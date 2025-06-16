@@ -325,9 +325,9 @@ class ProfileScreen extends StatelessWidget {
           fontFamily: "Inter",
         ),
       ),
-      side: BorderSide(color: Color(0xFFf3e8ff),),
+      side: BorderSide(color: Color(0xFFf3e8ff)),
       backgroundColor: Color(0xFFf3e8ff),
-      labelStyle: TextStyle(color: Color(0xFF7e22ce), fontFamily: "Inter",),
+      labelStyle: TextStyle(color: Color(0xFF7e22ce), fontFamily: "Inter"),
       padding: EdgeInsets.symmetric(horizontal: 8),
     );
   }

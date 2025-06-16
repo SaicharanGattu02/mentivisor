@@ -8,6 +8,7 @@ import '../presentation/DashBoard.dart';
 import '../presentation/Splash.dart';
 import 'package:mentivisor/presentation/MentivisorProfileSetup.dart';
 import 'package:mentivisor/presentation/ProfileScreen.dart';
+import 'package:mentivisor/presentation/StudyZoneScreen.dart';
 import 'package:mentivisor/presentation/authentication/SignupScreen.dart';
 
 import '../presentation/authentication/LoginScreen.dart';
@@ -30,6 +31,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
     ),
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(StudyZoneScreen(), state),
+    ),
 
     GoRoute(
       path: '/login',
@@ -50,6 +56,11 @@ final GoRouter appRouter = GoRouter(
       path: '/profile',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ProfileScreen(), state),
+    ),
+    GoRoute(
+      path: '/study_zone',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(StudyZoneScreen(), state),
     ),
   ],
 );
