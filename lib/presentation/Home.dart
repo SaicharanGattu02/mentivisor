@@ -19,7 +19,8 @@ class _HomeState extends State<Home> {
       'tags': ['Data Analytics', 'ML Engineering'],
       'timing': 'Next Week',
       'available': false,
-      'avatar': 'assets/images/priya.png', // Replace with actual asset or network path
+      'avatar':
+          'assets/images/priya.png', // Replace with actual asset or network path
     },
     {
       'name': 'Dr. Sarah Chen',
@@ -245,16 +246,18 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               OutlinedButton(
-                                onPressed: () {
-
-                                },
+                                onPressed: () {},
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color(0xFFCBD5E1)),
+                                  side: const BorderSide(
+                                    color: Color(0xFFCBD5E1),
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   minimumSize: const Size(0, 36),
                                 ),
                                 child: const Text(
@@ -263,12 +266,12 @@ class _HomeState extends State<Home> {
                                     fontSize: 14, // text-sm
                                     fontFamily: 'Inter',
                                     fontWeight: FontWeight.w500, // font-medium
-                                    color: Color(0xFF020817), // text color (based on Tailwind's slate-950)
+                                    color: Color(
+                                      0xFF020817,
+                                    ), // text color (based on Tailwind's slate-950)
                                   ),
                                 ),
-                              )
-
-
+                              ),
                             ],
                           ),
                         );
@@ -280,125 +283,208 @@ class _HomeState extends State<Home> {
 
               const SizedBox(height: 8),
               SizedBox(height: 16),
-            Container(
-              width: SizeConfig.screenWidth,
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
 
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    itemCount: mentors.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final mentor = mentors[index];
-                      return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: AssetImage(mentor['avatar']), // Use NetworkImage if dynamic
-                                  radius: 24,backgroundColor: Colors.grey.withOpacity(0.5),
+              Container(
+                width: SizeConfig.screenWidth,
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16),
+                    Container(
+                      height: 40, // similar to h-10
+                      child: Stack(
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40), // px-3 py-2 + space for icon
+                              hintText: 'Search mentors by name or expertise...',
+                              hintStyle: TextStyle(color: Colors.grey[500]), // placeholder:text-muted-foreground
+                              filled: true,
+                              fillColor: Theme.of(context).colorScheme.background, // bg-background
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).dividerColor), // border-input
+                                borderRadius: BorderRadius.circular(6), // rounded-md
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary, // ring-ring
+                                  width: 2,
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(mentor['name'], style: TextStyle(fontWeight: FontWeight.bold)),
-                                      Text(
-                                        mentor['title'],
-                                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                            style: const TextStyle(fontSize: 16), // text-base
+                          ),
+                          const Positioned(
+                            left: 12, // left-3
+                            top: 10, // top-3
+                            child: Icon(
+                              Icons.search,
+                              size: 16, // w-4 h-4
+                              color: Colors.grey, // text-gray-400
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                     SizedBox(height: 16),
+                    ListView.builder(
+                      itemCount: mentors.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final mentor = mentors[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      mentor['avatar'],
+                                    ), // Use NetworkImage if dynamic
+                                    radius: 24,
+                                    backgroundColor: Colors.grey.withOpacity(
+                                      0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          mentor['name'],
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          mentor['title'],
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  ),
+                                  Text(
+                                    ' ${mentor['rating']} (${mentor['reviews']})',
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.monetization_on,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  ),
+                                  Text(' ${mentor['coins']}'),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 6,
+                                children: mentor['tags']
+                                    .map<Widget>(
+                                      (tag) => Chip(
+                                        label: Text(tag),
+                                        backgroundColor: Colors.purple[50],
+                                        labelStyle: TextStyle(
+                                          color: Colors.purple,
+                                        ),
+                                        side: BorderSide.none,
                                       ),
-                                    ],
+                                    )
+                                    .toList(),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    color: Colors.green,
+                                    size: 16,
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.amber, size: 16),
-                                Text(' ${mentor['rating']} (${mentor['reviews']})'),
-                                const SizedBox(width: 8),
-                                Icon(Icons.monetization_on, color: Colors.amber, size: 16),
-                                Text(' ${mentor['coins']}'),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 6,
-                              children: mentor['tags']
-                                  .map<Widget>((tag) => Chip(
-                                label: Text(tag),
-                                backgroundColor: Colors.purple[50],
-                                labelStyle: TextStyle(color: Colors.purple),  side: BorderSide.none,
-                              ))
-                                  .toList(),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(Icons.access_time, color: Colors.green, size: 16),
-                                const SizedBox(width: 4),
-                                Text(mentor['timing'], style: TextStyle(fontSize: 12, color: Colors.grey[700])),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () {},
-                                  child: const Text('View Profile'),
-                                ),
-                                const SizedBox(width: 8),
-                                ElevatedButton(
-                                  onPressed: mentor['available'] ? () {} : null,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.deepPurple,
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    mentor['timing'],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[700],
+                                    ),
                                   ),
-                                  child: const Text('Book'),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: const Text('View Profile'),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  ElevatedButton(
+                                    onPressed: mentor['available']
+                                        ? () {}
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.deepPurple,
+                                    ),
+                                    child: const Text('Book'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
             ],
           ),
         ),
@@ -413,7 +499,7 @@ class _HomeState extends State<Home> {
     IconData icon,
   ) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 16),
+      margin: EdgeInsets.symmetric(vertical: 8),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -500,5 +586,4 @@ class _HomeState extends State<Home> {
       ],
     );
   }
-
 }

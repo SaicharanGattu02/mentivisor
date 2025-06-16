@@ -30,11 +30,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
     ),
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ProfileScreen(), state),
-    ),
+
     GoRoute(
       path: '/login',
       pageBuilder: (context, state) =>
