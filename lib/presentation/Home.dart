@@ -1,0 +1,504 @@
+import 'package:flutter/material.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
+
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<Map<String, dynamic>> mentors = [
+    {
+      'name': 'Dr. Priya Sharma',
+      'title': 'Data Science Lead at Netflix',
+      'rating': 4.9,
+      'reviews': 156,
+      'coins': 28,
+      'tags': ['Data Analytics', 'ML Engineering'],
+      'timing': 'Next Week',
+      'available': false,
+      'avatar': 'assets/images/priya.png', // Replace with actual asset or network path
+    },
+    {
+      'name': 'Dr. Sarah Chen',
+      'title': 'Senior Software Engineer at Google',
+      'rating': 4.7,
+      'reviews': 102,
+      'coins': 30,
+      'tags': ['Software Architecture', 'Backend Engineering'],
+      'timing': 'Tomorrow',
+      'available': true,
+      'avatar': 'assets/images/sarah.png',
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Inter',
+          ),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
+                side: const BorderSide(color: Colors.orange, width: 1.2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 8.0,
+                ),
+              ),
+              onPressed: () {},
+              child: Row(
+                spacing: 4,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: Colors.deepPurple,
+                  ),
+                  Text(
+                    '150 coins',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.deepPurple),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Welcome, Mentee!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_today),
+              title: const Text('My Sessions'),
+              onTap: () {},
+            ),
+
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Logout', style: TextStyle(color: Colors.red)),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xfffaf5ff), Color(0xffeff6ff), Color(0xffe0e7ff)],
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16),
+              _buildStatCard('Sessions Completed', '8', [
+                Color(0xFF8B5CF6),
+                Color(0xFF7C3AED),
+              ], Icons.emoji_events),
+              _buildStatCard('Upcoming Sessions', '2', [
+                Color(0xFF3B82F6), // blue-500
+                Color(0xFF2563EB), // blue-600
+              ], Icons.calendar_today),
+              _buildStatCard('Goals Achieved', '5', [
+                Color(0xFF22C55E),
+                Color(0xFF16A34A),
+              ], Icons.star_border),
+              _buildStatCard('Coin Balance', '150', [
+                Color(0xFFF97316),
+                Color(0xFFEA580C),
+              ], Icons.monetization_on),
+              SizedBox(height: 16),
+              Container(
+                width: SizeConfig.screenWidth,
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Upcoming Sessions',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    ListView.builder(
+                      itemCount: 2,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: SizeConfig.screenWidth,
+                          margin: EdgeInsets.only(top: 20),
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xfffaf5ff),
+                                Color(0xffeff6ff),
+                                Color(0xffe0e7ff),
+                              ],
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: SizeConfig.screenWidth * 0.45,
+                                child: Column(
+                                  spacing: 2,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Career Growth Strategy',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        color: Color(0xff111827),
+                                      ),
+                                    ),
+                                    Text(
+                                      'with ${'Dr. Sarah Chen'}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        color: Color(0xff4B5563),
+                                      ),
+                                    ),
+                                    Text(
+                                      '${'Today at 4:00 PM'} • \n ${'Video Call'}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Inter',
+                                        fontSize: 14,
+                                        color: Color(0xff6B7280),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              OutlinedButton(
+                                onPressed: () {
+
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: const BorderSide(color: Color(0xFFCBD5E1)),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  minimumSize: const Size(0, 36),
+                                ),
+                                child: const Text(
+                                  'Join Session',
+                                  style: TextStyle(
+                                    fontSize: 14, // text-sm
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w500, // font-medium
+                                    color: Color(0xFF020817), // text color (based on Tailwind's slate-950)
+                                  ),
+                                ),
+                              )
+
+
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 8),
+              SizedBox(height: 16),
+            Container(
+              width: SizeConfig.screenWidth,
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    itemCount: mentors.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final mentor = mentors[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage: AssetImage(mentor['avatar']), // Use NetworkImage if dynamic
+                                  radius: 24,backgroundColor: Colors.grey.withOpacity(0.5),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(mentor['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                                      Text(
+                                        mentor['title'],
+                                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(Icons.star, color: Colors.amber, size: 16),
+                                Text(' ${mentor['rating']} (${mentor['reviews']})'),
+                                const SizedBox(width: 8),
+                                Icon(Icons.monetization_on, color: Colors.amber, size: 16),
+                                Text(' ${mentor['coins']}'),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 6,
+                              children: mentor['tags']
+                                  .map<Widget>((tag) => Chip(
+                                label: Text(tag),
+                                backgroundColor: Colors.purple[50],
+                                labelStyle: TextStyle(color: Colors.purple),  side: BorderSide.none,
+                              ))
+                                  .toList(),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.access_time, color: Colors.green, size: 16),
+                                const SizedBox(width: 4),
+                                Text(mentor['timing'], style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {},
+                                  child: const Text('View Profile'),
+                                ),
+                                const SizedBox(width: 8),
+                                ElevatedButton(
+                                  onPressed: mentor['available'] ? () {} : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepPurple,
+                                  ),
+                                  child: const Text('Book'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(
+    String title,
+    String value,
+    List<Color> gradientColors,
+    IconData icon,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          Icon(icon, color: Colors.white, size: 28),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMentorFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TextField(
+          decoration: InputDecoration(
+            hintText: 'Search mentors by name or exp',
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                value: 'All Domains',
+                items: const [
+                  DropdownMenuItem(
+                    value: 'All Domains',
+                    child: Text('All Domains'),
+                  ),
+                ],
+                onChanged: (_) {},
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                value: 'All Ratings',
+                items: const [
+                  DropdownMenuItem(
+                    value: 'All Ratings',
+                    child: Text('All Ratings'),
+                  ),
+                ],
+                onChanged: (_) {},
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+}

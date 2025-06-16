@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import 'app_routes/StateInjector.dart';
 import 'app_routes/router.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return MultiRepositoryProvider(
       providers: StateInjector.repositoryProviders,
       child: MultiProvider(

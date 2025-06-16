@@ -3,17 +3,28 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import '../Components/NoInternet.dart';
+import '../presentation/DashBoard.dart';
+import '../presentation/Splash.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    // GoRoute(
-    //   path: '/',
-    //   pageBuilder: (context, state) =>
-    //       buildSlideTransitionPage(Splash(), state),
-    // ),
-
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Splash(), state),
+    ),
+    GoRoute(
+      path: '/nointernet',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Nointernet(), state),
+    ),
+    GoRoute(
+      path: '/dashboard',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Dashboard(), state),
+    ),
   ],
 );
 
