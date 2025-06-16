@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 
-abstract class RemoteDataSource {}
+abstract class RemoteDataSource {
+
+}
 
 class RemoteDataSourceImpl implements RemoteDataSource {
   Future<FormData> buildFormData(Map<String, dynamic> data) async {
