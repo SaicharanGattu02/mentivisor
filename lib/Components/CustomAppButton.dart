@@ -2,60 +2,162 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
-class CustomAppButton extends StatelessWidget implements PreferredSizeWidget {
+import 'package:flutter/material.dart';
+
+class CustomAppButton extends StatelessWidget {
   final String text;
-  final Color? color;
   final Color? textcolor;
   final double? width;
   final double? height;
   final VoidCallback? onPlusTap;
-  CustomAppButton({
+  final IconData? icon;
+
+  const CustomAppButton({
     Key? key,
     required this.text,
     required this.onPlusTap,
-    this.color,
     this.textcolor,
     this.height,
     this.width,
+    this.icon,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
     return SizedBox(
       width: width ?? w,
-      height: height ?? 48,
+      height: height ?? 50,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          backgroundColor: color,
-          foregroundColor: color,
-          disabledBackgroundColor: color,
-          disabledForegroundColor: color,
-          shadowColor: Colors.transparent,
-          overlayColor: Colors.transparent,
-        ),
         onPressed: onPlusTap,
-        child: Text(
-          text,
-          style: TextStyle(
-            color: textcolor ?? Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xff3b82f6), Color(0xff2563eb)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: textcolor ?? Colors.white,
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (icon != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                    icon,
+                    color: textcolor ?? Colors.white,
+                    size: 18,
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-
-  @override
-  Size get preferredSize => throw UnimplementedError();
 }
 
-class CustomAppButton1 extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppButton1 extends StatelessWidget {
+  final String text;
+  final Color? textcolor;
+  final double? width;
+  final double? height;
+  final VoidCallback? onPlusTap;
+  final IconData? icon;
+
+  const CustomAppButton1({
+    Key? key,
+    required this.text,
+    required this.onPlusTap,
+    this.textcolor,
+    this.height,
+    this.width,
+    this.icon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width: width ?? w,
+      height: height ?? 50,
+      child: ElevatedButton(
+        onPressed: onPlusTap,
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xffa855f7), Color(0xff3b82f6)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: textcolor ?? Colors.white,
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (icon != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                    icon,
+                    color: textcolor ?? Colors.white,
+                    size: 18,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class CustomAppButton2 extends StatelessWidget implements PreferredSizeWidget {
   final String text;
   final Color? color;
   final double? width;
@@ -63,7 +165,7 @@ class CustomAppButton1 extends StatelessWidget implements PreferredSizeWidget {
   final Color? textcolor;
   final VoidCallback? onPlusTap;
   final bool isLoading;
-  CustomAppButton1({
+  CustomAppButton2({
     Key? key,
     required this.text,
     required this.onPlusTap,

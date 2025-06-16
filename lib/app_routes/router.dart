@@ -6,6 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../Components/NoInternet.dart';
 import '../presentation/DashBoard.dart';
 import '../presentation/Splash.dart';
+import 'package:mentivisor/presentation/MentivisorProfileSetup.dart';
+import 'package:mentivisor/presentation/ProfileScreen.dart';
+import 'package:mentivisor/presentation/authentication/SignupScreen.dart';
+
+import '../presentation/authentication/LoginScreen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -24,6 +29,31 @@ final GoRouter appRouter = GoRouter(
       path: '/dashboard',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
+    ),
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ProfileScreen(), state),
+    ),
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(LoginScreen(), state),
+    ),
+    GoRoute(
+      path: '/sign_up',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SignupScreen(), state),
+    ),
+    GoRoute(
+      path: '/mentor_profile',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(MentivisorProfileSetup(), state),
+    ),
+    GoRoute(
+      path: '/profile',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ProfileScreen(), state),
     ),
   ],
 );
