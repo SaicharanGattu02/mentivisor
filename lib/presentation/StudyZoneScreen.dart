@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class StudyZoneScreen extends StatefulWidget {
   @override
   State<StudyZoneScreen> createState() => _StudyZoneScreenState();
 }
 
-// Roadmap data model
+
 class Roadmap {
   final String imagePath;
   final String title;
