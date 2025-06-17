@@ -3,6 +3,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/presentation/MyWalletScreen.dart';
 import '../Components/NoInternet.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../presentation/DashBoard.dart';
@@ -20,7 +21,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(StudyZoneScreen(), state),
+          buildSlideTransitionPage(MyWalletScreen(), state),
     ),
     GoRoute(
       path: '/nointernet',
@@ -56,6 +57,11 @@ final GoRouter appRouter = GoRouter(
       path: '/study_zone',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(StudyZoneScreen(), state),
+    ),
+    GoRoute(
+      path: '/wallet_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(MyWalletScreen(), state),
     ),
   ],
 );
