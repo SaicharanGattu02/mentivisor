@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/presentation/MyWalletScreen.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Home.dart';
+import 'ProfileScreen.dart';
+import 'SessionHistory.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({super.key});
@@ -57,9 +60,9 @@ class _DashboardState extends State<Dashboard> {
             controller: pageController,
             children: [
               Home(),
-              // Wallet(),
-              // Sessions(),
-              // More()
+              MyWalletScreen(),
+              SessionHistory(),
+              ProfileScreen(),
             ],
             physics: const NeverScrollableScrollPhysics(),
           ),
@@ -113,14 +116,14 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
             label: "Sessions",
             icon: Icon(
-              _selectedIndex == 2 ? Icons.headset : Icons.headset_outlined,
+              _selectedIndex == 2 ? Icons.history : Icons.history_outlined,
               size: 24,
             ),
           ),
           BottomNavigationBarItem(
             label: "More",
             icon: Icon(
-              _selectedIndex == 3 ? Icons.more_horiz : Icons.more_horiz_outlined,
+              _selectedIndex == 3 ? Icons.person : Icons.person_outline,
               size: 24,
             ),
           ),

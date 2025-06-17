@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
+import 'DailyCheckinDialog.dart';
 
 class MyWalletScreen extends StatefulWidget {
   @override
@@ -40,7 +43,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         .zero, // Ensures no extra padding disturbs centering
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   },
                   child: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
@@ -180,7 +183,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.push("/buy_coins");
+                            },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: Color(0xFFD1D5DB)),
                               padding: EdgeInsets.symmetric(
@@ -214,7 +219,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             ),
                           ),
                           OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.push("/wallet_history");
+                            },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: Color(0xFFD1D5DB)),
                               padding: EdgeInsets.symmetric(
@@ -318,7 +325,12 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const DailyCheckinDialog(),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF7C3AED),
                         padding: EdgeInsets.symmetric(

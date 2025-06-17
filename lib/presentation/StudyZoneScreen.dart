@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class StudyZoneScreen extends StatefulWidget {
   @override
@@ -454,7 +455,9 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                   children: [
                                     Expanded(
                                       child: OutlinedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          context.push("/details");
+                                        },
                                         style: OutlinedButton.styleFrom(
                                           side: BorderSide(
                                             color: Color(0xFFD1D5DB),
@@ -493,7 +496,9 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                     SizedBox(width: 8),
                                     Expanded(
                                       child: ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          context.push("/purchase_screen");
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Color(0xFF7C3AED),
                                           padding: EdgeInsets.symmetric(

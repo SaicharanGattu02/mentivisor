@@ -355,7 +355,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
               backgroundColor: Colors.deepPurple,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
             onPressed: () {},
@@ -363,6 +363,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
               'Book Session',
               style: TextStyle(
                 fontFamily: 'Inter',
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),

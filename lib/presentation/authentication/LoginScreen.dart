@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../Components/CustomAppButton.dart';
 import '../../utils/color_constants.dart';
@@ -125,7 +126,7 @@ class LoginScreen extends StatelessWidget {
                 text: "Sign In",
                 icon: Icons.arrow_forward,
                 onPlusTap: () {
-                  // Your logic
+                  context.pushReplacement("/dashboard");
                 },
               ),
               const SizedBox(height: 16),
@@ -145,7 +146,9 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      context.push("/sign_up");
+                    },
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(

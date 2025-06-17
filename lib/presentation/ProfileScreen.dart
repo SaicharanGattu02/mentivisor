@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -90,7 +91,9 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push("/book_sessions_screen");
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF9333ea),
                         shape: RoundedRectangleBorder(

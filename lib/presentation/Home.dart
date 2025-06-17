@@ -21,10 +21,8 @@ class _HomeState extends State<Home> {
       'tags': ['Data Analytics', 'ML Engineering'],
       'timing': 'Next Week',
       'available': false,
-      'avatar':
-          'assets/images/priya.png',
+      'avatar': 'assets/images/priya.png',
     },
-
   ];
   String? _selectDomain;
   String? _selectStars;
@@ -105,35 +103,43 @@ class _HomeState extends State<Home> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
+                      fontFamily: "Inter",
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
-
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('Session Booking'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('Session History'),
+              leading: const Icon(Icons.calendar_today_outlined),
+              title: const Text(
+                'Session Booking',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                  fontFamily: "Inter",
+                ),
+              ),
               onTap: () {
-                context.push('/session_history');
+                context.push("/book_sessions_screen");
               },
             ),
-
-            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.menu_book_outlined),
+              title: const Text('Study Zone',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                  fontFamily: "Inter",
+                ),
+              ),
+              onTap: () {
+                context.push("/study_zone");
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red)),
+              title: const Text('Logout', style: TextStyle(color: Colors.red,fontFamily: "Inter")),
               onTap: () {},
             ),
           ],

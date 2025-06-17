@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../Components/CustomAppButton.dart';
 import '../../utils/color_constants.dart';
@@ -104,14 +105,13 @@ class SignupScreen extends StatelessWidget {
                 text: "Create Account",
                 icon: Icons.arrow_forward,
                 onPlusTap: () {
-                  // Your logic
                 },
               ),
 
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
                     "Already have an account?",
                     style: TextStyle(
@@ -121,13 +121,18 @@ class SignupScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 4),
-                  Text(
-                    "Sign In",
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 15,
-                      color: primarycolor,
-                      fontWeight: FontWeight.w600,
+                  GestureDetector(
+                    onTap: () {
+                      context.push("/login");
+                    },
+                    child: const Text(
+                      "Sign In",
+                      style: TextStyle(
+                        color: primarycolor,
+                        fontFamily: "Inter",
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

@@ -3,9 +3,13 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/MyWalletScreen.dart';
+import 'package:mentivisor/presentation/PurchasePage.dart';
+import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import '../Components/NoInternet.dart';
 import '../presentation/BookSessionScreen.dart';
+import '../presentation/DailyCheckinDialog.dart';
 import '../presentation/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
@@ -24,7 +28,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Details(), state),
+          buildSlideTransitionPage(SplashScreen(), state),
     ),
     GoRoute(
       path: '/nointernet',
@@ -69,12 +73,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/wallet_screen',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(MyWalletScreen(), state),
-    ),
-    GoRoute(
-      path: '/wallet_history',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(WalletHistory(), state),
+          buildSlideTransitionPage(SplashScreen(), state),
     ),
     GoRoute(
       path: '/wallet_history',
@@ -85,6 +84,26 @@ final GoRouter appRouter = GoRouter(
       path: '/details',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Details(), state),
+    ),
+    GoRoute(
+      path: '/buy_coins',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(BuyCoinsScreen(), state),
+    ),
+    GoRoute(
+      path: '/purchase_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(PurchasePage(), state),
+    ),
+    GoRoute(
+      path: '/purchase_success_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(PurchaseSuccessPage(), state),
+    ),
+    GoRoute(
+      path: '/book_sessions_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(BookSessionScreen(), state),
     ),
   ],
 );
