@@ -241,7 +241,74 @@ class _DetailsState extends State<Details> {
                   ),
                 ),
 
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 16),
+                  width: w,
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    style:
+                        ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff9333EA),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Inter',
 
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                    label: const Text(
+                      'Purchase for 25 coins',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 16),
+                  width: w,
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    label: const Text(
+                      'Preview Content',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
@@ -249,13 +316,15 @@ class _DetailsState extends State<Details> {
                     color: const Color(0xFFFFF3CD),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    "💰 Your Balance\n145 coins",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      fontFamily: 'Inter',
-                      color: Colors.brown,
+                  child:  Center(
+                    child: Text(
+                      "💰 Your Balance\n145 coins",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'Inter',
+                        color: Colors.brown,
+                      ),
                     ),
                   ),
                 ),
