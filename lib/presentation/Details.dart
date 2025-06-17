@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class Details extends StatefulWidget {
   const Details({super.key});
@@ -97,7 +98,7 @@ class _DetailsState extends State<Details> {
                       const Text(
                         "About This Resource",
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           color: Color(0xff020817),
                           fontWeight: FontWeight.w600,
                         ),
@@ -154,7 +155,7 @@ class _DetailsState extends State<Details> {
                       const Text(
                         "What You'll Learn",
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           color: Color(0xff020817),
                           fontWeight: FontWeight.w600,
                         ),
@@ -180,7 +181,7 @@ class _DetailsState extends State<Details> {
                       Text(
                         "Complete DSA Roadmap 2024",
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           color: Color(0xff020817),
                           fontWeight: FontWeight.w600,
                         ),
@@ -205,34 +206,106 @@ class _DetailsState extends State<Details> {
                       const Text(
                         "About the Author",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
+                          fontFamily: 'Inter',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Row(
+                      Column(
+                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.deepPurpleAccent,
-                            child: Icon(Icons.person, color: Colors.white),
+                          Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 24,
+                                backgroundColor: Color(0xff9333EA),
+                                child: Icon(Icons.person, color: Colors.white),
+                              ),
+                              SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text(
+                                    "Dr. Sarah Chen",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Inter',
+                                      fontSize: 16,
+                                      color: Color(0xff111827),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Verified Mentor",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Inter',
+                                      fontSize: 14,
+                                      color: Color(0xff6B7280),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+
+                          SizedBox(height: 4),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              Icon(
+                                Icons.star_border,
+                                color: Colors.yellow,
+                                size: 16,
+                              ),
                               Text(
-                                "Dr. Sarah Chen",
+                                "4.8 average rating",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  color: Color(0xff4B5563),
                                 ),
                               ),
-                              Text("Verified Mentor"),
-                              SizedBox(height: 4),
-                              Text("⭐ 4.8 average rating"),
-                              Text("📥 15,000+ downloads"),
-                              Text("📅 Member since 2022"),
+                            ],
+                          ),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              Icon(
+                                Icons.download_rounded,
+                                color: Colors.grey[500],
+                                size: 16,
+                              ),
+                              Text(
+                                "15,000+ downloads",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  color: Color(0xff4B5563),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                color: Colors.grey[500],
+                                size: 16,
+                              ),
+                              Text(
+                                "Member since 2022",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  color: Color(0xff4B5563),
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -246,32 +319,25 @@ class _DetailsState extends State<Details> {
                   width: w,
                   child: ElevatedButton.icon(
                     onPressed: () {},
-                    style:
-                        ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff9333EA),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Inter',
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff9333EA),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
 
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                    label: const Text(
+                    label: Text(
                       'Purchase for 25 coins',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                        color: Color(0xfff8fafc),
+                        fontSize: 16,
                         fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -311,20 +377,49 @@ class _DetailsState extends State<Details> {
                 ),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF3CD),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child:  Center(
-                    child: Text(
-                      "💰 Your Balance\n145 coins",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        fontFamily: 'Inter',
-                        color: Colors.brown,
-                      ),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          spacing: 10,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/svg_icons/coins.svg',
+                              fit: BoxFit.cover,
+                              width: 20,
+                              height: 20,
+                              color: Color(0xff854D0E),
+                            ),
+                            Text(
+                              "Your Balance",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                fontFamily: 'Inter',
+                                color: Color(0xff854D0E),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "145 coins",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 24,
+                            fontFamily: 'Inter',
+                            color: Color(0xff854D0E),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
