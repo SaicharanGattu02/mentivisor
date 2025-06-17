@@ -31,7 +31,7 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(SplashScreen(), state),
     ),
     GoRoute(
-      path: '/nointernet',
+      path: '/no_internet',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Nointernet(), state),
     ),

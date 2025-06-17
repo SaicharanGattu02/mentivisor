@@ -15,6 +15,7 @@ class _SessionHistoryState extends State<SessionHistory> {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         padding: EdgeInsets.all(16),
@@ -198,94 +199,90 @@ class _SessionHistoryState extends State<SessionHistory> {
                                       ), // replace with actual path
                                     ),
                                     SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: w * 0.3,
-                                                child: Expanded(
-                                                  child: Text(
-                                                    'Technical Interview Prep',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color(0xff111827),
-                                                    ),
-                                                  ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              width: w * 0.3,
+                                              child: Text(
+                                                'Technical Interview Prep',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                      FontWeight.w600,
+                                                  color: Color(0xff111827),
                                                 ),
                                               ),
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xffDBEAFE),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                child: const Text(
-                                                  'upcoming',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xff1D4ED8),
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
                                                   ),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xffDBEAFE),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: const Text(
+                                                'upcoming',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xff1D4ED8),
                                                 ),
                                               ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        const Text(
+                                          'with Dr. Sarah Chen',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xff6B7280),
                                           ),
-                                          const SizedBox(height: 4),
-                                          const Text(
-                                            'with Dr. Sarah Chen',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: const [
+                                            Icon(
+                                              Icons.calendar_today,
+                                              size: 14,
                                               color: Color(0xff6B7280),
                                             ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            children: const [
-                                              Icon(
-                                                Icons.calendar_today,
-                                                size: 14,
+                                            SizedBox(width: 4),
+                                            Text(
+                                              '1/15/2024',
+                                              style: TextStyle(
+                                                fontSize: 13,
                                                 color: Color(0xff6B7280),
                                               ),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                '1/15/2024',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Color(0xff6B7280),
-                                                ),
-                                              ),
-                                              SizedBox(width: 16),
-                                              Icon(
-                                                Icons.access_time,
-                                                size: 14,
+                                            ),
+                                            SizedBox(width: 16),
+                                            Icon(
+                                              Icons.access_time,
+                                              size: 14,
+                                              color: Color(0xff6B7280),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              '45 mins',
+                                              style: TextStyle(
+                                                fontSize: 13,
                                                 color: Color(0xff6B7280),
                                               ),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                '45 mins',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Color(0xff6B7280),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),

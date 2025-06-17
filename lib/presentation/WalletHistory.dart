@@ -355,87 +355,83 @@ class _WalletHistoryState extends State<WalletHistory> {
                         itemCount: transactions.length,
                         itemBuilder: (context, index) {
                           final transaction = transactions[index];
-                          return Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade200),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 28,
-                                        height: 28,
-                                        decoration: BoxDecoration(
-                                          color: transaction.bgColor,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
-                                          child: Icon(
-                                            transaction.icon,
-                                            size: 20,
-                                            color: transaction.iconColor,
-                                          ),
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: transaction.bgColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          transaction.icon,
+                                          size: 20,
+                                          color: transaction.iconColor,
                                         ),
                                       ),
-                                      SizedBox(width: 12),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: w * 0.4,
-                                            child: Expanded(
-                                              child: Text(
-                                                transaction.title,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 16,
-                                                  color: Colors.black87,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            transaction.date,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: w * 0.4,
+                                          child: Text(
+                                            transaction.title,
                                             style: const TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              color: Colors.black87,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-          
-                                  /// Right section: points with icon
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.monetization_on_outlined,
-                                        size: 18,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          transaction.date,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+                                /// Right section: points with icon
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.monetization_on_outlined,
+                                      size: 18,
+                                      color: transaction.amountColor,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      transaction.amount,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
                                         color: transaction.amountColor,
                                       ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        transaction.amount,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: transaction.amountColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           );
                         },

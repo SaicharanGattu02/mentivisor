@@ -42,30 +42,21 @@ class _DashboardState extends State<Dashboard> {
         return false;
       },
       child: Scaffold(
-        body: BlocListener<InternetStatusBloc, InternetStatusState>(
-          listener: (context, state) {
-            if (state is InternetStatusLostState) {
-              context.push('/no_internet');
-            } else if (state is InternetStatusBackState) {
-              context.pop();
-            }
+        body: PageView(
+          onPageChanged: (value) {
+            HapticFeedback.lightImpact();
+            setState(() {
+              _selectedIndex = value;
+            });
           },
-          child: PageView(
-            onPageChanged: (value) {
-              HapticFeedback.lightImpact();
-              setState(() {
-                _selectedIndex = value;
-              });
-            },
-            controller: pageController,
-            children: [
-              Home(),
-              MyWalletScreen(),
-              SessionHistory(),
-              ProfileScreen(),
-            ],
-            physics: const NeverScrollableScrollPhysics(),
-          ),
+          controller: pageController,
+          children: [
+            Home(),
+            MyWalletScreen(),
+            SessionHistory(),
+            ProfileScreen(),
+          ],
+          physics: const NeverScrollableScrollPhysics(),
         ),
         bottomNavigationBar: _buildBottomNavigationBar(),
       ),
