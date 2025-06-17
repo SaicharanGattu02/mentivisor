@@ -14,22 +14,21 @@ class _DetailsState extends State<Details> {
     final w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          padding: EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xfffaf5ff),
-                Color(0xffeff6ff),
-                Color(0xffe0e7ff),
-              ], // Replace with your desired gradient
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xfffaf5ff),
+              Color(0xffeff6ff),
+              Color(0xffe0e7ff),
+            ], // Replace with your desired gradient
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
+        ),
+        child: SafeArea(
           child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -83,6 +82,7 @@ class _DetailsState extends State<Details> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
+                            fontFamily: "Inter",
                           ),
                         ),
                       ),
@@ -99,6 +99,7 @@ class _DetailsState extends State<Details> {
                         "About This Resource",
                         style: TextStyle(
                           fontSize: 20,
+                          fontFamily: "Inter",
                           color: Color(0xff020817),
                           fontWeight: FontWeight.w600,
                         ),
@@ -109,10 +110,11 @@ class _DetailsState extends State<Details> {
                         style: TextStyle(
                           fontSize: 16,
                           color: Color(0xff4B5563),
+                          fontFamily: "Inter",
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-
+                
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 16,
@@ -126,6 +128,7 @@ class _DetailsState extends State<Details> {
                               "Preview Content:",
                               style: TextStyle(
                                 fontSize: 16,
+                                fontFamily: "Inter",
                                 color: Color(0xff020817),
                                 fontWeight: FontWeight.w600,
                               ),
@@ -134,6 +137,7 @@ class _DetailsState extends State<Details> {
                               "Learn 50+ algorithms with detailed explanations...",
                               style: TextStyle(
                                 fontSize: 16,
+                                fontFamily: "Inter",
                                 color: Color(0xff4B5563),
                                 fontWeight: FontWeight.w400,
                               ),
@@ -144,9 +148,9 @@ class _DetailsState extends State<Details> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 8),
-
+                
                 _cardContainer(
                   width: w,
                   child: Column(
@@ -156,6 +160,7 @@ class _DetailsState extends State<Details> {
                         "What You'll Learn",
                         style: TextStyle(
                           fontSize: 20,
+                          fontFamily: "Inter",
                           color: Color(0xff020817),
                           fontWeight: FontWeight.w600,
                         ),
@@ -169,9 +174,9 @@ class _DetailsState extends State<Details> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 16),
-
+                
                 // Course Info
                 _cardContainer(
                   width: w,
@@ -182,6 +187,7 @@ class _DetailsState extends State<Details> {
                         "Complete DSA Roadmap 2024",
                         style: TextStyle(
                           fontSize: 20,
+                          fontFamily: "Inter",
                           color: Color(0xff020817),
                           fontWeight: FontWeight.w600,
                         ),
@@ -194,9 +200,9 @@ class _DetailsState extends State<Details> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 16),
-
+                
                 // Author
                 _cardContainer(
                   width: w,
@@ -249,7 +255,7 @@ class _DetailsState extends State<Details> {
                               ),
                             ],
                           ),
-
+                
                           SizedBox(height: 4),
                           Row(
                             spacing: 10,
@@ -313,7 +319,7 @@ class _DetailsState extends State<Details> {
                     ],
                   ),
                 ),
-
+                
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16),
                   width: w,
@@ -330,7 +336,7 @@ class _DetailsState extends State<Details> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-
+                
                     label: Text(
                       'Purchase for 25 coins',
                       style: TextStyle(
@@ -363,7 +369,7 @@ class _DetailsState extends State<Details> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-
+                
                     label: const Text(
                       'Preview Content',
                       style: TextStyle(

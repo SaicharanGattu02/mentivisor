@@ -10,7 +10,6 @@ class PurchaseSuccessPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF9FAFB),
       body: Container(
         height: height,
-        padding: EdgeInsets.all(16),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -23,7 +22,7 @@ class PurchaseSuccessPage extends StatelessWidget {
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -35,7 +34,10 @@ class PurchaseSuccessPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      side: const BorderSide(width: 1, color: Color(0xffe2e8f0)),
+                      side: const BorderSide(
+                        width: 1,
+                        color: Color(0xffe2e8f0),
+                      ),
                       padding: EdgeInsets
                           .zero, // Ensures no extra padding disturbs centering
                     ),
@@ -46,7 +48,13 @@ class PurchaseSuccessPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                Center(child: const Icon(Icons.check_circle, size: 80, color: Colors.green)),
+                Center(
+                  child: const Icon(
+                    Icons.check_circle,
+                    size: 80,
+                    color: Colors.green,
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Center(
                   child: const Text(
@@ -124,7 +132,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -138,8 +146,11 @@ class PurchaseSuccessPage extends StatelessWidget {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.monetization_on_outlined,
-                                size: 18, color: Colors.green),
+                            Icon(
+                              Icons.monetization_on_outlined,
+                              size: 18,
+                              color: Colors.green,
+                            ),
                             SizedBox(width: 6),
                             Text(
                               '25 coins spent',
@@ -168,11 +179,13 @@ class PurchaseSuccessPage extends StatelessWidget {
                           icon: const Icon(Icons.download, color: Colors.white),
                           label: const Text(
                             'Download Now',
-                            style:
-                            TextStyle(color: Colors.white, fontFamily: 'Inter'),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Inter',
+                            ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -180,9 +193,13 @@ class PurchaseSuccessPage extends StatelessWidget {
                 Center(
                   child: const Text(
                     'Your remaining balance: 120 coins',
-                    style: TextStyle(fontSize: 14, fontFamily: 'Inter', color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                      color: Colors.black54,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           ),
