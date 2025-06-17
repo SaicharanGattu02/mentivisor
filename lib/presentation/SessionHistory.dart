@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SessionHistory extends StatefulWidget {
   const SessionHistory({super.key});
@@ -11,16 +12,14 @@ class SessionHistory extends StatefulWidget {
 class _SessionHistoryState extends State<SessionHistory> {
   String? _selectSessions;
 
-
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Padding(
-        padding:  EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Container(
-          padding:  EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -50,12 +49,41 @@ class _SessionHistoryState extends State<SessionHistory> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          hint: Text(
-                            'Select Sessions',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 16,
-                              color: Colors.grey.shade500,
+                          customButton: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white, // Matches bg-background
+                              border: Border.all(
+                                color: const Color(0xFFCBD5E1),
+                              ), // Matches border-input
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.filter_alt_outlined, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      _selectSessions ?? 'All Sessions',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 14,
+                                        color: Colors.black, // or muted if null
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  size: 20,
+                                  color:
+                                      Colors.black45, // similar to .opacity-50
+                                ),
+                              ],
                             ),
                           ),
                           items: ['All Sessions', 'Completed', 'Upcoming']
@@ -66,7 +94,7 @@ class _SessionHistoryState extends State<SessionHistory> {
                                     e,
                                     style: const TextStyle(
                                       fontFamily: 'Inter',
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       color: Colors.black,
                                     ),
                                   ),
@@ -79,19 +107,6 @@ class _SessionHistoryState extends State<SessionHistory> {
                               _selectSessions = value;
                             });
                           },
-                          buttonStyleData: ButtonStyleData(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: Color(0xFFCBD5E1)),
-                              color: Colors.white,
-                            ),
-                          ),
-                          iconStyleData: IconStyleData(
-                            icon: Icon(Icons.keyboard_arrow_down_rounded),
-                            iconSize: 26,
-                            iconEnabledColor: Colors.grey.shade700,
-                          ),
                           dropdownStyleData: DropdownStyleData(
                             maxHeight: 200,
                             decoration: BoxDecoration(
@@ -99,9 +114,9 @@ class _SessionHistoryState extends State<SessionHistory> {
                               color: Colors.white,
                             ),
                           ),
-                          menuItemStyleData: MenuItemStyleData(
+                          menuItemStyleData: const MenuItemStyleData(
                             height: 45,
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
                             ),
@@ -116,25 +131,25 @@ class _SessionHistoryState extends State<SessionHistory> {
                   'Total Sessions',
                   '4',
                   Color(0xff9333EA),
-                  Icons.calendar_month,
+                 icon:  Icons.calendar_month,
                 ),
                 _buildStatCard(
                   'Average Rating',
                   '3.0',
                   Color(0xffCA8A04),
-                  Icons.star_border,
+                 icon:  Icons.star_border,
                 ),
                 _buildStatCard(
                   'Goals Completed',
                   '6/12',
                   Color(0xff16A34A),
-                  Icons.add_circle_outline,
+                  svgAsset: 'assets/svg_icons/goal.svg',
                 ),
                 _buildStatCard(
                   'Progress Rate',
                   '50%',
                   Color(0xff2563EB),
-                  Icons.auto_graph_rounded,
+                icon:  Icons.auto_graph_rounded,
                 ),
                 const SizedBox(height: 16),
                 Container(
@@ -156,18 +171,18 @@ class _SessionHistoryState extends State<SessionHistory> {
                           return Container(
                             width: w,
                             margin: const EdgeInsets.only(top: 12),
-                            padding: const EdgeInsets.all(16),
+                            // padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xfffaf5ff),
-                                  Color(0xffeff6ff),
-                                  Color(0xffe0e7ff),
-                                ],
-                              ),
+                              // gradient: const LinearGradient(
+                              //   begin: Alignment.topLeft,
+                              //   end: Alignment.bottomRight,
+                              //   colors: [
+                              //     Color(0xfffaf5ff),
+                              //     Color(0xffeff6ff),
+                              //     Color(0xffe0e7ff),
+                              //   ],
+                              // ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,13 +209,14 @@ class _SessionHistoryState extends State<SessionHistory> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               SizedBox(
-                                                width: w * 0.35,
+                                                width: w * 0.3,
                                                 child: Expanded(
                                                   child: Text(
                                                     'Technical Interview Prep',
                                                     style: TextStyle(
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       color: Color(0xff111827),
                                                     ),
                                                   ),
@@ -287,7 +303,9 @@ class _SessionHistoryState extends State<SessionHistory> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 2),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 2,
+                                      ),
                                       child: Row(
                                         children: [
                                           Container(
@@ -350,13 +368,13 @@ class _SessionHistoryState extends State<SessionHistory> {
       ),
     );
   }
-
   Widget _buildStatCard(
-    String title,
-    String value,
-    Color color,
-    IconData icon,
-  ) {
+      String title,
+      String value,
+      Color color, {
+        String? svgAsset,    // Optional SVG asset path
+        IconData? icon,      // Optional icon
+      }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -389,20 +407,28 @@ class _SessionHistoryState extends State<SessionHistory> {
               Text(
                 value,
                 style: TextStyle(
-                  color: color, // e.g., Colors.purple[600]
-                  fontSize: 28, // text-2xl
+                  color: color,
+                  fontSize: 28,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          Icon(
-            icon,
-            color: color, // e.g., Colors.purple[500]
-            size: 32, // equivalent to w-8 h-8
+          svgAsset != null
+              ? SvgPicture.asset(
+            svgAsset,
+            width: 32,
+            height: 32,
+            color: color,
+          )
+              : Icon(
+            icon ?? Icons.help_outline,
+            color: color,
+            size: 32,
           ),
         ],
       ),
     );
   }
+
 }
