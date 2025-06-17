@@ -11,83 +11,115 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF7F7F7), // Light beige background
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title and Subtitle
-                Text(
-                  "My Wallet",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A2A44),
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Manage your coins and track your earnings",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF6B7280),
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Current Balance Card
-                Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFFF8C00), Color(0xFFFFC107)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xfffefce8),
+              Color(0xfffef3c7),
+            ], // Replace with your desired gradient
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 40,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(width: 1, color: Color(0xffe2e8f0)),
+                    padding: EdgeInsets
+                        .zero, // Ensures no extra padding disturbs centering
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.monetization_on,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "Current Balance",
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(Icons.arrow_back, color: Colors.black),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Title and Subtitle
+              Text(
+                "My Wallet",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1A2A44),
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                "Manage your coins and track your earnings",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF6B7280),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Current Balance Card
+              Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFFC107), Color(0xFFFF8C00)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 6,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white.withOpacity(0.4),
+                      radius: 30,
+                      child: SvgPicture.asset(
+                        "assets/svg_icons/coins.svg",
+                        color: Colors.white,
+                        height: 32,
+                        width: 32,
                       ),
-                      SizedBox(height: 8),
-                      Center(
-                        child: Text(
-                          "150",
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
+                    ),
+                    Text(
+                      "Current Balance",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Center(
+                      child: Text(
+                        "150",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 36,
+                          height: 1,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 16),
-                      Row(
+                    ),
+                    SizedBox(height: 16),
+                    SizedBox(
+                      width: 250,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
@@ -140,63 +172,107 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
-                      Center(
-                        child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: Color(0xFFD1D5DB)),
-                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                    ),
+                    SizedBox(height: 16),
+                    SizedBox(
+                      width: 280,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Color(0xFFD1D5DB)),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 24,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: Colors.white,
                             ),
-                            backgroundColor: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Color(0xFF1A2A44),
-                                size: 16,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                "Buy Coins",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1A2A44),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: Color(0xFFea580c),
+                                  size: 16,
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: 4),
+                                Text(
+                                  "Buy Coins",
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFea580c),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                          OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Color(0xFFD1D5DB)),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 24,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: Colors.white,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.access_time_outlined,
+                                  color: Color(0xFFea580c),
+                                  size: 16,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  "History",
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFea580c),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 16),
-
-                // Daily Check-in Card
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
+              ),
+              SizedBox(height: 16),
+              // Daily Check-in Card
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
@@ -240,66 +316,88 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                         ],
                       ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF7C3AED),
-                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF7C3AED),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 16,
                         ),
-                        child: Text(
-                          "Check in Today",
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Your Achievements Section
-                Text(
-                  "Your Achievements",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A2A44),
-                  ),
-                ),
-                SizedBox(height: 8),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
+                      child: Text(
+                        "Check in Today",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // Sessions Completed
-                      Row(
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+              // Your Achievements Section
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  spacing: 8,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Your Achievements",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A2A44),
+                      ),
+                    ),
+                    // Sessions Completed
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFEFF6FF), // blue-50
+                            Color(0xFFFAF5FF), // purple-50
+                          ], // Replace with your desired gradient
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.person,
-                                color: Color(0xFF7C3AED),
-                                size: 20,
+                              CircleAvatar(
+                                backgroundColor: Color(0xfff3e8ff),
+                                child: SvgPicture.asset(
+                                  "assets/svg_icons/award.svg",
+                                  color: Color(0xFF7C3AED),
+                                  height: 15,
+                                  width: 15,
+                                ),
                               ),
                               SizedBox(width: 8),
                               Column(
@@ -330,10 +428,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                           Row(
                             children: [
-                              Icon(
-                                Icons.monetization_on,
+                              SvgPicture.asset(
+                                "assets/svg_icons/coins.svg",
                                 color: Color(0xFFD97706),
-                                size: 16,
+                                height: 20,
+                                width: 20,
                               ),
                               SizedBox(width: 4),
                               Text(
@@ -349,17 +448,32 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                         ],
                       ),
-                      Divider(height: 24),
-                      // Daily Check-ins
-                      Row(
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFEFF6FF), // blue-50
+                            Color(0xFFFAF5FF), // purple-50
+                          ], // Replace with your desired gradient
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.card_giftcard,
-                                color: Color(0xFF7C3AED),
-                                size: 20,
+                              CircleAvatar(
+                                backgroundColor: Color(0xfff3e8ff),
+                                child: Icon(
+                                  Icons.card_giftcard,
+                                  color: Color(0xFF7C3AED),
+                                  size: 15,
+                                ),
                               ),
                               SizedBox(width: 8),
                               Column(
@@ -390,10 +504,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                           Row(
                             children: [
-                              Icon(
-                                Icons.monetization_on,
+                              SvgPicture.asset(
+                                "assets/svg_icons/coins.svg",
                                 color: Color(0xFFD97706),
-                                size: 16,
+                                height: 20,
+                                width: 20,
                               ),
                               SizedBox(width: 4),
                               Text(
@@ -409,17 +524,32 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                         ],
                       ),
-                      Divider(height: 24),
-                      // Profile Updates
-                      Row(
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFEFF6FF), // blue-50
+                            Color(0xFFFAF5FF), // purple-50
+                          ], // Replace with your desired gradient
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.arrow_upward,
-                                color: Color(0xFF7C3AED),
-                                size: 20,
+                              CircleAvatar(
+                                backgroundColor: Color(0xfff3e8ff),
+                                child: Icon(
+                                  Icons.auto_graph_outlined,
+                                  color: Color(0xFF7C3AED),
+                                  size: 15,
+                                ),
                               ),
                               SizedBox(width: 8),
                               Column(
@@ -450,10 +580,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                           Row(
                             children: [
-                              Icon(
-                                Icons.monetization_on,
+                              SvgPicture.asset(
+                                "assets/svg_icons/coins.svg",
                                 color: Color(0xFFD97706),
-                                size: 16,
+                                height: 20,
+                                width: 20,
                               ),
                               SizedBox(width: 4),
                               Text(
@@ -469,17 +600,33 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                         ],
                       ),
-                      Divider(height: 24),
-                      // Reviews Given
-                      Row(
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFEFF6FF), // blue-50
+                            Color(0xFFFAF5FF), // purple-50
+                          ], // Replace with your desired gradient
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.bolt,
-                                color: Color(0xFF7C3AED),
-                                size: 20,
+                              CircleAvatar(
+                                backgroundColor: Color(0xfff3e8ff),
+                                child: Icon(
+                                  Icons.bolt_outlined,
+                                  color: Color(0xFF7C3AED),
+                                  size: 20,
+                                ),
                               ),
                               SizedBox(width: 8),
                               Column(
@@ -510,10 +657,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                           Row(
                             children: [
-                              Icon(
-                                Icons.monetization_on,
+                              SvgPicture.asset(
+                                "assets/svg_icons/coins.svg",
                                 color: Color(0xFFD97706),
-                                size: 16,
+                                height: 20,
+                                width: 20,
                               ),
                               SizedBox(width: 4),
                               Text(
@@ -529,164 +677,144 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Earn More Coins Section
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFE6FFFA),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Earn More Coins",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A2A44),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.person,
-                            color: Color(0xFF10B981),
-                            size: 24,
-                          ),
-                          SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Complete Sessions",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1A2A44),
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Earn 15 coins per session",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.bolt,
-                            color: Color(0xFF10B981),
-                            size: 24,
-                          ),
-                          SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Leave Reviews",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1A2A44),
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Earn 5 coins per review",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.card_giftcard,
-                            color: Color(0xFF10B981),
-                            size: 24,
-                          ),
-                          SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Daily Check-in",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1A2A44),
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Earn 5+ coins daily",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Back to Menu Button
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF7C3AED),
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Back to Menu",
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+              // Earn More Coins Section
+              Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color(0xFFE6FFFA),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Earn More Coins",
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontSize: 14,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: Color(0xFF1A2A44),
                       ),
                     ),
-                  ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Color(0xffdcfce7),
+                            child: SvgPicture.asset(
+                              "assets/svg_icons/award.svg",
+                              color: Colors.green,
+                              height: 20,
+                              width: 20,
+                            ),
+                          ),
+                          Text(
+                            "Complete Sessions",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1A2A44),
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "Earn 15 coins per session",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF6B7280),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+                    Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Color(0xffdcfce7),
+                            child: Icon(
+                              Icons.bolt,
+                              color: Color(0xFF10B981),
+                              size: 24,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text(
+                            "Leave Reviews",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1A2A44),
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "Earn 5 coins per review",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF6B7280),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Color(0xffdcfce7),
+                            child: Icon(
+                              Icons.card_giftcard,
+                              color: Color(0xFF10B981),
+                              size: 24,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text(
+                            "Daily Check-in",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1A2A44),
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "Earn 5+ coins daily",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF6B7280),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 16),
+            ],
           ),
         ),
       ),

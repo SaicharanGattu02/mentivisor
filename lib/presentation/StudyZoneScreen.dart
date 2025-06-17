@@ -5,8 +5,6 @@ class StudyZoneScreen extends StatefulWidget {
   @override
   State<StudyZoneScreen> createState() => _StudyZoneScreenState();
 }
-
-
 class Roadmap {
   final String imagePath;
   final String title;
