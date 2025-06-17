@@ -15,7 +15,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       body: Container(
-        padding: EdgeInsets.all(16),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -26,116 +25,118 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
             end: Alignment.centerRight,
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 50,
-                    height: 40,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 50,
+                      height: 40,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          side: const BorderSide(
+                            width: 1,
+                            color: Color(0xffe2e8f0),
+                          ),
+                          padding: EdgeInsets
+                              .zero, // Ensures no extra padding disturbs centering
                         ),
-                        side: const BorderSide(
-                          width: 1,
-                          color: Color(0xffe2e8f0),
-                        ),
-                        padding: EdgeInsets
-                            .zero, // Ensures no extra padding disturbs centering
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Icon(Icons.arrow_back, color: Colors.black),
                     ),
-                  ),
-                  SizedBox(width: 50),
-                  Text(
-                    "Book a Session",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Inter",
+                    SizedBox(width: 50),
+                    Text(
+                      "Book a Session",
+                      style: TextStyle(
+                        fontSize:22,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "Inter",
+                      ),
                     ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Select Date'),
+                      const SizedBox(height: 8),
+                      _dateTile('Today', '3 slots available'),
+                      _dateTile('Tomorrow', '4 slots available'),
+                      _dateTile('Wed, Jan 17', '3 slots available'),
+                      _dateTile('Thu, Jan 18', '4 slots available'),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle('Select Date'),
-                    const SizedBox(height: 8),
-                    _dateTile('Today', '3 slots available'),
-                    _dateTile('Tomorrow', '4 slots available'),
-                    _dateTile('Wed, Jan 17', '3 slots available'),
-                    _dateTile('Thu, Jan 18', '4 slots available'),
-                  ],
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Select Time'),
+                      const SizedBox(height: 8),
+                      _timeSelector(),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Session Type'),
+                      const SizedBox(height: 8),
+                      _sessionTypeSelector(),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle('Select Time'),
-                    const SizedBox(height: 8),
-                    _timeSelector(),
-                  ],
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Session Goals'),
+                      const SizedBox(height: 8),
+                      _goalsField(),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle('Session Type'),
-                    const SizedBox(height: 8),
-                    _sessionTypeSelector(),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle('Session Goals'),
-                    const SizedBox(height: 8),
-                    _goalsField(),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              _bookingSummary(),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+                _bookingSummary(),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

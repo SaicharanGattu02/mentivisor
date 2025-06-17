@@ -16,17 +16,16 @@ class _SessionHistoryState extends State<SessionHistory> {
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Padding(
+      body: Container(
         padding: EdgeInsets.all(16),
-        child: Container(
-          padding: EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xfffaf5ff), Color(0xffeff6ff), Color(0xffe0e7ff)],
-            ),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xfffaf5ff), Color(0xffeff6ff), Color(0xffe0e7ff)],
           ),
+        ),
+        child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               children: [

@@ -9,7 +9,6 @@ class BuyCoinsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: Container(
-        padding: EdgeInsets.all(16),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -20,160 +19,162 @@ class BuyCoinsScreen extends StatelessWidget {
             end: Alignment.centerRight,
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 50,
-                height: 40,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 50,
+                  height: 40,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: const BorderSide(width: 1, color: Color(0xffe2e8f0)),
+                      padding: EdgeInsets
+                          .zero, // Ensures no extra padding disturbs centering
                     ),
-                    side: const BorderSide(width: 1, color: Color(0xffe2e8f0)),
-                    padding: EdgeInsets
-                        .zero, // Ensures no extra padding disturbs centering
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(Icons.arrow_back, color: Colors.black),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                "Buy Coins",
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A2A44),
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                "Choose a bundle that works for you",
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF6B7280),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xffdcfce7),
-                      Color(0xffd1fae5),
-                    ], // Replace with your desired gradient
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                SizedBox(height: 20),
+                Text(
+                  "Buy Coins",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1A2A44),
                   ),
-                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8,
-                  children: [
-                    SvgPicture.asset(
-                      "assets/svg_icons/coins.svg",
-                      color: Color(0xFF065F46),
-                      height: 20,
-                      width: 20,
+                SizedBox(height: 4),
+                Text(
+                  "Choose a bundle that works for you",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xffdcfce7),
+                        Color(0xffd1fae5),
+                      ], // Replace with your desired gradient
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
                     ),
-                    const Text(
-                      'Current Balance: 150 coins',
-                      style: TextStyle(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 8,
+                    children: [
+                      SvgPicture.asset(
+                        "assets/svg_icons/coins.svg",
                         color: Color(0xFF065F46),
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Inter',
+                        height: 20,
+                        width: 20,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              _starterPackCard(),
-              _valuePackCard(),
-              _powerPackCard(),
-              _premiumPackCard(),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xffe0f2fe),
-                      Color(0xfff6faff),
-                    ], // Replace with your desired gradient
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                      const Text(
+                        'Current Balance: 150 coins',
+                        style: TextStyle(
+                          color: Color(0xFF065F46),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.15),
-                      blurRadius: 15,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
                 ),
-                child: Column(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Why Buy Coins?',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'Inter',
+                const SizedBox(height: 16),
+                _starterPackCard(),
+                _valuePackCard(),
+                _powerPackCard(),
+                _premiumPackCard(),
+                const SizedBox(height: 20),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xffe0f2fe),
+                        Color(0xfff6faff),
+                      ], // Replace with your desired gradient
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.15),
+                        blurRadius: 15,
+                        offset: Offset(0, 5),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _featureTile(
-                      icon: Icons.bolt_outlined,
-                      title: 'Instant Access',
-                      subtitle: 'Book sessions immediately without waiting',
-                      color: Colors.blue,
-                    ),
-                    _featureTile(
-                      icon: Icons.star_border_outlined,
-                      title: 'Premium Mentors',
-                      subtitle: 'Access to top-rated mentors and experts',
-                      color: Colors.purple,
-                    ),
-                    _featureTile(
-                      icon: Icons.verified_outlined,
-                      title: 'Exclusive Features',
-                      subtitle: 'Unlock special features and priority support',
-                      color: Colors.green,
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: Column(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Why Buy Coins?',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _featureTile(
+                        icon: Icons.bolt_outlined,
+                        title: 'Instant Access',
+                        subtitle: 'Book sessions immediately without waiting',
+                        color: Colors.blue,
+                      ),
+                      _featureTile(
+                        icon: Icons.star_border_outlined,
+                        title: 'Premium Mentors',
+                        subtitle: 'Access to top-rated mentors and experts',
+                        color: Colors.purple,
+                      ),
+                      _featureTile(
+                        icon: Icons.verified_outlined,
+                        title: 'Exclusive Features',
+                        subtitle: 'Unlock special features and priority support',
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-
-              const SizedBox(height: 16),
-              const Text(
-                '🔒 Secure payment processing · 30-day money-back guarantee · Cancel anytime',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                  fontFamily: 'Inter',
+          
+                const SizedBox(height: 16),
+                const Text(
+                  '🔒 Secure payment processing · 30-day money-back guarantee · Cancel anytime',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontFamily: 'Inter',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
-            ],
+                const SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ),
