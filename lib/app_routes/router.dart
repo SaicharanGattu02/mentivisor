@@ -7,6 +7,7 @@ import 'package:mentivisor/presentation/MyWalletScreen.dart';
 import '../Components/NoInternet.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../presentation/DashBoard.dart';
+import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 import '../presentation/Splash.dart';
 import 'package:mentivisor/presentation/MentivisorProfileSetup.dart';
@@ -14,6 +15,7 @@ import 'package:mentivisor/presentation/ProfileScreen.dart';
 import 'package:mentivisor/presentation/StudyZoneScreen.dart';
 import 'package:mentivisor/presentation/authentication/SignupScreen.dart';
 
+import '../presentation/WalletHistory.dart';
 import '../presentation/authentication/LoginScreen.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -22,13 +24,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SessionHistory(), state),
+          buildSlideTransitionPage(Details(), state),
     ),
     GoRoute(
       path: '/nointernet',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Nointernet(), state),
-    ),GoRoute(
+    ),
+    GoRoute(
       path: '/session_history',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SessionHistory(), state),
@@ -67,6 +70,21 @@ final GoRouter appRouter = GoRouter(
       path: '/wallet_screen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(MyWalletScreen(), state),
+    ),
+    GoRoute(
+      path: '/wallet_history',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(WalletHistory(), state),
+    ),
+    GoRoute(
+      path: '/wallet_history',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(WalletHistory(), state),
+    ),
+    GoRoute(
+      path: '/details',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Details(), state),
     ),
   ],
 );
