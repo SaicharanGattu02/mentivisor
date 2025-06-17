@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Components/NoInternet.dart';
 import '../presentation/DashBoard.dart';
+import '../presentation/SessionHistory.dart';
 import '../presentation/Splash.dart';
 import 'package:mentivisor/presentation/MentivisorProfileSetup.dart';
 import 'package:mentivisor/presentation/ProfileScreen.dart';
@@ -19,7 +20,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Splash(), state),
+          buildSlideTransitionPage(SessionHistory(), state),
     ),
     GoRoute(
       path: '/nointernet',
@@ -30,11 +31,10 @@ final GoRouter appRouter = GoRouter(
       path: '/dashboard',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
-    ),
-    GoRoute(
-      path: '/',
+    ), GoRoute(
+      path: '/session_history',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(StudyZoneScreen(), state),
+          buildSlideTransitionPage(SessionHistory(), state),
     ),
 
     GoRoute(

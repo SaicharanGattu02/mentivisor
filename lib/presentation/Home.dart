@@ -1,4 +1,6 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 class Home extends StatefulWidget {
@@ -20,23 +22,16 @@ class _HomeState extends State<Home> {
       'timing': 'Next Week',
       'available': false,
       'avatar':
-          'assets/images/priya.png', // Replace with actual asset or network path
+          'assets/images/priya.png',
     },
-    {
-      'name': 'Dr. Sarah Chen',
-      'title': 'Senior Software Engineer at Google',
-      'rating': 4.7,
-      'reviews': 102,
-      'coins': 30,
-      'tags': ['Software Architecture', 'Backend Engineering'],
-      'timing': 'Tomorrow',
-      'available': true,
-      'avatar': 'assets/images/sarah.png',
-    },
+
   ];
+  String? _selectDomain;
+  String? _selectStars;
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -124,8 +119,15 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.calendar_today),
-              title: const Text('My Sessions'),
+              title: const Text('Session Booking'),
               onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_today),
+              title: const Text('Session History'),
+              onTap: () {
+                context.push('/session_history');
+              },
             ),
 
             const Divider(),
@@ -169,9 +171,9 @@ class _HomeState extends State<Home> {
               ], Icons.monetization_on),
               SizedBox(height: 16),
               Container(
-                width: SizeConfig.screenWidth,
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(24),
+                width: w,
+                margin: EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -189,9 +191,10 @@ class _HomeState extends State<Home> {
                     ListView.builder(
                       itemCount: 2,
                       shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return Container(
-                          width: SizeConfig.screenWidth,
+                          width: w,
                           margin: EdgeInsets.only(top: 20),
                           padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -210,9 +213,8 @@ class _HomeState extends State<Home> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               SizedBox(
-                                width: SizeConfig.screenWidth * 0.45,
+                                width: w * 0.4,
                                 child: Column(
-                                  spacing: 2,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -224,8 +226,9 @@ class _HomeState extends State<Home> {
                                         color: Color(0xff111827),
                                       ),
                                     ),
+                                    SizedBox(height: 4),
                                     Text(
-                                      'with ${'Dr. Sarah Chen'}',
+                                      'with Dr. Sarah Chen',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontFamily: 'Inter',
@@ -233,8 +236,9 @@ class _HomeState extends State<Home> {
                                         color: Color(0xff4B5563),
                                       ),
                                     ),
+                                    SizedBox(height: 4),
                                     Text(
-                                      '${'Today at 4:00 PM'} • \n ${'Video Call'}',
+                                      'Today at 4:00 PM • \nVideo Call',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontFamily: 'Inter',
@@ -263,12 +267,10 @@ class _HomeState extends State<Home> {
                                 child: const Text(
                                   'Join Session',
                                   style: TextStyle(
-                                    fontSize: 14, // text-sm
+                                    fontSize: 14,
                                     fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500, // font-medium
-                                    color: Color(
-                                      0xFF020817,
-                                    ), // text color (based on Tailwind's slate-950)
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF020817),
                                   ),
                                 ),
                               ),
@@ -280,12 +282,10 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-
-              const SizedBox(height: 8),
               SizedBox(height: 16),
 
               Container(
-                width: SizeConfig.screenWidth,
+                width: w,
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -304,47 +304,253 @@ class _HomeState extends State<Home> {
                   children: [
                     SizedBox(height: 16),
                     Container(
-                      height: 40, // similar to h-10
+                      height: 40,
                       child: Stack(
                         children: [
                           TextField(
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40), // px-3 py-2 + space for icon
-                              hintText: 'Search mentors by name or expertise...',
-                              hintStyle: TextStyle(color: Colors.grey[500]), // placeholder:text-muted-foreground
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 40,
+                              ),
+                              hintText:
+                                  'Search mentors by name or expertise...',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[500],
+                              ), // placeholder:text-muted-foreground
                               filled: true,
-                              fillColor: Theme.of(context).colorScheme.background, // bg-background
+                              fillColor: Colors.white,
+
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).dividerColor), // border-input
-                                borderRadius: BorderRadius.circular(6), // rounded-md
+                                borderSide: BorderSide(
+                                  color: Color(0xFFCBD5E1),
+                                ), // border-input
+                                borderRadius: BorderRadius.circular(
+                                  6,
+                                ), // rounded-md
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary, // ring-ring
-                                  width: 2,
+                                  color: Color(0xFFCBD5E1),
+                                  width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               disabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide: BorderSide(
+                                  color: Color(0xFFCBD5E1),
+                                ),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             style: const TextStyle(fontSize: 16), // text-base
                           ),
                           const Positioned(
-                            left: 12, // left-3
-                            top: 10, // top-3
-                            child: Icon(
-                              Icons.search,
-                              size: 16, // w-4 h-4
-                              color: Colors.grey, // text-gray-400
+                            left: 12,
+                            top: 12,
+                            child: Center(
+                              child: Icon(
+                                Icons.search,
+                                size: 16, // w-4 h-4
+                                color: Colors.grey, // text-gray-400
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                     SizedBox(height: 16),
+                    SizedBox(height: 16),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Select Domain',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 16,
+                                  color: Colors.grey.shade500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        items:
+                            [
+                                  'All Domains',
+                                  'Technology',
+                                  'Product Management',
+                                  'Data Science',
+                                  'Business',
+                                ]
+                                .map(
+                                  (e) => DropdownMenuItem<String>(
+                                    value: e,
+                                    child: Text(
+                                      e,
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 15,
+                                        color: Colors
+                                            .black, // Changed from white to black for visibility
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        value: _selectDomain,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectDomain = value!;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Color(0xFFCBD5E1),
+                              width: 1,
+                            ),
+                            color: Colors.white,
+                          ),
+                        ),
+                        iconStyleData: IconStyleData(
+                          icon: Icon(Icons.keyboard_arrow_down_rounded),
+                          iconSize: 26,
+                          iconEnabledColor: Colors
+                              .grey
+                              .shade700, // Changed for better visibility
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                        ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 45,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          overlayColor:
+                              MaterialStateProperty.resolveWith<Color?>((
+                                Set<MaterialState> states,
+                              ) {
+                                if (states.contains(MaterialState.hovered)) {
+                                  return Colors
+                                      .grey
+                                      .shade200; // light hover effect
+                                }
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Colors.grey.shade300; // pressed effect
+                                }
+                                return null;
+                              }),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Select Ratings',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 16,
+                                  color: Colors.grey.shade500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        items:
+                            [
+                                  'All Ratings',
+                                  '4.5+ Stars',
+                                  '4.0+ Stars',
+                                  '3.5+ Stars',
+                                ]
+                                .map(
+                                  (e) => DropdownMenuItem<String>(
+                                    value: e,
+                                    child: Text(
+                                      e,
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        value: _selectStars,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectStars = value!;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Color(0xFFCBD5E1),
+                              width: 1,
+                            ),
+                            color: Colors.white,
+                          ),
+                        ),
+                        iconStyleData: IconStyleData(
+                          icon: Icon(Icons.keyboard_arrow_down_rounded),
+                          iconSize: 26,
+                          iconEnabledColor: Colors
+                              .grey
+                              .shade700, // Changed for better visibility
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                        ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 45,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          overlayColor:
+                              MaterialStateProperty.resolveWith<Color?>((
+                                Set<MaterialState> states,
+                              ) {
+                                if (states.contains(MaterialState.hovered)) {
+                                  return Colors
+                                      .grey
+                                      .shade200; // light hover effect
+                                }
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Colors.grey.shade300; // pressed effect
+                                }
+                                return null;
+                              }),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
                     ListView.builder(
                       itemCount: mentors.length,
                       shrinkWrap: true,
@@ -539,51 +745,6 @@ class _HomeState extends State<Home> {
           Icon(icon, color: Colors.white, size: 28),
         ],
       ),
-    );
-  }
-
-  Widget _buildMentorFilter() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const TextField(
-          decoration: InputDecoration(
-            hintText: 'Search mentors by name or exp',
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: DropdownButtonFormField<String>(
-                value: 'All Domains',
-                items: const [
-                  DropdownMenuItem(
-                    value: 'All Domains',
-                    child: Text('All Domains'),
-                  ),
-                ],
-                onChanged: (_) {},
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: DropdownButtonFormField<String>(
-                value: 'All Ratings',
-                items: const [
-                  DropdownMenuItem(
-                    value: 'All Ratings',
-                    child: Text('All Ratings'),
-                  ),
-                ],
-                onChanged: (_) {},
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
