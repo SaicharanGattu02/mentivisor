@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Components/NoInternet.dart';
+import '../presentation/BookSessionScreen.dart';
 import '../presentation/DashBoard.dart';
 import '../presentation/SessionHistory.dart';
 import '../presentation/Splash.dart';
@@ -20,6 +21,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
+          buildSlideTransitionPage(StudyZoneScreen(), state),
           buildSlideTransitionPage(SessionHistory(), state),
     ),
     GoRoute(
@@ -31,6 +33,7 @@ final GoRouter appRouter = GoRouter(
       path: '/dashboard',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
+    ),
     ), GoRoute(
       path: '/session_history',
       pageBuilder: (context, state) =>
@@ -61,6 +64,11 @@ final GoRouter appRouter = GoRouter(
       path: '/study_zone',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(StudyZoneScreen(), state),
+    ),
+    GoRoute(
+      path: '/booking_session',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(BookSessionScreen(), state),
     ),
   ],
 );
