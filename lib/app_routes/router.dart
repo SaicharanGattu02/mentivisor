@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Components/NoInternet.dart';
+import '../presentation/BookSessionScreen.dart';
 import '../presentation/DashBoard.dart';
 import '../presentation/Splash.dart';
 import 'package:mentivisor/presentation/MentivisorProfileSetup.dart';
@@ -19,7 +20,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Splash(), state),
+          buildSlideTransitionPage(StudyZoneScreen(), state),
     ),
     GoRoute(
       path: '/nointernet',
@@ -31,12 +32,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
     ),
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(StudyZoneScreen(), state),
-    ),
-
     GoRoute(
       path: '/login',
       pageBuilder: (context, state) =>
@@ -61,6 +56,11 @@ final GoRouter appRouter = GoRouter(
       path: '/study_zone',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(StudyZoneScreen(), state),
+    ),
+    GoRoute(
+      path: '/booking_session',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(BookSessionScreen(), state),
     ),
   ],
 );
