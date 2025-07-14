@@ -213,7 +213,7 @@ class _DetailsState extends State<Details> {
                         "About the Author",
                         style: TextStyle(
                           fontSize: 20,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -237,7 +237,7 @@ class _DetailsState extends State<Details> {
                                     "Dr. Sarah Chen",
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 16,
                                       color: Color(0xff111827),
                                     ),
@@ -246,7 +246,7 @@ class _DetailsState extends State<Details> {
                                     "Verified Mentor",
                                     style: TextStyle(
                                       fontWeight: FontWeight.w400,
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 14,
                                       color: Color(0xff6B7280),
                                     ),
@@ -269,7 +269,7 @@ class _DetailsState extends State<Details> {
                                 "4.8 average rating",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                   fontSize: 14,
                                   color: Color(0xff4B5563),
                                 ),
@@ -288,7 +288,7 @@ class _DetailsState extends State<Details> {
                                 "15,000+ downloads",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                   fontSize: 14,
                                   color: Color(0xff4B5563),
                                 ),
@@ -307,7 +307,7 @@ class _DetailsState extends State<Details> {
                                 "Member since 2022",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                   fontSize: 14,
                                   color: Color(0xff4B5563),
                                 ),
@@ -342,7 +342,7 @@ class _DetailsState extends State<Details> {
                       style: TextStyle(
                         color: Color(0xfff8fafc),
                         fontSize: 16,
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -365,7 +365,7 @@ class _DetailsState extends State<Details> {
                       ),
                       textStyle: TextStyle(
                         fontSize: 14,
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -375,7 +375,7 @@ class _DetailsState extends State<Details> {
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -410,7 +410,7 @@ class _DetailsState extends State<Details> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 color: Color(0xff854D0E),
                               ),
                             ),
@@ -421,7 +421,7 @@ class _DetailsState extends State<Details> {
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 24,
-                            fontFamily: 'Inter',
+                            fontFamily: 'segeo',
                             color: Color(0xff854D0E),
                           ),
                         ),
@@ -449,7 +449,7 @@ class _DetailsState extends State<Details> {
               "$index",
               style: const TextStyle(
                 fontSize: 14,
-                fontFamily: 'Inter',
+                fontFamily: 'segeo',
                 color: Colors.white,
               ),
             ),
@@ -460,7 +460,7 @@ class _DetailsState extends State<Details> {
               text,
               style: const TextStyle(
                 fontSize: 16,
-                fontFamily: 'Inter',
+                fontFamily: 'segeo',
                 color: Color(0xff374151),
                 fontWeight: FontWeight.w400,
               ),
@@ -504,7 +504,7 @@ class _infoRow extends StatelessWidget {
             label,
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              fontFamily: 'Inter',
+              fontFamily: 'segeo',
               fontSize: 16,
               color: Color(0xff4B5563),
             ),
@@ -517,7 +517,7 @@ class _infoRow extends StatelessWidget {
                 value,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontSize: 16,
                   color: Color(0xff020817),
                 ),

@@ -3,11 +3,34 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/EEC/AddEventScreen.dart';
+import 'package:mentivisor/EEC/EccScreen.dart';
+import 'package:mentivisor/newscreens/AchievementScreen.dart';
+import 'package:mentivisor/newscreens/AddPostScreen.dart';
+import 'package:mentivisor/newscreens/AddResourceScreen.dart';
+import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
+import 'package:mentivisor/newscreens/ChartScreen.dart';
+import 'package:mentivisor/newscreens/CommunityScreen.dart';
+import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
+import 'package:mentivisor/newscreens/MentorProfileScreen.dart';
+import 'package:mentivisor/newscreens/NewHomeScreens.dart';
+import 'package:mentivisor/newscreens/PostDetailScreen.dart';
+import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
+import 'package:mentivisor/newscreens/SuccessScreen.dart';
+import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
+import 'package:mentivisor/presentation/Home.dart';
 import 'package:mentivisor/presentation/MyWalletScreen.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
+import 'package:mentivisor/studyzone/ResourceDetailScreen.dart';
 import '../Components/NoInternet.dart';
+import '../newscreens/ExclusiveServices.dart';
+import '../newscreens/ExclusiveServicesInfo.dart';
+import '../newscreens/InfoScreen.dart';
+import '../newscreens/InterestingScreen.dart';
+import '../newscreens/LanguageSelectionScreen.dart';
+import '../newscreens/SessionCompletedScreen.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../presentation/DailyCheckinDialog.dart';
 import '../presentation/DashBoard.dart';
@@ -21,14 +44,109 @@ import 'package:mentivisor/presentation/authentication/SignupScreen.dart';
 
 import '../presentation/WalletHistory.dart';
 import '../presentation/authentication/LoginScreen.dart';
+import '../studyzone/StudyzoneScreens.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
+
+    GoRoute(
+      path: '/eccscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(EccScreen(), state),
+    ),
+
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SplashScreen(), state),
+          buildSlideTransitionPage(AddEventScreen(), state),
+    ),
+
+
+
+    GoRoute(
+      path: '/addpostscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(AddPostScreen(), state),
+    ),
+    GoRoute(
+      path: '/chartscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ChartScreen(), state),
+    ),
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(PostDetailScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/communityscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Communityscreen(), state),
+    ),
+
+
+
+    GoRoute(
+      path: '/addresourcescreen',
+        pageBuilder: (context, state) =>
+            buildSlideTransitionPage(AddResourceScreen(), state),
+      ),
+
+    GoRoute(
+      path: '/resourcedetailscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ResourceDetailScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/studyzonemainscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(StudyZonemainScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/infoscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(InfoScreen(), state),
+    ),
+    GoRoute(
+      path: '/executiveservices',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ExclusiveServices(), state),
+    ),
+    GoRoute(
+      path: '/executiveinfoservices',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ExclusiveInfoServices(), state),
+    ),
+
+
+    GoRoute(
+      path: '/topicselection',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(TopicSelectionScreen(), state),
+    ),
+    GoRoute(
+      path: '/success_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SuccessScreen(), state),
+    ),
+    GoRoute(
+      path: '/costperminute_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(CostPerMinuteScreen(), state),
+    ),
+    GoRoute(
+      path: '/subtopicselect_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SubTopicSelectionScreen(), state),
+    ),
+    GoRoute(
+      path: '/language_selection',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(LanguageSelectionScreen(), state),
     ),
     GoRoute(
       path: '/no_internet',
@@ -65,11 +183,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ProfileScreen(), state),
     ),
-    GoRoute(
-      path: '/study_zone',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(StudyZoneScreen(), state),
-    ),
+
     GoRoute(
       path: '/wallet_screen',
       pageBuilder: (context, state) =>

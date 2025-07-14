@@ -47,7 +47,7 @@ class BuyCoinsScreen extends StatelessWidget {
                 Text(
                   "Buy Coins",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1A2A44),
@@ -57,7 +57,7 @@ class BuyCoinsScreen extends StatelessWidget {
                 Text(
                   "Choose a bundle that works for you",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF6B7280),
@@ -93,7 +93,7 @@ class BuyCoinsScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Color(0xFF065F46),
                           fontWeight: FontWeight.w600,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                     ],
@@ -136,7 +136,7 @@ class BuyCoinsScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -169,7 +169,7 @@ class BuyCoinsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -279,7 +279,7 @@ class BuyCoinsScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                 ),
               ),
               const SizedBox(height: 6),
@@ -295,7 +295,7 @@ class BuyCoinsScreen extends StatelessWidget {
                   ),
                   Text(
                     coins,
-                    style: const TextStyle(fontSize: 16, fontFamily: 'Inter'),
+                    style: const TextStyle(fontSize: 16, fontFamily: 'segeo'),
                   ),
                 ],
               ),
@@ -304,7 +304,7 @@ class BuyCoinsScreen extends StatelessWidget {
                   bonus,
                   style: const TextStyle(
                     color: Colors.green,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 12,
                   ),
                 ),
@@ -314,7 +314,7 @@ class BuyCoinsScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   color: Color(0xFF8B5CF6),
                 ),
               ),
@@ -340,7 +340,7 @@ class BuyCoinsScreen extends StatelessWidget {
                     'Purchase',
                     style: TextStyle(
                       color: mostPopular ? Colors.white : Colors.black,
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                     ),
                   ),
                 ),
@@ -365,7 +365,7 @@ class BuyCoinsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     color: Colors.white,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                   ),
                 ),
               ),
@@ -394,7 +394,7 @@ class BuyCoinsScreen extends StatelessWidget {
             title,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontFamily: 'Inter',
+              fontFamily: 'segeo',
               fontSize: 14,
             ),
             textAlign: TextAlign.center,
@@ -403,7 +403,7 @@ class BuyCoinsScreen extends StatelessWidget {
           Text(
             subtitle,
             style: const TextStyle(
-              fontFamily: 'Inter',
+              fontFamily: 'segeo',
               fontSize: 12,
               color: Colors.grey,
             ),

@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Inter',
+            fontFamily: 'segeo',
           ),
         ),
         backgroundColor: Colors.white,
@@ -227,7 +227,7 @@ class _HomeState extends State<Home> {
                                       'Career Growth Strategy',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w900,
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 16,
                                         color: Color(0xff111827),
                                       ),
@@ -237,7 +237,7 @@ class _HomeState extends State<Home> {
                                       'with Dr. Sarah Chen',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 16,
                                         color: Color(0xff4B5563),
                                       ),
@@ -247,7 +247,7 @@ class _HomeState extends State<Home> {
                                       'Today at 4:00 PM • \nVideo Call',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 14,
                                         color: Color(0xff6B7280),
                                       ),
@@ -274,7 +274,7 @@ class _HomeState extends State<Home> {
                                   'Join Session',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF020817),
                                   ),
@@ -375,7 +375,7 @@ class _HomeState extends State<Home> {
                               child: Text(
                                 'Select Domain',
                                 style: TextStyle(
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                   fontSize: 16,
                                   color: Colors.grey.shade500,
                                 ),
@@ -398,7 +398,7 @@ class _HomeState extends State<Home> {
                                     child: Text(
                                       e,
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 15,
                                         color: Colors
                                             .black, // Changed from white to black for visibility
@@ -471,7 +471,7 @@ class _HomeState extends State<Home> {
                               child: Text(
                                 'Select Ratings',
                                 style: TextStyle(
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                   fontSize: 16,
                                   color: Colors.grey.shade500,
                                 ),
@@ -493,7 +493,7 @@ class _HomeState extends State<Home> {
                                     child: Text(
                                       e,
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 15,
                                         color: Colors.black,
                                       ),
@@ -733,7 +733,7 @@ class _HomeState extends State<Home> {
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14,
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontWeight: FontWeight.w400,
                 ),
               ),

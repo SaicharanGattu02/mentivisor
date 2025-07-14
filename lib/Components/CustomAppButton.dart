@@ -58,7 +58,7 @@ class CustomAppButton extends StatelessWidget {
                   text,
                   style: TextStyle(
                     color: textcolor ?? Colors.white,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -134,7 +134,7 @@ class CustomAppButton1 extends StatelessWidget {
                   text,
                   style: TextStyle(
                     color: textcolor ?? Colors.white,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),

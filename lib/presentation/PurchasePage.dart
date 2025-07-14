@@ -52,7 +52,7 @@ class PurchasePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -61,7 +61,7 @@ class PurchasePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.black54,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                     ],
@@ -77,7 +77,7 @@ class PurchasePage extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -102,7 +102,7 @@ class PurchasePage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                   ),
                                 ),
                                 SizedBox(height: 4),
@@ -111,7 +111,7 @@ class PurchasePage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.black54,
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                   ),
                                 ),
                                 SizedBox(height: 6),
@@ -127,7 +127,7 @@ class PurchasePage extends StatelessWidget {
                                       '4.8 rating',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                       ),
                                     ),
                                     SizedBox(width: 10),
@@ -135,7 +135,7 @@ class PurchasePage extends StatelessWidget {
                                       '1250 downloads',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                       ),
                                     ),
                                   ],
@@ -157,7 +157,7 @@ class PurchasePage extends StatelessWidget {
                             'Total Cost:',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontFamily: 'Inter',
+                              fontFamily: 'segeo',
                             ),
                           ),
                           Row(
@@ -173,7 +173,7 @@ class PurchasePage extends StatelessWidget {
                                 '25 coins',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                 ),
                               ),
                             ],
@@ -193,7 +193,7 @@ class PurchasePage extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -202,7 +202,7 @@ class PurchasePage extends StatelessWidget {
                         children: [
                           Text(
                             'Current Balance:',
-                            style: TextStyle(fontFamily: 'Inter'),
+                            style: TextStyle(fontFamily: 'segeo'),
                           ),
                           Row(
                             children: [
@@ -217,7 +217,7 @@ class PurchasePage extends StatelessWidget {
                                 '145 coins',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                 ),
                               ),
                             ],
@@ -230,7 +230,7 @@ class PurchasePage extends StatelessWidget {
                         children: [
                           Text(
                             'After Purchase:',
-                            style: TextStyle(fontFamily: 'Inter'),
+                            style: TextStyle(fontFamily: 'segeo'),
                           ),
                           Row(
                             children: [
@@ -245,7 +245,7 @@ class PurchasePage extends StatelessWidget {
                                 '120 coins',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: 'Inter',
+                                  fontFamily: 'segeo',
                                 ),
                               ),
                             ],
@@ -276,7 +276,7 @@ class PurchasePage extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                           color: Color(0xFF7C3AED),
                         ),
                       ),
@@ -318,7 +318,7 @@ class PurchasePage extends StatelessWidget {
                         ),
                         Text(
                           'Purchase for 25 coins',
-                          style: TextStyle(color: Colors.white, fontFamily: 'Inter'),
+                          style: TextStyle(color: Colors.white, fontFamily: 'segeo'),
                         ),
                       ],
                     ),
@@ -330,7 +330,7 @@ class PurchasePage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     color: Colors.black54,
                   ),
                 ),
@@ -380,7 +380,7 @@ class _benefitItem extends StatelessWidget {
         children: [
           Icon(icon, color: Color(0xFF7C3AED), size: 18),
           const SizedBox(width: 10),
-          Text(text, style: const TextStyle(fontFamily: 'Inter', fontSize: 14)),
+          Text(text, style: const TextStyle(fontFamily: 'segeo', fontSize: 14)),
         ],
       ),
     );

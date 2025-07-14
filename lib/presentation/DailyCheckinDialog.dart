@@ -44,7 +44,7 @@ class DailyCheckinDialog extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                   ),
                 ),
                 Icon(Icons.check_box, color: Colors.green),
@@ -53,7 +53,7 @@ class DailyCheckinDialog extends StatelessWidget {
             const SizedBox(height: 4),
             const Text(
               'Great consistency! ⭐',
-              style: TextStyle(fontSize: 14, fontFamily: 'Inter'),
+              style: TextStyle(fontSize: 14, fontFamily: 'segeo'),
             ),
             const SizedBox(height: 16),
             Container(
@@ -69,7 +69,7 @@ class DailyCheckinDialog extends StatelessWidget {
                     '🔥 7 Day Streak',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -115,7 +115,7 @@ class DailyCheckinDialog extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                     ),
                   ),
                   Row(
@@ -131,7 +131,7 @@ class DailyCheckinDialog extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                         ),
                       ),
                     ],
@@ -150,7 +150,7 @@ class DailyCheckinDialog extends StatelessWidget {
               child: const Text(
                 'Next milestone:\n7 more days for +10 bonus coins',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, fontFamily: 'Inter'),
+                style: TextStyle(fontSize: 13, fontFamily: 'segeo'),
               ),
             ),
             const SizedBox(height: 16),
@@ -187,7 +187,7 @@ class DailyCheckinDialog extends StatelessWidget {
                           "Claim Reward",
                           style: TextStyle(
                             color: Colors.white,
-                            fontFamily: 'Inter',
+                            fontFamily: 'segeo',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -224,7 +224,7 @@ class DailyCheckinDialog extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(title, style: const TextStyle(fontFamily: 'Inter')),
+            child: Text(title, style: const TextStyle(fontFamily: 'segeo')),
           ),
           Row(
             spacing: 5,
@@ -238,7 +238,7 @@ class DailyCheckinDialog extends StatelessWidget {
                 reward,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   color: color,
                 ),
               ),

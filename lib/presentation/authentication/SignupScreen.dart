@@ -43,7 +43,7 @@ class SignupScreen extends StatelessWidget {
               Text(
                 "Join Mentivisor",
                 style: const TextStyle(
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -53,7 +53,7 @@ class SignupScreen extends StatelessWidget {
               Text(
                 "Create your mentee account",
                 style: const TextStyle(
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontSize: 16,
                   color: Colors.black54,
                 ),
@@ -115,7 +115,7 @@ class SignupScreen extends StatelessWidget {
                   Text(
                     "Already have an account?",
                     style: TextStyle(
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                       fontSize: 15,
                       color: Colors.black87,
                     ),
@@ -150,7 +150,7 @@ class SignupScreen extends StatelessWidget {
       child: Text(
         label,
         style: const TextStyle(
-          fontFamily: 'Inter',
+          fontFamily: 'segeo',
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: Colors.black87,
@@ -169,7 +169,7 @@ class SignupScreen extends StatelessWidget {
         hintText: hint,
       ),
       style: const TextStyle(
-        fontFamily: 'Inter',
+        fontFamily: 'segeo',
         fontSize: 14,
       ),
     );

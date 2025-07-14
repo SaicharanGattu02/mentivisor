@@ -62,7 +62,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -74,7 +74,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.black54,
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -118,7 +118,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                   ),
                                 ),
                                 SizedBox(height: 4),
@@ -126,7 +126,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                                   'By Dr. Sarah Chen',
                                   style: TextStyle(
                                     fontSize: 13,
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     color: Colors.black54,
                                   ),
                                 ),
@@ -156,7 +156,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                               '25 coins spent',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 color: Colors.green,
                               ),
                             ),
@@ -181,7 +181,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                             'Download Now',
                             style: TextStyle(
                               color: Colors.white,
-                              fontFamily: 'Inter',
+                              fontFamily: 'segeo',
                             ),
                           ),
                         ),
@@ -195,7 +195,7 @@ class PurchaseSuccessPage extends StatelessWidget {
                     'Your remaining balance: 120 coins',
                     style: TextStyle(
                       fontSize: 14,
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                       color: Colors.black54,
                     ),
                   ),

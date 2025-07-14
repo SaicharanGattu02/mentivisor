@@ -54,7 +54,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                 Text(
                   "My Wallet",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1A2A44),
@@ -64,7 +64,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                 Text(
                   "Manage your coins and track your earnings",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF6B7280),
@@ -101,7 +101,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       Text(
                         "Current Balance",
                         style: TextStyle(
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
@@ -112,7 +112,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         child: Text(
                           "150",
                           style: TextStyle(
-                            fontFamily: 'Inter',
+                            fontFamily: 'segeo',
                             fontSize: 36,
                             height: 1,
                             fontWeight: FontWeight.w700,
@@ -132,7 +132,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "TOTAL EARNED",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.white70,
@@ -142,7 +142,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "480",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -156,7 +156,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "TOTAL SPENT",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.white70,
@@ -166,7 +166,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "330",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -210,7 +210,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                   Text(
                                     "Buy Coins",
                                     style: TextStyle(
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFFea580c),
@@ -246,7 +246,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                   Text(
                                     "History",
                                     style: TextStyle(
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFFea580c),
@@ -294,7 +294,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "Daily Check-in",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF1A2A44),
@@ -306,7 +306,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Current Streak: 7 days",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF1A2A44),
@@ -316,7 +316,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Earn 5 coins per day + bonus for streaks!",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF6B7280),
@@ -345,7 +345,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         child: Text(
                           "Check in Today",
                           style: TextStyle(
-                            fontFamily: 'Inter',
+                            fontFamily: 'segeo',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -378,7 +378,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       Text(
                         "Your Achievements",
                         style: TextStyle(
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF1A2A44),
@@ -419,7 +419,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "Sessions Completed",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF1A2A44),
@@ -429,7 +429,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "8 completed",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 12,
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xFF6B7280),
@@ -451,7 +451,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "+120",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFD97706),
@@ -495,7 +495,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "Daily Check-ins",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF1A2A44),
@@ -505,7 +505,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "7 completed",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 12,
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xFF6B7280),
@@ -527,7 +527,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "+35",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFD97706),
@@ -571,7 +571,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "Profile Updates",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF1A2A44),
@@ -581,7 +581,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "3 completed",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 12,
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xFF6B7280),
@@ -603,7 +603,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "+15",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFD97706),
@@ -648,7 +648,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "Reviews Given",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF1A2A44),
@@ -658,7 +658,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     Text(
                                       "5 completed",
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 12,
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xFF6B7280),
@@ -680,7 +680,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 Text(
                                   "+25",
                                   style: TextStyle(
-                                    fontFamily: 'Inter',
+                                    fontFamily: 'segeo',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFD97706),
@@ -708,7 +708,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       Text(
                         "Earn More Coins",
                         style: TextStyle(
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF1A2A44),
@@ -731,7 +731,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Complete Sessions",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF1A2A44),
@@ -741,7 +741,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Earn 15 coins per session",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF6B7280),
@@ -768,7 +768,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Leave Reviews",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF1A2A44),
@@ -778,7 +778,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Earn 5 coins per review",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF6B7280),
@@ -804,7 +804,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Daily Check-in",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF1A2A44),
@@ -814,7 +814,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             Text(
                               "Earn 5+ coins daily",
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF6B7280),

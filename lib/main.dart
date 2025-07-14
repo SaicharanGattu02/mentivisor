@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
             colorScheme: const ColorScheme.light(
               background: Colors.white,
             ).copyWith(background: Colors.white),
-            fontFamily: 'Inter',
+            fontFamily: 'segeo',
           ),
           debugShowCheckedModeBanner: false,
           routerConfig: appRouter,

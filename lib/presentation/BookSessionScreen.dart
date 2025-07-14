@@ -146,7 +146,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   Widget _sectionTitle(String text) => Text(
     text,
     style: const TextStyle(
-      fontFamily: 'Inter',
+      fontFamily: 'segeo',
       fontSize: 18,
       fontWeight: FontWeight.w500,
       color: Colors.black,
@@ -164,14 +164,14 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       title: Text(
         title,
         style: const TextStyle(
-          fontFamily: 'Inter',
+          fontFamily: 'segeo',
           fontSize: 15,
           fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(fontFamily: 'Inter', color: Colors.grey[700]),
+        style: TextStyle(fontFamily: 'segeo', color: Colors.grey[700]),
       ),
     ),
   );
@@ -196,7 +196,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       const SizedBox(height: 8),
       const Text(
         'All times shown in',
-        style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: Colors.grey),
+        style: TextStyle(fontFamily: 'segeo', fontSize: 12, color: Colors.grey),
       ),
     ],
   );
@@ -220,7 +220,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       child: Text(
         time,
         style: TextStyle(
-          fontFamily: 'Inter',
+          fontFamily: 'segeo',
           fontSize: 16,
           fontWeight: FontWeight.w500,
           color: selected ? Colors.deepPurple : Colors.black,
@@ -280,13 +280,13 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12),
+                  style: const TextStyle(fontFamily: 'segeo', fontSize: 12),
                 ),
               ],
             ),
@@ -324,14 +324,14 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                 Text(
                   'Dr. Sarah Chen',
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   'Senior Software Engineer at Google',
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 12,
                     color: Colors.grey,
                   ),
@@ -363,7 +363,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
             child: const Text(
               'Book Session',
               style: TextStyle(
-                fontFamily: 'Inter',
+                fontFamily: 'segeo',
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -377,14 +377,14 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   Widget _summaryRow(String label, String value, {bool coin = false}) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(label, style: const TextStyle(fontFamily: 'Inter')),
+      Text(label, style: const TextStyle(fontFamily: 'segeo')),
       Row(
         children: [
           const SizedBox(width: 4),
           Text(
             value,
             style: const TextStyle(
-              fontFamily: 'Inter',
+              fontFamily: 'segeo',
               fontWeight: FontWeight.w600,
             ),
           ),

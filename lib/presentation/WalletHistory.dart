@@ -57,7 +57,7 @@ class _WalletHistoryState extends State<WalletHistory> {
                 Text(
                   "Coin History",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1A2A44),
@@ -67,7 +67,7 @@ class _WalletHistoryState extends State<WalletHistory> {
                 Text(
                   "Track Your earnings and spending",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF6B7280),

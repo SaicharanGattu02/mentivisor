@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                       ),
                     ),
                   ),
@@ -93,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.white70,
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                       ),
                     ),
                   ),

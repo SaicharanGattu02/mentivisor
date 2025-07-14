@@ -96,7 +96,7 @@ class GradientProgressBar extends StatelessWidget {
               const Text(
                 'Profile Setup',
                 style: TextStyle(
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -104,7 +104,7 @@ class GradientProgressBar extends StatelessWidget {
               Text(
                 '$currentStep of 4',
                 style: const TextStyle(
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   color: Colors.black54,
                   fontSize: 14,
                 ),
@@ -174,7 +174,7 @@ class _Step1 extends StatelessWidget {
                 const Text(
                   "What's your name?",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
                     fontSize: 22,
                   ),
@@ -184,7 +184,7 @@ class _Step1 extends StatelessWidget {
                   "This is how others will see you on the platform",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     color: Colors.black54,
                   ),
@@ -226,7 +226,7 @@ class _Step1 extends StatelessWidget {
                   child: Text(
                     "Full Name",
                     style: TextStyle(
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -285,7 +285,7 @@ class _Step2 extends StatelessWidget {
                 const Text(
                   "Tell us about yourself",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
                     fontSize: 22,
                   ),
@@ -295,7 +295,7 @@ class _Step2 extends StatelessWidget {
                   "Write a brief bio that highlights your background",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     color: Colors.black54,
                   ),
@@ -306,7 +306,7 @@ class _Step2 extends StatelessWidget {
                   child: Text(
                     "Bio",
                     style: TextStyle(
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
@@ -331,7 +331,7 @@ class _Step2 extends StatelessWidget {
                 onPressed: onBack,
                 child: const Text(
                   "Back",
-                  style: TextStyle(fontFamily: 'Inter', color: Colors.black38),
+                  style: TextStyle(fontFamily: 'segeo', color: Colors.black38),
                 ),
               ),
               CustomAppButton1(
@@ -397,7 +397,7 @@ class _Step3 extends StatelessWidget {
                 const Text(
                   "Your Interests",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
                     color: Colors.black,
@@ -408,7 +408,7 @@ class _Step3 extends StatelessWidget {
                   "Choose areas you want to learn more about",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     color: Colors.black54,
                   ),
@@ -451,7 +451,7 @@ class _Step3 extends StatelessWidget {
                             child: Text(
                               interest,
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 14,
                                 color: isSelected ? const Color(0xff8b5cf6) : Colors.black,
                               ),
@@ -479,7 +479,7 @@ class _Step3 extends StatelessWidget {
                 child: const Text(
                   "Back",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 16,
                     color: Colors.black54,
                   ),
@@ -535,7 +535,7 @@ class _Step4 extends StatelessWidget {
                     "Your Academic Journey",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                       fontWeight: FontWeight.w700,
                       fontSize: 20,
                     ),
@@ -546,7 +546,7 @@ class _Step4 extends StatelessWidget {
                   "Tell us about your current studies and goals",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontSize: 14,
                     color: Colors.black54,
                   ),
@@ -555,7 +555,7 @@ class _Step4 extends StatelessWidget {
                 const Text(
                   "Current Year/Level",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -563,7 +563,7 @@ class _Step4 extends StatelessWidget {
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
                     hintText: "Select your current year",
-                    hintStyle: const TextStyle(fontFamily: 'Inter'),
+                    hintStyle: const TextStyle(fontFamily: 'segeo'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -577,7 +577,7 @@ class _Step4 extends StatelessWidget {
                 const Text(
                   "Your Goals",
                   style: TextStyle(
-                    fontFamily: 'Inter',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -619,7 +619,7 @@ class _Step4 extends StatelessWidget {
                             child: Text(
                               goal,
                               style: TextStyle(
-                                fontFamily: 'Inter',
+                                fontFamily: 'segeo',
                                 fontSize: 14,
                                 color: isSelected ? const Color(0xff8b5cf6) : Colors.black,
                               ),
@@ -643,7 +643,7 @@ class _Step4 extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: onBack,
-                child: const Text("Back", style: TextStyle(fontFamily: 'Inter')),
+                child: const Text("Back", style: TextStyle(fontFamily: 'segeo')),
               ),
 
               // Gradient-styled Complete Setup button
@@ -672,7 +672,7 @@ class _Step4 extends StatelessWidget {
                   label: const Text(
                     "Complete Setup",
                     style: TextStyle(
-                      fontFamily: 'Inter',
+                      fontFamily: 'segeo',
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),

@@ -119,7 +119,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
               Text(
                 "Study Zone",
                 style: TextStyle(
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF1A2A44),
@@ -129,7 +129,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
               Text(
                 "Discover and share learning resources",
                 style: TextStyle(
-                  fontFamily: 'Inter',
+                  fontFamily: 'segeo',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF6B7280),
@@ -164,7 +164,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                     Text(
                       "Your Balance: 145 coins",
                       style: TextStyle(
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFFD97706),
@@ -189,7 +189,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                     Text(
                       "Search resources...",
                       style: TextStyle(
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF6B7280),
@@ -210,7 +210,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                     label: Text(
                       tag,
                       style: TextStyle(
-                        fontFamily: 'Inter',
+                        fontFamily: 'segeo',
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: isSelected
@@ -301,7 +301,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                         Text(
                                           roadmap.price.toString(),
                                           style: TextStyle(
-                                            fontFamily: 'Inter',
+                                            fontFamily: 'segeo',
                                             fontSize: 12,
                                             fontWeight: FontWeight.w400,
                                             color: Colors.white,
@@ -336,7 +336,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                         Text(
                                           "ROADMAP",
                                           style: TextStyle(
-                                            fontFamily: 'Inter',
+                                            fontFamily: 'segeo',
                                             fontSize: 10,
                                             fontWeight: FontWeight.w400,
                                             color: Colors.black,
@@ -365,7 +365,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                   Text(
                                     roadmap.title,
                                     style: TextStyle(
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFF1A2A44),
@@ -375,7 +375,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                   Text(
                                     roadmap.description,
                                     style: TextStyle(
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF6B7280),
@@ -388,7 +388,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                         label: Text(
                                           roadmap.tag,
                                           style: TextStyle(
-                                            fontFamily: 'Inter',
+                                            fontFamily: 'segeo',
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFF374151),
@@ -417,7 +417,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                       Text(
                                         roadmap.rating.toString(),
                                         style: TextStyle(
-                                          fontFamily: 'Inter',
+                                          fontFamily: 'segeo',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFF6B7280),
@@ -433,7 +433,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                       Text(
                                         roadmap.downloads.toString(),
                                         style: TextStyle(
-                                          fontFamily: 'Inter',
+                                          fontFamily: 'segeo',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFF6B7280),
@@ -445,7 +445,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                   Text(
                                     "By ${roadmap.author}",
                                     style: TextStyle(
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF6B7280),
@@ -484,7 +484,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                               Text(
                                                 "PREVIEW",
                                                 style: TextStyle(
-                                                  fontFamily: 'Inter',
+                                                  fontFamily: 'segeo',
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600,
                                                   color: Color(0xFF6B7280),
@@ -525,7 +525,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                                               Text(
                                                 "BUY",
                                                 style: TextStyle(
-                                                  fontFamily: 'Inter',
+                                                  fontFamily: 'segeo',
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600,
                                                   color: Colors.white,

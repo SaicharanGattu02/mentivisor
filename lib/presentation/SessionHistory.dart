@@ -40,7 +40,7 @@ class _SessionHistoryState extends State<SessionHistory> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
-                          fontFamily: 'Inter',
+                          fontFamily: 'segeo',
                           color: Colors.black,
                         ),
                       ),
@@ -69,7 +69,7 @@ class _SessionHistoryState extends State<SessionHistory> {
                                     Text(
                                       _selectSessions ?? 'All Sessions',
                                       style: TextStyle(
-                                        fontFamily: 'Inter',
+                                        fontFamily: 'segeo',
                                         fontSize: 14,
                                         color: Colors.black, // or muted if null
                                       ),
@@ -93,7 +93,7 @@ class _SessionHistoryState extends State<SessionHistory> {
                                   child: Text(
                                     e,
                                     style: const TextStyle(
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'segeo',
                                       fontSize: 14,
                                       color: Colors.black,
                                     ),
