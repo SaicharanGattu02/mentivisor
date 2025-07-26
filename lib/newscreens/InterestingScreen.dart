@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class InterestingScreen extends StatelessWidget {
   const InterestingScreen({Key? key}) : super(key: key);
@@ -76,9 +77,14 @@ class InterestingScreen extends StatelessWidget {
 
             const SizedBox(height: 132),
             InkWell(
+
+
               onTap: () {
-                // Next button action
+                context.push("/language_selection");
               },
+
+                // Next button action
+
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),

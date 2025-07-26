@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mentivisor/newscreens/ExclusiveServicesInfo.dart';
 
 class Service {
   final String imageUrl;
@@ -21,6 +22,7 @@ class ExclusiveServices extends StatefulWidget {
 }
 
 class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
+
   final List<Service> _allServices = [
     Service(
       imageUrl:
@@ -61,90 +63,96 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   }
 
   Widget _buildServiceCard(Service s) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Banner image
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.asset("assets/images/bannerimg.png",
+    return GestureDetector(onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>ExclusiveInfoServices()),
+      );
+    } ,
+      child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Banner image
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.asset("assets/images/bannerimg.png",
 
-                height: 192,
+                  height: 192,
 
-                width: 480,
-                fit: BoxFit.cover,
+                  width: 480,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
 
-          // Content below image
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Avatar + name
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundImage: AssetImage('assets/images/bannerimg.png'),
-                      // or NetworkImage(...)
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      s.userName,
-                      style: TextStyle(
-
-                        fontSize: 12,
-                            color: Color(0xff222222),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'segeo'),
+            // Content below image
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Avatar + name
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundImage: AssetImage('assets/images/bannerimg.png'),
+                        // or NetworkImage(...)
                       ),
+                      SizedBox(width: 8),
+                      Text(
+                        s.userName,
+                        style: TextStyle(
 
-                  ],
-                ),
+                          fontSize: 12,
+                              color: Color(0xff222222),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'segeo'),
+                        ),
 
-                SizedBox(height: 8),
-                // Title
-                Text(
-                  s.title,
-    style: TextStyle(
+                    ],
+                  ),
 
-    fontSize: 14,
-    color: Color(0xff222222),
-    fontWeight: FontWeight.w700,
-    fontFamily: 'segeo'),
-    ),
+                  SizedBox(height: 8),
+                  // Title
+                  Text(
+                    s.title,
+      style: TextStyle(
+      fontSize: 14,
+      color: Color(0xff222222),
+      fontWeight: FontWeight.w700,
+      fontFamily: 'segeo'),
+      ), SizedBox(height: 4),
+                  // Description
+                  Text(
+                    s.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+      style: TextStyle(
 
-                SizedBox(height: 4),
-                // Description
-                Text(
-                  s.description,
+      fontSize: 12,
+      color: Color(0xff666666),
+      fontWeight: FontWeight.w400,
+      fontFamily: 'segeo'),
+      ),
+                ],
 
+              ),
 
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-    style: TextStyle(
-
-    fontSize: 12,
-    color: Color(0xff666666),
-    fontWeight: FontWeight.w400,
-    fontFamily: 'segeo'),
-    ),
-
-              ],
             ),
-          ),
-        ],
+
+          ],
+
+        ),
       ),
     );
+
   }
 
   @override
@@ -228,6 +236,8 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                 itemBuilder: (_, i) =>
                     _buildServiceCard(_filteredServices[i]),
               ),
+
+
             ),
           ],
         ),

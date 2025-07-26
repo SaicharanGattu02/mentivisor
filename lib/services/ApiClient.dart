@@ -13,14 +13,13 @@ class ApiClient {
   );
 
   static const List<String> _unauthenticatedEndpoints = [
-    '/auth/login',
-    '/auth/register',
-    '/auth/refreshtoken',
+    '/api/user-login',
   ];
 
   static void setupInterceptors() {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
+
         debugPrint('Interceptor triggered for: ${options.uri}');
         // Check if the request is for an unauthenticated endpoint
         final isUnauthenticated = _unauthenticatedEndpoints.any(
@@ -49,6 +48,7 @@ class ApiClient {
         }
         return handler.next(e); // Pass other errors to the next interceptor
       },
+
     ));
   }
 

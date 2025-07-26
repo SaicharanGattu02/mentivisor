@@ -166,7 +166,12 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: GestureDetector(
-                onTap: () {
+                onTap: (
+
+
+
+
+                    ) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => CostPerMinuteScreen()),

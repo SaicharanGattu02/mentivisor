@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BecomeMentorScreen extends StatelessWidget {
   const BecomeMentorScreen({Key? key}) : super(key: key);
@@ -69,11 +70,12 @@ class BecomeMentorScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const Spacer(),
+           SizedBox(height: 30,),
             InkWell(
-              onTap: () {
-                // Next button action
-              },
+            onTap: () {
+    context.push("/InterestingScreen");
+    },
+
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),

@@ -232,10 +232,12 @@ class _EccScreenState extends State<EccScreen> {
 
 /// The redesigned card widget:
 class EventCard extends StatelessWidget {
+
   const EventCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
     const Color gradStart = Color(0xFF8C36FF);
     const Color gradEnd = Color(0xFF3F9CFF);
 
@@ -279,8 +281,8 @@ class EventCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          // Organizer pill
           Padding(
+
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -331,6 +333,7 @@ class EventCard extends StatelessWidget {
           const SizedBox(height: 24),
 
           // View Details button
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SizedBox(
@@ -372,6 +375,7 @@ class EventCard extends StatelessWidget {
         ],
       ),
     );
+
   }
 }
 

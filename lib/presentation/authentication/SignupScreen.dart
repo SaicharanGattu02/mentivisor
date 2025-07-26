@@ -1,31 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/bloc/Register/Register_Cubit.dart';
+import 'package:mentivisor/bloc/Register/Registor_State.dart';
 import '../../Components/CustomAppButton.dart';
+import '../../Components/ShakeWidget.dart';
+import '../../Widgets/TextLableAndInputStyle.dart';
 import '../../utils/color_constants.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final emailController = TextEditingController();
+  final mobileController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool showEmailError = false;
+  bool showMobileError = false;
+  bool showPasswordError = false;
+
+  String emailError = '';
+  String mobileError = '';
+  String passwordError = '';
+
+  bool agree = false;
+
+  void validateAndSubmit() {
+    setState(() {
+      showEmailError = false;
+      showMobileError = false;
+      showPasswordError = false;
+      emailError = '';
+      mobileError = '';
+      passwordError = '';
+    });
+
+    final email = emailController.text.trim();
+    final mobile = mobileController.text.trim();
+    final password = passwordController.text.trim();
+
+    bool isValid = true;
+
+    if (email.isEmpty || !email.contains('@')) {
+      emailError = 'Enter a valid email address';
+      showEmailError = true;
+      isValid = false;
+    }
+    if (mobile.isEmpty || mobile.length != 10) {
+      mobileError = 'Enter a valid 10‑digit mobile number';
+      showMobileError = true;
+      isValid = false;
+    }
+    if (password.isEmpty || password.length < 6) {
+      passwordError = 'Password must be at least 6 characters';
+      showPasswordError = true;
+      isValid = false;
+    }
+    if (!agree) {
+      CustomSnackBar.show(context, 'You must agree to the terms');
+      isValid = false;
+    }
+
+    if (isValid) {
+      final data = {
+        "email": email,
+        "contact": mobile,
+        "password": password,
+      };
+      context.read<RegisterCubit>().registerApi(data);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: const Color(0xfff6faff),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: SizedBox(
           height: media.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon with gradient background
+              // Icon + Title
               Container(
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xff3b82f6), Color(0xff2563eb)],
+                    colors: [
+                      Color(0xffA258F7),
+                      Color(0xff726CF7),
+                      Color(0xff4280F6),
+                    ],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),
@@ -40,26 +115,18 @@ class SignupScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
+              const Text(
                 "Join Mentivisor",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'segeo',
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Create your mentee account",
-                style: const TextStyle(
-                  fontFamily: 'segeo',
-                  fontSize: 16,
-                  color: Colors.black54,
-                ),
-              ),
               const SizedBox(height: 28),
-              // Form container
+
+              // Input Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -69,50 +136,97 @@ class SignupScreen extends StatelessWidget {
                     BoxShadow(
                       blurRadius: 20,
                       color: Colors.black12.withOpacity(0.05),
-                    )
+                    ),
                   ],
                 ),
                 child: Column(
                   children: [
-                    buildLabel("Email Address"),
-                    const SizedBox(height: 6),
-                    buildTextField("Enter your email", Icons.email_outlined),
-                    const SizedBox(height: 16),
-
-                    buildLabel("Mobile Number"),
-                    const SizedBox(height: 6),
-                    buildTextField("Enter your Mobile Number", Icons.phone_android_outlined),
-                    const SizedBox(height: 16),
-
-                    buildLabel("College/Institution"),
-                    const SizedBox(height: 6),
-                    buildTextField("Enter your college name", Icons.house_siding_rounded),
-                    const SizedBox(height: 16),
-
-                    buildLabel("Password"),
-                    const SizedBox(height: 6),
-                    buildTextField("Enter your password", Icons.lock_outline, isPassword: true),
-                    const SizedBox(height: 16),
-
-                    buildLabel("Confirm Password"),
-                    const SizedBox(height: 6),
-                    buildTextField("Confirm your password", Icons.lock_outline),
+                    CommonPasswordTextField(
+                      hint: "Enter your email",
+                      icon: Icons.email_outlined,
+                      isPassword: false,
+                      controller: emailController,
+                      showError: showEmailError,
+                      errorKey: 'email_error',
+                      errorMsg: emailError,
+                    ),
+                    const SizedBox(height: 12),
+                    CommonPasswordTextField(
+                      hint: "Enter your mobile number",
+                      icon: Icons.phone_android_outlined,
+                      isPassword: false,
+                      controller: mobileController,
+                      showError: showMobileError,
+                      errorKey: 'mobile_error',
+                      errorMsg: mobileError,
+                    ),
+                    const SizedBox(height: 12),
+                    CommonPasswordTextField(
+                      hint: "Enter your password",
+                      icon: Icons.lock_outline,
+                      isPassword: true,
+                      controller: passwordController,
+                      showError: showPasswordError,
+                      errorKey: 'password_error',
+                      errorMsg: passwordError,
+                    ),
                   ],
                 ),
               ),
+
               const SizedBox(height: 24),
-              CustomAppButton(
-                text: "Create Account",
-                icon: Icons.arrow_forward,
-                onPlusTap: () {
+
+              // Terms & Conditions Checkbox
+              Row(
+                children: [
+                  Checkbox(
+                    value: agree,
+                    onChanged: (val) => setState(() => agree = val ?? false),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => agree = !agree),
+                      child: const Text(
+                        "I agree to terms and conditions",
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // Get OTP Button
+              BlocConsumer<RegisterCubit, RegisterState>(
+                listener: (context, state) {
+                  if (state is RegisterSucess) {
+                    context.pushReplacement(
+                      '/otp_verify?number=${mobileController.text}',
+                    );
+                  } else if (state is RegisterFailure) {
+                    CustomSnackBar.show(context, state.message);
+                  }
+                },
+                builder: (context, state) {
+                  return CustomAppButton1(
+                    isLoading: state is RegisterLoading,
+                    text: "Get OTP",
+                    onPlusTap: validateAndSubmit,
+                  );
                 },
               ),
 
               const SizedBox(height: 16),
+
+              // Sign In Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Already have an account?",
                     style: TextStyle(
                       fontFamily: 'segeo',
@@ -120,11 +234,9 @@ class SignupScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   GestureDetector(
-                    onTap: () {
-                      context.push("/login");
-                    },
+                    onTap: () => context.push("/login"),
                     child: const Text(
                       "Sign In",
                       style: TextStyle(
@@ -140,37 +252,6 @@ class SignupScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildLabel(String label) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontFamily: 'segeo',
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget buildTextField(String hint, IconData? icon, {bool isPassword = false}) {
-    return TextField(
-      obscureText: isPassword,
-      cursorColor: Colors.black,
-      decoration: InputDecoration(
-        prefixIcon: icon != null ? Icon(icon,color: Colors.black26,) : null,
-        suffixIcon: isPassword ? const Icon(Icons.visibility_outlined,color: Colors.black26,) : null,
-        hintText: hint,
-      ),
-      style: const TextStyle(
-        fontFamily: 'segeo',
-        fontSize: 14,
       ),
     );
   }

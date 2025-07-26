@@ -61,22 +61,42 @@ class UpcomingSessionsScreen extends StatelessWidget {
           // Join button & illustration
           Column(
             children: [
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF7F00FF),
+                      Color(0xFF726CF7),// purple
+                      Color(0xFF00BFFF),
+                      // blue
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text('Join Session'),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Join Session',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
               SizedBox(
                 height: 60,
                 width: 60,
-                child: Image.asset('assets/images/session_illustration.png'),
+                child: Image.asset('assets/images/videoimg.png'),
               ),
             ],
-          ),
+          )
         ],
       ),
     );
@@ -90,12 +110,14 @@ class _ChatButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: () {},
-      icon: const Icon(Icons.chat_bubble_outline, size: 16),
+
       label: const Text('Chat with Sarah Chen', style: TextStyle(fontSize: 12, fontFamily: 'segeo',)),
       style: OutlinedButton.styleFrom(
         foregroundColor: Colors.black, side: BorderSide(color: Colors.grey.shade300),
+
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+
       ),
     );
   }

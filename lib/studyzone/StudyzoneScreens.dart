@@ -123,11 +123,15 @@ class _StudyZoneScreenState extends State<StudyZoneScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 Text(
+
                   'Study Zone',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+
                 ),
                 SizedBox(height: 4),
+
                 Text(
                   'Download and share your study resources',
                   style: TextStyle(fontSize: 16, color: Colors.black54),
@@ -361,24 +365,38 @@ class _StudyZoneScreenState extends State<StudyZoneScreen>
                                 // ),
 
                                 Expanded(
-                                  child: OutlinedButton(
-
-                                    onPressed: () {},
-                                    child: Text('View'),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: Color(0xFF7F00FF),
-                                      side: BorderSide(color: Color(0xFF7F00FF)),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFF7F00FF), // Starting color
+                                          Color(0xFF4280F6), // Ending color
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
+                                      borderRadius: BorderRadius.circular(24),
+                                      border: Border.all(color: Color(0xFF4280F6)),
+                                    ),
+                                    child: OutlinedButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        'View',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        side: BorderSide.none,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(24),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Container(
@@ -387,14 +405,17 @@ class _StudyZoneScreenState extends State<StudyZoneScreen>
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          Color(0xFF7F00FF),
-                                          Color(0xFF00BFFF),
+                                          Color(0xFFA258F7),
+                                          Color(0xFF726CF7),
+                                          Color(0xFF4280F6),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.transparent,
                                         shadowColor: Colors.transparent,
@@ -403,7 +424,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen>
                                           vertical: 8,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(24),
                                         ),
                                       ),
                                       child: Text('Download',style: TextStyle(

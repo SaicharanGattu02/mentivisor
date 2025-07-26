@@ -125,6 +125,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                   color: Color(0xFF1A2A44),
                 ),
               ),
+
               SizedBox(height: 4),
               Text(
                 "Discover and share learning resources",
@@ -135,6 +136,7 @@ class _StudyZoneScreenState extends State<StudyZoneScreen> {
                   color: Color(0xFF6B7280),
                 ),
               ),
+
               SizedBox(height: 16),
           
               // Balance Container

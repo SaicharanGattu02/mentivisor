@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/EEC/AddEventScreen.dart';
 import 'package:mentivisor/EEC/EccScreen.dart';
+import 'package:mentivisor/Notification/NotificationScreen.dart';
 import 'package:mentivisor/newscreens/AchievementScreen.dart';
 import 'package:mentivisor/newscreens/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/AddResourceScreen.dart';
@@ -15,14 +16,18 @@ import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
 import 'package:mentivisor/newscreens/MentorProfileScreen.dart';
 import 'package:mentivisor/newscreens/NewHomeScreens.dart';
 import 'package:mentivisor/newscreens/PostDetailScreen.dart';
+import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
 import 'package:mentivisor/newscreens/SuccessScreen.dart';
 import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
+import 'package:mentivisor/newscreens/ViewEventScreen.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/Home.dart';
 import 'package:mentivisor/presentation/MyWalletScreen.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
+import 'package:mentivisor/profileview/EditProfileScreen.dart';
+import 'package:mentivisor/profileview/ProductivityToolsScreen.dart';
 import 'package:mentivisor/studyzone/ResourceDetailScreen.dart';
 import '../Components/NoInternet.dart';
 import '../newscreens/ExclusiveServices.dart';
@@ -30,6 +35,7 @@ import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
 import '../newscreens/InterestingScreen.dart';
 import '../newscreens/LanguageSelectionScreen.dart';
+import '../newscreens/ProfileSetupWizard.dart';
 import '../newscreens/SessionCompletedScreen.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../presentation/DailyCheckinDialog.dart';
@@ -43,13 +49,81 @@ import 'package:mentivisor/presentation/StudyZoneScreen.dart';
 import 'package:mentivisor/presentation/authentication/SignupScreen.dart';
 
 import '../presentation/WalletHistory.dart';
+import '../presentation/authentication/EnterMobileNumber.dart';
 import '../presentation/authentication/LoginScreen.dart';
+import '../presentation/authentication/OTPVerificationScreen.dart';
+import '../presentation/authentication/SelecterScreen.dart';
+import '../presentation/authentication/SuccessfullInScreen.dart';
+import '../profileview/ProfileScreen.dart';
 import '../studyzone/StudyzoneScreens.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(HomeScreennew(), state),
+    ),
 
+    GoRoute(
+      path: '/InterestingScreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(InterestingScreen(), state),
+    ),
+    GoRoute(
+      path: '/becomementorscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(BecomeMentorScreen(), state),
+    ),
+
+    // GoRoute(
+    //   path: '/',
+    //   pageBuilder: (context, state) =>
+    //       buildSlideTransitionPage(HomeScreennew(), state),
+    // ),
+    GoRoute(
+      path: '/profilesetup',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ProfileSetupScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/otp_verify',
+      pageBuilder: (context, state) {
+        final num=state.uri.queryParameters['number']??"";
+        return  buildSlideTransitionPage(OTPVerificationScreen(number:num ,), state);
+}
+
+    ),
+
+    GoRoute(
+      path: '/SuccessfullinScreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SuccessfullinScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/emailinput',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(EmailInputScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/loginscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(LoginScreen(), state),
+    ),
+    GoRoute(
+      path: '/selectedscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Selecterscreen(), state),
+    ),
+    GoRoute(
+      path: '/editprofile',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(EditProfileScreen(), state),
+    ),
     GoRoute(
       path: '/eccscreen',
       pageBuilder: (context, state) =>
@@ -57,12 +131,10 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/',
+      path: '/addeventscreen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(AddEventScreen(), state),
     ),
-
-
 
     GoRoute(
       path: '/addpostscreen',
@@ -74,11 +146,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ChartScreen(), state),
     ),
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(PostDetailScreen(), state),
-    ),
 
     GoRoute(
       path: '/communityscreen',
@@ -86,13 +153,11 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(Communityscreen(), state),
     ),
 
-
-
     GoRoute(
       path: '/addresourcescreen',
-        pageBuilder: (context, state) =>
-            buildSlideTransitionPage(AddResourceScreen(), state),
-      ),
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(AddResourceScreen(), state),
+    ),
 
     GoRoute(
       path: '/resourcedetailscreen',
@@ -101,7 +166,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/studyzonemainscreen',
+      path: '/study_zone',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(StudyZonemainScreen(), state),
     ),
@@ -121,7 +186,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ExclusiveInfoServices(), state),
     ),
-
 
     GoRoute(
       path: '/topicselection',
@@ -168,6 +232,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(LoginScreen(), state),
     ),
+
     GoRoute(
       path: '/sign_up',
       pageBuilder: (context, state) =>

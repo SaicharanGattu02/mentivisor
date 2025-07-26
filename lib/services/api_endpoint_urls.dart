@@ -1,23 +1,22 @@
 class APIEndpointUrls {
-  static const String baseUrl = 'https://fma.ozrit.in/';
-  // static const String baseUrl = 'http://192.168.80.193:8000/';
+  static const String baseUrl = 'http://192.168.80.42:8000/';
+
   static const String apiUrl = 'api/';
 
   /// Auth URls
-  static const String register = '${apiUrl}register';
-  static const String login = '${apiUrl}login';
-  static const String refreshtoken = '${apiUrl}login';
-  static const String addPost = '${apiUrl}create-post';
-  static const String deletePost = '${apiUrl}delete-post';
-  static const String editPost = '${apiUrl}edit-post';
+  static const String login = '${apiUrl}user-login';
 
-
-  ///Api Urls
-  static const String getarchetic = '${apiUrl}get-architects';
-
-
-
-
+  /// auth get register
+  static const String get_compuses = "${apiUrl}campuses";
+  static const String get_years = "${apiUrl}years";
+  static const String registerscreen = "${apiUrl}registration-step-1";
+  static const String verifyotp = "${apiUrl}verify-otp";
+  static const String get_banners = "${apiUrl}banners";
+  static const String get_books = "${apiUrl}users/study-zones";
+  static const String get_expertise = "${apiUrl}users/expertise";
+  static const String getoncampose = "${apiUrl}list-mentor-own-campus";
+  static const String gettopmentors = "${apiUrl}top-mentors";
+  static const String becomementor = "${apiUrl}users/become-mentor";
 
 
 }

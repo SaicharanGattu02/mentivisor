@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:mentivisor/newscreens/InfoScreen.dart';
 
 class ExclusiveInfoServices extends StatelessWidget {
   // Replace with your real data or pass in via constructor
@@ -41,103 +42,114 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Banner image
-                      ClipRRect(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
+                child: GestureDetector(onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>InfoScreen()),
+                  );
+                } ,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Banner image
+                        ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                          child: Image.asset(
+                            "assets/images/bannerimg.png",
+
+                            height: 192,
+
+                            width: 480,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        child: Image.asset(
-                          "assets/images/bannerimg.png",
 
-                          height: 192,
-
-                          width: 480,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Avatar + name
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: AssetImage(
-                                    'assets/images/bannerimg.png',
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Avatar + name
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: AssetImage(
+                                      'assets/images/bannerimg.png',
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  userName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    fontFamily: 'segeo',
+                                  SizedBox(width: 8),
+                                  Text(
+                                    userName,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      fontFamily: 'segeo',
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-
-                            SizedBox(height: 12),
-
-                            // Title
-                            Text(
-                              title,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xff222222),
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'segeo',
+                                ],
                               ),
-                            ),
 
-                            SizedBox(height: 8),
+                              SizedBox(height: 12),
 
-                            // Description text
-                            Text(
-                              description,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xff666666),
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'segeo',
-                              ),
-                            ),
-
-                            SizedBox(height: 12),
-
-                            // Clickable link
-                            GestureDetector(
-                              onTap: () {
-                                // TODO: launch linkUrl with url_launcher
-                              },
-                              child: Text(
-                                'Visit this link to access the exclusive service.\nClick here',
+                              // Title
+                              Text(
+                                title,
                                 style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   fontSize: 14,
-                                  color: Color(0xff9D5AF7),
+                                  color: Color(0xff222222),
                                   fontWeight: FontWeight.w700,
                                   fontFamily: 'segeo',
                                 ),
                               ),
-                            ),
-                          ],
+
+                              SizedBox(height: 8),
+
+                              // Description text
+                              Text(
+                                description,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xff666666),
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'segeo',
+                                ),
+                              ),
+
+                              SizedBox(height: 12),
+
+                              // Clickable link
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>ExclusiveInfoServices()),
+                                  );
+
+                                },
+                                child: Text(
+                                  'Visit this link to access the exclusive service.\nClick here',
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 14,
+                                    color: Color(0xff9D5AF7),
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'segeo',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -161,3 +173,4 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
     );
   }
 }
+

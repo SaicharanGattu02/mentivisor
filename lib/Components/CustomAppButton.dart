@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 
+import '../utils/color_constants.dart';
+
 class CustomAppButton extends StatelessWidget {
   final String text;
   final Color? textcolor;
@@ -25,55 +27,60 @@ class CustomAppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
-    return SizedBox(
-      width: width ?? w,
-      height: height ?? 50,
-      child: ElevatedButton(
-        onPressed: onPlusTap,
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xff3b82f6), Color(0xff2563eb)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: width ?? w,
+        height: height ?? 50,
+
+        child: ElevatedButton(
+          onPressed: onPlusTap,
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            borderRadius: BorderRadius.circular(12),
           ),
-          child: Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: textcolor ?? Colors.white,
-                    fontFamily: 'segeo',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xffA258F7),Color(0xff726CF7), Color(0xff4280F6) ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: textcolor ?? Colors.white,
+                      fontFamily: 'segeo',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                if (icon != null) ...[
-                  const SizedBox(width: 8),
-                  Icon(
-                    icon,
-                    color: textcolor ?? Colors.white,
-                    size: 18,
-                  ),
+                  if (icon != null) ...[
+                    const SizedBox(width: 8),
+                    Icon(
+                      icon,
+                      color: textcolor ?? Colors.white,
+                      size: 18,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
+
         ),
       ),
     );
@@ -87,6 +94,7 @@ class CustomAppButton1 extends StatelessWidget {
   final double? height;
   final VoidCallback? onPlusTap;
   final IconData? icon;
+  final bool isLoading;
 
   const CustomAppButton1({
     Key? key,
@@ -95,6 +103,7 @@ class CustomAppButton1 extends StatelessWidget {
     this.textcolor,
     this.height,
     this.width,
+    this.isLoading = false,
     this.icon,
   }) : super(key: key);
 
@@ -105,7 +114,7 @@ class CustomAppButton1 extends StatelessWidget {
       width: width ?? w,
       height: height ?? 50,
       child: ElevatedButton(
-        onPressed: onPlusTap,
+        onPressed: isLoading ? null : onPlusTap,
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
@@ -130,7 +139,16 @@ class CustomAppButton1 extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                isLoading
+                    ? const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                  color: Colors.white,
+                    strokeWidth: 1,
+                  ),
+                )
+                    : Text(
                   text,
                   style: TextStyle(
                     color: textcolor ?? Colors.white,

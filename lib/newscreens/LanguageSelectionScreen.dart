@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({Key? key}) : super(key: key);
@@ -139,9 +140,11 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             child: Padding(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
               child: InkWell(
+
                 onTap: () {
-                  // Next button action
-                },
+              context.push("/topicselection");
+              },
+
                 borderRadius: BorderRadius.circular(24),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 16),

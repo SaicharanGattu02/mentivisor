@@ -1,11 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/bloc/Login/LoginCubit.dart';
+import 'package:mentivisor/bloc/Login/LoginState.dart';
 
 import '../../Components/CustomAppButton.dart';
-import '../../utils/color_constants.dart';
+import '../../Components/CustomSnackBar.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _rememberMe = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool showEmailError = false;
+  bool showPasswordError = false;
+  String emailError = '';
+  String passwordError = '';
+
+  void validateAndSubmit() {
+    setState(() {
+      showEmailError = false;
+      showPasswordError = false;
+      emailError = '';
+      passwordError = '';
+    });
+
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    bool isValid = true;
+
+    if (email.isEmpty || !email.contains('@')) {
+      emailError = 'Enter a valid email address';
+      showEmailError = true;
+      isValid = false;
+    }
+
+    if (password.isEmpty || password.length < 6) {
+      passwordError = 'Password must be at least 6 characters';
+      showPasswordError = true;
+      isValid = false;
+    }
+
+    if (isValid) {
+      final Map<String, dynamic> data = {
+        "username": email,
+        "password": password,
+        "fcm_token": "dasfjgj",
+      };
+      context.read<LoginCubit>().logInApi(data);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,43 +76,36 @@ class LoginScreen extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xff3b82f6), Color(0xff2563eb)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.mail_outline_rounded,
-                    size: 32,
-                    color: Colors.white,
-                  ),
+                child: Image.asset(
+                  'assets/images/appicon_menty.png',
+                  height: 84,
+                  width: 92,
                 ),
               ),
               const SizedBox(height: 20),
               const Text(
-                "Welcome Back!",
+                'Welcome Back!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
-                  fontFamily: "Inter",
+                  fontFamily: 'Inter',
                 ),
               ),
               const SizedBox(height: 8),
               const Text(
-                "Sign in to your mentee account",
+                'Sign in to your mentee account',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black54,
                   fontWeight: FontWeight.w400,
-                  fontFamily: "Inter",
+                  fontFamily: 'Inter',
                 ),
               ),
               const SizedBox(height: 28),
-              // Card Form
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -74,64 +119,113 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Email Address",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: "Inter",
-                          fontWeight: FontWeight.w500,
-                        ),
+                    const Text(
+                      'Email Address',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: emailController,
                       cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.email_outlined,color: Colors.black26,),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.email_outlined, color: Colors.black26),
                         hintText: 'Enter your Email',
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Password",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: "Inter",
-                          fontWeight: FontWeight.w500,
+                    if (showEmailError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          emailError,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
+                      ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Password',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: passwordController,
                       obscureText: true,
                       cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock_outline,color: Colors.black26,),
-                        suffixIcon: const Icon(Icons.visibility_outlined,color: Colors.black26,),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.lock_outline, color: Colors.black26),
+                        suffixIcon: Icon(Icons.visibility_outlined, color: Colors.black26),
                         hintText: 'Enter your Password',
                       ),
+                    ),
+                    if (showPasswordError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          passwordError,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _rememberMe,
+                          onChanged: (v) {
+                            setState(() {
+                              _rememberMe = v ?? false;
+                            });
+                          },
+                        ),
+                        const Text(
+                          'Remember me',
+                          style: TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 12,
+                            color: Color(0xff666666),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 7),
+                    BlocConsumer<LoginCubit, LoginState>(
+                      listener: (context, state) {
+                        if (state is LoginSucess) {
+
+                          context.pushReplacement('/selectedscreen');
+                        } else if (state is LoginFailure) {
+                          CustomSnackBar.show(context,state.message);
+                        }
+                      },
+                      builder: (context, state) {
+                        return CustomAppButton1(
+                          isLoading: state is LoginLoading,
+                          text: "Next",
+                          onPlusTap: validateAndSubmit,
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Sign In Button
-              CustomAppButton(
-                text: "Sign In",
-                icon: Icons.arrow_forward,
-                onPlusTap: () {
-                  context.pushReplacement("/dashboard");
-                },
-              ),
               const SizedBox(height: 16),
-
-              // Sign Up Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -139,22 +233,20 @@ class LoginScreen extends StatelessWidget {
                     "Don't have an account?",
                     style: TextStyle(
                       color: Colors.black87,
-                      fontSize: 15,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      fontFamily: "Inter"
+                      fontFamily: 'Inter',
                     ),
                   ),
                   const SizedBox(width: 4),
                   GestureDetector(
-                    onTap: () {
-                      context.push("/sign_up");
-                    },
+                    onTap: () => context.push('/sign_up'),
                     child: const Text(
-                      "Sign Up",
+                      'Sign Up',
                       style: TextStyle(
-                        color: primarycolor,
-                        fontFamily: "Inter",
-                        fontSize: 15,
+                        color: Color(0xff9333EA),
+                        fontFamily: 'Inter',
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

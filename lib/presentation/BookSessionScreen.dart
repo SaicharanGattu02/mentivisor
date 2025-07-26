@@ -31,6 +31,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 Row(
                   children: [
                     SizedBox(

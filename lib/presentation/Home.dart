@@ -1,6 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/newscreens/AchievementScreen.dart';
+import 'package:mentivisor/newscreens/AddPostScreen.dart';
+import 'package:mentivisor/newscreens/SessionCompletedScreen.dart';
+import 'package:mentivisor/newscreens/UpcomingSessionsScreen.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 class Home extends StatefulWidget {
@@ -159,22 +163,54 @@ class _HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16),
-              _buildStatCard('Sessions Completed', '8', [
+              _buildStatCard(
+                  'Sessions Completed', '8', [
                 Color(0xFF8B5CF6),
                 Color(0xFF7C3AED),
-              ], Icons.emoji_events),
+              ], Icons.emoji_events,() =>
+
+              Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => SessionCompletedScreen()),
+        ),
+                ),
               _buildStatCard('Upcoming Sessions', '2', [
                 Color(0xFF3B82F6), // blue-500
                 Color(0xFF2563EB), // blue-600
-              ], Icons.calendar_today),
+              ], Icons.calendar_today,() =>
+
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => UpcomingSessionsScreen()),
+          ),
+
+              ),
               _buildStatCard('Goals Achieved', '5', [
                 Color(0xFF22C55E),
                 Color(0xFF16A34A),
-              ], Icons.star_border),
+              ], Icons.star_border,() =>
+
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => AchievementScreen()),
+        ),
+
+      ),
               _buildStatCard('Coin Balance', '150', [
                 Color(0xFFF97316),
                 Color(0xFFEA580C),
-              ], Icons.monetization_on),
+              ], Icons.monetization_on ,() =>
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => AddPostScreen()),
+                  ),
+
+              ),
               SizedBox(height: 16),
               Container(
                 width: w,
@@ -709,47 +745,50 @@ class _HomeState extends State<Home> {
     String value,
     List<Color> gradientColors,
     IconData icon,
+      VoidCallback onTap,
   ) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+    return GestureDetector(onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          Icon(icon, color: Colors.white, size: 28),
-        ],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'segeo',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            Icon(icon, color: Colors.white, size: 28),
+          ],
+        ),
       ),
     );
   }

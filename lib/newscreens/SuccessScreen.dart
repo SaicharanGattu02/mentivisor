@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mentivisor/newscreens/ExclusiveServices.dart';
 
 class SuccessScreen extends StatelessWidget {
   @override
@@ -37,7 +38,7 @@ class SuccessScreen extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SuccessScreen()),
+                    MaterialPageRoute(builder: (context) =>ExclusiveServices()),
                   );
                 },
                 borderRadius: BorderRadius.circular(24),

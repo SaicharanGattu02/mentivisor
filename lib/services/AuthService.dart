@@ -53,43 +53,43 @@ class AuthService {
   }
 
   /// Refresh token
-  static Future<bool> refreshToken() async {
-    final refreshToken = await getRefreshToken();
-    if (refreshToken == null) {
-      debugPrint('❌ No refresh token available');
-      return false;
-    }
-    try {
-      final response = await ApiClient.post(
-        APIEndpointUrls.refreshtoken,
-        data: {"refresh": refreshToken},
-      );
-      if (response.statusCode == 200) {
-        final tokenData = response.data["data"];
-        final newAccessToken = tokenData["access"];
-        final newRefreshToken = tokenData["refresh"];
-        final expiryTime = tokenData["expiry_time"];
-
-        if (newAccessToken == null || newRefreshToken == null || expiryTime == null) {
-          debugPrint("❌ Missing token data in response: $tokenData");
-          return false;
-        }
-        // Save the tokens with expiryTime (assuming expiry_time is in milliseconds)
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(_accessTokenKey, newAccessToken);
-        await prefs.setString(_refreshTokenKey, newRefreshToken);
-        await prefs.setInt(_tokenExpiryKey, expiryTime);
-        debugPrint("✅ Token refreshed and saved successfully");
-        return true;
-      } else {
-        debugPrint("❌ Refresh token request failed with status: ${response.statusCode}");
-        return false;
-      }
-    } catch (e) {
-      debugPrint("❌ Token refresh failed: $e");
-      return false;
-    }
-  }
+  // static Future<bool> refreshToken() async {
+  //   final refreshToken = await getRefreshToken();
+  //   if (refreshToken == null) {
+  //     debugPrint('❌ No refresh token available');
+  //     return false;
+  //   }
+  //   try {
+  //     final response = await ApiClient.post(
+  //       APIEndpointUrls.refreshtoken,
+  //       data: {"refresh": refreshToken},
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final tokenData = response.data["data"];
+  //       final newAccessToken = tokenData["access"];
+  //       final newRefreshToken = tokenData["refresh"];
+  //       final expiryTime = tokenData["expiry_time"];
+  //
+  //       if (newAccessToken == null || newRefreshToken == null || expiryTime == null) {
+  //         debugPrint("❌ Missing token data in response: $tokenData");
+  //         return false;
+  //       }
+  //       // Save the tokens with expiryTime (assuming expiry_time is in milliseconds)
+  //       final prefs = await SharedPreferences.getInstance();
+  //       await prefs.setString(_accessTokenKey, newAccessToken);
+  //       await prefs.setString(_refreshTokenKey, newRefreshToken);
+  //       await prefs.setInt(_tokenExpiryKey, expiryTime);
+  //       debugPrint("✅ Token refreshed and saved successfully");
+  //       return true;
+  //     } else {
+  //       debugPrint("❌ Refresh token request failed with status: ${response.statusCode}");
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     debugPrint("❌ Token refresh failed: $e");
+  //     return false;
+  //   }
+  // }
 
   /// Logout and clear tokens, redirect to sign-in screen
   static Future<void> logout() async {

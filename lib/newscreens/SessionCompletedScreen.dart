@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 
 class SessionCompletedScreen extends StatelessWidget {
@@ -82,8 +83,8 @@ class SessionCompletedScreen extends StatelessWidget {
                         Text(
                           'With Dr. Sarah Chen',
                           style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
+                            color: Color(0xff444444),
+                            fontSize: 14,
                             fontFamily: 'segeo',
                             fontWeight: FontWeight.w400,
                           ),
@@ -100,7 +101,6 @@ class SessionCompletedScreen extends StatelessWidget {
                                 size: 30,
                               ),
                             ),
-
                             const Text(
                               'Session completed',
                               style: TextStyle(
@@ -114,7 +114,7 @@ class SessionCompletedScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 12),
                     Text(
                       'Jul 25 4:00 pm',
 
@@ -134,8 +134,8 @@ class SessionCompletedScreen extends StatelessWidget {
           Text(
             "Rate your Experience",
             style: TextStyle(
-              color: Color(0xff444444),
-              fontWeight: FontWeight.w600,
+              color: Color(0xff666666),
+              fontWeight: FontWeight.w400,
               fontSize: 12,
             ),
           ),
@@ -191,7 +191,15 @@ class SessionCompletedScreen extends StatelessWidget {
             const SizedBox(height: 12),
 
             InkWell(
-              onTap: () {},
+
+                onTap: () {
+                  context.push("/becomementorscreen");
+                },
+
+
+
+
+
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 padding: const EdgeInsets.symmetric(
