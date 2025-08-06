@@ -15,6 +15,8 @@ import '../Models/EccGuestlist_Model.dart';
 import '../Models/ExpertiseRespModel.dart';
 import '../Models/GetCompusModel.dart';
 import '../Models/MenteeModels/CompusMentorListModel.dart';
+import '../Models/MenteeModels/MentorProfileModel.dart';
+import '../Models/MenteeModels/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import 'ApiClient.dart';
@@ -34,8 +36,11 @@ abstract class RemoteDataSource {
   Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin();
   Future<EccGuestlist_Model?> eccguestlist();
   Future<CommunityGuest_Model?> guestcommunitytags();
+
   ///
-  Future<CompusMentorListModel?> getCampusMentorList(String scope);
+  Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
+  Future<StudyZoneTagsModel?> getStudyZoneTags();
+  Future<MentorProfileModel?> getMentorProfile(int id);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -239,16 +244,44 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   ///Mentee
 
   @override
-  Future<CompusMentorListModel?> getCampusMentorList(String scope) async {
+  Future<CompusMentorListModel?> getCampusMentorList(
+    String name,
+    String scope,
+  ) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.get_campus_mentors}/?scope=${scope}",
+        "${APIEndpointUrls.get_campus_mentors}/?name=${name}&scope=${scope}",
       );
       AppLogger.log('get CampusMentorList::${res.data}');
       return CompusMentorListModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('CampusMentorList::${e}');
 
+      return null;
+    }
+  }
+
+  @override
+  Future<StudyZoneTagsModel?> getStudyZoneTags() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.study_zone_tags}");
+      AppLogger.log('get StudyZoneTags::${res.data}');
+      return StudyZoneTagsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('StudyZoneTags::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<MentorProfileModel?> getMentorProfile(int id) async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.mentor_profile}");
+      AppLogger.log('get MentorProfile::${res.data}/${id}');
+      return MentorProfileModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('MentorProfile::${e}');
       return null;
     }
   }

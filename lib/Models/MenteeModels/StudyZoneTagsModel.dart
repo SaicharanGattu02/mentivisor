@@ -1,10 +1,10 @@
-class StudyZone_getTagsWL_Model {
+class StudyZoneTagsModel {
   bool? status;
   List<String>? tags;
 
-  StudyZone_getTagsWL_Model({this.status, this.tags});
+  StudyZoneTagsModel({this.status, this.tags});
 
-  StudyZone_getTagsWL_Model.fromJson(Map<String, dynamic> json) {
+  StudyZoneTagsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     tags = json['tags'].cast<String>();
   }

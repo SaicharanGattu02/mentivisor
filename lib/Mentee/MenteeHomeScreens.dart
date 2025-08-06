@@ -25,7 +25,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<CampusMentorListCubit>().fetchCampusMentorList("");
+    context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
     context.read<Getbannerscubit>().getbanners();
   }
 
@@ -73,6 +73,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       await launchUrl(uri);
     }
   }
+
   void showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -150,7 +151,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 onPressed: () => Navigator.pop(context),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                  primarycolor, // Filled button color
+                                      primarycolor, // Filled button color
                                   foregroundColor: Colors.white, // Text color
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
@@ -207,6 +208,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -450,7 +452,10 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               ),
               const SizedBox(height: 24),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8EBF7),
@@ -458,21 +463,25 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                   ),
                   padding: const EdgeInsets.all(4),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,  // Ensures the row is centered
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // Ensures the row is centered
                     children: [
-
                       _buildToggle('On Campus', _onCampus, () {
                         setState(() {
                           _onCampus = true;
                         });
-                        context.read<CampusMentorListCubit>().fetchCampusMentorList("");
+                        context
+                            .read<CampusMentorListCubit>()
+                            .fetchCampusMentorList("", "");
                       }),
                       const SizedBox(width: 8),
                       _buildToggle('Beyond Campus', !_onCampus, () {
                         setState(() {
                           _onCampus = false;
                         });
-                        context.read<CampusMentorListCubit>().fetchCampusMentorList("beyond");
+                        context
+                            .read<CampusMentorListCubit>()
+                            .fetchCampusMentorList("", "beyond");
                       }),
                     ],
                   ),
@@ -493,7 +502,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      context.push('/viewall_mentorsscreen');
+                      if (_onCampus == true) {
+                        context.push('/campus_mentor_list?scope=${""}');
+                      } else {
+                        context.push('/campus_mentor_list?scope=${"beyond"}');
+                      }
                     },
                     child: const Text(
                       'View All',
@@ -511,8 +524,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       height: 200,
                       child: Center(child: CircularProgressIndicator()),
                     );
-                  }
-                  if (state is CampusMentorListStateFailure) {
+                  } else if (state is CampusMentorListStateFailure) {
                     return SizedBox(
                       height: 200,
                       child: Center(child: Text(state.msg ?? 'Failed to load')),
@@ -641,6 +653,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       ),
     );
   }
+
   Widget _buildToggle(String label, bool active, VoidCallback onTap) {
     return Expanded(
       child: GestureDetector(
@@ -648,7 +661,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: active ? const Color(0xFF4076ED).withOpacity(0.1) : Colors.transparent,
+            color: active
+                ? const Color(0xFF4076ED).withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: active ? const Color(0xFF4076ED) : Colors.transparent,
@@ -669,6 +684,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       ),
     );
   }
+
   Widget _buildDrawerItem({
     required IconData icon,
     required String label,

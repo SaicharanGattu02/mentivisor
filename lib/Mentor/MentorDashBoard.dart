@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/color_constants.dart';
-import '../bloc/internet_status/internet_status_bloc.dart';
 import '../newscreens/CommunityScreen.dart';
-import '../Mentee/MenteeHomeScreens.dart';
-import '../studyzone/StudyzoneScreens.dart';
 import '../EEC/EccScreen.dart';
 import 'MentorHomeScreen.dart';
 import 'MySessionsScreen.dart';

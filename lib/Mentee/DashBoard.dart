@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../Mentor/MentorHomeScreen.dart';
-import '../bloc/internet_status/internet_status_bloc.dart';
+import 'package:mentivisor/Mentee/studyzone/MeteeStudyzoneScreens.dart';
 import '../newscreens/CommunityScreen.dart';
 import '../utils/color_constants.dart';
 import 'MenteeHomeScreens.dart';
-import '../studyzone/StudyzoneScreens.dart';
+
 import '../EEC/EccScreen.dart';
 
 class Dashboard extends StatefulWidget {
@@ -49,7 +47,7 @@ class _DashboardState extends State<Dashboard> {
         },
         children: [
           MenteeHomeScreen(),
-          StudyZoneScreen(),
+          MenteeStudyZone(),
           EccScreen(),
           Communityscreen(),
         ],

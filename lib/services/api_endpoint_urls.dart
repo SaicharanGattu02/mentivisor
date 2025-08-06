@@ -5,6 +5,7 @@ class APIEndpointUrls {
 
   /// Auth URls
   static const String login = '${apiUrl}user-login';
+
   /// auth get register
   static const String get_compuses = "${apiUrl}campuses";
   static const String get_years = "${apiUrl}years";
@@ -16,26 +17,21 @@ class APIEndpointUrls {
   static const String getoncampose = "${apiUrl}list-mentor-own-campus";
   static const String gettopmentors = "${apiUrl}top-mentors";
 
-  static const String studyzonedownload_wl = "${apiUrl}users/study-zone/download";
-  static const String studyzonetags_wl = "${apiUrl}users/study-zone/tags";
+  static const String studyzonedownload_wl =
+      "${apiUrl}users/study-zone/download";
+
   static const String becomementor = "${apiUrl}users/become-mentor";
 
   static const String studyzonetags_wol = "${apiUrl}study-zone/tags";
-  static const String studyzonedownloads_wol = "${apiUrl}study-zone/top-downloads";
+  static const String studyzonedownloads_wol =
+      "${apiUrl}study-zone/top-downloads";
   static const String eccguestlist = "${apiUrl}guest-list-ecc";
-  static const String guestcommunitytags_wol = "${apiUrl}community-zone-tags-without-login";
-
-
-
-
-
-
+  static const String guestcommunitytags_wol =
+      "${apiUrl}community-zone-tags-without-login";
 
   /// Mentee
 
   static const String get_campus_mentors = "${apiUrl}users/mentorslist";
-
-
-
-
+  static const String study_zone_tags = "${apiUrl}users/study-zone/tags";
+  static const String mentor_profile = "${apiUrl}users/mentors";
 }

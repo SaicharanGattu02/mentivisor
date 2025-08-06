@@ -14,7 +14,7 @@ import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/newscreens/CommunityScreen.dart';
 import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
-import 'package:mentivisor/newscreens/MentorProfileScreen.dart';
+import 'package:mentivisor/Mentee/MentorProfileScreen.dart';
 import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
 import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
@@ -23,8 +23,8 @@ import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
-import 'package:mentivisor/studyzone/ResourceDetailScreen.dart';
 import '../Components/NoInternet.dart';
+import '../Mentee/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/MentorDashBoard.dart';
 import '../newscreens/AcadamicJourneyScreen.dart';
 import '../newscreens/ExclusiveServices.dart';
@@ -67,9 +67,10 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(AddResourceScreen(), state),
     ),
     GoRoute(
-      path: '/viewall_mentorsscreen',
+      path: '/campus_mentor_list',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(ViewAllMentorsScreen(), state);
+        final scope = state.uri.queryParameters['scope'] ?? "";
+        return buildSlideTransitionPage(Campusmentorlist(scope: scope), state);
       },
     ),
     GoRoute(
@@ -81,9 +82,13 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/mentor_profile',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(MentorProfileScreen(), state);
+        final idString = state.uri.queryParameters['id'];
+        final id = int.tryParse(idString ?? '') ?? 0;
+
+        return buildSlideTransitionPage(MentorProfileScreen(id: id), state);
       },
     ),
+
     GoRoute(
       path: '/mentivisorprofilesetup',
       pageBuilder: (context, state) =>
@@ -270,15 +275,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(BookSessionScreen(), state),
     ),
-
-
-
-
-
-
-
-
-
 
     //// Mentor routes
     GoRoute(
