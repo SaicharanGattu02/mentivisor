@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen>
             if (token == null || token.isEmpty) {
               context.pushReplacement('/login');
             } else {
-              context.pushReplacement('/selectedscreen');
+              context.pushReplacement('/selected_screen');
             }
           });
   }

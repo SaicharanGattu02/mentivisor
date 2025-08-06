@@ -20,7 +20,7 @@ import 'api_endpoint_urls.dart';
 
 abstract class RemoteDataSource {
   Future<LogInModel?> login(Map<String, dynamic> data);
-  Future<GetCompusModel?> getCampuses();
+  Future<GetCompusModel?> getCampuses(String Scope);
   Future<YearsResponsemodel?> getyears();
   Future<RegisterModel?> Register(Map<String, dynamic> data);
   Future<Otpverifymodel?> Verifyotp(Map<String, dynamic> data);
@@ -92,9 +92,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
 
   @override
-  Future<GetCompusModel?> getCampuses() async {
+  Future<GetCompusModel?> getCampuses(String scope) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.get_compuses}");
+      Response res = await ApiClient.get("${APIEndpointUrls.get_compuses}?scope=${scope}");
       debugPrint('getCampuses::${res.data}');
       return GetCompusModel.fromJson(res.data);
     } catch (e) {

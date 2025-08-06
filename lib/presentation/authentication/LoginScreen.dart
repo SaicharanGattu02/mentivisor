@@ -9,16 +9,13 @@ import '../../Components/CustomSnackBar.dart';
 import '../../services/AuthService.dart';
 
 class LoginScreen extends StatefulWidget {
-
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
-
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   bool _rememberMe = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -28,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String emailError = '';
   String passwordError = '';
 
+  bool _obscurePassword = true; // To toggle password visibility
 
   void validateAndSubmit() {
     setState(() {
@@ -139,7 +137,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: emailController,
                       cursorColor: Colors.black,
                       decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email_outlined, color: Colors.black26),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Colors.black26,
+                        ),
                         hintText: 'Enter your Email',
                       ),
                     ),
@@ -170,11 +171,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
                     TextField(
                       controller: passwordController,
-                      obscureText: true,
+                      obscureText:
+                          _obscurePassword, // Toggle the password visibility
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline, color: Colors.black26),
-                        suffixIcon: Icon(Icons.visibility_outlined, color: Colors.black26),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          color: Colors.black26,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: Colors.black26,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword =
+                                  !_obscurePassword; // Toggle password visibility
+                            });
+                          },
+                        ),
                         hintText: 'Enter your Password',
                       ),
                     ),
@@ -223,9 +241,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             tokens.refreshToken ?? "",
                             tokens.expiresIn ?? 0,
                           );
-                          context.pushReplacement('/selectedscreen');
+                          context.pushReplacement('/selected_screen');
                         } else if (state is LoginFailure) {
-                          CustomSnackBar.show(context,state.message);
+                          CustomSnackBar.show(context, state.message);
                         }
                       },
                       builder: (context, state) {
@@ -272,6 +290,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-
   }
 }

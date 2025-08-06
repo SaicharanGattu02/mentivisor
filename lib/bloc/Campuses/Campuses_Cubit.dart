@@ -9,11 +9,11 @@ class CampusesCubit extends Cubit<CampusesState> {
 
   CampusesCubit(this.campusRepo) : super(CampusesStateIntially());
 
-  Future<void> getState() async {
+  Future<void> getState(String scope) async {
 
     emit(CampusesStateLoading());
     try {
-      final res = await campusRepo.getCampusApi();
+      final res = await campusRepo.getCampusApi(scope);
       if (res != null) {
         emit(CampusesStateLoaded(getCompusModel: res));
       } else {

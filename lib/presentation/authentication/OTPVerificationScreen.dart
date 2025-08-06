@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../Components/CustomAppButton.dart';
-import '../../newscreens/SuccessScreen.dart';
-import 'SuccessfullInScreen.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   final String number;
@@ -48,13 +46,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
       final otp = _otpControllers.map((c) => c.text).join();
-      // TODO: verify OTP logic
-      context.pushReplacement('/SuccessfullinScreen');
+      context.pushReplacement('/success_screen');
     }
   }
 
   void _resendOtp() {
-    // TODO: resend OTP logic
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('OTP resent successfully')),
     );
@@ -171,9 +168,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   text: 'Submit OTP',
                   onPlusTap: _isButtonEnabled
                       ? () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => SuccessfullinScreen()),
-                    );
+
                   }
                       : null,
                 ),

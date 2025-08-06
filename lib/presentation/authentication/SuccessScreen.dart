@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/presentation/DashBoard.dart';
 
-class SuccessfullinScreen extends StatelessWidget {
-  const SuccessfullinScreen({Key? key}) : super(key: key);
+class SuccessScreen extends StatelessWidget {
+  const SuccessScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

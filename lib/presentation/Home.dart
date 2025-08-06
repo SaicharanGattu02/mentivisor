@@ -130,7 +130,8 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.menu_book_outlined),
-              title: const Text('Study Zone',
+              title: const Text(
+                'Study Zone',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 15,
@@ -143,7 +144,10 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red,fontFamily: "Inter")),
+              title: const Text(
+                'Logout',
+                style: TextStyle(color: Colors.red, fontFamily: "Inter"),
+              ),
               onTap: () {},
             ),
           ],
@@ -164,52 +168,47 @@ class _HomeState extends State<Home> {
             children: [
               SizedBox(height: 16),
               _buildStatCard(
-                  'Sessions Completed', '8', [
-                Color(0xFF8B5CF6),
-                Color(0xFF7C3AED),
-              ], Icons.emoji_events,() =>
-
-              Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => SessionCompletedScreen()),
-        ),
+                'Sessions Completed',
+                '8',
+                [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                Icons.emoji_events,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => SessionCompletedScreen()),
                 ),
-              _buildStatCard('Upcoming Sessions', '2', [
-                Color(0xFF3B82F6), // blue-500
-                Color(0xFF2563EB), // blue-600
-              ], Icons.calendar_today,() =>
-
-          Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => UpcomingSessionsScreen()),
-          ),
-
               ),
-              _buildStatCard('Goals Achieved', '5', [
-                Color(0xFF22C55E),
-                Color(0xFF16A34A),
-              ], Icons.star_border,() =>
-
-          Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => AchievementScreen()),
-        ),
-
-      ),
-              _buildStatCard('Coin Balance', '150', [
-                Color(0xFFF97316),
-                Color(0xFFEA580C),
-              ], Icons.monetization_on ,() =>
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => AddPostScreen()),
-                  ),
-
+              _buildStatCard(
+                'Upcoming Sessions',
+                '2',
+                [
+                  Color(0xFF3B82F6), // blue-500
+                  Color(0xFF2563EB), // blue-600
+                ],
+                Icons.calendar_today,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => UpcomingSessionsScreen()),
+                ),
+              ),
+              _buildStatCard(
+                'Goals Achieved',
+                '5',
+                [Color(0xFF22C55E), Color(0xFF16A34A)],
+                Icons.star_border,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AchievementScreen()),
+                ),
+              ),
+              _buildStatCard(
+                'Coin Balance',
+                '150',
+                [Color(0xFFF97316), Color(0xFFEA580C)],
+                Icons.monetization_on,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AddPostScreen()),
+                ),
               ),
               SizedBox(height: 16),
               Container(
@@ -745,9 +744,10 @@ class _HomeState extends State<Home> {
     String value,
     List<Color> gradientColors,
     IconData icon,
-      VoidCallback onTap,
+    VoidCallback onTap,
   ) {
-    return GestureDetector(onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 8),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

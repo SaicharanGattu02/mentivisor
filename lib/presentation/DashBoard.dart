@@ -1,5 +1,3 @@
-// lib/presentation/Dashboard.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,25 +37,22 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (i) {
-            HapticFeedback.lightImpact();
-            setState(() => _selectedIndex = i);
-          },
-          children:  [
-            HomeScreennew(),      // Home
-            StudyZoneScreen(),    // Study Zone
-            EccScreen(),          // ECC
-            Communityscreen(),    // Community
-          ],
-        ),
-        bottomNavigationBar: _buildBottomNav(),
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (i) {
+          HapticFeedback.lightImpact();
+          setState(() => _selectedIndex = i);
+        },
+        children: [
+          HomeScreennew(),
+          StudyZoneScreen(),
+          EccScreen(), // ECC
+          Communityscreen(), // Community
+        ],
       ),
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
