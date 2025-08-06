@@ -31,7 +31,7 @@ import '../newscreens/InterestingScreen.dart';
 import '../newscreens/LanguageSelectionScreen.dart';
 import '../newscreens/ProfileSetupWizard.dart';
 import '../presentation/BookSessionScreen.dart';
-import '../presentation/DashBoard.dart';
+import '../Mentee/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 import '../presentation/Splash.dart';

@@ -1,14 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mentivisor/bloc/GetBanners/GetBannersCubit.dart';
-import 'package:mentivisor/bloc/GetBanners/GetBannersState.dart';
-import 'package:mentivisor/bloc/TopMentors/TopMentors_Cubit.dart';
-import 'package:mentivisor/bloc/TopMentors/TopMentors_State.dart';
-import 'package:mentivisor/utils/color_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../bloc/GetBanners/GetBannersCubit.dart';
+import '../bloc/GetBanners/GetBannersState.dart';
+import '../bloc/Mentee/CampusMentorList/campus_mentor_list_cubit.dart';
+import '../bloc/Mentee/CampusMentorList/campus_mentor_list_state.dart';
+import '../services/AuthService.dart';
+import '../utils/color_constants.dart';
 
 class MenteeHomeScreen extends StatefulWidget {
   const MenteeHomeScreen({Key? key}) : super(key: key);
@@ -18,14 +20,13 @@ class MenteeHomeScreen extends StatefulWidget {
 }
 
 class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
-  int _selectedToggleIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  bool _onCampus = true;
   @override
   void initState() {
     super.initState();
+    context.read<CampusMentorListCubit>().fetchCampusMentorList("");
     context.read<Getbannerscubit>().getbanners();
-    context.read<TopmentorsCubit>().topmentors();
   }
 
   void _navigateToScreen(String name) {
@@ -58,7 +59,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         Navigator.pushNamed(context, '/become-mentor');
         break;
       case 'Logout':
-        // _handleLogout();
+        showLogoutDialog(context);
         break;
       case 'View All':
         Navigator.pushNamed(context, '/mentors');
@@ -66,15 +67,148 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     }
   }
 
-
-
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
   }
+  void showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          elevation: 4.0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 14.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: SizedBox(
+            width: 300.0,
+            height: 230.0,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Power Icon Positioned Above Dialog
+                Positioned(
+                  top: -35.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Container(
+                    width: 70.0,
+                    height: 70.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 6.0, color: Colors.white),
+                      shape: BoxShape.circle,
+                      color: Colors.red.shade100, // Light red background
+                    ),
+                    child: const Icon(
+                      Icons.power_settings_new,
+                      size: 40.0,
+                      color: Colors.red, // Power icon color
+                    ),
+                  ),
+                ),
 
+                // Dialog Content
+                Positioned.fill(
+                  top: 30.0, // Moves content down
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 15.0),
+                        Text(
+                          "Logout",
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w700,
+                            color: primarycolor,
+                            fontFamily: "roboto_serif",
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        const Text(
+                          "Are you sure you want to logout?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.black54,
+                            fontFamily: "roboto_serif",
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+
+                        // Buttons Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // No Button (Filled)
+                            SizedBox(
+                              width: 100,
+                              child: ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                  primarycolor, // Filled button color
+                                  foregroundColor: Colors.white, // Text color
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "No",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "roboto_serif",
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Yes Button (Outlined)
+                            SizedBox(
+                              width: 100,
+                              child: OutlinedButton(
+                                onPressed: () async {
+                                  await AuthService.logout();
+                                  context.go("/login");
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: primarycolor, // Text color
+                                  side: BorderSide(
+                                    color: primarycolor,
+                                  ), // Border color
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Yes",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "roboto_serif",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -317,18 +451,37 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                 },
               ),
               const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8EBF7),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,  // Ensures the row is centered
+                    children: [
 
-              // TOGGLES
-              Row(
-                children: [
-                  _buildToggle('On Campus', 0),
-                  const SizedBox(width: 16),
-                  _buildToggle('Beyond Campus', 1),
-                ],
+                      _buildToggle('On Campus', _onCampus, () {
+                        setState(() {
+                          _onCampus = true;
+                        });
+                        context.read<CampusMentorListCubit>().fetchCampusMentorList("");
+                      }),
+                      const SizedBox(width: 8),
+                      _buildToggle('Beyond Campus', !_onCampus, () {
+                        setState(() {
+                          _onCampus = false;
+                        });
+                        context.read<CampusMentorListCubit>().fetchCampusMentorList("beyond");
+                      }),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 24),
 
-              // MENTORS HEADER
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -353,26 +506,25 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               ),
               const SizedBox(height: 16),
 
-              // MENTORS GRID
-              BlocBuilder<TopmentorsCubit, TopmentorsState>(
+              BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
                 builder: (context, state) {
-                  if (state is TopmentorStateLoading) {
+                  if (state is CampusMentorListStateLoading) {
                     return const SizedBox(
                       height: 200,
                       child: Center(child: CircularProgressIndicator()),
                     );
                   }
-                  if (state is TopmentorStateFailure) {
+                  if (state is CampusMentorListStateFailure) {
                     return SizedBox(
                       height: 200,
                       child: Center(child: Text(state.msg ?? 'Failed to load')),
                     );
                   }
                   final list =
-                      (state as TopmentorStateLoaded)
-                          .topmentersresponsemodel
+                      (state as CampusMentorListStateLoaded)
+                          .campusMentorListModel
                           .data
-                          ?.mentordata ??
+                          ?.campusMentorData ??
                       [];
                   if (list.isEmpty) {
                     return const SizedBox(
@@ -491,7 +643,34 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       ),
     );
   }
-
+  Widget _buildToggle(String label, bool active, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: active ? const Color(0xFF4076ED).withOpacity(0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: active ? const Color(0xFF4076ED) : Colors.transparent,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Segoe',
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                color: active ? const Color(0xFF4076ED) : Colors.black54,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   Widget _buildDrawerItem({
     required IconData icon,
     required String label,
@@ -510,33 +689,5 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     ),
     trailing: trailing,
     onTap: onTap,
-  );
-
-  Widget _buildToggle(String label, int idx) => Expanded(
-    child: GestureDetector(
-      onTap: () => setState(() => _selectedToggleIndex = idx),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: _selectedToggleIndex == idx
-              ? const Color(0xFF4076ED).withOpacity(0.10)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: _selectedToggleIndex == idx
-                  ? const Color(0xff4076ED)
-                  : const Color(0xff666666),
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              fontFamily: "Inter",
-            ),
-          ),
-        ),
-      ),
-    ),
   );
 }

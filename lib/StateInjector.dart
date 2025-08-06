@@ -4,14 +4,15 @@ import 'package:mentivisor/bloc/Login/LoginCubit.dart';
 import 'package:mentivisor/bloc/On_Campouse/OnCampus_Repository.dart';
 import 'package:mentivisor/bloc/Register/Register_Cubit.dart';
 import 'package:mentivisor/bloc/Register/Register_Repository.dart';
-import 'package:mentivisor/bloc/TopMentors/TopMentors_Cubit.dart';
-import 'package:mentivisor/bloc/TopMentors/TopMentors_Repository.dart';
 import 'package:mentivisor/bloc/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'package:mentivisor/bloc/Verify_Otp/Verify_Otp_Repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import '../services/remote_data_source.dart';
 import 'bloc/GetBanners/GetBannersRepository.dart';
 import 'bloc/Login/LoginRepository.dart';
+import 'bloc/Mentee/CampusMentorList/campus_mentor_list_cubit.dart';
+import 'bloc/Mentee/CampusMentorList/campus_mentor_list_repo.dart';
+
 
 class StateInjector {
   static final repositoryProviders = <RepositoryProvider>[
@@ -36,9 +37,9 @@ class StateInjector {
           BannersImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
-    RepositoryProvider<TopmentorsRepository>(
+    RepositoryProvider<CampusMentorListRepository>(
       create: (context) =>
-          TopmentersImpl(remoteDataSource: context.read<RemoteDataSource>()),
+          CampusMentorListRepositoryImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
 
@@ -59,10 +60,9 @@ class StateInjector {
       create: (context) =>
           Getbannerscubit(context.read<Getbannersrepository>()),
     ),
-    BlocProvider<TopmentorsCubit>(
+    BlocProvider<CampusMentorListCubit>(
       create: (context) =>
-          TopmentorsCubit(context.read<TopmentorsRepository>()),
+          CampusMentorListCubit(context.read<CampusMentorListRepository>()),
     ),
-
   ];
 }

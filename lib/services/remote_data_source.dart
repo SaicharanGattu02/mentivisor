@@ -9,10 +9,12 @@ import 'package:mentivisor/Models/OnCampouseRespModel.dart';
 import 'package:mentivisor/Models/StudyZoneDownloadModel_wo_log.dart';
 import 'package:mentivisor/Models/TopMentersResponseModel.dart';
 import 'package:mentivisor/Models/Years_ResponseModel.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 
 import '../Models/EccGuestlist_Model.dart';
 import '../Models/ExpertiseRespModel.dart';
 import '../Models/GetCompusModel.dart';
+import '../Models/MenteeModels/CompusMentorListModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import 'ApiClient.dart';
@@ -32,6 +34,8 @@ abstract class RemoteDataSource {
   Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin();
   Future<EccGuestlist_Model?> eccguestlist();
   Future<CommunityGuest_Model?> guestcommunitytags();
+  ///
+  Future<CompusMentorListModel?> getCampusMentorList(String scope);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -90,11 +94,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }
   }
 
-
   @override
   Future<GetCompusModel?> getCampuses(String scope) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.get_compuses}?scope=${scope}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_compuses}?scope=${scope}",
+      );
       debugPrint('getCampuses::${res.data}');
       return GetCompusModel.fromJson(res.data);
     } catch (e) {
@@ -193,22 +198,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin() async {
-
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.studyzonedownloads_wol}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.studyzonedownloads_wol}",
+      );
       debugPrint('get on download::${res.data}');
       return StudyZoneDownloadModel_wo_log.fromJson(res.data);
     } catch (e) {
       debugPrint('Error get on download::$e');
       return null;
     }
-
   }
-
 
   @override
   Future<EccGuestlist_Model?> eccguestlist() async {
-
     try {
       Response res = await ApiClient.get("${APIEndpointUrls.eccguestlist}");
       debugPrint('get on Ecclist::${res.data}');
@@ -217,23 +220,36 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       debugPrint('Error get on Ecclist::$e');
       return null;
     }
-
   }
 
   @override
   Future<CommunityGuest_Model?> guestcommunitytags() async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.guestcommunitytags_wol}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.guestcommunitytags_wol}",
+      );
       debugPrint('get on communitytagslist::${res.data}');
       return CommunityGuest_Model.fromJson(res.data);
     } catch (e) {
       debugPrint('Error get on communitytags::$e');
       return null;
     }
-
   }
 
+  ///Mentee
 
+  @override
+  Future<CompusMentorListModel?> getCampusMentorList(String scope) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_campus_mentors}/?scope=${scope}",
+      );
+      AppLogger.log('get CampusMentorList::${res.data}');
+      return CompusMentorListModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('CampusMentorList::${e}');
 
-
+      return null;
+    }
+  }
 }

@@ -19,12 +19,21 @@ class APIEndpointUrls {
   static const String studyzonedownload_wl = "${apiUrl}users/study-zone/download";
   static const String studyzonetags_wl = "${apiUrl}users/study-zone/tags";
   static const String becomementor = "${apiUrl}users/become-mentor";
-//guestflow//
+
   static const String studyzonetags_wol = "${apiUrl}study-zone/tags";
   static const String studyzonedownloads_wol = "${apiUrl}study-zone/top-downloads";
   static const String eccguestlist = "${apiUrl}guest-list-ecc";
   static const String guestcommunitytags_wol = "${apiUrl}community-zone-tags-without-login";
 
+
+
+
+
+
+
+  /// Mentee
+
+  static const String get_campus_mentors = "${apiUrl}users/mentorslist";
 
 
 

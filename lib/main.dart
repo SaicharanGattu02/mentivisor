@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/services/ApiClient.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'StateInjector.dart';
 import 'app_routes/router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  ApiClient.setupInterceptors();
   runApp(const MyApp());
 }
 
