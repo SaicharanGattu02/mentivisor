@@ -210,38 +210,44 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          onChanged: (v) {
-                            setState(() {
-                              _rememberMe = v ?? false;
-                            });
-                          },
-                        ),
-                        const Text(
-                          'Remember me',
-                          style: TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 12,
-                            color: Color(0xff666666),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Checkbox(
+                    //       value: _rememberMe,
+                    //       onChanged: (v) {
+                    //         setState(() {
+                    //           _rememberMe = v ?? false;
+                    //         });
+                    //       },
+                    //     ),
+                    //     const Text(
+                    //       'Remember me',
+                    //       style: TextStyle(
+                    //         fontFamily: 'segeo',
+                    //         fontSize: 12,
+                    //         color: Color(0xff666666),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
 
                     const SizedBox(height: 7),
                     BlocConsumer<LoginCubit, LoginState>(
                       listener: (context, state) async {
                         if (state is LoginSucess) {
-                          final tokens = state.logInModel;
+                          final data = state.logInModel;
                           await AuthService.saveTokens(
-                            tokens.accessToken ?? "",
-                            tokens.refreshToken ?? "",
-                            tokens.expiresIn ?? 0,
+                            data.accessToken ?? "",
+                            data.refreshToken ?? "",
+                            data.expiresIn ?? 0,
+                            data.role ?? "",
+                            data.user?.id ?? 0,
                           );
-                          context.pushReplacement('/selected_screen');
+                          if (data.role == "Both") {
+                            context.pushReplacement('/selected_screen');
+                          } else if (data.role == "Mentee") {
+                            context.pushReplacement('/dashboard');
+                          }
                         } else if (state is LoginFailure) {
                           CustomSnackBar.show(context, state.message);
                         }

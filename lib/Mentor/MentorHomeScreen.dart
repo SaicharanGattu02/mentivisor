@@ -2,13 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-// Dummy SizeConfig and primarycolor for completeness
-class SizeConfig {
-  static double screenHeight = 800;
-  static double screenWidth = 400;
-}
-
-const Color primarycolor = Color(0xFF4076ED);
+import '../Widgets/Mentor/SessionCard.dart';
+import '../utils/color_constants.dart';
+import '../utils/media_query_helper.dart';
 
 class MentorHomeScreen extends StatefulWidget {
   const MentorHomeScreen({Key? key}) : super(key: key);
@@ -18,7 +14,7 @@ class MentorHomeScreen extends StatefulWidget {
 }
 
 class _MentorHomeScreenState extends State<MentorHomeScreen> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 
   final List<String> bannerData = [
@@ -34,94 +30,18 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
     super.dispose();
   }
 
-  void _toggleDrawerOrExit() {
-    final scaffoldState = _scaffoldKey.currentState;
-    if (scaffoldState != null && scaffoldState.isDrawerOpen) {
-      // Drawer is open → close it
-      Navigator.of(context).pop();
-      // If you truly wanted to exit instead, replace the pop() with:
-      // exit(0);
-    } else {
-      // Drawer is closed → open it
-      scaffoldState?.openDrawer();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: primarycolor),
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            // Add more drawer items here...
-          ],
-        ),
-      ),
-      appBar: AppBar(
-        backgroundColor: const Color(0xffF7F9FE),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
-          onPressed: _toggleDrawerOrExit,
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Hello!',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                fontFamily: "Inter",
-              ),
-            ),
-            Text(
-              'Vijay',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                fontFamily: "Inter",
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.black),
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Notifications clicked')),
-            ),
-          ),
-        ],
-      ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFFAF5FF),
-              Color(0xFFF5F6FF),
-              Color(0xFFEFF6FF),
-            ],
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
           ),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
               options: CarouselOptions(
@@ -189,18 +109,12 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
               },
             ),
             const SizedBox(height: 24),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Upcoming Session',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'segeo',
-                  ),
-                ),
+            Text(
+              'Upcoming Session',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'segeo',
               ),
             ),
             const SizedBox(height: 8),
@@ -209,7 +123,22 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                 slivers: [
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                          (context, index) => _buildSessionCard(),
+                      (context, index) => SessionCard(
+                        status: 'Upcoming',
+                        sessionDate: '5th Jun 2025',
+                        sessionTime: '45 Minutes to go',
+                        sessionName: 'G-Meet with Suresh from SVG Collage',
+                        sessionImage:
+                            'assets/images/image.png', // Image for upcoming sessions
+                        sessionTopics:
+                            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+                        reason:
+                            'Lorem Ipsum has been the industry standard for type.',
+                        buttonText: 'Message from Suresh',
+                        buttonIcon: 'assets/icons/chaticon.png',
+                        remainingTime:
+                            '45 Minutes to go', // Time remaining for upcoming session
+                      ),
                       childCount: 5,
                     ),
                   ),
@@ -224,13 +153,10 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
 
   Widget _buildSessionCard() {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 2,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -263,7 +189,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
-                    'images/communityimage.png',
+                    'assets/images/image.png',
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
@@ -311,6 +237,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
               children: [
                 Expanded(
                   child: Container(
+                    height: 48,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
@@ -324,7 +251,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.message, size: 16),
-                      label: const Text(
+                      label: Text(
                         'Message from Ramesh',
                         style: TextStyle(
                           fontSize: 12,
@@ -339,34 +266,29 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 24,
-                        ),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
-                OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.shade400),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+                SizedBox(
+                  height: 48,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.grey.shade400),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      backgroundColor: const Color(0xFFF5F5F5),
                     ),
-                    backgroundColor: const Color(0xFFF5F5F5),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 24,
-                    ),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF333333),
-                      fontFamily: 'segeo',
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF333333),
+                        fontFamily: 'segeo',
+                      ),
                     ),
                   ),
                 ),

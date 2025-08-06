@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 import 'package:flutter/material.dart';
 
 import '../utils/color_constants.dart';
@@ -46,7 +45,11 @@ class CustomAppButton extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xffA258F7),Color(0xff726CF7), Color(0xff4280F6) ],
+                colors: [
+                  Color(0xffA258F7),
+                  Color(0xff726CF7),
+                  Color(0xff4280F6),
+                ],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               ),
@@ -70,17 +73,12 @@ class CustomAppButton extends StatelessWidget {
                   ),
                   if (icon != null) ...[
                     const SizedBox(width: 8),
-                    Icon(
-                      icon,
-                      color: textcolor ?? Colors.white,
-                      size: 18,
-                    ),
+                    Icon(icon, color: textcolor ?? Colors.white, size: 18),
                   ],
                 ],
               ),
             ),
           ),
-
         ),
       ),
     );
@@ -141,29 +139,25 @@ class CustomAppButton1 extends StatelessWidget {
               children: [
                 isLoading
                     ? const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(
-                  color: Colors.white,
-                    strokeWidth: 1,
-                  ),
-                )
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 1,
+                        ),
+                      )
                     : Text(
-                  text,
-                  style: TextStyle(
-                    color: textcolor ?? Colors.white,
-                    fontFamily: 'segeo',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                        text,
+                        style: TextStyle(
+                          color: textcolor ?? Colors.white,
+                          fontFamily: 'segeo',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                 if (icon != null) ...[
                   const SizedBox(width: 8),
-                  Icon(
-                    icon,
-                    color: textcolor ?? Colors.white,
-                    size: 18,
-                  ),
+                  Icon(icon, color: textcolor ?? Colors.white, size: 18),
                 ],
               ],
             ),
@@ -173,7 +167,6 @@ class CustomAppButton1 extends StatelessWidget {
     );
   }
 }
-
 
 class CustomAppButton2 extends StatelessWidget implements PreferredSizeWidget {
   final String text;
@@ -203,7 +196,9 @@ class CustomAppButton2 extends StatelessWidget implements PreferredSizeWidget {
       height: height ?? 48,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           backgroundColor: color,
           foregroundColor: color,
           disabledBackgroundColor: color,

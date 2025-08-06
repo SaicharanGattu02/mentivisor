@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-
 enum UserRole { mentor, mentee }
 
 class Selecterscreen extends StatefulWidget {
@@ -13,19 +12,17 @@ class Selecterscreen extends StatefulWidget {
 }
 
 class _RoleSelectionScreenState extends State<Selecterscreen> {
-
   UserRole? _selectedRole;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _onRoleTap(UserRole role) {
     setState(() {
       _selectedRole = role;
     });
-    context.push('/dashboard');
+    if (_selectedRole == UserRole.mentor) {
+      context.push('/mentor_dashboard');
+    } else {
+      context.push('/dashboard');
+    }
   }
 
   @override
@@ -33,10 +30,11 @@ class _RoleSelectionScreenState extends State<Selecterscreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FAFF),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // App Icon
               Container(
@@ -56,9 +54,7 @@ class _RoleSelectionScreenState extends State<Selecterscreen> {
                   size: 32,
                 ),
               ),
-
               const SizedBox(height: 24),
-
               // Title
               const Text(
                 'Welcome to Mentivisor!',
@@ -95,7 +91,6 @@ class _RoleSelectionScreenState extends State<Selecterscreen> {
               ),
 
               const SizedBox(height: 16),
-
               // Mentee Card
               _RoleCard(
                 title: "I'm a Mentee",

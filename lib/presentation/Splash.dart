@@ -23,10 +23,15 @@ class _SplashScreenState extends State<SplashScreen>
         AnimationController(vsync: this, duration: const Duration(seconds: 2))
           ..forward().whenComplete(() async {
             final token = await AuthService.getAccessToken();
+            final role = await AuthService.getRole();
             if (token == null || token.isEmpty) {
               context.pushReplacement('/login');
             } else {
-              context.pushReplacement('/selected_screen');
+              if (role == "Both") {
+                context.pushReplacement('/selected_screen');
+              } else if (role == "Mentee") {
+                context.pushReplacement('/dashboard');
+              }
             }
           });
   }
