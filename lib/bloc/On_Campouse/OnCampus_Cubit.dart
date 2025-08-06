@@ -6,20 +6,24 @@ import 'OnCampus_State.dart';
 class OncampusCubit extends Cubit<OncampusState> {
   OncampusRepository oncampusRepository;
 
-  OncampusCubit(this.oncampusRepository) : super(GetbookStateIntially());
+  OncampusCubit(this.oncampusRepository) : super(GetoncamposeStateIntially());
 
-  Future<void> getbooks() async {
+  Future<void> getoncampose() async {
 
-    emit(GetbookStateStateLoading());
+    emit(GetoncamposeStateLoading());
     try {
+
       final res = await oncampusRepository.getoncampose();
       if (res != null) {
-        emit(GetbookStateLoaded(getBooksRespModel: res));
+        emit(GetoncamposeStateLoaded(getonCampusemodel: res));
       } else {
-        emit(GetbooksStateFailure(msg: "No states found."));
+        emit(GetoncamposeStateFailure(msg: "No states found."));
       }
+
     } catch (e) {
-      emit(GetbooksStateFailure(msg: "An error occurred: $e"));
+
+      emit(GetoncamposeStateFailure(msg: "An error occurred: $e"));
+
     }
   }
 

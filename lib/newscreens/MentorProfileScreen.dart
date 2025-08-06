@@ -1,213 +1,377 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 
 class MentorProfileScreen extends StatelessWidget {
-  const MentorProfileScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Mentor profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          'Mentor Profile',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Card
-            Container(
+      body: Container(
+        padding: EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xfff6faff),
+              Color(0xffe0f2fe),
+            ], // Replace with your desired gradient
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Header
+                Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      Text(
+                        'Dr. Sarah Chen',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Senior Software Engineer at Google',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontFamily: "Inter",
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.yellow[700], size: 16),
+                          SizedBox(width: 4),
 
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade200,
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
+                          Text(
+                            '4.9 (127 reviews)',
+                            style: TextStyle(fontFamily: "Inter"),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(Icons.access_time, color: Colors.blue, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            '< 2 hours',
+                            style: TextStyle(fontFamily: "Inter"),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.language, color: Colors.green, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            'English, Mandarin, Spanish',
+                            style: TextStyle(fontFamily: "Inter"),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey.shade100,
-                    backgroundImage: AssetImage('assets/images/mentor_avatar.png'),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Dr. Sarah Chen',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Senior Software Engineer at Google',
+                ),
+                // About Section
+                _buildSection(
+                  title: 'About',
+                  child: Text(
+                    'Passionate about helping aspiring engineers break into top tech companies. With 8+ years at Google and mentoring 200+ students, I specialize in technical interviews, career transitions, and leadership development.',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      fontFamily: "Inter",
+                      height: 1.8,
                     ),
-                    textAlign: TextAlign.start,
                   ),
-                  const SizedBox(height: 12),
-                  // Ratings and response time
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
-                      Icon(Icons.star, color: Colors.amber, size: 16),
-                      SizedBox(width: 4),
-                      Text('4.9 (127 reviews)', style: TextStyle(fontSize: 12)),
-                      SizedBox(width: 16),
-                      Icon(Icons.access_time, color: Colors.grey, size: 16),
-                      SizedBox(width: 4),
-                      Text('< 2 hours', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  // Languages
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
-                      Icon(Icons.language, color: Colors.green, size: 16),
-                      SizedBox(width: 4),
-                      Text('English, Mandarin, Spanish', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  // Coins/session and button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.
-                    start,
-                    children: [
-                      const Icon(Icons.monetization_on, color: Colors.deepPurple, size: 16),
-                      const SizedBox(width: 4),
-                      const Text('25 coins/session', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500,color: Colors.purple)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width:200,
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.calendar_today_outlined,color: Colors.white ),
-                      label: const Text('Book Session',style: TextStyle(color: Colors.white),),
-                      style: ElevatedButton.styleFrom(
+                ),
 
-                        backgroundColor: Colors.deepPurple,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                    ),
+                // Expertise Section
+                _buildSection(
+                  title: 'Expertise',
+                  child: Wrap(
+                    runSpacing: 10,
+                    spacing: 8,
+                    children: [
+                      _buildChip('Machine Learning'),
+                      _buildChip('Career Growth'),
+                      _buildChip('Technical Leadership'),
+                      _buildChip('System Design'),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            // About section
-            const Text('About', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(color: Colors.grey.shade100, blurRadius: 4, offset: const Offset(0,2)),
-                ],
-              ),
-              child: const Text(
-                'Passionate about helping aspiring engineers break into top tech companies. With 8+ years at Google and mentoring 200+ students, I specialize in technical interviews, career transitions, and leadership development.',
-                style: TextStyle(fontSize: 14, height: 1.4),
-              ),
-            ),
-            const SizedBox(height: 24),
-            // Expertise
-            const Text('Expertise', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildTag('Machine Learning'),
-                _buildTag('Career Growth'),
-                _buildTag('Technical Leadership'),
-                _buildTag('System Design'),
+                ),
+
+                // Achievements Section
+
+                // Available Slots Section
+                _buildSection(
+                  title: 'Available Slots',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Today',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Wrap(
+                        runSpacing: 10,
+                        spacing: 8,
+                        children: [
+                          _buildTimeSlot('2:00 PM - 3:00 PM'),
+                          _buildTimeSlot('4:30 PM - 5:00 PM'),
+                          _buildTimeSlot('6:00 PM - 7:00 PM'),
+                          _buildTimeSlot('7:00 PM - 8:00 PM'),
+                          _buildTimeSlot('8:00 PM - 9:00 PM'),
+                          _buildTimeSlot('9:00 PM - 10:00 PM'),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Tomorrow',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Wrap(
+                        runSpacing: 10,
+                        spacing: 8,
+                        children: [
+                          _buildTimeSlot1('9:00 AM  -  10:00 AM'),
+                          _buildTimeSlot1('11:30 AM - 12:00 AM'),
+                          _buildTimeSlot1('3:00 PM  -  5:00 PM'),
+                          _buildTimeSlot1('6:00 PM  -  7:00 PM'),
+                          _buildTimeSlot1('7:00 PM  -  8:00 PM'),
+                          _buildTimeSlot1('8:00 PM  -  9:00 PM'),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '14 more slots this week',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Recent Reviews Section
+                _buildSection(
+                  title: 'Recent Reviews',
+                  child: Column(
+                    children: [
+                      _buildReview(
+                        name: 'Alex Kumar',
+                        rating: 5,
+                        timeAgo: '2 days ago',
+                        review:
+                            'Sarah helped me crack my Google interview! Her mock interviews were incredibly helpful.',
+                      ),
+                      SizedBox(height: 16),
+                      _buildReview(
+                        name: 'Maria Garcia',
+                        rating: 5,
+                        timeAgo: '1 week ago',
+                        review:
+                            'Amazing mentor! Very patient and provides actionable feedback. Highly recommend!',
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 24),
-            // Available Slots
-            const Text('Available Slots', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 12),
-            _buildSlotsCard('Today', ['2:00 PM', '4:30 PM', '7:00 PM']),
-            const SizedBox(height: 12),
-            _buildSlotsCard('Tomorrow', ['9:00 AM', '11:30 AM', '3:00 PM', '5:00 PM']),
-            const SizedBox(height: 8),
-            const Text('12 more slots available this week', style: TextStyle(fontSize: 12, color: Colors.grey)),
-            const SizedBox(height: 24),
-            // Recent Reviews Placeholder
-            const Text('Recent Reviews', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            // Add ListView of review widgets here
-          ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: CustomAppButton(text: 'Done', onPlusTap: (){
+
+          }),
         ),
       ),
     );
   }
 
-  Widget _buildTag(String text) {
+  Widget _buildSection({required String title, required Widget child}) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.purple.shade50,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(text, style: const TextStyle(color: Colors.deepPurple,)),
-    );
-  }
-
-  Widget _buildSlotsCard(String day, List<String> times) {
-    return Container(
-      padding: const EdgeInsets.all(12),
+      width: double.infinity,
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.shade100, blurRadius: 4, offset: const Offset(0,2))],
-      ),
-      child: Column(
-
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(day, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: times.map((t,) => Chip(label: Text(t))).toList(),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
         ],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAchievementCard(String icon, String title) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Color(0xFFfefce8),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 10,
+        children: [
+          Text(icon, style: TextStyle(fontSize: 20)),
+          SizedBox(width: 8),
+          Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                fontFamily: "Inter",
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeSlot(String time) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Color(0xFFdcfce7),
+        borderRadius: BorderRadius.circular(36),
+      ),
+      child: Text(time, style: TextStyle(color: Color(0xFF15803d))),
+    );
+  }
+
+  Widget _buildTimeSlot1(String time) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Color(0xFFdbeafe),
+        borderRadius: BorderRadius.circular(36),
+      ),
+      child: Text(time, style: TextStyle(color: Color(0xFF1d4ed8))),
+    );
+  }
+
+  Widget _buildChip(String label) {
+    return Chip(
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          fontFamily: "Inter",
+        ),
+      ),
+      side: BorderSide(color: Color(0xFFf3e8ff)),
+      backgroundColor: Color(0xFFf3e8ff),
+      labelStyle: TextStyle(color: Color(0xFF7e22ce), fontFamily: "Inter"),
+      padding: EdgeInsets.symmetric(horizontal: 8),
+    );
+  }
+
+  Widget _buildReview({
+    required String name,
+    required int rating,
+    required String timeAgo,
+    required String review,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(width: 4, height: 80, color: Color(0xFF6B48FF)),
+        SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "segeo",
+                    ),
+                  ),
+                  Spacer(),
+                  Text(
+                    timeAgo,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      fontFamily: "segeo",
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: List.generate(
+                  rating,
+                  (index) =>
+                      Icon(Icons.star, color: Colors.yellow[700], size: 16),
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(review, style: TextStyle(fontSize: 12, fontFamily: "Inter")),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -150,6 +150,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       errorKey: 'email_error',
                       errorMsg: emailError,
                     ),
+
                     const SizedBox(height: 12),
                     CommonPasswordTextField(
                       hint: "Enter your mobile number",
@@ -215,6 +216,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   return CustomAppButton1(
                     isLoading: state is RegisterLoading,
                     text: "Get OTP",
+
                     onPlusTap: validateAndSubmit,
                   );
                 },
@@ -232,6 +234,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       fontFamily: 'segeo',
                       fontSize: 15,
                       color: Colors.black87,
+
                     ),
                   ),
                   const SizedBox(width: 4),

@@ -178,7 +178,7 @@ class AddResourceScreen extends StatefulWidget {
   alignment: Alignment.centerLeft,
   child: Text(
   text,
-  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Color(0xff374151E5)),
   ),
   );
 
@@ -201,11 +201,11 @@ class AddResourceScreen extends StatefulWidget {
   padding: const EdgeInsets.symmetric(vertical: 24),
   decoration: _boxDecoration(),
   child: Column(
-  mainAxisSize: MainAxisSize.min,
+
   children: [
-  const Icon(Icons.upload_file, size: 28, color: Colors.grey),
-  const SizedBox(height: 8),
-  Text(label, style: TextStyle(color: Colors.grey.shade600)),
+
+  const SizedBox(height: 3),
+  Text(label, style: TextStyle(color: Color(0xff9CA3AF))),
   ],
   ),
   ),

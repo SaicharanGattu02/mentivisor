@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/presentation/authentication/EnterMobileNumber.dart';
+
 enum UserRole { mentor, mentee }
 
 class Selecterscreen extends StatefulWidget {
@@ -11,24 +13,19 @@ class Selecterscreen extends StatefulWidget {
 }
 
 class _RoleSelectionScreenState extends State<Selecterscreen> {
+
   UserRole? _selectedRole;
 
   @override
   void initState() {
     super.initState();
-    _selectedRole = UserRole.mentee;
   }
-
 
   void _onRoleTap(UserRole role) {
     setState(() {
       _selectedRole = role;
     });
-    // Navigate immediately when a role is selected
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const EmailInputScreen()),
-    );
+    context.push('/dashboard');
   }
 
   @override
@@ -89,8 +86,6 @@ class _RoleSelectionScreenState extends State<Selecterscreen> {
               ),
 
               const SizedBox(height: 32),
-
-              // Mentor Card
               _RoleCard(
                 title: "I'm a Mentor",
                 subtitle: 'Share knowledge & guide others',
@@ -178,17 +173,13 @@ class _RoleCard extends StatelessWidget {
                 gradient: selected
                     ? null
                     : const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF9333EA), Color(0xFF9333EA)],
-                ),
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF9333EA), Color(0xFF9333EA)],
+                      ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: Icon(icon, color: Colors.white, size: 24),
             ),
             const SizedBox(width: 16),
             // Texts
@@ -230,4 +221,3 @@ class _RoleCard extends StatelessWidget {
     );
   }
 }
-

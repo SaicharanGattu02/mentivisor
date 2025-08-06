@@ -5,13 +5,14 @@ abstract class TopmentorsRepository {
   Future<Topmentersresponsemodel?> topmentors();
 }
 
-class BannersImpl implements TopmentorsRepository {
+class TopmentersImpl implements TopmentorsRepository {
   final RemoteDataSource remoteDataSource;
 
-  BannersImpl({required this.remoteDataSource});
+  TopmentersImpl({required this.remoteDataSource});
 
   @override
   Future<Topmentersresponsemodel?> topmentors() async {
     return await remoteDataSource.topmentors();
   }
+
 }

@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mentivisor/Models/CommunityGuest_Model.dart';
 import 'package:mentivisor/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Models/GetBooksRespModel.dart';
 import 'package:mentivisor/Models/LoginResponseModel.dart';
 import 'package:mentivisor/Models/OnCampouseRespModel.dart';
+import 'package:mentivisor/Models/StudyZoneDownloadModel_wo_log.dart';
 import 'package:mentivisor/Models/TopMentersResponseModel.dart';
 import 'package:mentivisor/Models/Years_ResponseModel.dart';
 
+import '../Models/EccGuestlist_Model.dart';
 import '../Models/ExpertiseRespModel.dart';
 import '../Models/GetCompusModel.dart';
 import '../Models/OtpVerifyModel.dart';
@@ -26,6 +29,9 @@ abstract class RemoteDataSource {
   Future<ExpertiseRespModel?> getexpertise();
   Future<MentorOnCamposeRespModel?> mentoroncampose();
   Future<Topmentersresponsemodel?> topmentors();
+  Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin();
+  Future<EccGuestlist_Model?> eccguestlist();
+  Future<CommunityGuest_Model?> guestcommunitytags();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -83,6 +89,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
 
   @override
   Future<GetCompusModel?> getCampuses() async {
@@ -176,13 +183,57 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<Topmentersresponsemodel?> topmentors() async {
     try {
       Response res = await ApiClient.get("${APIEndpointUrls.gettopmentors}");
-      debugPrint('get on campose::${res.data}');
+      debugPrint('get on topmentors::${res.data}');
       return Topmentersresponsemodel.fromJson(res.data);
     } catch (e) {
-      debugPrint('Error get on campose::$e');
+      debugPrint('Error get on topmentors::$e');
+      return null;
+    }
+  }
+
+  @override
+  Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin() async {
+
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.studyzonedownloads_wol}");
+      debugPrint('get on download::${res.data}');
+      return StudyZoneDownloadModel_wo_log.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error get on download::$e');
       return null;
     }
 
   }
+
+
+  @override
+  Future<EccGuestlist_Model?> eccguestlist() async {
+
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.eccguestlist}");
+      debugPrint('get on Ecclist::${res.data}');
+      return EccGuestlist_Model.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error get on Ecclist::$e');
+      return null;
+    }
+
+  }
+
+  @override
+  Future<CommunityGuest_Model?> guestcommunitytags() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.guestcommunitytags_wol}");
+      debugPrint('get on communitytagslist::${res.data}');
+      return CommunityGuest_Model.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error get on communitytags::$e');
+      return null;
+    }
+
+  }
+
+
+
 
 }

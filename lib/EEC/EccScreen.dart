@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+// lib/presentation/EccScreen.dart
 
-// 1) Define a reusable EventCard widget:
+import 'package:flutter/material.dart';
 
 class EccScreen extends StatefulWidget {
   const EccScreen({Key? key}) : super(key: key);
@@ -17,14 +16,11 @@ class _EccScreenState extends State<EccScreen> {
 
   static const Color _blue = Color(0xFF1677FF);
   static const Color _lightBlue = Color(0xFFE4EEFF);
-  static const Color _searchBg = Colors.white;
-  static const Color _searchIcon = Colors.black38;
-  bool active = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // subtle gradient background
+      // gradient background
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -48,7 +44,7 @@ class _EccScreenState extends State<EccScreen> {
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
-                    color: Color(0xff121212),
+                    color: Color(0xFF121212),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -58,87 +54,35 @@ class _EccScreenState extends State<EccScreen> {
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    color: Color(0xff666666),
+                    color: Color(0xFF666666),
                   ),
                 ),
 
                 const SizedBox(height: 24),
 
-
-
-          Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: Color(0xffDBE5FB).withOpacity(0.4),
-          ),
-          child: Row(
-            children: [
-              // On Campus button
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(() => _onCampus = true),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _onCampus ? Color(0xff4076ED).withOpacity(0.1) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: _onCampus ? _blue :Colors.transparent,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'On Campus',
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: _onCampus ? _blue : Colors.black54,
-                        ),
-                      ),
-                    ),
+                // On Campus / Beyond Campus toggle
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE4EEFF),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Row(
+                    children: [
+                      _buildToggleButton('On Campus', _onCampus, () {
+                        setState(() => _onCampus = true);
+                      }),
+                      const SizedBox(width: 8),
+                      _buildToggleButton('Beyond Campus', !_onCampus, () {
+                        setState(() => _onCampus = false);
+                      }),
+                    ],
                   ),
                 ),
-              ),
 
-              const SizedBox(width: 12),
+                const SizedBox(height: 24),
 
-              // Beyond Campus button
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(() => _onCampus = false),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: !_onCampus ? Color(0xff4076ED).withOpacity(0.1) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: !_onCampus ? _blue : Colors.transparent,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Beyond Campus',
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: !_onCampus ? _blue : Colors.black54,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-
-          const SizedBox(height: 24),
-
-                // “Updates” label
+                // Updates label
                 const Text(
                   'Updates',
                   style: TextStyle(
@@ -189,7 +133,7 @@ class _EccScreenState extends State<EccScreen> {
 
                 const SizedBox(height: 16),
 
-                // Search input
+                // Search field
                 TextField(
                   decoration: InputDecoration(
                     hintText: 'Search',
@@ -199,9 +143,9 @@ class _EccScreenState extends State<EccScreen> {
                       fontSize: 14,
                       color: Colors.black38,
                     ),
-                    prefixIcon: Icon(Icons.search, color: _searchIcon),
+                    prefixIcon: const Icon(Icons.search, color: Colors.black38),
                     filled: true,
-                    fillColor: _searchBg,
+                    fillColor: Colors.white,
                     contentPadding: const EdgeInsets.symmetric(vertical: 0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -212,16 +156,51 @@ class _EccScreenState extends State<EccScreen> {
 
                 const SizedBox(height: 24),
 
-                // Scrollable list of EventCards
+                // Event list
                 Expanded(
-                  child: ListView(
-                    children: const [
-                      EventCard(),
-                      // duplicate EventCard() for more entries...
-                    ],
+                  child: ListView.separated(
+                    itemCount: 3, // your dynamic count
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (_, __) => const EventCard(),
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+
+      // Floating “+” button
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // your onPressed
+        },
+        backgroundColor: _blue,
+        child: const Icon(Icons.add, size: 32),
+      ),
+    );
+  }
+
+  Widget _buildToggleButton(String label, bool active, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: active ? _blue.withOpacity(0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: active ? _blue : Colors.transparent),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'segeo',
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                color: active ? _blue : Colors.black54,
+              ),
             ),
           ),
         ),
@@ -230,19 +209,16 @@ class _EccScreenState extends State<EccScreen> {
   }
 }
 
-/// The redesigned card widget:
 class EventCard extends StatelessWidget {
-
   const EventCard({Key? key}) : super(key: key);
+
+  static const Color gradStart = Color(0xFF8C36FF);
+  static const Color gradEnd   = Color(0xFF3F9CFF);
 
   @override
   Widget build(BuildContext context) {
-
-    const Color gradStart = Color(0xFF8C36FF);
-    const Color gradEnd = Color(0xFF3F9CFF);
-
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -259,7 +235,7 @@ class EventCard extends StatelessWidget {
             child: Image.asset(
               'assets/images/eventimg.png',
               height: 160,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
 
@@ -268,9 +244,9 @@ class EventCard extends StatelessWidget {
           // Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
+            child: const Text(
               'Annual tech Symposium 2024',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'segeo',
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -281,8 +257,8 @@ class EventCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
+          // Institute chip
           Padding(
-
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -291,7 +267,7 @@ class EventCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Text(
-                'Indian Institute of technology Bombay',
+                'Indian Institute of Technology Bombay',
                 style: TextStyle(
                   fontFamily: 'segeo',
                   fontWeight: FontWeight.w700,
@@ -333,7 +309,6 @@ class EventCard extends StatelessWidget {
           const SizedBox(height: 24),
 
           // View Details button
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SizedBox(
@@ -375,7 +350,6 @@ class EventCard extends StatelessWidget {
         ],
       ),
     );
-
   }
 }
 

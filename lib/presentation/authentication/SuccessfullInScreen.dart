@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/presentation/DashBoard.dart';
 
 class SuccessfullinScreen extends StatelessWidget {
@@ -30,7 +31,8 @@ class SuccessfullinScreen extends StatelessWidget {
               'Your Account Verified',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.w500,
+                fontFamily: 'segeo',
+                fontWeight: FontWeight.bold,
                 color: Color(0xff222222),
               ),
             ),
@@ -41,7 +43,7 @@ class SuccessfullinScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   'Create Your profile to use all features',
-                  style: TextStyle(fontSize: 14, fontFamily: "segeo", color: Color(0xff374151)),
+                  style: TextStyle(fontSize: 14, fontFamily: "segeo", color: Color(0xff374151), fontWeight: FontWeight.w500),
                 ) ,
               ),
             ),
@@ -53,7 +55,7 @@ class SuccessfullinScreen extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => Dashboard()),
+                        builder: (_) => ProfileSetupScreen()),
                   ),
 
 
@@ -70,10 +72,12 @@ class SuccessfullinScreen extends StatelessWidget {
                   ),
                   child: const Text(
                     'Create Profile',
+
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
+                      fontFamily: 'segeo',
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -1,5 +1,3 @@
-// lib/presentation/Dashboard.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,15 +7,16 @@ import '../newscreens/CommunityScreen.dart';
 import '../newscreens/NewHomeScreens.dart';
 import '../studyzone/StudyzoneScreens.dart';
 import '../EEC/EccScreen.dart';
+import 'MentorHomeScreen.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
+class MentorDashboard extends StatefulWidget {
+  const MentorDashboard({Key? key}) : super(key: key);
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<MentorDashboard> createState() => _MentorDashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _MentorDashboardState extends State<MentorDashboard> {
   late PageController _pageController;
   int _selectedIndex = 0;
 
@@ -50,7 +49,7 @@ class _DashboardState extends State<Dashboard> {
             setState(() => _selectedIndex = i);
           },
           children:  [
-            HomeScreennew(),      // Home
+            MentorHomeScreen(),      // Home
             StudyZoneScreen(),    // Study Zone
             EccScreen(),          // ECC
             Communityscreen(),    // Community
@@ -81,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: primarycolor,
+        selectedItemColor: Colors.green ,
         unselectedItemColor: Colors.black,
         showSelectedLabels: true,
         showUnselectedLabels: true,
@@ -100,21 +99,21 @@ class _DashboardState extends State<Dashboard> {
               _selectedIndex == 1 ? Icons.menu_book : Icons.menu_book_outlined,
               size: 24,
             ),
-            label: 'Study Zone',
+            label: 'My Session',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               _selectedIndex == 2 ? Icons.school : Icons.school_outlined,
               size: 24,
             ),
-            label: 'ECC',
+            label: 'Availability',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               _selectedIndex == 3 ? Icons.group : Icons.group_outlined,
               size: 24,
             ),
-            label: 'Community',
+            label: 'Earnings',
           ),
         ],
       ),

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
+import '../services/AuthService.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -10,18 +12,23 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _progressController;
 
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(vsync: this, duration: const Duration(seconds: 2))
-      ..forward().whenComplete(() {
-        Future.delayed(const Duration(milliseconds: 400), () {
-          context.pushReplacement("/login");
-        });
-      });
+    _progressController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..forward().whenComplete(() async {
+            final token = await AuthService.getAccessToken();
+            if (token == null || token.isEmpty) {
+              context.pushReplacement('/login');
+            } else {
+              context.pushReplacement('/selectedscreen');
+            }
+          });
   }
 
   @override
@@ -45,16 +52,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
         ),
         child: Stack(
           children: [
-            Positioned(
-              top: 100,
-              left: 50,
-              child: _buildAnimatedCircle(80),
-            ),
-            Positioned(
-              bottom: 120,
-              right: 40,
-              child: _buildAnimatedCircle(60),
-            ),
+            Positioned(top: 100, left: 50, child: _buildAnimatedCircle(80)),
+            Positioned(bottom: 120, right: 40, child: _buildAnimatedCircle(60)),
             Positioned(
               top: MediaQuery.of(context).size.height * 0.35,
               left: 0,
@@ -69,7 +68,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Icon(Icons.check_circle, color: Color(0xFF8B5CF6), size: 48),
+                      child: const Icon(
+                        Icons.check_circle,
+                        color: Color(0xFF8B5CF6),
+                        size: 48,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -124,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         );
                       },
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -136,7 +139,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   Widget _buildAnimatedCircle(double size) {
     return Animate(
-      effects: [FadeEffect(duration: 1200.ms), ScaleEffect(duration: 1800.ms)],
+      effects: [
+        FadeEffect(duration: 1200.ms),
+        ScaleEffect(duration: 1800.ms),
+      ],
       child: Container(
         width: size,
         height: size,
@@ -148,4 +154,3 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
   }
 }
-

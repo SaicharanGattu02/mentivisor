@@ -5,10 +5,10 @@ import 'package:mentivisor/bloc/GetBanners/GetBannersState.dart';
 class Getbannerscubit extends Cubit<Getbannersstate> {
   Getbannersrepository _getbannersrepository;
 
-  Getbannerscubit(this._getbannersrepository) : super(GetbannersStateIntially());
+  Getbannerscubit(this._getbannersrepository)
+    : super(GetbannersStateIntially());
 
   Future<void> getbanners() async {
-
     emit(GetbannersStateLoading());
     try {
       final res = await _getbannersrepository.getBannersApi();
@@ -21,5 +21,4 @@ class Getbannerscubit extends Cubit<Getbannersstate> {
       emit(GetbannersStateFailure(msg: "An error occurred: $e"));
     }
   }
-
 }

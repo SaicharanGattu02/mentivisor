@@ -7,8 +7,8 @@ class TopmentorStateIntially extends TopmentorsState {}
 class TopmentorStateLoading extends TopmentorsState {}
 
 class TopmentorStateLoaded extends TopmentorsState {
-  Topmentersresponsemodel getbannerModel;
-  TopmentorStateLoaded({required this.getbannerModel});
+  Topmentersresponsemodel topmentersresponsemodel;
+  TopmentorStateLoaded({required this.topmentersresponsemodel});
 }
 
 class TopmentorStateFailure extends TopmentorsState {

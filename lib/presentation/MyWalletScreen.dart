@@ -27,7 +27,10 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 10.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -39,7 +42,10 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      side: const BorderSide(width: 1, color: Color(0xffe2e8f0)),
+                      side: const BorderSide(
+                        width: 1,
+                        color: Color(0xffe2e8f0),
+                      ),
                       padding: EdgeInsets
                           .zero, // Ensures no extra padding disturbs centering
                     ),
@@ -51,27 +57,31 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                 ),
                 SizedBox(height: 20),
                 // Title and Subtitle
-                Text(
-                  "My Wallet",
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A2A44),
+                Center(
+                  child: Text(
+                    "My Wallet",
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A2A44),
+                    ),
                   ),
                 ),
                 SizedBox(height: 4),
-                Text(
-                  "Manage your coins and track your earnings",
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF6B7280),
+                Center(
+                  child: Text(
+                    "Manage your coins and track your earnings",
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF6B7280),
+                    ),
                   ),
                 ),
                 SizedBox(height: 16),
-          
+
                 // Current Balance Card
                 Container(
                   padding: EdgeInsets.all(20),
@@ -121,13 +131,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         ),
                       ),
                       SizedBox(height: 16),
-                      SizedBox(
-                        width: 250,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:32.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+
                               children: [
                                 Text(
                                   "TOTAL EARNED",
@@ -138,13 +148,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     color: Colors.white70,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+
                                 Text(
                                   "480",
                                   style: TextStyle(
                                     fontFamily: 'segeo',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -167,7 +177,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                   "330",
                                   style: TextStyle(
                                     fontFamily: 'segeo',
-                                    fontSize: 18,
+                                    fontSize: 40,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -178,85 +188,82 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         ),
                       ),
                       SizedBox(height: 16),
-                      SizedBox(
-                        width: 280,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            OutlinedButton(
-                              onPressed: () {
-                                context.push("/buy_coins");
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Color(0xFFD1D5DB)),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 24,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                backgroundColor: Colors.white,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              context.push("/buy_coins");
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Color(0xFFD1D5DB)),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 24,
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    color: Color(0xFFea580c),
-                                    size: 16,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "Buy Coins",
-                                    style: TextStyle(
-                                      fontFamily: 'segeo',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFea580c),
-                                    ),
-                                  ),
-                                ],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
+                              backgroundColor: Colors.white,
                             ),
-                            OutlinedButton(
-                              onPressed: () {
-                                context.push("/wallet_history");
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Color(0xFFD1D5DB)),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 24,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.access_time_outlined,
-                                    color: Color(0xFFea580c),
-                                    size: 16,
+
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Buy Coins",
+                                  style: TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFFB9B37),
                                   ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "History",
-                                    style: TextStyle(
-                                      fontFamily: 'segeo',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFea580c),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.add_circle,
+                                  color: Color(0xFFFB9B37),
+                                  size: 16,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          // OutlinedButton(
+                          //   onPressed: () {
+                          //     context.push("/wallet_history");
+                          //   },
+                          //   style: OutlinedButton.styleFrom(
+                          //     side: BorderSide(color: Color(0xFFD1D5DB)),
+                          //     padding: EdgeInsets.symmetric(
+                          //       vertical: 12,
+                          //       horizontal: 24,
+                          //     ),
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(8),
+                          //     ),
+                          //     backgroundColor: Colors.white,
+                          //   ),
+                          // child: Row(
+                          //   mainAxisSize: MainAxisSize.min,
+                          //   children: [
+                          //     Icon(
+                          //       Icons.access_time_outlined,
+                          //       color: Color(0xFFFB9B37),
+                          //       size: 16,
+                          //     ),
+                          //     SizedBox(width: 4),
+                          //     // Text(
+                          //     //   "History",
+                          //     //   style: TextStyle(
+                          //     //     fontFamily: 'segeo',
+                          //     //     fontSize: 14,
+                          //     //     fontWeight: FontWeight.w600,
+                          //     //     color: Color(0xFFFB9B37),
+                          //     //   ),
+                          //     // ),
+                          //   ],
+                          // ),
+                          // ),
+                        ],
                       ),
                     ],
                   ),
@@ -614,7 +621,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ],
                         ),
                       ),
-          
+
                       Container(
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -750,7 +757,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ],
                         ),
                       ),
-          
+
                       SizedBox(height: 16),
                       Center(
                         child: Column(
@@ -787,7 +794,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ],
                         ),
                       ),
-          
+
                       SizedBox(height: 16),
                       Center(
                         child: Column(

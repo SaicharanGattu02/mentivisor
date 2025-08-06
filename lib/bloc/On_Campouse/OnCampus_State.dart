@@ -2,18 +2,18 @@ import '../../Models/OnCampouseRespModel.dart';
 
 abstract class OncampusState {}
 
-class GetbookStateIntially extends OncampusState {}
+class GetoncamposeStateIntially extends OncampusState {}
 
-class GetbookStateStateLoading extends OncampusState {}
+class GetoncamposeStateLoading extends OncampusState {}
 
-class GetbookStateLoaded extends OncampusState {
-  MentorOnCamposeRespModel getBooksRespModel;
-  GetbookStateLoaded({required this.getBooksRespModel});
+class GetoncamposeStateLoaded extends OncampusState {
+  MentorOnCamposeRespModel getonCampusemodel;
+  GetoncamposeStateLoaded({required this.getonCampusemodel});
 }
 
-class GetbooksStateFailure extends OncampusState {
+class GetoncamposeStateFailure extends OncampusState {
   final String msg;
-  GetbooksStateFailure({required this.msg});
+  GetoncamposeStateFailure({required this.msg});
 
 
 }

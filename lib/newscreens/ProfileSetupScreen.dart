@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   @override
@@ -49,7 +50,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 Text(
                   'Join Mentivisor',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -57,6 +58,30 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
                 SizedBox(height: 24),
+                Row(
+
+                  children: [
+                    Text(
+                      'Profile Setup',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'segeo' ,
+                        color: Colors.black54,
+                        fontSize: 14,
+                      ),
+                    ),
+
+                   Spacer(),
+                    Text(
+                      '1 of 4',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10,),
                 // Progress bar with step indicator
                 Row(
                   children: [
@@ -72,13 +97,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       ),
                     ),
                     SizedBox(width: 8),
-                    Text(
-                      '1 of 4',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 14,
-                      ),
-                    ),
+
                   ],
                 ),
                 SizedBox(height: 32),
@@ -103,7 +122,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       Text(
                         "What's your name?",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'segeo'
 
@@ -114,7 +133,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       Text(
                         'This is how others will see you on the platform',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontFamily: 'segeo',
                           fontWeight: FontWeight.bold,
                           color: Colors.black54,
@@ -182,7 +201,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: 'Full Name',
+                          labelText: 'Enter your full Name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -203,14 +222,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       },
                       child: Text(
                         'Back',
-                        style: TextStyle(fontSize: 12,color: Color(0xff222222)),
+                        style: TextStyle(fontSize: 12,color: Color(0xff222222), fontFamily: 'segeo'),
                       ),
                     ),
                     Spacer(),
                     GestureDetector(
                       onTap: () {
-                        // TODO: handle next
-                      },
+                            // replace with your route:
+                            context.push('/profilesetupwizard');
+                            // or with Navigator:
+                            // Navigator.of(context).push(MaterialPageRoute(builder: (_) => NextScreen()));
+                          },
+
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         decoration: BoxDecoration(
@@ -228,7 +251,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                               'Next',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 14,
+                                fontFamily: 'segeo',
+
                               ),
                             ),
                             SizedBox(width: 4),

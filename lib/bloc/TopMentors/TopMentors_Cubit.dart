@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'TopMentors_Repository.dart';
 import 'TopMentors_State.dart';
 
-class Getbannerscubit extends Cubit<TopmentorsState> {
+class TopmentorsCubit extends Cubit<TopmentorsState> {
   TopmentorsRepository topmentorsRepository;
 
-  Getbannerscubit(this.topmentorsRepository) : super(TopmentorStateIntially());
+  TopmentorsCubit(this.topmentorsRepository) : super(TopmentorStateIntially());
 
   Future<void> topmentors() async {
 
@@ -14,7 +14,7 @@ class Getbannerscubit extends Cubit<TopmentorsState> {
     try {
       final res = await topmentorsRepository.topmentors();
       if (res != null) {
-        emit(TopmentorStateLoaded(getbannerModel: res));
+        emit(TopmentorStateLoaded(topmentersresponsemodel: res));
       } else {
         emit(TopmentorStateFailure(msg: "No states found."));
       }

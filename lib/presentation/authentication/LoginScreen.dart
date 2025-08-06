@@ -6,15 +6,19 @@ import 'package:mentivisor/bloc/Login/LoginState.dart';
 
 import '../../Components/CustomAppButton.dart';
 import '../../Components/CustomSnackBar.dart';
+import '../../services/AuthService.dart';
 
 class LoginScreen extends StatefulWidget {
+
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
+
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   bool _rememberMe = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -23,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showPasswordError = false;
   String emailError = '';
   String passwordError = '';
+
 
   void validateAndSubmit() {
     setState(() {
@@ -51,8 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (isValid) {
       final Map<String, dynamic> data = {
-        "username": email,
-        "password": password,
+        "username": emailController.text,
+        "password": passwordController.text,
         "fcm_token": "dasfjgj",
       };
       context.read<LoginCubit>().logInApi(data);
@@ -138,6 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Enter your Email',
                       ),
                     ),
+
                     if (showEmailError)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
@@ -151,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
+
                     const SizedBox(height: 16),
                     const Text(
                       'Password',
@@ -171,6 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Enter your Password',
                       ),
                     ),
+
                     if (showPasswordError)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
@@ -204,11 +212,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 7),
                     BlocConsumer<LoginCubit, LoginState>(
-                      listener: (context, state) {
+                      listener: (context, state) async {
                         if (state is LoginSucess) {
-
+                          final tokens = state.logInModel;
+                          await AuthService.saveTokens(
+                            tokens.accessToken ?? "",
+                            tokens.refreshToken ?? "",
+                            tokens.expiresIn ?? 0,
+                          );
                           context.pushReplacement('/selectedscreen');
                         } else if (state is LoginFailure) {
                           CustomSnackBar.show(context,state.message);
@@ -258,5 +272,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+
   }
 }

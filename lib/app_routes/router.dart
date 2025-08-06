@@ -10,6 +10,7 @@ import 'package:mentivisor/newscreens/AchievementScreen.dart';
 import 'package:mentivisor/newscreens/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/AddResourceScreen.dart';
 import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
+import 'package:mentivisor/newscreens/BuyCoinsScreens.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/newscreens/CommunityScreen.dart';
 import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
@@ -20,6 +21,7 @@ import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
 import 'package:mentivisor/newscreens/SuccessScreen.dart';
 import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
+import 'package:mentivisor/newscreens/ViewAllMentorsScreen.dart';
 import 'package:mentivisor/newscreens/ViewEventScreen.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/Home.dart';
@@ -30,6 +32,9 @@ import 'package:mentivisor/profileview/EditProfileScreen.dart';
 import 'package:mentivisor/profileview/ProductivityToolsScreen.dart';
 import 'package:mentivisor/studyzone/ResourceDetailScreen.dart';
 import '../Components/NoInternet.dart';
+import '../Mentor/MentorDashBoard.dart';
+import '../Mentor/mentorHomeScreen.dart';
+import '../newscreens/AcadamicJourneyScreen.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
@@ -43,11 +48,10 @@ import '../presentation/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 import '../presentation/Splash.dart';
-import 'package:mentivisor/presentation/MentivisorProfileSetup.dart';
+
 import 'package:mentivisor/presentation/ProfileScreen.dart';
 import 'package:mentivisor/presentation/StudyZoneScreen.dart';
 import 'package:mentivisor/presentation/authentication/SignupScreen.dart';
-
 import '../presentation/WalletHistory.dart';
 import '../presentation/authentication/EnterMobileNumber.dart';
 import '../presentation/authentication/LoginScreen.dart';
@@ -55,17 +59,80 @@ import '../presentation/authentication/OTPVerificationScreen.dart';
 import '../presentation/authentication/SelecterScreen.dart';
 import '../presentation/authentication/SuccessfullInScreen.dart';
 import '../profileview/ProfileScreen.dart';
-import '../studyzone/StudyzoneScreens.dart';
+
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/',
+      path: '/addresource',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(HomeScreennew(), state),
+          buildSlideTransitionPage(AddResourceScreen(), state),
+    ),
+    GoRoute(
+      path: '/viewall_mentorsscreen',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(ViewAllMentorsScreen(),state);
+      },
+
+    ),
+    GoRoute(
+        path: '/mentor_dashboard',
+        pageBuilder: (context, state) {
+          return buildSlideTransitionPage(MentorDashboard(),state);
+        },
+
     ),
 
+    GoRoute(
+      path: '/resourcedetailscreen',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(ResourceDetailScreen(),state);
+      },
+
+    ),
+
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(ChartScreen(),state);
+      },
+
+    ),
+
+    GoRoute(
+      path: '/mentor_profile',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(MentorProfileScreen(),state);
+      },
+
+    ),
+
+
+    // GoRoute(
+    //     path: '/',
+    //     pageBuilder: (context, state) {
+    //       final num=state.uri.queryParameters['number']??"";
+    //       return  buildSlideTransitionPage(OTPVerificationScreen(number:num ,), state);
+    //     }
+    //
+    // ),
+    GoRoute(
+      path: '/mentivisorprofilesetup',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(Acadamicjourneyscreen(), state),
+    ),
+    GoRoute(
+      path: '/profilesetupwizard',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ProfileSetupWizard(), state),
+    ),
+
+    GoRoute(
+      path: '/SplashScreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SplashScreen(), state),
+    ),
     GoRoute(
       path: '/InterestingScreen',
       pageBuilder: (context, state) =>
@@ -88,25 +155,18 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(ProfileSetupScreen(), state),
     ),
 
-    GoRoute(
-      path: '/otp_verify',
-      pageBuilder: (context, state) {
-        final num=state.uri.queryParameters['number']??"";
-        return  buildSlideTransitionPage(OTPVerificationScreen(number:num ,), state);
-}
-
-    ),
-
+    //     GoRoute(
+    //       path: '/otp_verify',
+    //       pageBuilder: (context, state) {
+    //         final num=state.uri.queryParameters['number']??"";
+    //         return  buildSlideTransitionPage(OTPVerificationScreen(number:num ,), state);
+    // }
+    //
+    //     ),
     GoRoute(
       path: '/SuccessfullinScreen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SuccessfullinScreen(), state),
-    ),
-
-    GoRoute(
-      path: '/emailinput',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(EmailInputScreen(), state),
     ),
 
     GoRoute(
@@ -141,11 +201,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(AddPostScreen(), state),
     ),
-    GoRoute(
-      path: '/chartscreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ChartScreen(), state),
-    ),
+    // GoRoute(
+    //   path: '/chartscreen',
+    //   pageBuilder: (context, state) =>
+    //       buildSlideTransitionPage(Chartscreen(), state),
+    // ),
 
     GoRoute(
       path: '/communityscreen',
@@ -153,11 +213,7 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(Communityscreen(), state),
     ),
 
-    GoRoute(
-      path: '/addresourcescreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(AddResourceScreen(), state),
-    ),
+
 
     GoRoute(
       path: '/resourcedetailscreen',
@@ -165,11 +221,6 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(ResourceDetailScreen(), state),
     ),
 
-    GoRoute(
-      path: '/study_zone',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(StudyZonemainScreen(), state),
-    ),
 
     GoRoute(
       path: '/infoscreen',
@@ -238,11 +289,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SignupScreen(), state),
     ),
-    GoRoute(
-      path: '/mentor_profile',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(MentivisorProfileSetup(), state),
-    ),
+    // GoRoute(
+    //   path: '/mentor_profile',
+    //   pageBuilder: (context, state) =>
+    //       buildSlideTransitionPage(MentivisorProfileSetup(), state),
+    // ),
     GoRoute(
       path: '/profile',
       pageBuilder: (context, state) =>

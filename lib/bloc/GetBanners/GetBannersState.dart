@@ -1,10 +1,13 @@
 import 'package:mentivisor/Models/GetBannersRespModel.dart';
 
-abstract class Getbannersstate {}
+abstract class Getbannersstate {
+}
 
-class GetbannersStateIntially extends Getbannersstate {}
+class GetbannersStateIntially extends Getbannersstate {
+}
 
-class GetbannersStateLoading extends Getbannersstate {}
+class GetbannersStateLoading extends Getbannersstate {
+}
 
 class GetbannersStateLoaded extends Getbannersstate {
   GetBannersRespModel getbannerModel;
@@ -14,6 +17,4 @@ class GetbannersStateLoaded extends Getbannersstate {
 class GetbannersStateFailure extends Getbannersstate {
   final String msg;
   GetbannersStateFailure({required this.msg});
-
-
 }

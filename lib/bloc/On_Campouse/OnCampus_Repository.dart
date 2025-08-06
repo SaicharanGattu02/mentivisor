@@ -5,13 +5,14 @@ abstract class OncampusRepository{
   Future<MentorOnCamposeRespModel?> getoncampose();
 }
 
-class BooksImpl implements OncampusRepository{
+class oncampusImpl implements OncampusRepository{
   final RemoteDataSource remoteDataSource;
 
-  BooksImpl({required this.remoteDataSource});
+  oncampusImpl({required this.remoteDataSource});
 
   @override
   Future<MentorOnCamposeRespModel?> getoncampose() async {
     return await remoteDataSource.mentoroncampose();
+
   }
 }
