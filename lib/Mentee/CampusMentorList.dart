@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Mentor/MentorHomeScreen.dart';
-// import '../bloc/Mentee/TopMentors/campus_mentor_list_cubit.dart';
-// import '../bloc/Mentee/TopMentors/campus_mentor_list_state.dart';
-
+import '../bloc/Mentee/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../utils/color_constants.dart';
 
 class ViewAllMentorsScreen extends StatefulWidget {
@@ -18,18 +14,13 @@ class ViewAllMentorsScreen extends StatefulWidget {
 class _ViewAllMentorsScreenState extends State<ViewAllMentorsScreen> {
   String searchQuery = '';
 
-  int _calculateCrossAxisCount(double width) {
-    if (width >= 1000) return 4;
-    if (width >= 700) return 3;
-    return 2;
-  }
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    // context.read<TopmentorsCubit>().topmentors();
+    context.read<CampusMentorListCubit>().fetchCampusMentorList("");
   }
 
 

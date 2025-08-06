@@ -110,8 +110,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                     ),
                   ),
                 ),
-
-                // Dialog Content
                 Positioned.fill(
                   top: 30.0, // Moves content down
                   child: Padding(

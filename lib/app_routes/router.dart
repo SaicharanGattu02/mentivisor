@@ -15,7 +15,7 @@ import 'package:mentivisor/newscreens/MentorProfileScreen.dart';
 import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
 import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
-import 'package:mentivisor/newscreens/ViewAllMentorsScreen.dart';
+import 'package:mentivisor/Mentee/CampusMentorList.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
