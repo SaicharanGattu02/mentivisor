@@ -26,8 +26,10 @@ class APIEndpointUrls {
   static const String studyzonedownloads_wol =
       "${apiUrl}study-zone/top-downloads";
   static const String eccguestlist = "${apiUrl}guest-list-ecc";
-  static const String guestcommunitytags_wol =
-      "${apiUrl}community-zone-tags-without-login";
+  static const String guestcommunitytags_wol = "${apiUrl}community-zone-tags-without-login";
+  static const String wallet_money = "${apiUrl}users/my-wallet";
+  // static const String guestcommunitytags_wol =
+  //     "${apiUrl}community-zone-tags-without-login";
 
   /// Mentee
 

@@ -70,7 +70,6 @@ import 'package:flutter/material.dart';
                 fontWeight: FontWeight.w600,
                 color: Color(0xff333333),
 
-
               ),
             ),
             const SizedBox(height: 8),
@@ -171,7 +170,7 @@ import 'package:flutter/material.dart';
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0), // adjust the radius as needed
+                        borderRadius: BorderRadius.circular(5), // adjust the radius as needed
                       ),
                       backgroundColor: const Color(0xff315DEA),
                       padding: const EdgeInsets.all(12), // you can adjust padding if needed

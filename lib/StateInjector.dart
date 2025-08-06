@@ -8,6 +8,8 @@ import 'package:mentivisor/bloc/Register/Register_Cubit.dart';
 import 'package:mentivisor/bloc/Register/Register_Repository.dart';
 import 'package:mentivisor/bloc/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'package:mentivisor/bloc/Verify_Otp/Verify_Otp_Repository.dart';
+import 'package:mentivisor/bloc/WalletMoney/WalletMoney_Cubit.dart';
+import 'package:mentivisor/bloc/WalletMoney/Walletmoney_Repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import '../services/remote_data_source.dart';
 import 'bloc/GetBanners/GetBannersRepository.dart';
@@ -16,6 +18,7 @@ import 'bloc/Mentee/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'bloc/Mentee/CampusMentorList/campus_mentor_list_repo.dart';
 import 'bloc/Mentee/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'bloc/Mentee/StudyZoneTags/StudyZoneTagsRepository.dart';
+
 
 class StateInjector {
   static final repositoryProviders = <RepositoryProvider>[
@@ -38,6 +41,10 @@ class StateInjector {
     RepositoryProvider<Getbannersrepository>(
       create: (context) =>
           BannersImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<WalletmoneyRepository>(
+      create: (context) =>
+          walletmoneyImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
     RepositoryProvider<CampusMentorListRepository>(
@@ -84,6 +91,10 @@ class StateInjector {
     BlocProvider<MentorProfileCubit>(
       create: (context) =>
           MentorProfileCubit(context.read<MentorProfileRepository>()),
+    ),
+    BlocProvider<WalletmoneyCubit>(
+      create: (context) =>
+          WalletmoneyCubit(context.read<WalletmoneyRepository>()),
     ),
   ];
 }

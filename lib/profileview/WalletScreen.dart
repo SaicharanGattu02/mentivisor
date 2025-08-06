@@ -1,247 +1,215 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/bloc/WalletMoney/WalletMoney_Cubit.dart';
+import 'package:mentivisor/bloc/WalletMoney/WalletMoney_State.dart';
 
-class WalletScreen extends StatelessWidget {
-  const WalletScreen({Key? key}) : super(key: key);
+class Walletscreen extends StatefulWidget {
+  const Walletscreen({Key? key}) : super(key: key);
 
-  // Sample data for achievements
-  final List<_Achievement> _achievements = const [
-    _Achievement(
-      title: 'Sessions Completed',
-      count: 3,
-      coins: 120,
-      icon: Icons.fitness_center,
-    ),
-    _Achievement(
-      title: 'Daily Check‑ins',
-      count: 7,
-      coins: 35,
-      icon: Icons.calendar_today,
-    ),
-    _Achievement(
-      title: 'Profile Updates',
-      count: 3,
-      coins: 15,
-      icon: Icons.person,
-    ),
-    _Achievement(
-      title: 'Reviews Given',
-      count: 5,
-      coins: 25,
-      icon: Icons.rate_review,
-    ),
-  ];
+  @override
+  State<Walletscreen> createState() => _WalletscreenState();
+}
+
+class _WalletscreenState extends State<Walletscreen> {
+  @override
+  void initState() {
+    context.read<WalletmoneyCubit>().getwalletmoney();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                Text(
-                  'My Wallet',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Manage your coins and track your earnings',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+      backgroundColor: const Color(0xffFFF8EC), // Light yellow background
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Center(
+          child: Text(
+            'Book Session',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // Blue
+              fontFamily: 'Segoe',
+            ),
+          ),
+        ),
 
-                const SizedBox(height: 24),
-
-                // Gradient balance card
-                Container(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4),
+          child: const Text(
+            'Manage your coins and track your earnings',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF666666), // Grey
+              fontFamily: 'Segoe',
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Balance Section
+          BlocBuilder<WalletmoneyCubit, WalletmoneyState>(
+            builder: (context, state) {
+              if (state is WalletmoneyStateLoading) {
+                return Center(child: CircularProgressIndicator());
+              } else if (state is WalletmoneyStateLoaded) {
+                final coins = state.walletResponseModel.data?.wallet;
+                return Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD54F), Color(0xFFFFA726)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFFFA726), // Orange start
+                        Color(0xFFFF9800), // Orange end
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
                   ),
                   child: Column(
                     children: [
-                      // Coin icon
-                      const Icon(Icons.monetization_on, size: 40, color: Colors.white70),
-
-                      const SizedBox(height: 16),
-
-                      // Balance label
-                      Text(
-                        'Current Balance',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70),
+                      const Icon(
+                        Icons.monetization_on,
+                        size: 40,
+                        color: Colors.white,
                       ),
-
-                      const SizedBox(height: 8),
-
-                      // Balance amount
-                      Text(
-                        '150',
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Current Balance',
+                        style: TextStyle(
+                          fontSize: 16,
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Segoe',
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // Earned / Spent row
+                      Text(
+                        coins?.currentBalance ?? "0",
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'Segoe',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text('Total Earned', style: TextStyle(color: Colors.white70)),
-                              SizedBox(height: 4),
-                              Text('480', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            children: [
+                              Text(
+                                'Total Earned',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  fontFamily: 'Segoe',
+                                ),
+                              ),
+                              Text(
+                                coins?.totalEarned ?? "",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'Segoe',
+                                ),
+                              ),
                             ],
                           ),
+                          const SizedBox(width: 32),
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const [
-                              Text('Total Spent', style: TextStyle(color: Colors.white70)),
-                              SizedBox(height: 4),
-                              Text('330', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            children: [
+                              Text(
+                                'Total Spent',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  fontFamily: 'Segoe',
+                                ),
+                              ),
+                              Text(
+                                coins?.totalSpent ?? "",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'Segoe',
+                                ),
+                              ),
                             ],
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // Buy coins button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.add_circle_outline),
-                          label: const Text('Buy Coins'),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.orange, backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.add,
+                          size: 18,
+                          color: Color(0xFF8A56AC),
+                        ),
+                        label: const Text(
+                          'Buy Coins',
+                          style: TextStyle(
+                            fontFamily: 'Segoe',
+                            fontSize: 16,
+                            color: Color(0xFF8A56AC),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 16,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Daily Check‑in card
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        // Gift icon
-                        const Icon(Icons.card_giftcard, size: 32, color: Colors.purple),
-                        const SizedBox(width: 12),
-                        // Texts + button
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Daily Check‑in',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text('Current Streak: 7 days'),
-                              const Text('Earn 5 coins per day + bonus for streaks!'),
-                            ],
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('Check In Today'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                        ),
-                      ],
-                    ),
+                );
+              } else if (state is WalletmoneyStateFailure) {
+                return Text(state.msg);
+              }
+              return SizedBox.shrink();
+            },
+          ),
+          const SizedBox(height: 16),
+          // Coin History & Achievements
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Coin History',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF121212),
+                    fontFamily: 'Segoe',
                   ),
                 ),
-
-                const SizedBox(height: 24),
-
-                // Achievements header
-                Text(
-                  'Your Achievements',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-
-                // Achievements list
-                Column(
-                  children: _achievements
-                      .map((ach) => _AchievementTile(achievement: ach))
-                      .toList(),
+                const Text(
+                  'Achievements',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF121212),
+                    fontFamily: 'Segoe',
+                  ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Model for achievement
-class _Achievement {
-  final String title;
-  final int count;
-  final int coins;
-  final IconData icon;
-
-  const _Achievement({
-    required this.title,
-    required this.count,
-    required this.coins,
-    required this.icon,
-  });
-}
-
-// Individual achievement row
-class _AchievementTile extends StatelessWidget {
-  final _Achievement achievement;
-
-  const _AchievementTile({Key? key, required this.achievement}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Icon(achievement.icon, color: Colors.deepPurple),
-        ),
-        title: Text(achievement.title),
-        subtitle: Text('${achievement.count} completed'),
-        trailing: Text(
-          '+${achievement.coins}',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.deepPurple,
-          ),
-        ),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }

@@ -23,6 +23,7 @@ import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
+import 'package:mentivisor/profileview/WalletScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/MentorDashBoard.dart';
@@ -59,6 +60,12 @@ final GoRouter appRouter = GoRouter(
       path: '/chart_screen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(ChartScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/wallet',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(Walletscreen(), state);
       },
     ),
     GoRoute(

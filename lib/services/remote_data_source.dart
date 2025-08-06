@@ -5,6 +5,7 @@ import 'package:mentivisor/Models/CommunityGuest_Model.dart';
 import 'package:mentivisor/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Models/GetBooksRespModel.dart';
 import 'package:mentivisor/Models/LoginResponseModel.dart';
+import 'package:mentivisor/Models/MenteeModels/WalletResponseModel.dart';
 import 'package:mentivisor/Models/OnCampouseRespModel.dart';
 import 'package:mentivisor/Models/StudyZoneDownloadModel_wo_log.dart';
 import 'package:mentivisor/Models/TopMentersResponseModel.dart';
@@ -38,6 +39,7 @@ abstract class RemoteDataSource {
   Future<CommunityGuest_Model?> guestcommunitytags();
 
   ///
+  Future<WalletResponseModel?> getwalletmoney();
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
@@ -284,5 +286,25 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       AppLogger.error('MentorProfile::${e}');
       return null;
     }
+
   }
+
+  @override
+  Future<WalletResponseModel?>getwalletmoney() async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.wallet_money}",
+
+      );
+      AppLogger.log('get walletmoney::${res.data}');
+      return WalletResponseModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('walletmoney::${e}');
+
+      return null;
+    }
+
+
+  }
+
 }
