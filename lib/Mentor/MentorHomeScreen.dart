@@ -14,7 +14,6 @@ class MentorHomeScreen extends StatefulWidget {
 }
 
 class _MentorHomeScreenState extends State<MentorHomeScreen> {
-
   final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 
   final List<String> bannerData = [
@@ -34,7 +33,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
@@ -43,6 +42,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 20),
             CarouselSlider(
               options: CarouselOptions(
                 height: SizeConfig.screenHeight * 0.2,

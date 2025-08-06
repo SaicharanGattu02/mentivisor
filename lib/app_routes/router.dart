@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/EEC/AddEventScreen.dart';
 import 'package:mentivisor/EEC/EccScreen.dart';
+import 'package:mentivisor/Mentor/CancelSessionScreen.dart';
+import 'package:mentivisor/Mentor/MenteeListScreen.dart';
+import 'package:mentivisor/Mentor/SessionDetailScreen.dart';
 import 'package:mentivisor/newscreens/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/AddResourceScreen.dart';
 import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
@@ -67,12 +70,6 @@ final GoRouter appRouter = GoRouter(
       path: '/viewall_mentorsscreen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(ViewAllMentorsScreen(), state);
-      },
-    ),
-    GoRoute(
-      path: '/mentor_dashboard',
-      pageBuilder: (context, state) {
-        return buildSlideTransitionPage(MentorDashboard(), state);
       },
     ),
     GoRoute(
@@ -272,6 +269,42 @@ final GoRouter appRouter = GoRouter(
       path: '/book_sessions_screen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(BookSessionScreen(), state),
+    ),
+
+
+
+
+
+
+
+
+
+
+    //// Mentor routes
+    GoRoute(
+      path: '/mentor_dashboard',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(MentorDashboard(), state);
+      },
+    ),
+    GoRoute(
+      path: '/cancel_session',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(CancelSessionScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/session_details',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(SessionDetailScreen(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/mentees_list',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(MenteeListScreen(), state);
+      },
     ),
   ],
 );

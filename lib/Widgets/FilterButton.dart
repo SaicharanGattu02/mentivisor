@@ -15,23 +15,26 @@ class FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 37,
+      height: 40,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? primarycolor1.withOpacity(0.1) : primarycolor1,
-          foregroundColor: isSelected ? Colors.white : Colors.blue,
+          backgroundColor: isSelected
+              ? primarycolor1.withOpacity(0.1)
+              : Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          elevation: isSelected ? 4 : 0,
+          shadowColor: Colors.transparent,
+          overlayColor: Colors.transparent,
+          elevation: 0,
         ),
         child: Text(
           text,
           style: TextStyle(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? primarycolor1 : Colors.transparent,
+            color: isSelected ? primarycolor1 : Color(0xff666666),
           ),
         ),
       ),

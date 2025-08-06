@@ -43,7 +43,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
       sessionImage: 'assets/images/image.png', // Replace with your image asset
       sessionTopics: 'Lorem Ipsum is simply dummy text of the printing...',
       buttonText: 'Message from Ramesh',
-      buttonIcon: 'assets/message_icon.png', // Replace with your icon asset
+      buttonIcon: 'assets/icons/chaticon.png', // Replace with your icon asset
     ),
     // Completed session
     Session(
@@ -54,7 +54,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
       sessionImage: 'assets/images/image.png', // Replace with your image asset
       sessionTopics: 'Lorem Ipsum has been the...',
       buttonText: 'Report Mentee',
-      buttonIcon: 'assets/report_icon.png', // Replace with your icon asset
+      buttonIcon: 'assets/icons/report.png', // Replace with your icon asset
     ),
     // Cancelled session
     Session(
@@ -65,7 +65,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
       sessionImage: 'assets/images/image.png', // Replace with your image asset
       sessionTopics: 'Lorem Ipsum is simply dummy text...',
       buttonText: 'No Action',
-      buttonIcon: 'assets/no_action_icon.png', // Replace with your icon asset
+      buttonIcon: 'assets/icons/chaticon.png', // Replace with your icon asset
       reason: 'Session was cancelled due to unforeseen circumstances.',
     ),
   ];
@@ -89,8 +89,13 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+      body: Container(
         padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xffFAF5FF), Color(0xffF5F6FF), Color(0xffEFF6FF)],
+          ),
+        ),
         child: Column(
           spacing: 10,
           children: [
@@ -99,7 +104,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Color(0xffDBE5FB),
-                borderRadius: BorderRadius.circular(36)
+                borderRadius: BorderRadius.circular(36),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -153,7 +158,8 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                         reason: filteredSessions[index].reason ?? '',
                         buttonText: filteredSessions[index].buttonText,
                         buttonIcon: filteredSessions[index].buttonIcon,
-                        remainingTime: filteredSessions[index].status == 'Upcoming'
+                        remainingTime:
+                            filteredSessions[index].status == 'Upcoming'
                             ? filteredSessions[index].sessionTime
                             : '',
                       );
