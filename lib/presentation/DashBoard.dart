@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import '../newscreens/CommunityScreen.dart';
-import '../newscreens/NewHomeScreens.dart';
+import '../newscreens/MenteeHomeScreens.dart';
 import '../studyzone/StudyzoneScreens.dart';
 import '../EEC/EccScreen.dart';
 
@@ -46,10 +46,10 @@ class _DashboardState extends State<Dashboard> {
           setState(() => _selectedIndex = i);
         },
         children: [
-          HomeScreennew(),
+          MenteeHomeScreen(),
           StudyZoneScreen(),
-          EccScreen(), // ECC
-          Communityscreen(), // Community
+          EccScreen(),
+          Communityscreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(),

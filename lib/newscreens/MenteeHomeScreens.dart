@@ -1,5 +1,3 @@
-// lib/screens/HomeScreennew.dart
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +10,14 @@ import 'package:mentivisor/bloc/TopMentors/TopMentors_State.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomeScreennew extends StatefulWidget {
-  const HomeScreennew({Key? key}) : super(key: key);
+class MenteeHomeScreen extends StatefulWidget {
+  const MenteeHomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreennewState createState() => _HomeScreennewState();
+  _MenteeHomeScreenState createState() => _MenteeHomeScreenState();
 }
 
-class _HomeScreennewState extends State<HomeScreennew> {
-  int _selectedBottomIndex = 0;
+class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   int _selectedToggleIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -61,7 +58,7 @@ class _HomeScreennewState extends State<HomeScreennew> {
         Navigator.pushNamed(context, '/become-mentor');
         break;
       case 'Logout':
-        _handleLogout();
+        // _handleLogout();
         break;
       case 'View All':
         Navigator.pushNamed(context, '/mentors');
@@ -69,12 +66,7 @@ class _HomeScreennewState extends State<HomeScreennew> {
     }
   }
 
-  void _handleLogout() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Logged out successfully')));
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
-  }
+
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
@@ -266,7 +258,6 @@ class _HomeScreennewState extends State<HomeScreennew> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // BANNERS
               BlocBuilder<Getbannerscubit, Getbannersstate>(
                 builder: (context, state) {
                   if (state is GetbannersStateLoading) {

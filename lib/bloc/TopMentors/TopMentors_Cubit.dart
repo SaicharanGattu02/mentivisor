@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'TopMentors_Repository.dart';
 import 'TopMentors_State.dart';
 
-class TopmentorsCubit extends Cubit<TopmentorsState> {
-  TopmentorsRepository topmentorsRepository;
+class OnCampusMentors extends Cubit<TopmentorsState> {
+  OnCampusMentors topmentorsRepository;
 
   TopmentorsCubit(this.topmentorsRepository) : super(TopmentorStateIntially());
 
