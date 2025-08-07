@@ -7,8 +7,8 @@ class StudyZoneReportInitial extends StudyZoneReportState {}
 class StudyZoneReportLoading extends StudyZoneReportState {}
 
 class StudyZoneReportSuccess extends StudyZoneReportState {
-  final StudyZoneReportModel studyZoneReportModel;
-  StudyZoneReportSuccess(this.studyZoneReportModel);
+  final SuccessModel successModel;
+  StudyZoneReportSuccess(this.successModel);
 }
 
 class StudyZoneReportFailure extends StudyZoneReportState {

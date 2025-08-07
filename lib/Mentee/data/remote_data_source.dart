@@ -57,7 +57,7 @@ abstract class RemoteDataSource {
   );
   Future<CommunityPostsModel?> getCommunityPosts(int page);
   Future<DownloadsModel?> getDownloads(int page);
-  Future<StudyZoneReportModel?> postStudyZoneReport(Map<String, dynamic> data);
+  Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -390,7 +390,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<StudyZoneReportModel?> postStudyZoneReport(
+  Future<SuccessModel?> postStudyZoneReport(
     Map<String, dynamic> data,
   ) async {
     final formData = await buildFormData(data);
@@ -400,7 +400,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         data: formData,
       );
       AppLogger.log('StudyZone Report::${res.data}');
-      return StudyZoneReportModel.fromJson(res.data);
+      return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('StudyZone Report ::${e}');
 
