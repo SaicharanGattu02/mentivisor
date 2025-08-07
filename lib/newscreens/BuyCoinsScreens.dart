@@ -10,16 +10,6 @@ class BuyCoinsScreens extends StatefulWidget {
 }
 
 class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
-  // final List<CoinPackage> _packages = [
-  //   CoinPackage(coins: 1600, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 200, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 1000, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 1200, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 1600, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 200, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 1000, original: 500, price: 300, discountPercent: 45),
-  //   CoinPackage(coins: 1200, original: 500, price: 300, discountPercent: 45),
-  // ];
 
   int _selectedIndex = -1;
 
@@ -105,11 +95,8 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                             ),
                             child: Column(
                               children: [
-                                const Icon(
-                                  Icons.monetization_on,
-                                  size: 28,
-                                  color: Color(0xFFFFB300),
-                                ),
+                                 Image.asset("assets/images/GoldCoins.png",width: 32,height: 32),
+
                                 const SizedBox(height: 6),
                                 Text(
                                   "10",

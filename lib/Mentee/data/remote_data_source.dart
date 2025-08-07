@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mentivisor/Models/CoinsPackRespModel.dart';
 import 'package:mentivisor/Models/CommunityGuest_Model.dart';
 import 'package:mentivisor/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Models/GetBooksRespModel.dart';
@@ -41,6 +42,7 @@ abstract class RemoteDataSource {
 
   ///
   Future<WalletResponseModel?> getwalletmoney();
+  Future<CoinsPackRespModel?> getcoinspack();
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
@@ -329,6 +331,19 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return WalletResponseModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('walletmoney::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<CoinsPackRespModel?> getcoinspack() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.coins_pack}");
+      AppLogger.log('get coins pack::${res.data}');
+      return CoinsPackRespModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('coins pack::${e}');
 
       return null;
     }

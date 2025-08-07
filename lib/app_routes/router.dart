@@ -32,6 +32,7 @@ import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../newscreens/AcadamicJourneyScreen.dart';
+import '../newscreens/BuyCoinsScreens.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
@@ -50,9 +51,15 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/',
+      path: '/splash',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(BuyCoinsScreens(), state);
       },
     ),
     GoRoute(
