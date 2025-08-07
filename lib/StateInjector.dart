@@ -1,24 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mentivisor/bloc/GetBanners/GetBannersCubit.dart';
-import 'package:mentivisor/bloc/Login/LoginCubit.dart';
-import 'package:mentivisor/bloc/Mentee/MentorProfile/MentorProfileCubit.dart';
-import 'package:mentivisor/bloc/Mentee/MentorProfile/MentorProfileRepository.dart';
-import 'package:mentivisor/bloc/On_Campouse/OnCampus_Repository.dart';
-import 'package:mentivisor/bloc/Register/Register_Cubit.dart';
-import 'package:mentivisor/bloc/Register/Register_Repository.dart';
-import 'package:mentivisor/bloc/Verify_Otp/Verify_Otp_Cubit.dart';
-import 'package:mentivisor/bloc/Verify_Otp/Verify_Otp_Repository.dart';
-import 'package:mentivisor/bloc/WalletMoney/WalletMoney_Cubit.dart';
-import 'package:mentivisor/bloc/WalletMoney/Walletmoney_Repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
-import '../services/remote_data_source.dart';
-import 'bloc/GetBanners/GetBannersRepository.dart';
-import 'bloc/Login/LoginRepository.dart';
-import 'bloc/Mentee/CampusMentorList/campus_mentor_list_cubit.dart';
-import 'bloc/Mentee/CampusMentorList/campus_mentor_list_repo.dart';
-import 'bloc/Mentee/StudyZoneTags/StudyZoneTagsCubit.dart';
-import 'bloc/Mentee/StudyZoneTags/StudyZoneTagsRepository.dart';
-
+import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
+import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
+import 'Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
+import 'Mentee/data/cubits/GetBanners/GetBannersRepository.dart';
+import 'Mentee/data/cubits/Login/LoginCubit.dart';
+import 'Mentee/data/cubits/Login/LoginRepository.dart';
+import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
+import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
+import 'Mentee/data/cubits/Register/Register_Cubit.dart';
+import 'Mentee/data/cubits/Register/Register_Repository.dart';
+import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
+import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
+import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
+import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
+import 'Mentee/data/remote_data_source.dart';
 
 class StateInjector {
   static final repositoryProviders = <RepositoryProvider>[
@@ -42,11 +38,11 @@ class StateInjector {
       create: (context) =>
           BannersImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
-    RepositoryProvider<WalletmoneyRepository>(
-      create: (context) =>
-          walletmoneyImpl(remoteDataSource: context.read<RemoteDataSource>()),
-    ),
 
+    // RepositoryProvider<WalletmoneyRepository>(
+    //   create: (context) =>
+    //       walletmoneyImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    // ),
     RepositoryProvider<CampusMentorListRepository>(
       create: (context) => CampusMentorListRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
@@ -92,9 +88,9 @@ class StateInjector {
       create: (context) =>
           MentorProfileCubit(context.read<MentorProfileRepository>()),
     ),
-    BlocProvider<WalletmoneyCubit>(
-      create: (context) =>
-          WalletmoneyCubit(context.read<WalletmoneyRepository>()),
-    ),
+    // BlocProvider<WalletmoneyCubit>(
+    //   create: (context) =>
+    //       WalletmoneyCubit(context.read<WalletmoneyRepository>()),
+    // ),
   ];
 }
