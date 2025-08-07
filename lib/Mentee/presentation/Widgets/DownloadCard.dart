@@ -49,21 +49,18 @@ class DownloadCard extends StatelessWidget {
                     spacing: 6.0, // space between tags
                     children:
                         downloads.tag?.map((tag) {
-                          return Chip(
-                            label: Text(
-                              tag,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueAccent,
-                              ),
+                          return Text(
+                            tag,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
-                            backgroundColor: Colors.blue.withOpacity(0.1),
                           );
                         }).toList() ??
                         [],
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 15),
                   CustomOutlinedButton(text: "View", radius: 24, onTap: () {}),
                 ],
               ),

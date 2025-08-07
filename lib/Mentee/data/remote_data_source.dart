@@ -42,14 +42,13 @@ abstract class RemoteDataSource {
   Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin();
   Future<EccGuestlist_Model?> eccguestlist();
   Future<CommunityGuest_Model?> guestcommunitytags();
-
-  ///
   Future<WalletResponseModel?> getwalletmoney();
   Future<CoinsPackRespModel?> getcoinspack();
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(int page);
+  Future<SuccessModel?> addEcc(Map<String, dynamic> data);
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
     String tag,
@@ -83,6 +82,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       }
     }
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<SuccessModel?> addEcc(Map<String, dynamic> data) async {
+    try {
+      final formdata = await buildFormData(data);
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.add_ecc}",
+        data: formdata,
+      );
+      debugPrint('Error addEcc::$res');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error addEcc::$e');
+      return null;
+    }
   }
 
   @override
@@ -390,9 +405,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SuccessModel?> postStudyZoneReport(
-    Map<String, dynamic> data,
-  ) async {
+  Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.post(

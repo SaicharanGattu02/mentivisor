@@ -53,6 +53,7 @@ dependencies:
   carousel_slider: ^5.1.1
   url_launcher: ^6.1.7
   flutter_secure_storage: ^9.2.4
+  image_picker: ^1.1.2
 
 
 
