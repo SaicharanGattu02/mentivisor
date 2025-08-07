@@ -1,5 +1,5 @@
 import '../../../Models/StudyZoneCampusModel.dart';
-import '../../../Models/StudyZoneReportModel.dart';
+import '../../../Models/SuccessModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class StudyZoneReportRepository {

@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/newscreens/AddPostScreen.dart';
-import 'package:mentivisor/newscreens/AddResourceScreen.dart';
+import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
 import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
@@ -73,15 +73,8 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-    //
-    // GoRoute(
-    //   path: '/buy_coins',
-    //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(BuyCoinsScreens(), state);
-    //   },
-    // ),
     GoRoute(
-      path: '/addresource',
+      path: '/add_resource',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(AddResourceScreen(), state),
     ),

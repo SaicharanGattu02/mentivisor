@@ -1,4 +1,4 @@
-import 'package:mentivisor/Mentee/Models/StudyZoneReportModel.dart';
+import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
 
 abstract class StudyZoneReportState {}
 

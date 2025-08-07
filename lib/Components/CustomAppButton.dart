@@ -103,7 +103,7 @@ class CustomAppButton1 extends StatelessWidget {
   Widget build(BuildContext context) {
     final double buttonWidth = width ?? MediaQuery.of(context).size.width;
     final double buttonHeight = height ?? 50;
-    final int borderRadius = radius ?? 12;
+    final int borderRadius = radius ?? 24;
     final Color textColor = textcolor ?? Colors.white;
 
     return SizedBox(

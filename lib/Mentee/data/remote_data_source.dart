@@ -22,7 +22,7 @@ import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
 import '../Models/ECCModel.dart';
 import '../Models/MentorProfileModel.dart';
-import '../Models/StudyZoneReportModel.dart';
+import '../Models/SuccessModel.dart';
 import '../Models/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';

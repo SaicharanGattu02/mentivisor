@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportState.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../utils/media_query_helper.dart';
@@ -25,7 +29,7 @@ class ResourceDetailScreen extends StatelessWidget {
               borderRadius: BorderRadiusGeometry.circular(4),
               child: CachedNetworkImage(
                 width: SizeConfig.screenWidth,
-                height: 144,
+                height: 200,
                 imageUrl: studyZoneCampusData.image ?? "",
                 fit: BoxFit.cover,
                 placeholder: (context, url) => SizedBox(
@@ -272,6 +276,9 @@ class ResourceDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+
+
+
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 24),
@@ -280,7 +287,6 @@ class ResourceDetailScreen extends StatelessWidget {
       ),
     );
   }
-
 
   void _showReportSheet(BuildContext context) {
     String _selected = 'False Information';
@@ -363,7 +369,9 @@ class ResourceDetailScreen extends StatelessWidget {
                           });
                         },
                         activeColor: const Color(0xFF4A00E0),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ),
                       );
                     }).toList(),
                   ),
@@ -388,23 +396,32 @@ class ResourceDetailScreen extends StatelessWidget {
                   ],
                   const SizedBox(height: 24),
                   // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: CustomAppButton1(text: "Submit Report", onPlusTap: (){
-                        final Map<String,dynamic> data={
-
-                        };
-                      })
-                    ),
+                  BlocConsumer<StudyZoneReportCubit, StudyZoneReportState>(
+                    listener: (context, state) {
+                      if (state is StudyZoneReportSuccess) {
+                        context.pop();
+                      } else if (state is StudyZoneReportFailure) {
+                        return CustomSnackBar1.show(
+                          context,
+                          state.message ?? "",
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return CustomAppButton1(
+                        isLoading: state is StudyZoneReportLoading,
+                        text: "Submit Report",
+                        onPlusTap: () {
+                          final Map<String, dynamic> data = {
+                            "content_id": studyZoneCampusData.id,
+                            "reason": _selected,
+                          };
+                          context
+                              .read<StudyZoneReportCubit>()
+                              .postStudyZoneReport(data);
+                        },
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
                 ],

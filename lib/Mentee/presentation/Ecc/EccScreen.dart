@@ -247,8 +247,6 @@ class _EccScreenState extends State<EccScreen> {
           ),
         ),
       ),
-
-      // Floating “+” button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.push("/addeventscreen");
