@@ -12,6 +12,8 @@ import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
 import 'Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'Mentee/data/cubits/Register/Register_Repository.dart';
+import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
+import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusRepository.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
@@ -41,10 +43,6 @@ class StateInjector {
           BannersImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
-    // RepositoryProvider<WalletmoneyRepository>(
-    //   create: (context) =>
-    //       walletmoneyImpl(remoteDataSource: context.read<RemoteDataSource>()),
-    // ),
     RepositoryProvider<CampusMentorListRepository>(
       create: (context) => CampusMentorListRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
@@ -58,6 +56,11 @@ class StateInjector {
     ),
     RepositoryProvider<MentorProfileRepository>(
       create: (context) => MentorProfileRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<StudyZoneCampusRepository>(
+      create: (context) => StudyZoneCampusRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
@@ -97,9 +100,9 @@ class StateInjector {
     BlocProvider<ECCCubit>(
       create: (context) => ECCCubit(context.read<ECCRepository>()),
     ),
-    // BlocProvider<WalletmoneyCubit>(
-    //   create: (context) =>
-    //       WalletmoneyCubit(context.read<WalletmoneyRepository>()),
-    // ),
+    BlocProvider<StudyZoneCampusCubit>(
+      create: (context) =>
+          StudyZoneCampusCubit(context.read<StudyZoneCampusRepository>()),
+    ),
   ];
 }

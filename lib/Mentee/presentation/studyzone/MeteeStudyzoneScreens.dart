@@ -1,7 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusState.dart';
 
+import '../../../utils/color_constants.dart';
 import '../../data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import '../../data/cubits/StudyZoneTags/StudyZoneTagsState.dart';
 
@@ -14,29 +21,15 @@ class MenteeStudyZone extends StatefulWidget {
 
 class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   bool _onCampus = true;
-  String _searchText = '';
   int _selectedTagIndex = -1;
 
   final TextEditingController _searchController = TextEditingController();
-
-  final List<Map<String, String>> _resources = List.generate(
-    5,
-    (i) => {
-      'image': 'https://via.placeholder.com/120.png?text=DSA',
-      'title': 'Complete DSA Roadmap 2024',
-      'subtitle':
-          'Compressive Guide Covering all data Structures and algorithms',
-      'tag': ['DSA', 'Aptitude', 'Java', 'Python', 'System'][i % 5],
-    },
-  );
-
+  Timer? _debounce;
   @override
   void initState() {
     super.initState();
     context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
-    _searchController.addListener(() {
-      setState(() => _searchText = _searchController.text);
-    });
+    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "");
   }
 
   @override
@@ -45,192 +38,315 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
     super.dispose();
   }
 
-  void _onAddResource() {
-    // handle FAB tap
-  }
-
+  String searchQuery = '';
+  final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Study Zone',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF121212),
-                fontFamily: 'Segoe',
-              ),
-            ),
-            Text(
-              'Download and share your study resources',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-                fontFamily: 'Segoe',
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8EBF7),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              padding: const EdgeInsets.all(4),
-              child: Row(
-                children: [
-                  _buildToggle('On Campus', _onCampus, () {
-                    setState(() => _onCampus = true);
-                  }),
-                  const SizedBox(width: 8),
-                  _buildToggle('Beyond Campus', !_onCampus, () {
-                    setState(() => _onCampus = false);
-                  }),
-                ],
-              ),
-            ),
-          ),
-
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _searchController,
-                style: const TextStyle(fontFamily: 'Segoe'),
-                decoration: InputDecoration(
-                  hintText: 'Search your Topics',
-                  hintStyle: const TextStyle(fontFamily: 'Segoe'),
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
+      appBar: CustomAppBar1(title: "Study Zone", actions: []),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            children: [
+              // Toggle Row
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8EBF7),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  children: [
+                    _buildToggle('On Campus', _onCampus, () {
+                      setState(() => _onCampus = true);
+                    }),
+                    const SizedBox(width: 8),
+                    _buildToggle('Beyond Campus', !_onCampus, () {
+                      setState(() => _onCampus = false);
+                    }),
+                  ],
                 ),
               ),
-            ),
-          ),
+              const SizedBox(height: 12),
 
-          const SizedBox(height: 12),
-
-          BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
-            builder: (context, state) {
-              if (state is StudyZoneTagsLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is StudyZoneTagsFailure) {
-                return Center(child: Text(state.msg));
-              } else if (state is StudyZoneTagsLoaded) {
-                final tags = state.studyZoneTagsModel.tags;
-                return SizedBox(
-                  height: 42,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: tags?.length ?? 0,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
-                    itemBuilder: (ctx, i) {
-                      final tagItem = tags![i];
-                      final isSelected = _selectedTagIndex == i;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? const Color(0xFFEDEBFF)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: isSelected
-                                ? Colors.transparent
-                                : const Color(0xFFE0E0E0),
-                          ),
-                          boxShadow: isSelected
-                              ? [
-                                  const BoxShadow(
-                                    color: Color(0xFFDDDFFF),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedTagIndex = i;
-                            });
-                          },
-                          child: Center(
-                            child: Text(
-                              tagItem,
-                              style: TextStyle(
-                                fontFamily: 'Segoe',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
+              // Search Field
+              SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: searchController,
+                  cursorColor: primarycolor,
+                  onChanged: (query) {
+                    if (_debounce?.isActive ?? false) _debounce!.cancel();
+                    _debounce = Timer(const Duration(milliseconds: 300), () {
+                      context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
+                        "",
+                        "",
+                      );
+                    });
+                  },
+                  style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
+                  decoration: InputDecoration(
+                    hintText: 'Search by employee name, phone',
+                    prefixIcon: const Icon(Icons.search),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: BorderSide(color: primarycolor, width: 0.5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: BorderSide(color: primarycolor, width: 0.5),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
+                builder: (context, state) {
+                  if (state is StudyZoneTagsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is StudyZoneTagsFailure) {
+                    return Center(child: Text(state.msg));
+                  } else if (state is StudyZoneTagsLoaded) {
+                    final tags = state.studyZoneTagsModel.tags;
+                    return SizedBox(
+                      height: 42,
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: tags?.length ?? 0,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (ctx, i) {
+                          final tagItem = tags![i];
+                          final isSelected = _selectedTagIndex == i;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? const Color(0xFFEDEBFF)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
                                 color: isSelected
-                                    ? const Color(0xFF2563EB)
-                                    : const Color(0xFF555555),
+                                    ? Colors.transparent
+                                    : const Color(0xFFE0E0E0),
                               ),
+                              boxShadow: isSelected
+                                  ? [
+                                const BoxShadow(
+                                  color: Color(0xFFDDDFFF),
+                                  blurRadius: 8,
+                                  offset: Offset(0, 2),
+                                ),
+                              ]
+                                  : null,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedTagIndex = i;
+                                });
+                              },
+                              child: Center(
+                                child: Text(
+                                  tagItem,
+                                  style: TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    color: isSelected
+                                        ? const Color(0xFF2563EB)
+                                        : const Color(0xFF555555),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              const SizedBox(height: 12),
+              BlocBuilder<StudyZoneCampusCubit,StudyZoneCampusState>(builder:(context, state) {
+                if (state is StudyZoneCampusLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is StudyZoneCampusFailure) {
+                  return Center(child: Text(state.message));
+                }else if(state is StudyZoneCampusLoaded){
+                  return Expanded(
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverPadding(
+                          padding: EdgeInsets.all(0),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final campusList =state.studyZoneCampusModel.studyZoneData?.data![index];
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                    color: const Color(0xFFEFF4FF),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:  BorderRadius.all(Radius.circular(8)
+                                        ),
+                                        child: Image.network(
+                                          campusList?.image??"",
+                                          height: 180,
+                                          width: 140,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+
+                                      // Right Content
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                               Text(
+                                                campusList?.name??"",
+                                                style: TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12,
+                                                  height: 1,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                               Text(
+                                                 campusList?.description??"",
+                                                style: TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 11,
+                                                  height: 1,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              if ((campusList?.tag?.isNotEmpty ?? false))
+                                                Wrap(
+                                                  spacing: 8,
+                                                  runSpacing: 8,
+                                                  children: campusList!.tag!.map((tag) {
+                                                    return Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(20),
+                                                      ),
+                                                      child: Text(
+                                                        tag,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'segeo',
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+
+
+                                              const SizedBox(height: 16),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: OutlinedButton(
+                                                      onPressed: () {},
+                                                      style: OutlinedButton.styleFrom(
+                                                        side: const BorderSide(
+                                                          color: Color(0xFF6D6BFF),
+                                                        ),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                          BorderRadius.circular(28),
+                                                        ),
+                                                      ),
+                                                      child: const Text(
+                                                        'View',
+                                                        style: TextStyle(
+                                                          fontFamily: 'segeo',
+                                                          color: Color(0xFF6D6BFF),
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  Expanded(
+                                                    child: CustomAppButton1(
+                                                      text: "Download",
+                                                      onPlusTap: () {},
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              childCount: 3,
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+                      ],
+                    ),
+                  );
+                }else {
+                  return SizedBox.shrink();
+                }
 
-          SizedBox(height: 12),
-        ],
+              } ,
+
+              ),
+            ],
+          ),
+        ),
       ),
 
-      // Floating “+” button
-      // floatingActionButton: Container(
-      //   height: 64,
-      //   width: 64,
-      //   decoration: const BoxDecoration(
-      //     shape: BoxShape.circle,
-      //     gradient: LinearGradient(
-      //       colors: [grad1, grad2, grad3],
-      //       begin: Alignment.topLeft,
-      //       end: Alignment.bottomRight,
-      //     ),
-      //     boxShadow: [
-      //       BoxShadow(
-      //         color: Colors.black26,
-      //         blurRadius: 12,
-      //         offset: Offset(0, 6),
-      //       ),
-      //     ],
-      //   ),
-      //   child: FloatingActionButton(
-      //     onPressed: _onAddResource,
-      //     backgroundColor: Colors.transparent,
-      //     elevation: 0,
-      //     child: const Icon(Icons.add, size: 32),
-      //   ),
-      // ),
+
+      floatingActionButton: Container(
+        height: 64,
+        width: 64,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 12,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.add, size: 32),
+        ),
+      ),
     );
   }
 
@@ -253,7 +369,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
             child: Text(
               label,
               style: TextStyle(
-                fontFamily: 'Segoe',
+                fontFamily: 'segeosegeo',
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
                 color: active ? const Color(0xFF4076ED) : Colors.black54,

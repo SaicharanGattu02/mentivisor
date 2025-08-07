@@ -37,4 +37,5 @@ class APIEndpointUrls {
   static const String study_zone_tags = "${userUrl}study-zone/tags";
   static const String mentor_profile = "${userUrl}mentors";
   static const String list_ecc = "${userUrl}list-ecc";
+  static const String study_zone_campus = "${userUrl}/study-zones";
 }

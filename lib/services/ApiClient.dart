@@ -18,9 +18,7 @@ class ApiClient {
     ),
   );
 
-  static const List<String> _unauthenticatedEndpoints = [
-    '/api/user-login',
-  ];
+  static const List<String> _unauthenticatedEndpoints = ['/api/user-login'];
 
   static void setupInterceptors() {
     try {
@@ -39,7 +37,7 @@ class ApiClient {
         InterceptorsWrapper(
           onRequest: (options, handler) async {
             final isUnauthenticated = _unauthenticatedEndpoints.any(
-                  (endpoint) => options.uri.path.startsWith(endpoint),
+              (endpoint) => options.uri.path.startsWith(endpoint),
             );
 
             if (isUnauthenticated) {
@@ -99,7 +97,7 @@ class ApiClient {
 
           onError: (DioException e, handler) async {
             final isUnauthenticated = _unauthenticatedEndpoints.any(
-                  (endpoint) => e.requestOptions.uri.path.endsWith(endpoint),
+              (endpoint) => e.requestOptions.uri.path.endsWith(endpoint),
             );
 
             if (isUnauthenticated) {
@@ -125,9 +123,9 @@ class ApiClient {
   }
 
   static Future<Response> get(
-      String path, {
-        Map<String, dynamic>? queryParameters,
-      }) async {
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
       return await _dio.get(path, queryParameters: queryParameters);
     } catch (e) {
@@ -169,7 +167,7 @@ class ApiClient {
 
   // Placeholder for _handleNavigation (implement as needed)
   static void _handleNavigation(
-      int? statusCode,
-      GlobalKey<NavigatorState> navigatorKey,
-      ) {}
+    int? statusCode,
+    GlobalKey<NavigatorState> navigatorKey,
+  ) {}
 }

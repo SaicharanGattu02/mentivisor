@@ -11,10 +11,10 @@ import 'package:mentivisor/Models/StudyZoneDownloadModel_wo_log.dart';
 import 'package:mentivisor/Models/TopMentersResponseModel.dart';
 import 'package:mentivisor/Models/Years_ResponseModel.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
-
 import '../../Models/EccGuestlist_Model.dart';
 import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
+import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
 import '../Models/ECCModel.dart';
@@ -45,6 +45,7 @@ abstract class RemoteDataSource {
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(int page);
+  Future<StudyZoneCampusModel?> getStudyZoneCampus(String scope, String tag);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -75,7 +76,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<ECCModel?> getEcc(int page) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.list_ecc}?page=${page}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.list_ecc}?page=${page}",
+      );
       return ECCModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getEcc::$e');
@@ -297,6 +300,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return MentorProfileModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('MentorProfile::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<StudyZoneCampusModel?> getStudyZoneCampus(
+    String scope,
+    String tag,
+  ) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.study_zone_campus}?scope=${scope}&tag=${tag}",
+      );
+      AppLogger.log('get StudyZoneCampus::${res.data}');
+      return StudyZoneCampusModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('StudyZoneCampus::${e}');
       return null;
     }
   }
