@@ -16,15 +16,19 @@ class _CommunityScreenState extends State<Communityscreen> {
   final List<String> _subTabs = ['All', 'Recent', 'Trending', 'Highlighted'];
 
   // Sample data based on the image
-  final List<Map<String, String>> _posts = List.generate(5, (i) => {
-    'image': 'assets/images/communityimage.png', // Replace with actual path
-    'author': 'Suraj',
-    'title': 'A Complete Guide for the Data Science Road Map',
-    'subtitle': 'Seen many students struggle to for clear road map for science i made it simple and clear',
-    'likes': '100',
-    'comments': '100',
-    'highlighted': i == 1 || i == 3 ? 'true' : 'false', // Highlighted posts
-  });
+  final List<Map<String, String>> _posts = List.generate(
+    5,
+    (i) => {
+      'image': 'assets/images/communityimage.png', // Replace with actual path
+      'author': 'Suraj',
+      'title': 'A Complete Guide for the Data Science Road Map',
+      'subtitle':
+          'Seen many students struggle to for clear road map for science i made it simple and clear',
+      'likes': '100',
+      'comments': '100',
+      'highlighted': i == 1 || i == 3 ? 'true' : 'false', // Highlighted posts
+    },
+  );
 
   // Gradient colors for FAB
   static const Color grad1 = Color(0xFFA258F7);
@@ -116,13 +120,14 @@ class _CommunityScreenState extends State<Communityscreen> {
                 ),
 
                 Container(
-
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         decoration: const BoxDecoration(
-                          color: Color(0xFF8A56AC), // Solid darker purple for icon
+                          color: Color(
+                            0xFF8A56AC,
+                          ), // Solid darker purple for icon
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20),
                             bottomLeft: Radius.circular(20),
@@ -130,7 +135,11 @@ class _CommunityScreenState extends State<Communityscreen> {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8),
-                          child: const Icon(Icons.add, size: 24, color: Colors.white),
+                          child: const Icon(
+                            Icons.add,
+                            size: 24,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       Container(
@@ -149,7 +158,10 @@ class _CommunityScreenState extends State<Communityscreen> {
                           ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 12,
+                          ),
                           child: const Text(
                             'Add',
                             style: TextStyle(
@@ -162,7 +174,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -180,13 +192,17 @@ class _CommunityScreenState extends State<Communityscreen> {
                   final sel = i == _selectedTabIndex;
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: sel ? const Color(0xFFB9DFFF) : Colors.white,
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: sel ? Colors.transparent : const Color(0xFFE0E0E0),
+                        color: sel
+                            ? Colors.transparent
+                            : const Color(0xFFE0E0E0),
                       ),
                     ),
                     child: GestureDetector(
@@ -264,7 +280,9 @@ class _CommunityScreenState extends State<Communityscreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: active ? const Color(0xFF4076ED).withOpacity(0.1) : Colors.transparent,
+            color: active
+                ? const Color(0xFF4076ED).withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: active ? const Color(0xFF4076ED) : Colors.transparent,
@@ -295,16 +313,16 @@ class _PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               child: Image.asset(
                 data['image']!,
                 height: 180,
@@ -326,7 +344,9 @@ class _PostCard extends StatelessWidget {
                     children: [
                       const CircleAvatar(
                         radius: 12,
-                        backgroundImage: AssetImage('assets/images/profileimg.png'), // Replace with actual path
+                        backgroundImage: AssetImage(
+                          'assets/images/profileimg.png',
+                        ), // Replace with actual path
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -366,11 +386,17 @@ class _PostCard extends StatelessWidget {
                     children: [
                       const Icon(Icons.thumb_up_alt_outlined, size: 18),
                       const SizedBox(width: 6),
-                      Text(data['likes']!, style: const TextStyle(fontFamily: 'Segoe')),
+                      Text(
+                        data['likes']!,
+                        style: const TextStyle(fontFamily: 'Segoe'),
+                      ),
                       const SizedBox(width: 24),
                       const Icon(Icons.comment_outlined, size: 18),
                       const SizedBox(width: 6),
-                      Text(data['comments']!, style: const TextStyle(fontFamily: 'Segoe')),
+                      Text(
+                        data['comments']!,
+                        style: const TextStyle(fontFamily: 'Segoe'),
+                      ),
                     ],
                   ),
                 ],
@@ -381,7 +407,10 @@ class _PostCard extends StatelessWidget {
                 top: 8,
                 right: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.amber[400],
                     borderRadius: BorderRadius.circular(6),

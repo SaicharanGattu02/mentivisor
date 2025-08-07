@@ -42,11 +42,7 @@ class CustomAppButton extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                Color(0xffA258F7),
-                Color(0xff726CF7),
-                Color(0xff4280F6),
-              ],
+              colors: [Color(0xffA258F7), Color(0xff726CF7), Color(0xff4280F6)],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
@@ -81,7 +77,6 @@ class CustomAppButton extends StatelessWidget {
   }
 }
 
-
 class CustomAppButton1 extends StatelessWidget {
   final String text;
   final Color? textcolor;
@@ -90,7 +85,7 @@ class CustomAppButton1 extends StatelessWidget {
   final VoidCallback? onPlusTap;
   final IconData? icon;
   final bool isLoading;
-  final int? radus;
+  final int? radius;
 
   const CustomAppButton1({
     Key? key,
@@ -101,14 +96,14 @@ class CustomAppButton1 extends StatelessWidget {
     this.width,
     this.isLoading = false,
     this.icon,
-    this.radus,
+    this.radius,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final double buttonWidth = width ?? MediaQuery.of(context).size.width;
     final double buttonHeight = height ?? 50;
-    final int borderRadius = radus ?? 12;
+    final int borderRadius = radius ?? 12;
     final Color textColor = textcolor ?? Colors.white;
 
     return SizedBox(
@@ -171,7 +166,6 @@ class CustomAppButton1 extends StatelessWidget {
     );
   }
 }
-
 
 class CustomOutlinedButton extends StatelessWidget {
   final String text;
@@ -259,7 +253,6 @@ class CustomOutlinedButton extends StatelessWidget {
     );
   }
 }
-
 
 class CustomAppButton2 extends StatelessWidget implements PreferredSizeWidget {
   final String text;

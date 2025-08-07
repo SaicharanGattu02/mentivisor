@@ -15,6 +15,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Models/EccGuestlist_Model.dart';
 import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
+import '../Models/CommunityPostsModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
@@ -48,6 +49,7 @@ abstract class RemoteDataSource {
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(int page);
   Future<StudyZoneCampusModel?> getStudyZoneCampus(String scope, String tag);
+  Future<CommunityPostsModel?> getCommunityPosts(int page);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -76,11 +78,26 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<CommunityPostsModel?> getCommunityPosts(int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.list_ecc}?page=${page}",
+      );
+      debugPrint('Error getCommunityPosts::$res');
+      return CommunityPostsModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getCommunityPosts::$e');
+      return null;
+    }
+  }
+
+  @override
   Future<ECCModel?> getEcc(int page) async {
     try {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.list_ecc}?page=${page}",
       );
+      debugPrint('Error getEcc::$res');
       return ECCModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getEcc::$e');

@@ -60,24 +60,26 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                 padding: const EdgeInsets.all(4),
                 child: Row(
                   mainAxisAlignment:
-                  MainAxisAlignment.center, // Ensures the row is centered
+                      MainAxisAlignment.center, // Ensures the row is centered
                   children: [
                     _buildToggle('On Campus', _onCampus, () {
                       setState(() {
                         _onCampus = true;
                       });
-                      context
-                          .read<StudyZoneCampusCubit>()
-                          .fetchStudyZoneCampus("", "");
+                      context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
+                        "",
+                        "",
+                      );
                     }),
                     const SizedBox(width: 8),
                     _buildToggle('Beyond Campus', !_onCampus, () {
                       setState(() {
                         _onCampus = false;
                       });
-                      context
-                          .read<StudyZoneCampusCubit>()
-                          .fetchStudyZoneCampus("", "beyond");
+                      context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
+                        "",
+                        "beyond",
+                      );
                     }),
                   ],
                 ),
@@ -321,14 +323,17 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                 Row(
                                                   children: [
                                                     Expanded(
-                                                      child: CustomOutlinedButton(radius: 24,text: "View", onTap: (){
-
-                                                      }),
+                                                      child:
+                                                          CustomOutlinedButton(
+                                                            radius: 24,
+                                                            text: "View",
+                                                            onTap: () {},
+                                                          ),
                                                     ),
                                                     const SizedBox(width: 12),
                                                     Expanded(
                                                       child: CustomAppButton1(
-                                                        radus: 24,
+                                                        radius: 24,
                                                         text: "Download",
                                                         onPlusTap: () {},
                                                       ),

@@ -8,18 +8,20 @@ import 'package:mentivisor/newscreens/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/AddResourceScreen.dart';
 import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
-import 'package:mentivisor/newscreens/CommunityScreen.dart';
+import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
 import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
 import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
 import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
 import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
+import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
 import 'package:mentivisor/profileview/WalletScreen.dart';
 import '../Components/NoInternet.dart';
+import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
@@ -32,7 +34,6 @@ import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../newscreens/AcadamicJourneyScreen.dart';
-import '../newscreens/BuyCoinsScreens.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
@@ -51,15 +52,9 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/splash',
-      pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SplashScreen(), state);
-      },
-    ),
-    GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(BuyCoinsScreens(), state);
+        return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
     GoRoute(
@@ -157,15 +152,20 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/addpostscreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(AddPostScreen(), state),
+      path: '/view_event',
+      pageBuilder: (context, state) {
+        final eccList = state.extra as ECCList; // Cast the extra data
+        return buildSlideTransitionPage(
+          ViewEventScreen(eccList: eccList),
+          state,
+        );
+      },
     ),
 
     GoRoute(
-      path: '/communityscreen',
+      path: '/addpostscreen',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Communityscreen(), state),
+          buildSlideTransitionPage(AddPostScreen(), state),
     ),
 
     GoRoute(

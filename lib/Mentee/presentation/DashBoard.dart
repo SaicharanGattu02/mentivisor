@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/MeteeStudyzoneScreens.dart';
-import '../../newscreens/CommunityScreen.dart';
+import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
 import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';

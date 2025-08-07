@@ -1,9 +1,10 @@
-// lib/presentation/EccScreen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_states.dart';
+import 'package:mentivisor/utils/color_constants.dart';
+import '../Widgets/EventCard.dart';
 
 class EccScreen extends StatefulWidget {
   const EccScreen({Key? key}) : super(key: key);
@@ -19,6 +20,12 @@ class _EccScreenState extends State<EccScreen> {
 
   static const Color _blue = Color(0xFF1677FF);
   static const Color _lightBlue = Color(0xFFE4EEFF);
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ECCCubit>().getECC();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,23 +161,86 @@ class _EccScreenState extends State<EccScreen> {
                 ),
 
                 const SizedBox(height: 24),
-
-                // Event list
-                Expanded(
-                  child: BlocBuilder<ECCCubit, ECCStates>(
-                    builder: (context, state) {
-                      return CustomScrollView(
-                        slivers: [
-                          SliverList.separated(
-                            itemCount: 3, // your dynamic count
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 16),
-                            itemBuilder: (_, __) => const EventCard(),
-                          ),
-                        ],
+                BlocBuilder<ECCCubit, ECCStates>(
+                  builder: (context, state) {
+                    if (state is ECCLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(color: primarycolor1),
                       );
-                    },
-                  ),
+                    } else if (state is ECCLoaded || state is ECCLoadingMore) {
+                      final ecc_model = (state is ECCLoaded)
+                          ? (state as ECCLoaded).eccModel
+                          : (state as ECCLoadingMore).eccModel;
+                      final ecclist = ecc_model.data?.ecclist;
+                      if (ecclist?.length == 0) {
+                        return Center(
+                          child: Column(
+                            spacing: 10,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Oops !',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                textAlign: TextAlign.center,
+                                'No Data Found!',
+                                style: TextStyle(
+                                  color: primarycolor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Expanded(
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (scrollInfo) {
+                            if (scrollInfo.metrics.pixels >=
+                                scrollInfo.metrics.maxScrollExtent * 0.9) {
+                              if (state is ECCLoaded && state.hasNextPage) {
+                                context.read<ECCCubit>().fetchMoreECC();
+                              }
+                              return false;
+                            }
+                            return false;
+                          },
+                          child: CustomScrollView(
+                            slivers: [
+                              SliverList.separated(
+                                itemCount: ecclist?.length ?? 0,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 16),
+                                itemBuilder: (context, index) =>
+                                    EventCard(eccList: ecclist![index]),
+                              ),
+                              if (state is ECCLoadingMore)
+                                SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(25.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 0.8,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Center(child: Text("No Data"));
+                    }
+                  },
                 ),
               ],
             ),
@@ -180,7 +250,9 @@ class _EccScreenState extends State<EccScreen> {
 
       // Floating “+” button
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.push("/addeventscreen");
+        },
         backgroundColor: _blue,
         child: const Icon(Icons.add, size: 32),
       ),
@@ -211,162 +283,6 @@ class _EccScreenState extends State<EccScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class EventCard extends StatelessWidget {
-  const EventCard({Key? key}) : super(key: key);
-
-  static const Color gradStart = Color(0xFF8C36FF);
-  static const Color gradEnd = Color(0xFF3F9CFF);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Banner
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            child: Image.asset(
-              'assets/images/eventimg.png',
-              height: 160,
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: const Text(
-              'Annual tech Symposium 2024',
-              style: TextStyle(
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Details
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: const [
-                _DetailRow(
-                  icon: Icons.calendar_today,
-                  bgColor: Color(0xFF3F51B5),
-                  text: '15 July 2024 at 4:00pm',
-                ),
-                SizedBox(height: 8),
-                _DetailRow(
-                  icon: Icons.location_on,
-                  bgColor: Color(0xFF4CAF50),
-                  text: 'Mumbai Convention Center, Mumbai',
-                ),
-                SizedBox(height: 8),
-                _DetailRow(
-                  icon: Icons.apartment,
-                  bgColor: Color(0xFF000000),
-                  text: 'Indian Institute of Technology Bombay',
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // View Details button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SizedBox(
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-                child: Ink(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [gradStart, gradEnd],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(24)),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'View Details',
-                      style: TextStyle(
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  final IconData icon;
-  final Color bgColor;
-  final String text;
-
-  const _DetailRow({
-    required this.icon,
-    required this.bgColor,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-          child: Icon(icon, size: 16, color: Colors.white),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'segeo',
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

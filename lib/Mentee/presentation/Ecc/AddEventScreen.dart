@@ -1,7 +1,7 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 class AddEventScreen extends StatefulWidget {
   @override
   _AddEventScreenState createState() => _AddEventScreenState();
@@ -64,21 +64,19 @@ class _AddEventScreenState extends State<AddEventScreen> {
         ),
         title: const Text(
           'Add Event',
-          style: TextStyle(color: Color(0xff222222), fontWeight: FontWeight.w600, fontFamily: 'segeo',fontSize: 16),
+          style: TextStyle(
+            color: Color(0xff222222),
+            fontWeight: FontWeight.w600,
+            fontFamily: 'segeo',
+            fontSize: 16,
+          ),
         ),
       ),
       body: SingleChildScrollView(
-
-
         padding: const EdgeInsets.all(16),
         child: Column(
-
-
-
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-
             // Illustration with blue border
             Container(
               decoration: BoxDecoration(
@@ -100,7 +98,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
             Text(
               'What is the Update',
               style: TextStyle(
-              color: Color(0xff222222), fontWeight: FontWeight.w600, fontFamily: 'segeo',fontSize: 16
+                color: Color(0xff222222),
+                fontWeight: FontWeight.w600,
+                fontFamily: 'segeo',
+                fontSize: 16,
               ),
             ),
             const SizedBox(height: 8),
@@ -108,15 +109,22 @@ class _AddEventScreenState extends State<AddEventScreen> {
               children: List.generate(_segments.length, (i) {
                 final selected = i == _selectedSegment;
                 return Padding(
-                  padding: EdgeInsets.only(right: i == _segments.length - 1 ? 0 : 8),
+                  padding: EdgeInsets.only(
+                    right: i == _segments.length - 1 ? 0 : 8,
+                  ),
                   child: GestureDetector(
                     onTap: () => setState(() => _selectedSegment = i),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: selected ? primaryColor : Colors.grey.shade300),
+                        border: Border.all(
+                          color: selected ? primaryColor : Colors.grey.shade300,
+                        ),
                       ),
                       child: Text(
                         _segments[i],
@@ -135,14 +143,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
             // Form fields
             Form(
-
               key: _formKey,
               child: Column(
-
                 children: [
                   const SizedBox(height: 16),
                   _buildTextField(
-
                     label: 'Event Name',
                     hint: 'Enter your name',
                     onChanged: (v) => _eventName = v,
@@ -192,7 +197,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: Colors.grey.shade300),
@@ -202,10 +210,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         children: const [
                           Icon(Icons.upload_file, size: 20, color: Colors.grey),
                           SizedBox(width: 8),
-                          Text(
-                            'Upload',
-                            style: TextStyle(color: Colors.grey),
-                          ),
+                          Text('Upload', style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -215,7 +220,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
                   SwitchListTile(
                     title: const Text('Highlight Post'),
-                    subtitle: const Text('Make your post Highlight with 40 coins for 1 day'),
+                    subtitle: const Text(
+                      'Make your post Highlight with 40 coins for 1 day',
+                    ),
                     value: _highlightPost,
                     onChanged: (v) => setState(() => _highlightPost = v),
                     activeColor: primaryColor,
@@ -330,7 +337,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
         // 2) Capsule‑shaped TextFormField
         TextFormField(
-
           onChanged: onChanged,
           validator: validator,
           maxLines: maxLines,
@@ -344,7 +350,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
               vertical: 18,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),  // pill shape
+              borderRadius: BorderRadius.circular(30), // pill shape
               borderSide: BorderSide.none,
             ),
           ),
@@ -352,7 +358,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
       ],
     );
   }
-
 
   Widget _buildDateTimeField({
     required String label,
@@ -369,7 +374,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
         suffixIcon: Icon(icon, color: Colors.grey),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

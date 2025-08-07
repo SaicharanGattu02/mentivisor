@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/color_constants.dart';
-import '../../newscreens/CommunityScreen.dart';
+import '../../Mentee/presentation/Community/CommunityScreen.dart';
 import 'MentorHomeScreen.dart';
 import 'MySessionsScreen.dart';
 

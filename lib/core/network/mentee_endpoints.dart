@@ -39,4 +39,5 @@ class APIEndpointUrls {
   static const String list_ecc = "${userUrl}list-ecc";
   static const String study_zone_campus = "${userUrl}/study-zones";
   static const String coins_pack = "${userUrl}/coin-packs";
+  static const String community_zone_post = "${userUrl}/community-zone-post";
 }
