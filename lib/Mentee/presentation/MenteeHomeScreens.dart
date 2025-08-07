@@ -35,7 +35,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
        context.push("/wallet");
         break;
       case 'Downloads':
-        Navigator.pushNamed(context, '/downloads');
+        context.push("/downloads");
         break;
       case 'Productivity Tools':
         Navigator.pushNamed(context, '/productivity');

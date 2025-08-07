@@ -1,5 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsStates.dart';
+
+import '../../Models/CommunityPostsModel.dart';
+import '../Widgets/PostCard.dart';
 
 class Communityscreen extends StatefulWidget {
   const Communityscreen({Key? key}) : super(key: key);
@@ -15,21 +21,6 @@ class _CommunityScreenState extends State<Communityscreen> {
   final List<String> _mainTabs = ['On Campus', 'Beyond Campus'];
   final List<String> _subTabs = ['All', 'Recent', 'Trending', 'Highlighted'];
 
-  // Sample data based on the image
-  final List<Map<String, String>> _posts = List.generate(
-    5,
-    (i) => {
-      'image': 'assets/images/communityimage.png', // Replace with actual path
-      'author': 'Suraj',
-      'title': 'A Complete Guide for the Data Science Road Map',
-      'subtitle':
-          'Seen many students struggle to for clear road map for science i made it simple and clear',
-      'likes': '100',
-      'comments': '100',
-      'highlighted': i == 1 || i == 3 ? 'true' : 'false', // Highlighted posts
-    },
-  );
-
   // Gradient colors for FAB
   static const Color grad1 = Color(0xFFA258F7);
   static const Color grad2 = Color(0xFF726CF7);
@@ -38,6 +29,7 @@ class _CommunityScreenState extends State<Communityscreen> {
   @override
   void initState() {
     super.initState();
+    context.read<CommunityPostsCubit>().getCommunityPosts();
   }
 
   @override
@@ -45,18 +37,14 @@ class _CommunityScreenState extends State<Communityscreen> {
     super.dispose();
   }
 
-  void _onAddPost() {
-    // Handle Add button tap
-  }
-
   @override
   Widget build(BuildContext context) {
-    final filtered = _posts; // No filtering for now, match image
     return Scaffold(
       backgroundColor: const Color(0xFFE0F0FF), // Match image background
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: const Text(
           'Community',
           style: TextStyle(
@@ -78,12 +66,11 @@ class _CommunityScreenState extends State<Communityscreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          // On Campus / Beyond Campus toggle
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFE8EBF7),
                 borderRadius: BorderRadius.circular(30),
@@ -101,12 +88,9 @@ class _CommunityScreenState extends State<Communityscreen> {
                 ],
               ),
             ),
-          ),
 
-          // Posts section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
+            // Posts section
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
@@ -118,7 +102,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                     fontFamily: 'Segoe',
                   ),
                 ),
-
                 Container(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -177,12 +160,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                 ),
               ],
             ),
-          ),
 
-          // Sub Tabs
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SizedBox(
+            SizedBox(
               height: 42,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
@@ -225,23 +204,74 @@ class _CommunityScreenState extends State<Communityscreen> {
                 },
               ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Post list
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: filtered.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (ctx, idx) {
-                final p = filtered[idx];
-                return _PostCard(data: p);
+            // Post list
+            BlocBuilder<CommunityPostsCubit, CommunityPostsStates>(
+              builder: (context, state) {
+                if (state is CommunityPostsLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is CommunityPostsLoaded ||
+                    state is CommunityPostsLoadingMore) {
+                  final communityPostsModel = (state is CommunityPostsLoaded)
+                      ? (state as CommunityPostsLoaded).communityPostsModel
+                      : (state as CommunityPostsLoadingMore)
+                            .communityPostsModel;
+                  final communityposts =
+                      communityPostsModel.data?.communityposts;
+                  return Expanded(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (scrollInfo) {
+                        if (scrollInfo.metrics.pixels >=
+                            scrollInfo.metrics.maxScrollExtent * 0.9) {
+                          if (state is CommunityPostsLoaded &&
+                              state.hasNextPage) {
+                            context
+                                .read<CommunityPostsCubit>()
+                                .fetchMoreCommunityPosts();
+                          }
+                          return false;
+                        }
+                        return false;
+                      },
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverList.separated(
+                            itemCount: communityposts?.length ?? 0,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 16), // The separator
+                            itemBuilder: (context, index) {
+                              final communitypost = communityposts?[index];
+                              return PostCard(
+                                communityPosts:
+                                    communitypost ?? CommunityPosts(),
+                              );
+                            },
+                          ),
+
+                          if (state is CommunityPostsLoadingMore)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 0.8,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return Center(child: Text("No Data Found"));
+                }
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       // Floating Action Button
@@ -299,140 +329,6 @@ class _CommunityScreenState extends State<Communityscreen> {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PostCard extends StatelessWidget {
-  final Map<String, String> data;
-  const _PostCard({Key? key, required this.data}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: () {},
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-              child: Image.asset(
-                data['image']!,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 180,
-                  width: double.infinity,
-                  color: Colors.grey.shade200,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const CircleAvatar(
-                        radius: 12,
-                        backgroundImage: AssetImage(
-                          'assets/images/profileimg.png',
-                        ), // Replace with actual path
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        data['author']!,
-                        style: const TextStyle(
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    data['title']!,
-                    style: const TextStyle(
-                      fontFamily: 'Segoe',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Color(0xFF222222),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    data['subtitle']!,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: 'Segoe',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: Color(0xFF666666),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.thumb_up_alt_outlined, size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        data['likes']!,
-                        style: const TextStyle(fontFamily: 'Segoe'),
-                      ),
-                      const SizedBox(width: 24),
-                      const Icon(Icons.comment_outlined, size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        data['comments']!,
-                        style: const TextStyle(fontFamily: 'Segoe'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            if (data['highlighted'] == 'true')
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.amber[400],
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.star, size: 14, color: Colors.white),
-                      SizedBox(width: 4),
-                      Text(
-                        'Highlighted',
-                        style: TextStyle(
-                          fontFamily: 'Segoe',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
         ),
       ),
     );

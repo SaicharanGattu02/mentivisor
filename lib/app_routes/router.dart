@@ -3,6 +3,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/newscreens/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/AddResourceScreen.dart';
@@ -61,6 +62,12 @@ final GoRouter appRouter = GoRouter(
       path: '/chart_screen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(ChartScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/downloads',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(DownloadsScreen(), state);
       },
     ),
     // GoRoute(

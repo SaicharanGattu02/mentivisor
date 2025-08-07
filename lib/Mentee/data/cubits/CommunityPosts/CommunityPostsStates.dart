@@ -6,12 +6,21 @@ class CommunityPostsInitially extends CommunityPostsStates {}
 
 class CommunityPostsLoading extends CommunityPostsStates {}
 
+class CommunityPostsLoadingMore extends CommunityPostsStates {
+  final CommunityPostsModel communityPostsModel;
+  final bool hasNextPage;
+
+  CommunityPostsLoadingMore(this.communityPostsModel, this.hasNextPage);
+}
+
 class CommunityPostsLoaded extends CommunityPostsStates {
-  CommunityPostsModel communityPostsModel;
-  CommunityPostsLoaded(this.communityPostsModel);
+  final CommunityPostsModel communityPostsModel;
+  final bool hasNextPage;
+  CommunityPostsLoaded(this.communityPostsModel, this.hasNextPage);
 }
 
 class CommunityPostsFailure extends CommunityPostsStates {
-  String error;
+  final String error;
+
   CommunityPostsFailure(this.error);
 }

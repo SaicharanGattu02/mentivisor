@@ -144,7 +144,10 @@ class CommunityPosts {
     id = json['id'];
     heading = json['heading'];
     description = json['description'];
-    tags = json['tags'].cast<String>();
+
+    // Handle null values for tags
+    tags = json['tags'] != null ? List<String>.from(json['tags']) : [];
+
     image = json['image'];
     anonymous = json['anonymous'];
     popular = json['popular'];
@@ -158,40 +161,34 @@ class CommunityPosts {
     commentsCount = json['comments_count'];
     imgUrl = json['img_url'];
     uploader = json['uploader'] != null
-        ? new Uploader.fromJson(json['uploader'])
+        ? Uploader.fromJson(json['uploader'])
         : null;
-    // if (json['comments'] != null) {
-    //   comments = <Null>[];
-    //   json['comments'].forEach((v) {
-    //     comments!.add(new Null.fromJson(v));
-    //   });
-    // }
+
+    // Handle null for comments
+    // comments = json['comments'] != null ? List<Null>.from(json['comments']) : [];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['heading'] = this.heading;
-    data['description'] = this.description;
-    data['tags'] = this.tags;
-    data['image'] = this.image;
-    data['anonymous'] = this.anonymous;
-    data['popular'] = this.popular;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['uploadedBy'] = this.uploadedBy;
-    data['college_id'] = this.collegeId;
-    data['likes_count'] = this.likesCount;
-    data['comments_count'] = this.commentsCount;
-    data['img_url'] = this.imgUrl;
-    if (this.uploader != null) {
-      data['uploader'] = this.uploader!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['heading'] = heading;
+    data['description'] = description;
+    data['tags'] = tags;
+    data['image'] = image;
+    data['anonymous'] = anonymous;
+    data['popular'] = popular;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
+    data['active_status'] = activeStatus;
+    data['uploadedBy'] = uploadedBy;
+    data['college_id'] = collegeId;
+    data['likes_count'] = likesCount;
+    data['comments_count'] = commentsCount;
+    data['img_url'] = imgUrl;
+    if (uploader != null) {
+      data['uploader'] = uploader?.toJson();
     }
-    // if (this.comments != null) {
-    //   data['comments'] = this.comments!.map((v) => v.toJson()).toList();
-    // }
     return data;
   }
 }

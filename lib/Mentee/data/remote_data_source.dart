@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
 import 'package:mentivisor/Models/CoinsPackRespModel.dart';
 import 'package:mentivisor/Models/CommunityGuest_Model.dart';
 import 'package:mentivisor/Models/GetBannersRespModel.dart';
@@ -50,6 +51,7 @@ abstract class RemoteDataSource {
   Future<ECCModel?> getEcc(int page);
   Future<StudyZoneCampusModel?> getStudyZoneCampus(String scope, String tag);
   Future<CommunityPostsModel?> getCommunityPosts(int page);
+  Future<DownloadsModel?> getDownloads(int page);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -75,6 +77,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       }
     }
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<DownloadsModel?> getDownloads(int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.my_downloads}?page=${page}",
+      );
+      debugPrint('Error getDownloads::$res');
+      return DownloadsModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getDownloads::$e');
+      return null;
+    }
   }
 
   @override

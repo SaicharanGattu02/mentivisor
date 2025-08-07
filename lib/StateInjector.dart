@@ -1,4 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepository.dart';
+import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
@@ -68,6 +73,16 @@ class StateInjector {
       create: (context) =>
           ECCRepositoryImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
+    RepositoryProvider<CommunityPostsRepo>(
+      create: (context) => CommunityPostsRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<DownloadsRepository>(
+      create: (context) => DownloadsRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -103,6 +118,13 @@ class StateInjector {
     BlocProvider<StudyZoneCampusCubit>(
       create: (context) =>
           StudyZoneCampusCubit(context.read<StudyZoneCampusRepository>()),
+    ),
+    BlocProvider<CommunityPostsCubit>(
+      create: (context) =>
+          CommunityPostsCubit(context.read<CommunityPostsRepo>()),
+    ),
+    BlocProvider<DownloadsCubit>(
+      create: (context) => DownloadsCubit(context.read<DownloadsRepository>()),
     ),
   ];
 }
