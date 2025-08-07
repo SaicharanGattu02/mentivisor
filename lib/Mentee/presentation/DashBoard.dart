@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/MeteeStudyzoneScreens.dart';
 import '../../newscreens/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
-import '../../EEC/EccScreen.dart';
+import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';
 
 class Dashboard extends StatefulWidget {

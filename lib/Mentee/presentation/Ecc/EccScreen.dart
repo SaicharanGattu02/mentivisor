@@ -1,6 +1,9 @@
 // lib/presentation/EccScreen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_states.dart';
 
 class EccScreen extends StatefulWidget {
   const EccScreen({Key? key}) : super(key: key);
@@ -20,7 +23,6 @@ class _EccScreenState extends State<EccScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // gradient background
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -36,7 +38,6 @@ class _EccScreenState extends State<EccScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-
                 // Title + subtitle
                 const Text(
                   'Event, Competitions & Challenges',
@@ -79,9 +80,7 @@ class _EccScreenState extends State<EccScreen> {
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 24),
-
+                const SizedBox(height: 10),
                 // Updates label
                 const Text(
                   'Updates',
@@ -158,10 +157,19 @@ class _EccScreenState extends State<EccScreen> {
 
                 // Event list
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: 3, // your dynamic count
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
-                    itemBuilder: (_, __) => const EventCard(),
+                  child: BlocBuilder<ECCCubit, ECCStates>(
+                    builder: (context, state) {
+                      return CustomScrollView(
+                        slivers: [
+                          SliverList.separated(
+                            itemCount: 3, // your dynamic count
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 16),
+                            itemBuilder: (_, __) => const EventCard(),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
@@ -172,9 +180,7 @@ class _EccScreenState extends State<EccScreen> {
 
       // Floating “+” button
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // your onPressed
-        },
+        onPressed: () {},
         backgroundColor: _blue,
         child: const Icon(Icons.add, size: 32),
       ),
@@ -213,7 +219,7 @@ class EventCard extends StatelessWidget {
   const EventCard({Key? key}) : super(key: key);
 
   static const Color gradStart = Color(0xFF8C36FF);
-  static const Color gradEnd   = Color(0xFF3F9CFF);
+  static const Color gradEnd = Color(0xFF3F9CFF);
 
   @override
   Widget build(BuildContext context) {
@@ -254,32 +260,7 @@ class EventCard extends StatelessWidget {
               ),
             ),
           ),
-
-          const SizedBox(height: 8),
-
-          // Institute chip
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Text(
-                'Indian Institute of Technology Bombay',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  color: Colors.black54,
-                ),
-              ),
-            ),
-          ),
-
           const SizedBox(height: 16),
-
           // Details
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

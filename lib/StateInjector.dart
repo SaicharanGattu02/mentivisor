@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
@@ -59,6 +61,10 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<ECCRepository>(
+      create: (context) =>
+          ECCRepositoryImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -87,6 +93,9 @@ class StateInjector {
     BlocProvider<MentorProfileCubit>(
       create: (context) =>
           MentorProfileCubit(context.read<MentorProfileRepository>()),
+    ),
+    BlocProvider<ECCCubit>(
+      create: (context) => ECCCubit(context.read<ECCRepository>()),
     ),
     // BlocProvider<WalletmoneyCubit>(
     //   create: (context) =>

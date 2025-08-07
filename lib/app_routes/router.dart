@@ -3,8 +3,6 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mentivisor/EEC/AddEventScreen.dart';
-import 'package:mentivisor/EEC/EccScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/newscreens/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/AddResourceScreen.dart';
@@ -22,6 +20,7 @@ import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
 import 'package:mentivisor/profileview/WalletScreen.dart';
 import '../Components/NoInternet.dart';
+import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
 import '../Mentee/presentation/authentication/OTPVerificationScreen.dart';
@@ -144,12 +143,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(EditProfileScreen(), state),
     ),
-    GoRoute(
-      path: '/eccscreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(EccScreen(), state),
-    ),
-
     GoRoute(
       path: '/addeventscreen',
       pageBuilder: (context, state) =>

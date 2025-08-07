@@ -2,6 +2,7 @@ class APIEndpointUrls {
   static const String baseUrl = 'http://192.168.80.42:8000/';
 
   static const String apiUrl = 'api/';
+  static const String userUrl = '${apiUrl}users/';
 
   /// Auth URls
   static const String login = '${apiUrl}user-login';
@@ -26,14 +27,14 @@ class APIEndpointUrls {
   static const String studyzonedownloads_wol =
       "${apiUrl}study-zone/top-downloads";
   static const String eccguestlist = "${apiUrl}guest-list-ecc";
-  static const String guestcommunitytags_wol = "${apiUrl}community-zone-tags-without-login";
+  static const String guestcommunitytags_wol =
+      "${apiUrl}community-zone-tags-without-login";
   static const String wallet_money = "${apiUrl}users/my-wallet";
-  // static const String guestcommunitytags_wol =
-  //     "${apiUrl}community-zone-tags-without-login";
 
   /// Mentee
 
-  static const String get_campus_mentors = "${apiUrl}users/mentorslist";
-  static const String study_zone_tags = "${apiUrl}users/study-zone/tags";
-  static const String mentor_profile = "${apiUrl}users/mentors";
+  static const String get_campus_mentors = "${userUrl}mentorslist";
+  static const String study_zone_tags = "${userUrl}study-zone/tags";
+  static const String mentor_profile = "${userUrl}mentors";
+  static const String list_ecc = "${userUrl}list-ecc";
 }

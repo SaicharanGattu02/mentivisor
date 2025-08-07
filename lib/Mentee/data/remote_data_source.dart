@@ -17,6 +17,7 @@ import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
+import '../Models/ECCModel.dart';
 import '../Models/MentorProfileModel.dart';
 import '../Models/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
@@ -43,6 +44,7 @@ abstract class RemoteDataSource {
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
+  Future<ECCModel?> getEcc(int page);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -68,6 +70,17 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       }
     }
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<ECCModel?> getEcc(int page) async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.list_ecc}?page=${page}");
+      return ECCModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getEcc::$e');
+      return null;
+    }
   }
 
   @override
@@ -286,16 +299,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       AppLogger.error('MentorProfile::${e}');
       return null;
     }
-
   }
 
   @override
-  Future<WalletResponseModel?>getwalletmoney() async {
+  Future<WalletResponseModel?> getwalletmoney() async {
     try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.wallet_money}",
-
-      );
+      Response res = await ApiClient.get("${APIEndpointUrls.wallet_money}");
       AppLogger.log('get walletmoney::${res.data}');
       return WalletResponseModel.fromJson(res.data);
     } catch (e) {
@@ -303,8 +312,5 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
       return null;
     }
-
-
   }
-
 }
