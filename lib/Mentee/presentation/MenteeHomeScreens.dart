@@ -32,7 +32,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   void _navigateToScreen(String name) {
     switch (name) {
       case 'Wallet':
-       context.push("/wallet");
+       context.push("/wallet_screen");
         break;
       case 'Downloads':
         context.push("/downloads");

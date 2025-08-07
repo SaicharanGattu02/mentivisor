@@ -41,3 +41,37 @@ class Background extends StatelessWidget {
     );
   }
 }
+
+
+class Background1 extends StatelessWidget {
+  final Widget child;
+  final String? bgImagePath;
+  final Color? bgColor;
+
+  const Background1({
+    super.key,
+    required this.child,
+    this.bgImagePath,
+    this.bgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0.15,
+            child: Container(
+              decoration: BoxDecoration(
+              color: bgColor??Color(0xffFFF8EC)
+              ),
+            ),
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+}

@@ -66,15 +66,16 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                         children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
                             .map(
                               (e) => Expanded(
-                            child: Center(
-                              child: Text(
-                                e,
-                                style:
-                                const TextStyle(fontWeight: FontWeight.w600),
+                                child: Center(
+                                  child: Text(
+                                    e,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             .toList(),
                       ),
                       const Padding(
@@ -89,8 +90,12 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                           int day = index + 1;
                           bool isSelected = selectedDay == day;
 
-                          Color textColor = isSelected ? Colors.pink : Colors.grey;
-                          Color borderColor = isSelected ? Colors.pink : Colors.grey.shade300;
+                          Color textColor = isSelected
+                              ? Colors.pink
+                              : Colors.grey;
+                          Color borderColor = isSelected
+                              ? Colors.pink
+                              : Colors.grey.shade300;
                           double borderWidth = isSelected ? 2.0 : 1.0;
 
                           return GestureDetector(
@@ -110,8 +115,9 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                 child: Text(
                                   '$day',
                                   style: TextStyle(
-                                    fontWeight:
-                                    isSelected ? FontWeight.bold : FontWeight.normal,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                     color: textColor,
                                   ),
                                 ),
@@ -129,8 +135,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                   children: [
                     Text(
                       '$selectedDay Aug Task',
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {},
@@ -172,7 +180,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                           ),
                           TextButton(
                             onPressed: () {},
-                            child: Text('Add', style: TextStyle(color: Colors.purple)),
+                            child: Text(
+                              'Add',
+                              style: TextStyle(color: Colors.purple),
+                            ),
                           ),
                         ],
                       ),
@@ -180,23 +191,25 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                       ...[
                         'Complete 30 minutes Study',
                         'Complete 30 minutes Study',
-                        'Complete 30 minutes Study'
-                      ].map((task) => Container(
-                        padding: EdgeInsets.all(12),
-                        margin: EdgeInsets.symmetric(vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
+                        'Complete 30 minutes Study',
+                      ].map(
+                        (task) => Container(
+                          padding: EdgeInsets.all(12),
+                          margin: EdgeInsets.symmetric(vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: _buildTaskItem(task, task.hashCode % 2 == 0),
                         ),
-                        child: _buildTaskItem(task, task.hashCode % 2 == 0),
-                      )),
+                      ),
                     ],
                   ),
                 ),
@@ -230,10 +243,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                 : Colors.blue,
           ),
           SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(fontSize: 14),
-          ),
+          Text(title, style: TextStyle(fontSize: 14)),
           Text(
             value,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

@@ -20,13 +20,14 @@ import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
-import 'package:mentivisor/profileview/ProductivityToolsScreen.dart';
-import 'package:mentivisor/profileview/WalletScreen.dart';
+// import 'package:mentivisor/Mentee/presentation/WalletScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
+import '../Mentee/presentation/ProductivityToolsScreen.dart';
+import '../Mentee/presentation/WalletScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
 import '../Mentee/presentation/authentication/OTPVerificationScreen.dart';
 import '../Mentee/presentation/authentication/SelecterScreen.dart';
@@ -37,6 +38,7 @@ import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../newscreens/AcadamicJourneyScreen.dart';
+import '../newscreens/BuyCoinsScreens.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
@@ -49,7 +51,7 @@ import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 import '../presentation/Splash.dart';
 import 'package:mentivisor/presentation/ProfileScreen.dart';
-import '../presentation/WalletHistory.dart';
+// import '../presentation/WalletHistory.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -74,23 +76,21 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-    //
     // GoRoute(
-    //   path: '/buy_coins',
+    //   path: '/wallet',
     //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(BuyCoinsScreens(), state);
+    //     return buildSlideTransitionPage(Walletscreen(), state);
     //   },
     // ),
-    GoRoute(
-      path: '/wallet',
-      pageBuilder: (context, state) {
-        return buildSlideTransitionPage(Walletscreen(), state);
-      },
-    ),
     GoRoute(
       path: '/add_resource',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(AddResourceScreen(), state),
+    ),
+    GoRoute(
+      path: '/productivity_screen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ProductivityScreen(), state),
     ),
     GoRoute(
       path: '/campus_mentor_list',
@@ -270,13 +270,19 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/wallet_screen',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SplashScreen(), state),
+          buildSlideTransitionPage(WalletScreen(), state),
     ),
     GoRoute(
-      path: '/wallet_history',
+      path: '/buy_coins_screens',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(WalletHistory(), state),
+          buildSlideTransitionPage(BuyCoinsScreens(), state),
     ),
+
+    // GoRoute(
+    //   path: '/wallet_history',
+    //   pageBuilder: (context, state) =>
+    //       buildSlideTransitionPage(WalletHistory(), state),
+    // ),
     GoRoute(
       path: '/details',
       pageBuilder: (context, state) =>
