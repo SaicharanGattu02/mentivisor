@@ -6,6 +6,7 @@ import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dar
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
@@ -19,6 +20,7 @@ import 'Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'Mentee/data/cubits/Register/Register_Repository.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusRepository.dart';
+import 'Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
@@ -83,6 +85,10 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<StudyZoneReportRepository>(
+      create: (context) =>
+          StudyZoneReportImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -125,6 +131,10 @@ class StateInjector {
     ),
     BlocProvider<DownloadsCubit>(
       create: (context) => DownloadsCubit(context.read<DownloadsRepository>()),
+    ),
+    BlocProvider<StudyZoneReportCubit>(
+      create: (context) =>
+          StudyZoneReportCubit(context.read<StudyZoneReportRepository>()),
     ),
   ];
 }

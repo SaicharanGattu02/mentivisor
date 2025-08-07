@@ -22,6 +22,7 @@ import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
 import 'package:mentivisor/profileview/WalletScreen.dart';
 import '../Components/NoInternet.dart';
+import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
@@ -58,6 +59,7 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
+
     GoRoute(
       path: '/chart_screen',
       pageBuilder: (context, state) {
@@ -70,10 +72,12 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(DownloadsScreen(), state);
       },
     ),
+
+    //
     // GoRoute(
-    //   path: '/wallet',
+    //   path: '/buy_coins',
     //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(Walletscreen(), state);
+    //     return buildSlideTransitionPage(BuyCoinsScreens(), state);
     //   },
     // ),
     GoRoute(
@@ -89,9 +93,13 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/resourcedetailscreen',
+      path: '/resource_details_screen',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(ResourceDetailScreen(), state);
+        final studyZoneData = state.extra as StudyZoneCampusData;
+        return buildSlideTransitionPage(
+          ResourceDetailScreen(studyZoneCampusData: studyZoneData),
+          state,
+        );
       },
     ),
     GoRoute(
@@ -103,7 +111,6 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(MentorProfileScreen(id: id), state);
       },
     ),
-
     GoRoute(
       path: '/mentivisorprofilesetup',
       pageBuilder: (context, state) =>
@@ -176,11 +183,10 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/resourcedetailscreen',
+      path: '/communityscreen',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ResourceDetailScreen(), state),
+          buildSlideTransitionPage(Communityscreen(), state),
     ),
-
     GoRoute(
       path: '/infoscreen',
       pageBuilder: (context, state) =>

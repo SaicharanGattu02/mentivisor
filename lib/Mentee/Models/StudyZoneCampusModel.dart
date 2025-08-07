@@ -23,7 +23,7 @@ class StudyZoneCampusModel {
 
 class StudyZoneData {
   int? currentPage;
-  List<Data>? data;
+  List<StudyZoneCampusData>? studyZoneCampusData;
   String? firstPageUrl;
   int? from;
   int? lastPage;
@@ -38,7 +38,7 @@ class StudyZoneData {
 
   StudyZoneData({
     this.currentPage,
-    this.data,
+    this.studyZoneCampusData,
     this.firstPageUrl,
     this.from,
     this.lastPage,
@@ -55,9 +55,9 @@ class StudyZoneData {
   StudyZoneData.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
-      data = <Data>[];
+      studyZoneCampusData = <StudyZoneCampusData>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        studyZoneCampusData!.add(new StudyZoneCampusData.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -81,8 +81,8 @@ class StudyZoneData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['current_page'] = this.currentPage;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    if (this.studyZoneCampusData != null) {
+      data['data'] = this.studyZoneCampusData!.map((v) => v.toJson()).toList();
     }
     data['first_page_url'] = this.firstPageUrl;
     data['from'] = this.from;
@@ -101,7 +101,7 @@ class StudyZoneData {
   }
 }
 
-class Data {
+class StudyZoneCampusData {
   int? id;
   String? name;
   String? image;
@@ -116,7 +116,7 @@ class Data {
   Null? deletedAt;
   Uploader? uploader;
 
-  Data({
+  StudyZoneCampusData({
     this.id,
     this.name,
     this.image,
@@ -132,7 +132,7 @@ class Data {
     this.uploader,
   });
 
-  Data.fromJson(Map<String, dynamic> json) {
+  StudyZoneCampusData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     image = json['image'];
@@ -176,7 +176,7 @@ class Uploader {
   String? name;
   String? email;
   int? contact;
-  Null? emailVerifiedAt;
+  bool? emailVerifiedAt;
   String? refreshToken;
   String? webFcmToken;
   String? deviceFcmToken;

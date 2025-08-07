@@ -22,6 +22,7 @@ import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
 import '../Models/ECCModel.dart';
 import '../Models/MentorProfileModel.dart';
+import '../Models/StudyZoneReportModel.dart';
 import '../Models/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
@@ -49,9 +50,14 @@ abstract class RemoteDataSource {
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(int page);
-  Future<StudyZoneCampusModel?> getStudyZoneCampus(String scope, String tag);
+  Future<StudyZoneCampusModel?> getStudyZoneCampus(
+    String scope,
+    String tag,
+    int page,
+  );
   Future<CommunityPostsModel?> getCommunityPosts(int page);
   Future<DownloadsModel?> getDownloads(int page);
+  Future<StudyZoneReportModel?> postStudyZoneReport(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -343,10 +349,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
     String tag,
+    int page,
   ) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.study_zone_campus}?scope=${scope}&tag=${tag}",
+        "${APIEndpointUrls.study_zone_campus}?scope=${scope}&tag=${tag}&page=${page}",
       );
       AppLogger.log('get StudyZoneCampus::${res.data}');
       return StudyZoneCampusModel.fromJson(res.data);
@@ -377,6 +384,25 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return CoinsPackRespModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('coins pack::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<StudyZoneReportModel?> postStudyZoneReport(
+    Map<String, dynamic> data,
+  ) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.study_zone_report_resource}",
+        data: formData,
+      );
+      AppLogger.log('StudyZone Report::${res.data}');
+      return StudyZoneReportModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('StudyZone Report ::${e}');
 
       return null;
     }

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
@@ -24,7 +25,7 @@ class MenteeStudyZone extends StatefulWidget {
 
 class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   bool _onCampus = true;
-  int _selectedTagIndex = -1;
+  final ValueNotifier<int> _selectedTagIndex = ValueNotifier<int>(-1);
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -37,6 +38,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
 
   @override
   void dispose() {
+    _selectedTagIndex.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -77,16 +79,14 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                         _onCampus = false;
                       });
                       context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
-                        "",
                         "beyond",
+                        "",
                       );
                     }),
                   ],
                 ),
               ),
               const SizedBox(height: 12),
-
-              // Search Field
               SizedBox(
                 height: 48,
                 child: TextField(
@@ -126,69 +126,62 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                   } else if (state is StudyZoneTagsLoaded) {
                     final tags = state.studyZoneTagsModel.tags;
                     return SizedBox(
-                      height: 42,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: tags?.length ?? 0,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemBuilder: (ctx, i) {
-                          final tagItem = tags![i];
-                          final isSelected = _selectedTagIndex == i;
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? const Color(0xFFEDEBFF)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(
-                                color: isSelected
-                                    ? Colors.transparent
-                                    : const Color(0xFFE0E0E0),
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      const BoxShadow(
-                                        color: Color(0xFFDDDFFF),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedTagIndex = i;
-                                });
-                              },
-                              child: Center(
-                                child: Text(
-                                  tagItem,
-                                  style: TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
+                      height: 30,
+                      child: ValueListenableBuilder<int>(
+                        valueListenable: _selectedTagIndex,
+                        builder: (context, selectedIndex, _) {
+                          return ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: tags?.length ?? 0,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              final tagItem = tags![index];
+                              final isSelected = index == selectedIndex;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  _selectedTagIndex.value = index;
+                                  context
+                                      .read<StudyZoneCampusCubit>()
+                                      .fetchStudyZoneCampus("", tagItem);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
                                     color: isSelected
-                                        ? const Color(0xFF2563EB)
-                                        : const Color(0xFF555555),
+                                        ? const Color(0xffD4E0FB)
+                                        : const Color(0xffffffff),
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: Text(
+                                    tagItem,
+                                    style: TextStyle(
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      color: isSelected
+                                          ? const Color(0xFF2563EB)
+                                          : const Color(0xFF555555),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           );
                         },
                       ),
                     );
                   }
+
                   return const SizedBox.shrink();
                 },
               ),
+
               const SizedBox(height: 12),
               BlocBuilder<StudyZoneCampusCubit, StudyZoneCampusState>(
                 builder: (context, state) {
@@ -196,20 +189,33 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is StudyZoneCampusFailure) {
                     return Center(child: Text(state.message));
-                  } else if (state is StudyZoneCampusLoaded) {
+                  } else if (state is StudyZoneCampusLoaded ||
+                      state is StudyZoneCampusLoadingMore) {
+                    final studyZoneCampusModel =
+                        (state is StudyZoneCampusLoaded)
+                        ? (state as StudyZoneCampusLoaded).studyZoneCampusModel
+                        : (state as StudyZoneCampusLoadingMore)
+                              .studyZoneCampusModel;
+                    final studyZoneData = studyZoneCampusModel.studyZoneData;
                     return Expanded(
                       child: CustomScrollView(
                         slivers: [
                           SliverPadding(
                             padding: EdgeInsets.all(12),
                             sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final campusList = state
-                                      .studyZoneCampusModel
-                                      .studyZoneData
-                                      ?.data![index];
-                                  return Container(
+                              delegate: SliverChildBuilderDelegate((
+                                context,
+                                index,
+                              ) {
+                                final campusList = studyZoneData?.studyZoneCampusData![index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                      '/resource_details_screen',
+                                      extra: campusList,
+                                    );
+                                  },
+                                  child: Container(
                                     padding: EdgeInsets.only(left: 12),
                                     margin: const EdgeInsets.only(bottom: 16),
                                     decoration: BoxDecoration(
@@ -346,16 +352,22 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                         ),
                                       ],
                                     ),
-                                  );
-                                },
-                                childCount: state
-                                    .studyZoneCampusModel
-                                    .studyZoneData
-                                    ?.data
-                                    ?.length,
-                              ),
+                                  ),
+                                );
+                              }, childCount: studyZoneData?.studyZoneCampusData?.length),
                             ),
                           ),
+                          if (state is StudyZoneCampusLoadingMore)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 0.8,
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     );
@@ -366,32 +378,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
               ),
             ],
           ),
-        ),
-      ),
-
-      floatingActionButton: Container(
-        height: 64,
-        width: 64,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 12,
-              offset: Offset(0, 6),
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.add, size: 32),
         ),
       ),
     );
@@ -424,168 +410,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ResourceCard extends StatelessWidget {
-  final Map<String, String> data;
-  const _ResourceCard({Key? key, required this.data}) : super(key: key);
-
-  static const Color grad1 = Color(0xFFA258F7);
-  static const Color grad2 = Color(0xFF726CF7);
-  static const Color grad3 = Color(0xFF4280F6);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FD),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          // Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              "images/download.jpg",
-              height: 144,
-              width: 144,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                height: 144,
-                width: 144,
-                color: Colors.grey.shade200,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          // Text & buttons
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    data['title']!,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Color(0xFF222222),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    data['subtitle']!,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                      color: Color(0xFF666666),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEDEBFF),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      data['tag']!,
-                      style: const TextStyle(
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        color: Color(0xFF7F00FF),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      // View button
-                      SizedBox(
-                        height: 36,
-                        width: 100,
-                        child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                              width: 1.5,
-                              color: Color(0xFF7F00FF),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            backgroundColor: Colors.white,
-                          ),
-                          child: const Text(
-                            'View',
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: Color(0xFF7F00FF),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 28),
-                      // Download button
-                      SizedBox(
-                        height: 36,
-                        width: 100,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [grad1, grad2, grad3],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Download',
-                                style: TextStyle(
-                                  fontFamily: 'segeo',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
