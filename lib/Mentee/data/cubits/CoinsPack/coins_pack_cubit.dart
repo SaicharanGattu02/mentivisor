@@ -8,7 +8,7 @@ class CoinsPackCubit extends Cubit<CoinsPackState> {
   CoinsPackCubit(this.coinsPackRepo)
       : super(CoinsPackStateInitial());
 
-  Future<void> fetchCampusMentorList() async {
+  Future<void> fetchCoinsPack() async {
     emit(CoinsPackStateLoading());
     try {
       final result = await coinsPackRepo.getcoinspack();

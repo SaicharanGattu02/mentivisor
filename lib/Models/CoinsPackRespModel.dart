@@ -111,8 +111,8 @@ class Meta {
   int? to;
   int? total;
 
-  Meta(
-      {this.currentPage,
+  Meta({
+        this.currentPage,
         this.from,
         this.lastPage,
         this.links,

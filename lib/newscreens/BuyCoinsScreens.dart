@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_state.dart';
 
 class BuyCoinsScreens extends StatefulWidget {
   const BuyCoinsScreens({Key? key}) : super(key: key);
@@ -10,8 +11,16 @@ class BuyCoinsScreens extends StatefulWidget {
 }
 
 class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
-
   int _selectedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    // Call API after widget is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CoinsPackCubit>().fetchCoinsPack();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +54,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
               ),
             ),
           ),
+
           // Section title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -60,115 +70,140 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
               ),
             ),
           ),
+
           const SizedBox(height: 8),
-          // Grid of packages: 4 columns
+
+          /// ✅ FIXED: Wrap BlocBuilder with Expanded
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: GridView.builder(
-                itemCount: 10,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.66,
-                ),
-                itemBuilder: (context, index) {
-                  final selected = index == _selectedIndex;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedIndex = index),
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: selected ? Color(0xffA351EE) : Color(0xffFFF8EC),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(10),
+            child: BlocBuilder<CoinsPackCubit, CoinsPackState>(
+              builder: (context, state) {
+                if (state is CoinsPackStateLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is CoinsPackStateLoaded) {
+                  final packs = state.coinsPackRespModel.data ?? [];
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: GridView.builder(
+                      itemCount: packs.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.65,
+                          ),
+
+
+                      itemBuilder: (context, index) {
+                        final coinspack = packs[index];
+                        final selected = index == _selectedIndex;
+
+                        return GestureDetector(
+                          onTap: () => setState(() => _selectedIndex = index),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadiusGeometry.circular(16),
+                              color: selected
+                                  ? const Color(0xffA351EE)
+                                  : const Color(0xffFFF8EC),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                 Image.asset("assets/images/GoldCoins.png",width: 32,height: 32),
-
-                                const SizedBox(height: 6),
-                                Text(
-                                  "10",
-                                  style: const TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/GoldCoins.png",
+                                        width: 32,
+                                        height: 32,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        coinspack.coins?.toString() ?? "0",
+                                        style: const TextStyle(
+                                          fontFamily: 'segeo',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Coins',
+                                        style: TextStyle(
+                                          fontFamily: 'segeo',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const Text(
-                                  'Coins',
+
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: selected
+                                        ? Colors.white
+                                        : const Color(0xffA351EE),
+                                    borderRadius: BorderRadius.circular(36),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${coinspack.discountPercent?.toString() ?? "0"}% off',
+                                      style: TextStyle(
+                                        fontFamily: 'segeo',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                        color: selected
+                                            ? const Color(0xff340063)
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                Text(
+                                  'for ${coinspack.discountPercent?.toString() ?? "0"}  ${coinspack.offerPrice?.toString() ?? "0"}',
                                   style: TextStyle(
                                     fontFamily: 'segeo',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 12,
+                                    color: selected
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            width: double.infinity,
-                            padding:  EdgeInsets.symmetric(vertical: 6),
-                            decoration: BoxDecoration(
-                              color: selected ? Colors.white : Color(0xffA351EE),
-                              borderRadius:  BorderRadius.circular(36)
-                            ),
-                            child: Center(
-                              child: Text(
-                                '18% off',
-                                style: TextStyle(
-                                  fontFamily: 'segeo',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                  color: selected ? Color(0xff340063) : Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "for 500 300",
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: selected ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   );
-                },
-              ),
+                } else if (state is CoinsPackStateFailure) {
+                  return Center(
+                    child: Text(state.msg ?? "Something went wrong"),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
             ),
           ),
         ],
       ),
     );
   }
-}
-
-class CoinPackage {
-  final int coins;
-  final int original;
-  final int price;
-  final int discountPercent;
-
-  CoinPackage({
-    required this.coins,
-    required this.original,
-    required this.price,
-    required this.discountPercent,
-  });
 }

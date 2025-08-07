@@ -1,314 +1,267 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-// import 'package:table_calendar/table_calendar.dart';
 
-class ProductivityToolsScreen extends StatefulWidget {
+class ProductivityScreen extends StatefulWidget {
   @override
-  _ProductivityToolsScreenState createState() =>
-      _ProductivityToolsScreenState();
+  _ProductivityScreenState createState() => _ProductivityScreenState();
 }
 
-class _ProductivityToolsScreenState extends State<ProductivityToolsScreen> {
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
-  Map<DateTime, List<String>> _tasks = {};
-  final TextEditingController _taskController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedDay = _focusedDay;
-    // seed with three example tasks
-    _tasks[_selectedDay!] = [
-      'Complete 30 minutes Study',
-      'Complete 30 minutes Study',
-      'Complete 30 minutes Study',
-    ];
-  }
-
-  List<String> get _todayTasks => _tasks[_selectedDay!] ?? [];
-
-  int get _currentStreak {
-    // naive streak: count backward days that have tasks
-    int streak = 0;
-    DateTime day = _selectedDay!;
-    while ((_tasks[day]?.isNotEmpty ?? false)) {
-      streak++;
-      day = day.subtract(const Duration(days: 1));
-    }
-    return streak;
-  }
-
-  int get _completedTaskCount {
-    return _tasks.values.fold(0, (sum, list) => sum + list.length);
-  }
-
-  void _addTask() {
-    final text = _taskController.text.trim();
-    if (text.isEmpty) return;
-    setState(() {
-      _tasks.putIfAbsent(_selectedDay!, () => []);
-      _tasks[_selectedDay!]!.add(text);
-      _taskController.clear();
-    });
-  }
-
-  void _deleteTask(int idx) {
-    setState(() {
-      _tasks[_selectedDay!]!.removeAt(idx);
-    });
-  }
-
-  void _toggleComplete(int idx) {
-    setState(() {
-      final list = _tasks[_selectedDay!]!;
-      final item = list.removeAt(idx);
-      // move completed to top
-      list.insert(0, item);
-    });
-  }
+class _ProductivityScreenState extends State<ProductivityScreen> {
+  int selectedDay = DateTime.now().day;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: const BackButton(color: Colors.black87),
-        centerTitle: true,
-        title: const Text(
-          'Productivity Tools',
-          style: TextStyle(color: Color(0xff222222), fontWeight: FontWeight.w600,fontFamily: 'segeo'),
-        ),
-      ),
-      body: Column(
-        children: [
-          // ── TOP METRIC CARDS ─────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _MetricCard(
-                  color: const Color(0xFFFFF0E6),
-                  icon: Icons.local_fire_department,
-                  iconColor: Colors.orange,
-                  label: 'Current Streak',
-                  value: _currentStreak.toString().padLeft(2, '0'),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () {},
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Productivity Tools',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                _MetricCard(
-                  color: const Color(0xFFE6FFF2),
-                  icon: Icons.check_circle,
-                  iconColor: Colors.green,
-                  label: 'Completed Task',
-                  value: _completedTaskCount.toString(),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildStatCard('Current Streak', '03', Colors.orange[100]!),
+                    _buildStatCard('Completed Task', '10', Colors.green[100]!),
+                    _buildStatCard('Today Task', '15', Colors.blue[100]!),
+                  ],
                 ),
-                _MetricCard(
-                  color: const Color(0xFFDCEBF7),
-                  icon: Icons.today,
-                  iconColor: const Color(0xFF2563EC),
-                  label: 'Today Task',
-                  value: _todayTasks.length.toString(),
-                ),
-              ],
-            ),
-          ),
-
-          // ── CALENDAR ───────────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-
-              ),
-            ),
-          ),
-
-          // ── TASK LIST ───────────────────────────────────────────────────
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
+                SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // header + add button
+                      const Text(
+                        'Aug 2025',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${_selectedDay!.day} ${_monthName(_selectedDay!)} Task',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: _addTask,
-                            icon: const Icon(Icons.add, size: 16),
-                            label: const Text('Add Task'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xff9333EA),
-                              shape: const StadiumBorder(),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-
-                      // inline input
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _taskController,
-                              decoration: InputDecoration(
-                                hintText: 'Task Name',
-                                filled: true,
-                                fillColor: Colors.grey.shade200,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 12),
+                        children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+                            .map(
+                              (e) => Expanded(
+                            child: Center(
+                              child: Text(
+                                e,
+                                style:
+                                const TextStyle(fontWeight: FontWeight.w600),
                               ),
                             ),
                           ),
-                          TextButton(
-                            onPressed: _addTask,
-                            child: const Text('Add'),
-                          ),
-                        ],
+                        )
+                            .toList(),
                       ),
-                      const SizedBox(height: 12),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Divider(color: Colors.grey, height: 1),
+                      ),
+                      GridView.count(
+                        crossAxisCount: 7,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: List.generate(31, (index) {
+                          int day = index + 1;
+                          bool isSelected = selectedDay == day;
 
-                      // tasks
-                      Expanded(
-                        child: ListView.separated(
-                          itemCount: _todayTasks.length,
-                          separatorBuilder: (_, __) =>
-                          const SizedBox(height: 8),
-                          itemBuilder: (_, idx) {
-                            final task = _todayTasks[idx];
-                            final done = idx != 0;
-                            return Container(
+                          Color textColor = isSelected ? Colors.pink : Colors.grey;
+                          Color borderColor = isSelected ? Colors.pink : Colors.grey.shade300;
+                          double borderWidth = isSelected ? 2.0 : 1.0;
+
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() => selectedDay = day);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                shape: BoxShape.circle,
                                 border: Border.all(
-                                    color: Colors.grey.shade200),
-                              ),
-                              child: ListTile(
-                                leading: IconButton(
-                                  icon: Icon(
-                                    done
-                                        ? Icons.check_circle
-                                        : Icons.circle_outlined,
-                                    color: done ? Colors.green : Colors.grey,
-                                  ),
-                                  onPressed: () => _toggleComplete(idx),
+                                  color: borderColor,
+                                  width: borderWidth,
                                 ),
-                                title: Text(
-                                  task,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '$day',
                                   style: TextStyle(
-                                    decoration: done
-                                        ? TextDecoration.lineThrough
-                                        : TextDecoration.none,
+                                    fontWeight:
+                                    isSelected ? FontWeight.bold : FontWeight.normal,
+                                    color: textColor,
                                   ),
                                 ),
-                                trailing: IconButton(
-                                  icon:
-                                  const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => _deleteTask(idx),
-                                ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),
                 ),
-              ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$selectedDay Aug Task',
+                      style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(10),
+                      ),
+                      child: Icon(Icons.add, color: Colors.white),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Task Name',
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text('Add', style: TextStyle(color: Colors.purple)),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      ...[
+                        'Complete 30 minutes Study',
+                        'Complete 30 minutes Study',
+                        'Complete 30 minutes Study'
+                      ].map((task) => Container(
+                        padding: EdgeInsets.all(12),
+                        margin: EdgeInsets.symmetric(vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: _buildTaskItem(task, task.hashCode % 2 == 0),
+                      )),
+                    ],
+                  ),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, String value, Color color) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            title == 'Current Streak'
+                ? Icons.local_fire_department
+                : title == 'Completed Task'
+                ? Icons.check_circle
+                : Icons.task,
+            color: title == 'Current Streak'
+                ? Colors.orange
+                : title == 'Completed Task'
+                ? Colors.green
+                : Colors.blue,
+          ),
+          SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(fontSize: 14),
+          ),
+          Text(
+            value,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  String _monthName(DateTime d) {
-    const m = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-    return m[d.month - 1];
-  }
-}
-
-class _MetricCard extends StatelessWidget {
-  final Color color;
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-
-  const _MetricCard({
-    required this.color,
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 100,
-      height: 100,
-      child: Card(
-        color: color,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12)),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: iconColor, size: 28),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style:
-                const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
-            ],
+  Widget _buildTaskItem(String title, bool isCompleted) {
+    return Row(
+      children: [
+        Icon(
+          isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
+          color: isCompleted ? Colors.green : Colors.red,
+          size: 20,
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              decoration: isCompleted ? TextDecoration.lineThrough : null,
+            ),
           ),
         ),
-      ),
+        Icon(Icons.delete, color: Colors.red, size: 20),
+      ],
     );
   }
 }

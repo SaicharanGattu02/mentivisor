@@ -20,6 +20,7 @@ import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
+import 'package:mentivisor/profileview/ProductivityToolsScreen.dart';
 import 'package:mentivisor/profileview/WalletScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
@@ -73,6 +74,19 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
+    //
+    // GoRoute(
+    //   path: '/buy_coins',
+    //   pageBuilder: (context, state) {
+    //     return buildSlideTransitionPage(BuyCoinsScreens(), state);
+    //   },
+    // ),
+    GoRoute(
+      path: '/wallet',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(Walletscreen(), state);
+      },
+    ),
     GoRoute(
       path: '/add_resource',
       pageBuilder: (context, state) =>

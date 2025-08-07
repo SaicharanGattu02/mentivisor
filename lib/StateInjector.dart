@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
@@ -6,6 +8,8 @@ import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dar
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
@@ -75,6 +79,17 @@ class StateInjector {
       create: (context) =>
           ECCRepositoryImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
+    RepositoryProvider<CoinsPackRepo>(
+      create: (context) =>
+          CoinspackImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+
+    RepositoryProvider<WalletmoneyRepository>(
+      create: (context) =>
+          walletmoneyImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+
+
     RepositoryProvider<CommunityPostsRepo>(
       create: (context) => CommunityPostsRepoImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
@@ -124,6 +139,15 @@ class StateInjector {
     BlocProvider<StudyZoneCampusCubit>(
       create: (context) =>
           StudyZoneCampusCubit(context.read<StudyZoneCampusRepository>()),
+    ),
+
+    BlocProvider<CoinsPackCubit>(
+      create: (context) =>
+          CoinsPackCubit(context.read<CoinsPackRepo>()),
+    ),
+    BlocProvider<WalletmoneyCubit>(
+      create: (context) =>
+          WalletmoneyCubit(context.read<WalletmoneyRepository>()),
     ),
     BlocProvider<CommunityPostsCubit>(
       create: (context) =>
