@@ -20,7 +20,6 @@ import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
-// import 'package:mentivisor/Mentee/presentation/WalletScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
@@ -75,13 +74,6 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(DownloadsScreen(), state);
       },
     ),
-
-    // GoRoute(
-    //   path: '/wallet',
-    //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(Walletscreen(), state);
-    //   },
-    // ),
     GoRoute(
       path: '/add_resource',
       pageBuilder: (context, state) =>
@@ -277,12 +269,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(BuyCoinsScreens(), state),
     ),
-
-    // GoRoute(
-    //   path: '/wallet_history',
-    //   pageBuilder: (context, state) =>
-    //       buildSlideTransitionPage(WalletHistory(), state),
-    // ),
     GoRoute(
       path: '/details',
       pageBuilder: (context, state) =>
