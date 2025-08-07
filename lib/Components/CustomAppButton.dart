@@ -81,6 +81,7 @@ class CustomAppButton extends StatelessWidget {
   }
 }
 
+
 class CustomAppButton1 extends StatelessWidget {
   final String text;
   final Color? textcolor;
@@ -89,6 +90,7 @@ class CustomAppButton1 extends StatelessWidget {
   final VoidCallback? onPlusTap;
   final IconData? icon;
   final bool isLoading;
+  final int? radus;
 
   const CustomAppButton1({
     Key? key,
@@ -99,14 +101,19 @@ class CustomAppButton1 extends StatelessWidget {
     this.width,
     this.isLoading = false,
     this.icon,
+    this.radus,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    final double buttonWidth = width ?? MediaQuery.of(context).size.width;
+    final double buttonHeight = height ?? 50;
+    final int borderRadius = radus ?? 12;
+    final Color textColor = textcolor ?? Colors.white;
+
     return SizedBox(
-      width: width ?? w,
-      height: height ?? 50,
+      width: buttonWidth,
+      height: buttonHeight,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPlusTap,
         style: ElevatedButton.styleFrom(
@@ -114,7 +121,7 @@ class CustomAppButton1 extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(borderRadius.toDouble()),
           ),
         ),
         child: Ink(
@@ -124,7 +131,7 @@ class CustomAppButton1 extends StatelessWidget {
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(borderRadius.toDouble()),
           ),
           child: Container(
             alignment: Alignment.center,
@@ -133,27 +140,28 @@ class CustomAppButton1 extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                isLoading
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 1,
-                        ),
-                      )
-                    : Text(
-                        text,
-                        style: TextStyle(
-                          color: textcolor ?? Colors.white,
-                          fontFamily: 'segeo',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                if (icon != null) ...[
+                if (isLoading)
+                  const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 1.5,
+                    ),
+                  )
+                else
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: textColor,
+                      fontFamily: 'segeo',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                if (!isLoading && icon != null) ...[
                   const SizedBox(width: 8),
-                  Icon(icon, color: textcolor ?? Colors.white, size: 18),
+                  Icon(icon, color: textColor, size: 18),
                 ],
               ],
             ),
@@ -163,6 +171,95 @@ class CustomAppButton1 extends StatelessWidget {
     );
   }
 }
+
+
+class CustomOutlinedButton extends StatelessWidget {
+  final String text;
+  final Color? textColor;
+  final double? width;
+  final double? height;
+  final VoidCallback? onTap;
+  final IconData? icon;
+  final bool isLoading;
+  final int? radius;
+
+  const CustomOutlinedButton({
+    Key? key,
+    required this.text,
+    required this.onTap,
+    this.textColor,
+    this.width,
+    this.height,
+    this.icon,
+    this.isLoading = false,
+    this.radius,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final double buttonWidth = width ?? MediaQuery.of(context).size.width;
+    final double buttonHeight = height ?? 50;
+    final int borderRadius = radius ?? 12;
+    final Color finalTextColor = textColor ?? const Color(0xFF6D6BFF);
+
+    return SizedBox(
+      width: buttonWidth,
+      height: buttonHeight,
+      child: GestureDetector(
+        onTap: isLoading ? null : onTap,
+        child: Container(
+          padding: const EdgeInsets.all(1.5), // border thickness
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xffa855f7), Color(0xff3b82f6)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(borderRadius.toDouble()),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // inner background
+              borderRadius: BorderRadius.circular(borderRadius.toDouble()),
+            ),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (isLoading)
+                    const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF6D6BFF),
+                        strokeWidth: 1.5,
+                      ),
+                    )
+                  else
+                    Text(
+                      text,
+                      style: TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: finalTextColor,
+                      ),
+                    ),
+                  if (!isLoading && icon != null) ...[
+                    const SizedBox(width: 8),
+                    Icon(icon, color: finalTextColor, size: 18),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class CustomAppButton2 extends StatelessWidget implements PreferredSizeWidget {
   final String text;
