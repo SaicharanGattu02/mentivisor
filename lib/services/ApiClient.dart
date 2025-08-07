@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../core/network/mentee_endpoints.dart';
 import '../utils/constants.dart';
 import 'AuthService.dart';
-import 'api_endpoint_urls.dart';
 
 class ApiClient {
   static final Dio _dio = Dio(

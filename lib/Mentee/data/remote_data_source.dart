@@ -15,13 +15,13 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Models/EccGuestlist_Model.dart';
 import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
+import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
 import '../Models/MentorProfileModel.dart';
 import '../Models/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import '../../services/ApiClient.dart';
-import '../../services/api_endpoint_urls.dart';
 
 abstract class RemoteDataSource {
   Future<LogInModel?> login(Map<String, dynamic> data);
