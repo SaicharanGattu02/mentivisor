@@ -26,6 +26,7 @@ import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
+import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
 import '../Mentee/presentation/authentication/OTPVerificationScreen.dart';
@@ -44,6 +45,7 @@ import '../newscreens/InfoScreen.dart';
 import '../newscreens/InterestingScreen.dart';
 import '../newscreens/LanguageSelectionScreen.dart';
 import '../newscreens/ProfileSetupWizard.dart';
+import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 import '../presentation/Details.dart';
@@ -83,6 +85,16 @@ final GoRouter appRouter = GoRouter(
       path: '/productivity_screen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ProductivityScreen(), state),
+    ),
+    GoRoute(
+      path: '/session_completed',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SessionCompletedScreen(), state),
+    ),
+    GoRoute(
+      path: '/upcoming_session',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(UpcomingSessionsScreen(), state),
     ),
     GoRoute(
       path: '/campus_mentor_list',

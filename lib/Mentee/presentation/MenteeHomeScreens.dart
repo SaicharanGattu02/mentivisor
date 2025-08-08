@@ -41,28 +41,28 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         context.push("/productivity_screen");
         break;
       case 'Session Completed':
-        Navigator.pushNamed(context, '/sessions/completed');
+        context.push("/session_completed");
         break;
       case 'Upcoming Sessions':
-        Navigator.pushNamed(context, '/sessions/upcoming');
+        context.push("/upcoming_session");
         break;
       case 'Info':
-        Navigator.pushNamed(context, 'infoscreen');
         break;
       case 'Invite Friend':
-        Navigator.pushNamed(context, '/invite');
         break;
       case 'Customer Services':
-        Navigator.pushNamed(context, '/support');
         break;
       case 'Become Mentor':
-        Navigator.pushNamed(context, '/become-mentor');
         break;
       case 'Logout':
         showLogoutDialog(context);
         break;
       case 'View All':
-        Navigator.pushNamed(context, '/mentors');
+        if (_onCampus == true) {
+          context.push('/campus_mentor_list?scope=${""}');
+        } else {
+          context.push('/campus_mentor_list?scope=${"beyond"}');
+        }
         break;
     }
   }

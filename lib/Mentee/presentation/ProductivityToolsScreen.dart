@@ -416,8 +416,11 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                                 dynamic
                                                               >
                                                               data = {
-                                                                "task_date": formattedDate,
-                                                                "title": _taskNameController.text,
+                                                                "task_date":
+                                                                    formattedDate,
+                                                                "title":
+                                                                    _taskNameController
+                                                                        .text,
                                                               };
                                                               context
                                                                   .read<
@@ -469,7 +472,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                         ),
                                       );
                                     },
-                                  ).whenComplete((){
+                                  ).whenComplete(() {
                                     _taskNameController.clear();
                                   });
                                 },
@@ -705,9 +708,23 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                                       (
                                                                         context,
                                                                         taskDelete,
-                                                                      ) {
+                                                                      ) async {
                                                                         if (taskDelete
                                                                             is TaskUpdateSuccess) {
+                                                                          final formattedDate =
+                                                                              DateFormat(
+                                                                                'yyyy-MM-dd',
+                                                                              ).format(
+                                                                                _selectedDateNotifier.value,
+                                                                              );
+
+                                                                          await context
+                                                                              .read<
+                                                                                TaskByDateCubit
+                                                                              >()
+                                                                              .fetchTasksByDate(
+                                                                                formattedDate,
+                                                                              ); // pass
                                                                           context
                                                                               .pop();
                                                                         } else if (taskDelete

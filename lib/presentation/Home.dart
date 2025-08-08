@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/newscreens/AchievementScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
-import 'package:mentivisor/newscreens/SessionCompletedScreen.dart';
-import 'package:mentivisor/newscreens/UpcomingSessionsScreen.dart';
+import 'package:mentivisor/Mentee/presentation/SessionCompletedScreen.dart';
+import 'package:mentivisor/Mentee/presentation/UpcomingSessionsScreen.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 class Home extends StatefulWidget {

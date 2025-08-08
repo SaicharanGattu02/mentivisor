@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 
-class SessionCompletedScreen extends StatelessWidget {
+class SessionCompletedScreen extends StatefulWidget {
   const SessionCompletedScreen({Key? key}) : super(key: key);
 
+  @override
+  State<SessionCompletedScreen> createState() => _SessionCompletedScreenState();
+}
+
+class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
