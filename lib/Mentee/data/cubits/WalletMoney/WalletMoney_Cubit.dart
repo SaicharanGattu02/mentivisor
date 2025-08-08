@@ -11,7 +11,7 @@ class WalletmoneyCubit extends Cubit<WalletmoneyState> {
   Future<void> getwalletmoney() async {
     emit(WalletmoneyStateLoading());
     try {
-      final res = await walletmoneyRepository.getwalletmoney();
+      final res = await walletmoneyRepository.getWallet();
       if (res != null) {
         emit(WalletmoneyStateLoaded(walletResponseModel: res));
       } else {

@@ -43,4 +43,8 @@ class APIEndpointUrls {
   static const String study_zone_report_resource ="${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
+  static const String task_by_date = "${userUrl}/tasks";
+  static const String task_by_states= "${userUrl}/tasks/stats";
+  static const String task_update = "${userUrl}/tasks/";
+  static const String task_delete = "${userUrl}/tasks/";
 }

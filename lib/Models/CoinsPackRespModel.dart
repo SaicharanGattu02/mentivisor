@@ -33,48 +33,50 @@ class CoinsPackRespModel {
 
 class Data {
   int? id;
-  int? coins;
+  double? coins;
   String? originalPrice;
   String? offerPrice;
-  int? discountPercent;
+  double? discountPercent;
   String? status;
   String? createdAt;
   String? updatedAt;
 
-  Data(
-      {this.id,
-        this.coins,
-        this.originalPrice,
-        this.offerPrice,
-        this.discountPercent,
-        this.status,
-        this.createdAt,
-        this.updatedAt});
+  Data({
+    this.id,
+    this.coins,
+    this.originalPrice,
+    this.offerPrice,
+    this.discountPercent,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    coins = json['coins'];
-    originalPrice = json['original_price'];
-    offerPrice = json['offer_price'];
-    discountPercent = json['discount_percent'];
+    coins = (json['coins'] as num?)?.toDouble();
+    originalPrice = json['original_price']?.toString();
+    offerPrice = json['offer_price']?.toString();
+    discountPercent = (json['discount_percent'] as num?)?.toDouble();
     status = json['status'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['coins'] = this.coins;
-    data['original_price'] = this.originalPrice;
-    data['offer_price'] = this.offerPrice;
-    data['discount_percent'] = this.discountPercent;
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['coins'] = coins;
+    data['original_price'] = originalPrice;
+    data['offer_price'] = offerPrice;
+    data['discount_percent'] = discountPercent;
+    data['status'] = status;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }
+
 
 class Links {
   String? first;

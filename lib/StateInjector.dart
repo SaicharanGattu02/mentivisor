@@ -20,6 +20,9 @@ import 'Mentee/data/cubits/Login/LoginCubit.dart';
 import 'Mentee/data/cubits/Login/LoginRepository.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
+import 'Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
+import 'Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
+import 'Mentee/data/cubits/ProductTools/product_tools_repository.dart';
 import 'Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'Mentee/data/cubits/Register/Register_Repository.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
@@ -89,7 +92,6 @@ class StateInjector {
           walletmoneyImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
-
     RepositoryProvider<CommunityPostsRepo>(
       create: (context) => CommunityPostsRepoImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
@@ -101,8 +103,13 @@ class StateInjector {
       ),
     ),
     RepositoryProvider<StudyZoneReportRepository>(
+      create: (context) => StudyZoneReportImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<ProductToolsRepository>(
       create: (context) =>
-          StudyZoneReportImpl(remoteDataSource: context.read<RemoteDataSource>()),
+          ProductToolsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
   ];
 
@@ -142,8 +149,7 @@ class StateInjector {
     ),
 
     BlocProvider<CoinsPackCubit>(
-      create: (context) =>
-          CoinsPackCubit(context.read<CoinsPackRepo>()),
+      create: (context) => CoinsPackCubit(context.read<CoinsPackRepo>()),
     ),
     BlocProvider<WalletmoneyCubit>(
       create: (context) =>
@@ -159,6 +165,14 @@ class StateInjector {
     BlocProvider<StudyZoneReportCubit>(
       create: (context) =>
           StudyZoneReportCubit(context.read<StudyZoneReportRepository>()),
+    ),
+    BlocProvider<TaskByDateCubit>(
+      create: (context) =>
+          TaskByDateCubit(context.read<ProductToolsRepository>()),
+    ),
+    BlocProvider<TaskByStatusCubit>(
+      create: (context) =>
+          TaskByStatusCubit(context.read<ProductToolsRepository>()),
     ),
   ];
 }

@@ -37,7 +37,7 @@ import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../newscreens/AcadamicJourneyScreen.dart';
-import '../newscreens/BuyCoinsScreens.dart';
+import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';

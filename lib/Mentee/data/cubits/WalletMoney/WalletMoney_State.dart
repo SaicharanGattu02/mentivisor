@@ -1,4 +1,4 @@
-import '../../../Models/WalletResponseModel.dart';
+import '../../../Models/WalletModel.dart';
 
 abstract class WalletmoneyState {}
 
@@ -7,7 +7,7 @@ class WalletmoneyStateIntially extends WalletmoneyState {}
 class WalletmoneyStateLoading extends WalletmoneyState {}
 
 class WalletmoneyStateLoaded extends WalletmoneyState {
-  WalletResponseModel walletResponseModel ;
+  WalletModel walletResponseModel ;
   WalletmoneyStateLoaded({required this.walletResponseModel});
 }
 

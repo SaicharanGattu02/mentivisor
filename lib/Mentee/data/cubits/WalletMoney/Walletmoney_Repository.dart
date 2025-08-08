@@ -1,21 +1,17 @@
-
-
-import '../../../Models/WalletResponseModel.dart';
+import '../../../Models/WalletModel.dart';
 import '../../remote_data_source.dart';
 
-
-abstract class WalletmoneyRepository{
-  Future<WalletResponseModel?> getwalletmoney();
+abstract class WalletmoneyRepository {
+  Future<WalletModel?> getWallet();
 }
 
-class walletmoneyImpl implements WalletmoneyRepository{
+class walletmoneyImpl implements WalletmoneyRepository {
   final RemoteDataSource remoteDataSource;
 
   walletmoneyImpl({required this.remoteDataSource});
 
   @override
-  Future<WalletResponseModel?> getwalletmoney() async {
-    return await remoteDataSource.getwalletmoney();
-
+  Future<WalletModel?> getWallet() async {
+    return await remoteDataSource.getWallet();
   }
 }

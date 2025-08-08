@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_state.dart';
 
@@ -16,7 +17,6 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
   @override
   void initState() {
     super.initState();
-    // Call API after widget is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CoinsPackCubit>().fetchCoinsPack();
     });
@@ -25,20 +25,8 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Buy Coins',
-          style: TextStyle(
-            fontFamily: 'segeo',
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
-        leading: const BackButton(color: Color(0xff222222)),
-        backgroundColor: Colors.white,
-        elevation: 1,
-      ),
-      backgroundColor: const Color(0xFFFFF8EE),
+      appBar: CustomAppBar1(title: "Buy Coins", actions: []),
+      backgroundColor: Color(0xffFFF8EC),
       body: Column(
         children: [
           // Top illustration
@@ -72,8 +60,6 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
           ),
 
           const SizedBox(height: 8),
-
-          /// ✅ FIXED: Wrap BlocBuilder with Expanded
           Expanded(
             child: BlocBuilder<CoinsPackCubit, CoinsPackState>(
               builder: (context, state) {
@@ -93,7 +79,6 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                             mainAxisSpacing: 12,
                             childAspectRatio: 0.65,
                           ),
-
 
                       itemBuilder: (context, index) {
                         final coinspack = packs[index];

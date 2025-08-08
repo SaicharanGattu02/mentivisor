@@ -1,10 +1,10 @@
-class WalletResponseModel {
+class WalletModel {
   bool? status;
   Data? data;
 
-  WalletResponseModel({this.status, this.data});
+  WalletModel({this.status, this.data});
 
-  WalletResponseModel.fromJson(Map<String, dynamic> json) {
+  WalletModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
@@ -69,7 +69,7 @@ class Wallet {
 
 class CreditedCoins {
   int? currentPage;
-  List<Data>? data;
+  List<CoinsHistory>? coinsHistory;
   String? firstPageUrl;
   int? from;
   int? lastPage;
@@ -84,7 +84,7 @@ class CreditedCoins {
 
   CreditedCoins(
       {this.currentPage,
-        this.data,
+        this.coinsHistory,
         this.firstPageUrl,
         this.from,
         this.lastPage,
@@ -100,9 +100,9 @@ class CreditedCoins {
   CreditedCoins.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
-      data = <Data>[];
+      coinsHistory = <CoinsHistory>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        coinsHistory!.add(new CoinsHistory.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -126,8 +126,8 @@ class CreditedCoins {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['current_page'] = this.currentPage;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    if (this.coinsHistory != null) {
+      data['data'] = this.coinsHistory!.map((v) => v.toJson()).toList();
     }
     data['first_page_url'] = this.firstPageUrl;
     data['from'] = this.from;
@@ -146,7 +146,7 @@ class CreditedCoins {
   }
 }
 
-class WalletData{
+class CoinsHistory {
   int? id;
   int? userId;
   String? activity;
@@ -157,7 +157,7 @@ class WalletData{
   String? createdAt;
   String? updatedAt;
 
-  WalletData(
+  CoinsHistory(
       {this.id,
         this.userId,
         this.activity,
@@ -168,7 +168,7 @@ class WalletData{
         this.createdAt,
         this.updatedAt});
 
-  WalletData.fromJson(Map<String, dynamic> json) {
+  CoinsHistory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     activity = json['activity'];

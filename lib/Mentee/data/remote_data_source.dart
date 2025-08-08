@@ -7,7 +7,7 @@ import 'package:mentivisor/Models/CommunityGuest_Model.dart';
 import 'package:mentivisor/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Models/GetBooksRespModel.dart';
 import 'package:mentivisor/Models/LoginResponseModel.dart';
-import 'package:mentivisor/Mentee/Models/WalletResponseModel.dart';
+import 'package:mentivisor/Mentee/Models/WalletModel.dart';
 import 'package:mentivisor/Models/OnCampouseRespModel.dart';
 import 'package:mentivisor/Models/StudyZoneDownloadModel_wo_log.dart';
 import 'package:mentivisor/Models/TopMentersResponseModel.dart';
@@ -17,6 +17,7 @@ import '../../Models/EccGuestlist_Model.dart';
 import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
 import '../Models/CommunityPostsModel.dart';
+import '../Models/ProductToolTaskByDateModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
@@ -27,6 +28,7 @@ import '../Models/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import '../../services/ApiClient.dart';
+import '../Models/TaskStatesModel.dart';
 
 abstract class RemoteDataSource {
   Future<LogInModel?> login(Map<String, dynamic> data);
@@ -42,7 +44,7 @@ abstract class RemoteDataSource {
   Future<StudyZoneDownloadModel_wo_log?> studtzonedownloadwithoutlogin();
   Future<EccGuestlist_Model?> eccguestlist();
   Future<CommunityGuest_Model?> guestcommunitytags();
-  Future<WalletResponseModel?> getwalletmoney();
+  Future<WalletModel?> getWallet();
   Future<CoinsPackRespModel?> getcoinspack();
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
@@ -57,6 +59,10 @@ abstract class RemoteDataSource {
   Future<CommunityPostsModel?> getCommunityPosts(int page);
   Future<DownloadsModel?> getDownloads(int page);
   Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data);
+  Future<TaskStatesModel?> getTaskByStates();
+  Future<ProductToolTaskByDateModel?> getTaskByDate(String date);
+  Future<SuccessModel?> putTaskComplete(int taskId);
+  Future<SuccessModel?> TaskDelete(int taskId);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -379,11 +385,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<WalletResponseModel?> getwalletmoney() async {
+  Future<WalletModel?> getWallet() async {
     try {
       Response res = await ApiClient.get("${APIEndpointUrls.wallet_money}");
       AppLogger.log('get walletmoney::${res.data}');
-      return WalletResponseModel.fromJson(res.data);
+      return WalletModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('walletmoney::${e}');
 
@@ -400,6 +406,58 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     } catch (e) {
       AppLogger.error('coins pack::${e}');
 
+      return null;
+    }
+  }
+
+  @override
+  Future<ProductToolTaskByDateModel?> getTaskByDate(String date) async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.task_by_date}");
+      AppLogger.log('get taskBy Date ::${res.data}');
+      return ProductToolTaskByDateModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('taskBy Date::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<TaskStatesModel?> getTaskByStates() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.task_by_states}");
+      AppLogger.log('get taskBy States ::${res.data}');
+      return TaskStatesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('taskBy States ::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> putTaskComplete(int taskId) async {
+    try {
+      Response res = await ApiClient.put(
+        "${APIEndpointUrls.task_update}/${taskId}/complete",
+      );
+      AppLogger.log('task Update ::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('task Update  ::${e}');
+      return null;
+    }
+  }
+  @override
+  Future<SuccessModel?> TaskDelete(int taskId) async {
+    try {
+      Response res = await ApiClient.delete(
+        "${APIEndpointUrls.task_delete}/${taskId}",
+      );
+      AppLogger.log('task delete ::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('task delete  ::${e}');
       return null;
     }
   }
