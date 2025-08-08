@@ -48,7 +48,7 @@ class Nointernet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CustomAppButton(text: "Retry", onPlusTap: (){
+            CustomAppButton1(text: "Retry", onPlusTap: (){
 
             }),
           ],

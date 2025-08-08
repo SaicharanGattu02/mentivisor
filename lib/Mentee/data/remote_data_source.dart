@@ -17,6 +17,7 @@ import '../../Models/EccGuestlist_Model.dart';
 import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
 import '../Models/CommunityPostsModel.dart';
+import '../Models/CommunityZoneTagsModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
@@ -64,6 +65,8 @@ abstract class RemoteDataSource {
   Future<ProductToolTaskByDateModel?> getTaskByDate(String date);
   Future<SuccessModel?> putTaskComplete(int taskId);
   Future<SuccessModel?> TaskDelete(int taskId);
+  Future<CommunityZoneTagsModel?> getCommunityZoneTags();
+  Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -103,6 +106,36 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<CommunityZoneTagsModel?> getCommunityZoneTags() async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.community_zone_tags}",
+      );
+      debugPrint('getCommunityZoneTags::$res');
+      return CommunityZoneTagsModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getCommunityZoneTags::$e');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data) async {
+    try {
+      final formdata = await buildFormData(data);
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.add_community}",
+        data: formdata,
+      );
+      debugPrint('addCommunityPost::$res');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error addCommunityPost::$e');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> postComment(Map<String, dynamic> data) async {
     try {
       final formdata = await buildFormData(data);
@@ -110,7 +143,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         "${APIEndpointUrls.add_comment}",
         data: formdata,
       );
-      debugPrint('Error postComment::$res');
+      debugPrint('postComment::$res');
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error postComment::$e');
@@ -126,7 +159,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         "${APIEndpointUrls.add_ecc}",
         data: formdata,
       );
-      debugPrint('Error addEcc::$res');
+      debugPrint('addEcc::$res');
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error addEcc::$e');
@@ -140,7 +173,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.my_downloads}?page=${page}",
       );
-      debugPrint('Error getDownloads::$res');
+      debugPrint('getDownloads::$res');
       return DownloadsModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getDownloads::$e');
@@ -154,7 +187,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.list_ecc}?page=${page}",
       );
-      debugPrint('Error getCommunityPosts::$res');
+      debugPrint('getCommunityPosts::$res');
       return CommunityPostsModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getCommunityPosts::$e');
@@ -168,7 +201,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.list_ecc}?page=${page}",
       );
-      debugPrint('Error getEcc::$res');
+      debugPrint('getEcc::$res');
       return ECCModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getEcc::$e');
@@ -199,7 +232,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         "${APIEndpointUrls.registerscreen}",
         data: formdata,
       );
-      debugPrint('Error Register::$res');
+      debugPrint('Register::$res');
       return RegisterModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error Register::$e');
@@ -476,6 +509,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> TaskDelete(int taskId) async {
     try {

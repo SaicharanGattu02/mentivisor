@@ -238,7 +238,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: CustomAppButton(text: 'Done', onPlusTap: () {}),
+          child: CustomAppButton1(text: 'Done', onPlusTap: () {}),
         ),
       ),
     );

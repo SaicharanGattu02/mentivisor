@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepository.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
@@ -115,10 +117,8 @@ class StateInjector {
       create: (context) => PostCommentRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
-      create: (context) => StudyZoneReportImpl(
-        remoteDataSource: context.read<RemoteDataSource>(),
-      ),
     ),
+
     RepositoryProvider<ProductToolsRepository>(
       create: (context) =>
           ProductToolsImpl(remoteDataSource: context.read<RemoteDataSource>()),
@@ -173,6 +173,14 @@ class StateInjector {
     BlocProvider<CommunityPostsCubit>(
       create: (context) =>
           CommunityPostsCubit(context.read<CommunityPostsRepo>()),
+    ),
+    BlocProvider<AddCommunityPostCubit>(
+      create: (context) =>
+          AddCommunityPostCubit(context.read<CommunityPostsRepo>()),
+    ),
+    BlocProvider<CommunityTagsCubit>(
+      create: (context) =>
+          CommunityTagsCubit(context.read<CommunityPostsRepo>()),
     ),
     BlocProvider<DownloadsCubit>(
       create: (context) => DownloadsCubit(context.read<DownloadsRepository>()),

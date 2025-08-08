@@ -11,9 +11,9 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_states.dart';
-
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
+import '../Widgets/common_widgets.dart';
 
 class AddEventScreen extends StatefulWidget {
   @override
@@ -223,8 +223,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 ],
               ),
               SizedBox(height: 10),
-              _buildCustomLabel('Event Name'),
-              _buildTextField(
+              buildCustomLabel('Event Name'),
+              buildCustomTextField(
                 controller: _eventNameController,
                 hint: "Event Name",
                 validator: (value) {
@@ -232,8 +232,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   return null;
                 },
               ),
-              _buildCustomLabel('Location'),
-              _buildTextField(
+              buildCustomLabel('Location'),
+              buildCustomTextField(
                 controller: _locationController,
                 hint: "Location",
                 validator: (value) {
@@ -241,11 +241,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   return null;
                 },
               ),
-              _buildCustomLabel('Date'),
+              buildCustomLabel('Date'),
               ValueListenableBuilder<String>(
                 valueListenable: selectedDateStr,
                 builder: (context, value, _) {
-                  return _buildTextField(
+                  return buildCustomTextField(
                     controller: TextEditingController(text: value),
                     hint: "Date",
                     validator: (value) {
@@ -257,11 +257,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 },
               ),
 
-              _buildCustomLabel('Time'),
+              buildCustomLabel('Time'),
               ValueListenableBuilder<String>(
                 valueListenable: selectedTimeStr,
                 builder: (context, value, _) {
-                  return _buildTextField(
+                  return buildCustomTextField(
                     controller: TextEditingController(text: value),
                     hint: "Time",
                     validator: (value) {
@@ -272,8 +272,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   );
                 },
               ),
-              _buildCustomLabel('College/Institution Name'),
-              _buildTextField(
+              buildCustomLabel('College/Institution Name'),
+              buildCustomTextField(
                 controller: _collegeNameController,
                 hint: "College/Institution Name",
                 validator: (value) {
@@ -281,13 +281,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   return null;
                 },
               ),
-              _buildCustomLabel('Description (Optional)'),
-              _buildTextField(
+              buildCustomLabel('Description (Optional)'),
+              buildCustomTextField(
                 controller: _descriptionController,
                 hint: "Description (Optional)",
               ),
-              _buildCustomLabel('Event Link (optional)'),
-              _buildTextField(
+              buildCustomLabel('Event Link (optional)'),
+              buildCustomTextField(
                 controller: _eventLinkController,
                 hint: "Event Link (optional)",
               ),
@@ -495,34 +495,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    String? Function(String?)? validator,
-    GestureTapCallback? onTap,
-  }) {
-    return TextFormField(
-      controller: controller,
-      cursorColor: Colors.black,
-      onTap: onTap,
-      decoration: InputDecoration(
-        hint: Text(hint),
-        border: OutlineInputBorder(),
-      ),
-      validator: validator,
-    );
-  }
-
-  Widget _buildCustomLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
     );
   }
 }

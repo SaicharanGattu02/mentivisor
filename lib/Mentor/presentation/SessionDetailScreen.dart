@@ -52,7 +52,10 @@ class SessionDetailScreen extends StatelessWidget {
                         ),
                         Container(
                           width: 125,
-                          padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(20),
@@ -106,7 +109,7 @@ class SessionDetailScreen extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: CustomAppButton(text: "Okay", onPlusTap: () {}),
+          child: CustomAppButton1(text: "Okay", onPlusTap: () {}),
         ),
       ),
     );

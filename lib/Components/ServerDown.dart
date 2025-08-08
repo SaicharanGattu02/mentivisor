@@ -48,7 +48,7 @@ class Serverdown extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CustomAppButton(text: "Try later", onPlusTap: (){
+            CustomAppButton1(text: "Try later", onPlusTap: (){
 
             }),
           ],

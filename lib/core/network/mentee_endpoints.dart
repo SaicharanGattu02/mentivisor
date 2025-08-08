@@ -44,6 +44,8 @@ class APIEndpointUrls {
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
+  static const String community_zone_tags= "${userUrl}community-zone-tags";
+  static const String add_community = "${userUrl}add-community";
   static const String task_by_date = "${userUrl}/tasks";
   static const String task_by_states= "${userUrl}/tasks/stats";
   static const String task_update = "${userUrl}/tasks/";

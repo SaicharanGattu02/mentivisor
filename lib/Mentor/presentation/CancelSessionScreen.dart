@@ -131,7 +131,7 @@ class CancelSessionScreen extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: CustomAppButton(text: "Submit", onPlusTap: () {}),
+          child: CustomAppButton1(text: "Submit", onPlusTap: () {}),
         ),
       ),
     );

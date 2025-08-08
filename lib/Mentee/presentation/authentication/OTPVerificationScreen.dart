@@ -165,7 +165,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 ),
                 const Spacer(),
-                CustomAppButton(
+                CustomAppButton1(
                   text: 'Submit OTP',
                   onPlusTap: _isButtonEnabled
                       ? () {
