@@ -27,6 +27,7 @@ import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
+import 'Mentee/data/cubits/ProductTools/TaskUpdate/task_update_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/product_tools_repository.dart';
 import 'Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'Mentee/data/cubits/Register/Register_Repository.dart';
@@ -200,6 +201,10 @@ class StateInjector {
     BlocProvider<TaskByStatusCubit>(
       create: (context) =>
           TaskByStatusCubit(context.read<ProductToolsRepository>()),
+    ),
+    BlocProvider<TaskUpdateCubit>(
+      create: (context) =>
+          TaskUpdateCubit(context.read<ProductToolsRepository>()),
     ),
   ];
 }

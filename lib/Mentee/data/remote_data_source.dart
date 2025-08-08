@@ -67,6 +67,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> TaskDelete(int taskId);
   Future<CommunityZoneTagsModel?> getCommunityZoneTags();
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
+  Future<SuccessModel?> addTask(final Map<String,dynamic>data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -474,7 +475,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<ProductToolTaskByDateModel?> getTaskByDate(String date) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.task_by_date}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.task_by_date}?date=${date}",
+      );
       AppLogger.log('get taskBy Date ::${res.data}');
       return ProductToolTaskByDateModel.fromJson(res.data);
     } catch (e) {
@@ -524,6 +527,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }
   }
 
+  @override
+  Future<SuccessModel?> addTask(final Map<String,dynamic>data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.add_task}",
+        data: formData,
+      );
+      AppLogger.log('task Add::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('task Add ::${e}');
+
+      return null;
+    }
+  }
   @override
   Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);

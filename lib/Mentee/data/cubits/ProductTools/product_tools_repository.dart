@@ -8,6 +8,7 @@ abstract class ProductToolsRepository {
   Future<ProductToolTaskByDateModel?> getTaskByDates(String date);
   Future<SuccessModel?> taskUpdate(int taskId);
   Future<SuccessModel?> taskDelete(int taskId);
+  Future<SuccessModel?> addTask(final Map<String, dynamic> data);
 }
 
 class ProductToolsImpl implements ProductToolsRepository {
@@ -33,5 +34,10 @@ class ProductToolsImpl implements ProductToolsRepository {
   @override
   Future<SuccessModel?> taskDelete(int taskId) async {
     return await remoteDataSource.TaskDelete(taskId);
+  }
+
+  @override
+  Future<SuccessModel?> addTask(final Map<String, dynamic> data) async {
+    return await remoteDataSource.addTask(data);
   }
 }

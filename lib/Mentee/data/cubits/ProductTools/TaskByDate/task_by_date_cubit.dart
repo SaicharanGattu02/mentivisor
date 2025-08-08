@@ -11,7 +11,7 @@ class TaskByDateCubit extends Cubit<TaskBydateStates> {
     emit(TaskBydateLoading());
     try {
       final res = await _productToolsRepository.getTaskByDates(date);
-      if (res != null) {
+      if (res != null&& res.status==true) {
         emit(TaskBydateLoaded(productToolTaskByDateModel: res));
       } else {
         emit(TaskBydateFailure(msg: "No tasks found for the selected date."));

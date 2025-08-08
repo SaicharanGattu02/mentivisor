@@ -12,7 +12,7 @@ class TaskByStatusCubit extends Cubit<TaskByStatusStates> {
     emit(TaskByStatusLoading());
     try {
       final res = await _productToolsRepository.getTaskStates();
-      if (res != null) {
+      if (res != null&& res.status==true) {
         emit(TaskByStatusLoaded(taskStatesModel: res));
       } else {
         emit(TaskByStatusFailure(msg: "No tasks found for status: $res."));
