@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsStates.dart';
 
 import '../../Models/CommunityPostsModel.dart';
+import '../Widgets/FilterButton.dart';
 import '../Widgets/PostCard.dart';
 
 class Communityscreen extends StatefulWidget {
@@ -18,7 +20,9 @@ class _CommunityScreenState extends State<Communityscreen> {
   bool _onCampus = true;
   int _selectedTabIndex = 0;
 
-  final List<String> _mainTabs = ['On Campus', 'Beyond Campus'];
+  int _selectedFilter = 0;
+  String selectedFilter = 'On Campus';
+  final List<String> _filters = ['All', 'Active', 'Upcoming', 'Highlighted'];
   final List<String> _subTabs = ['All', 'Recent', 'Trending', 'Highlighted'];
 
   // Gradient colors for FAB
@@ -41,111 +45,116 @@ class _CommunityScreenState extends State<Communityscreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE0F0FF), // Match image background
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Community',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF121212),
-            fontFamily: 'Segoe',
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: const Text(
-            'Connect and Collaborate with Peers',
-            style: TextStyle(
-              fontSize: 14,
-              color: Color(0xFF666666),
-              fontFamily: 'Segoe',
-            ),
-          ),
-        ),
-      ),
-      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8EBF7),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              padding: const EdgeInsets.all(4),
-              child: Row(
-                children: [
-                  _buildToggle('On Campus', _onCampus, () {
-                    setState(() => _onCampus = true);
-                  }),
-                  const SizedBox(width: 8),
-                  _buildToggle('Beyond Campus', !_onCampus, () {
-                    setState(() => _onCampus = false);
-                  }),
-                ],
-              ),
-            ),
-
-            // Posts section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Posts',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF121212),
-                    fontFamily: 'Segoe',
-                  ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Community',
+                style: TextStyle(
+                  fontFamily: 'segeo',
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                  fontSize: 20,
+                  color: Color(0xFF121212),
                 ),
-                Container(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Color(
-                            0xFF8A56AC,
-                          ), // Solid darker purple for icon
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            bottomLeft: Radius.circular(20),
-                          ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Connect and Collaborate with Peers ',
+                style: TextStyle(
+                  fontFamily: 'segeo',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Color(0xFF666666),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE4EEFF),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: FilterButton(
+                        text: 'On Campus',
+                        isSelected: selectedFilter == 'On Campus',
+                        onPressed: () {
+                          setState(() {
+                            selectedFilter = 'On Campus';
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: FilterButton(
+                        text: 'Beyond Campus',
+                        isSelected: selectedFilter == 'Beyond Campus',
+                        onPressed: () {
+                          setState(() {
+                            selectedFilter = 'Beyond Campus';
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Posts',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF121212),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      context.push("/addpostscreen");
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFD1A9F0), // Lighter purple start
+                            Color(0xFFE6C4F5), // Even lighter purple end
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.add,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 10,
+                        children: [
+                          const Icon(
+                            Icons.add_box_outlined,
                             size: 24,
                             color: Colors.white,
                           ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFD1A9F0), // Lighter purple start
-                              Color(0xFFE6C4F5), // Even lighter purple end
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 12,
-                          ),
-                          child: const Text(
+                          const Text(
                             'Add',
                             style: TextStyle(
                               fontFamily: 'Segoe',
@@ -153,124 +162,123 @@ class _CommunityScreenState extends State<Communityscreen> {
                               color: Colors.white,
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(
-              height: 42,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: _subTabs.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (ctx, i) {
-                  final sel = i == _selectedTabIndex;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: sel ? const Color(0xFFB9DFFF) : Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: sel
-                            ? Colors.transparent
-                            : const Color(0xFFE0E0E0),
-                      ),
-                    ),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedTabIndex = i),
-                      child: Center(
-                        child: Text(
-                          _subTabs[i],
-                          style: TextStyle(
-                            fontFamily: 'Segoe',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: sel
-                                ? const Color(0xFF2196F3)
-                                : const Color(0xFF555555),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Post list
-            BlocBuilder<CommunityPostsCubit, CommunityPostsStates>(
-              builder: (context, state) {
-                if (state is CommunityPostsLoading) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (state is CommunityPostsLoaded ||
-                    state is CommunityPostsLoadingMore) {
-                  final communityPostsModel = (state is CommunityPostsLoaded)
-                      ? (state as CommunityPostsLoaded).communityPostsModel
-                      : (state as CommunityPostsLoadingMore)
-                            .communityPostsModel;
-                  final communityposts =
-                      communityPostsModel.data?.communityposts;
-                  return Expanded(
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (scrollInfo) {
-                        if (scrollInfo.metrics.pixels >=
-                            scrollInfo.metrics.maxScrollExtent * 0.9) {
-                          if (state is CommunityPostsLoaded &&
-                              state.hasNextPage) {
-                            context
-                                .read<CommunityPostsCubit>()
-                                .fetchMoreCommunityPosts();
-                          }
-                          return false;
-                        }
-                        return false;
-                      },
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverList.separated(
-                            itemCount: communityposts?.length ?? 0,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 16), // The separator
-                            itemBuilder: (context, index) {
-                              final communitypost = communityposts?[index];
-                              return PostCard(
-                                communityPosts:
-                                    communitypost ?? CommunityPosts(),
-                              );
-                            },
-                          ),
-
-                          if (state is CommunityPostsLoadingMore)
-                            SliverToBoxAdapter(
-                              child: Padding(
-                                padding: const EdgeInsets.all(25.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.8,
-                                  ),
-                                ),
-                              ),
-                            ),
                         ],
                       ),
                     ),
-                  );
-                } else {
-                  return Center(child: Text("No Data Found"));
-                }
-              },
-            ),
-          ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              SizedBox(
+                height: 32,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _filters.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemBuilder: (context, i) {
+                    final selected = i == _selectedFilter;
+                    return ChoiceChip(
+                      showCheckmark: false,
+                      labelPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 0,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                      label: Text(
+                        _filters[i],
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: selected ? Color(0xFF4076ED) : Colors.black54,
+                        ),
+                      ),
+                      selected: selected,
+                      onSelected: (_) {
+                        setState(() => _selectedFilter = i);
+                      },
+                      selectedColor: const Color(0xFF4076ED).withOpacity(0.1),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        side: selected
+                            ? const BorderSide(
+                                color: Color(0xFF4076ED),
+                              ) // 10% opacity
+                            : const BorderSide(color: Colors.transparent),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Post list
+              BlocBuilder<CommunityPostsCubit, CommunityPostsStates>(
+                builder: (context, state) {
+                  if (state is CommunityPostsLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is CommunityPostsLoaded ||
+                      state is CommunityPostsLoadingMore) {
+                    final communityPostsModel = (state is CommunityPostsLoaded)
+                        ? (state as CommunityPostsLoaded).communityPostsModel
+                        : (state as CommunityPostsLoadingMore)
+                              .communityPostsModel;
+                    final communityposts =
+                        communityPostsModel.data?.communityposts;
+                    return Expanded(
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (scrollInfo) {
+                          if (scrollInfo.metrics.pixels >=
+                              scrollInfo.metrics.maxScrollExtent * 0.9) {
+                            if (state is CommunityPostsLoaded &&
+                                state.hasNextPage) {
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .fetchMoreCommunityPosts();
+                            }
+                            return false;
+                          }
+                          return false;
+                        },
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverList.separated(
+                              itemCount: communityposts?.length ?? 0,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 16), // The separator
+                              itemBuilder: (context, index) {
+                                final communitypost = communityposts?[index];
+                                return PostCard(
+                                  communityPosts:
+                                      communitypost ?? CommunityPosts(),
+                                );
+                              },
+                            ),
+
+                            if (state is CommunityPostsLoadingMore)
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 0.8,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Center(child: Text("No Data Found"));
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
 

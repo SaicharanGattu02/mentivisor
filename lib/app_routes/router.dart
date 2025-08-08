@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
-import 'package:mentivisor/newscreens/AddPostScreen.dart';
+import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
 import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';

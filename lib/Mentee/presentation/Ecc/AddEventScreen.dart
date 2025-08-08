@@ -2,32 +2,18 @@ import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_states.dart';
 
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Add Event',
-      theme: ThemeData(
-        fontFamily: 'segeo',
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: AddEventScreen(),
-    );
-  }
-}
 
 class AddEventScreen extends StatefulWidget {
   @override
@@ -45,37 +31,49 @@ class _AddEventScreenState extends State<AddEventScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _eventLinkController = TextEditingController();
 
-  bool _isHighlighted = false;
-  bool _useDefaultImage = false;
+  final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _useDefaultImage = ValueNotifier<bool>(false);
+  final ValueNotifier<String> selectedDateStr = ValueNotifier<String>('');
+  final ValueNotifier<String> selectedTimeStr = ValueNotifier<String>('');
+  final ValueNotifier<String> selectedTabIndex = ValueNotifier<String>('event');
+  final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
+    DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (selectedDate != null && selectedDate != DateTime.now()) {
-      setState(() {
-        _dateController.text = "${selectedDate.toLocal()}".split(' ')[0];
-      });
+
+    if (picked != null) {
+      selectedDateStr.value = picked.toLocal().toString().split(' ')[0];
     }
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? selectedTime = await showTimePicker(
+    TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
-    if (selectedTime != null) {
-      setState(() {
-        _timeController.text = selectedTime.format(context);
-      });
+
+    if (picked != null) {
+      final now = DateTime.now();
+      final dt = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        picked.hour,
+        picked.minute,
+      );
+      final formattedTime =
+          "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+
+      selectedTimeStr.value = formattedTime; // ⏰ 24-hour format like 14:30
     }
   }
 
   final ImagePicker _picker = ImagePicker();
-  File? _image;
   Future<void> _pickImage() async {
     showModalBottomSheet(
       context: context,
@@ -147,7 +145,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     _pickImageFromCamera();
                   },
                 ),
-
                 const SizedBox(height: 8),
               ],
             ),
@@ -166,9 +163,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         File(pickedFile.path),
       );
       if (compressedFile != null) {
-        setState(() {
-          _image = compressedFile;
-        });
+        _imageFile.value = compressedFile;
       }
     }
   }
@@ -182,11 +177,22 @@ class _AddEventScreenState extends State<AddEventScreen> {
         File(pickedFile.path),
       );
       if (compressedFile != null) {
-        setState(() {
-          _image = compressedFile;
-        });
+        _imageFile.value = compressedFile;
       }
     }
+  }
+
+  void _cancelImage() {
+    _imageFile.value = null;
+  }
+
+  @override
+  void dispose() {
+    selectedTabIndex.dispose();
+    _imageFile.dispose();
+    _isHighlighted.dispose();
+    _useDefaultImage.dispose();
+    super.dispose();
   }
 
   @override
@@ -208,14 +214,15 @@ class _AddEventScreenState extends State<AddEventScreen> {
             children: [
               Image.asset("assets/images/addevent.png"),
               Text('What is the Update', style: TextStyle(fontSize: 18)),
+              SizedBox(height: 10),
               Row(
                 children: [
-                  _buildTab('Events'),
-                  _buildTab('Competitions'),
-                  _buildTab('Challenges'),
+                  _buildTab('Events', "event"),
+                  _buildTab('Competitions', "competition"),
+                  _buildTab('Challenges', "challenge"),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               _buildCustomLabel('Event Name'),
               _buildTextField(
                 controller: _eventNameController,
@@ -235,24 +242,35 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 },
               ),
               _buildCustomLabel('Date'),
-              _buildTextField(
-                controller: _dateController,
-                hint: "Date",
-                validator: (value) {
-                  if (value!.isEmpty) return 'Event Date is required';
-                  return null;
+              ValueListenableBuilder<String>(
+                valueListenable: selectedDateStr,
+                builder: (context, value, _) {
+                  return _buildTextField(
+                    controller: TextEditingController(text: value),
+                    hint: "Date",
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Event Date is required';
+                      return null;
+                    },
+                    onTap: () => _selectDate(context), // Date Picker
+                  );
                 },
-                onTap: () => _selectDate(context), // Date Picker
               ),
+
               _buildCustomLabel('Time'),
-              _buildTextField(
-                controller: _timeController,
-                hint: "Time",
-                validator: (value) {
-                  if (value!.isEmpty) return 'Event Time is required';
-                  return null;
+              ValueListenableBuilder<String>(
+                valueListenable: selectedTimeStr,
+                builder: (context, value, _) {
+                  return _buildTextField(
+                    controller: TextEditingController(text: value),
+                    hint: "Time",
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Event Time is required';
+                      return null;
+                    },
+                    onTap: () => _selectTime(context), // Time Picker
+                  );
                 },
-                onTap: () => _selectTime(context), // Time Picker
               ),
               _buildCustomLabel('College/Institution Name'),
               _buildTextField(
@@ -274,67 +292,113 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 hint: "Event Link (optional)",
               ),
               SizedBox(height: 15),
-              GestureDetector(
-                onTap: () {
-                  _pickImage();
-                },
-                child: DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(36),
-                  color: primarycolor,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(36)),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      color: Color(0xffF5F5F5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Uploads",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: labeltextColor,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: "Poppins",
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Icon(Icons.apartment_outlined, color: labeltextColor),
-                        ],
+              ValueListenableBuilder<File?>(
+                valueListenable: _imageFile,
+                builder: (context, file, _) {
+                  return GestureDetector(
+                    onTap: file == null ? _pickImage : null,
+                    child: DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: Radius.circular(36),
+                      color: primarycolor,
+                      strokeWidth: 1.5,
+                      dashPattern: [6, 3],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(36)),
+                        child: Container(
+                          width: double.infinity,
+                          color: Color(0xffF5F5F5),
+                          child: file == null
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 14),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Upload",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: labeltextColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Icon(
+                                        Icons.upload_rounded,
+                                        color: labeltextColor,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Stack(
+                                  children: [
+                                    Image.file(
+                                      file,
+                                      width: double.infinity,
+                                      height: 180,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: GestureDetector(
+                                        onTap: _cancelImage,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.black54,
+                                          radius: 16,
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
               SizedBox(height: 15),
-              Row(
-                children: [
-                  Switch(
-                    value: _useDefaultImage,
-                    onChanged: (val) {
-                      setState(() {
-                        _useDefaultImage = val;
-                      });
-                    },
-                  ),
-                  Text('Use Default Images'),
-                ],
+              // Use Default Image Switch
+              ValueListenableBuilder<bool>(
+                valueListenable: _useDefaultImage,
+                builder: (context, value, _) {
+                  return Row(
+                    children: [
+                      Switch(
+                        value: value,
+                        onChanged: (val) {
+                          _useDefaultImage.value = val;
+                        },
+                      ),
+                      Text('Use Default Images'),
+                    ],
+                  );
+                },
               ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isHighlighted,
-                    onChanged: (val) {
-                      setState(() {
-                        _isHighlighted = val!;
-                      });
-                    },
-                  ),
-                  Text('Highlight Post'),
-                  SizedBox(width: 8),
-                  Text('Available coins 3000'),
-                ],
+              // Highlight Post Checkbox
+              ValueListenableBuilder<bool>(
+                valueListenable: _isHighlighted,
+                builder: (context, value, _) {
+                  return Row(
+                    children: [
+                      Checkbox(
+                        value: value,
+                        onChanged: (val) {
+                          if (val != null) _isHighlighted.value = val;
+                        },
+                      ),
+                      Text('Highlight Post'),
+                      SizedBox(width: 8),
+                      Text('Available coins 3000'),
+                    ],
+                  );
+                },
               ),
               SizedBox(height: 20),
               Row(
@@ -348,15 +412,50 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     ),
                   ),
                   Expanded(
-                    child: CustomAppButton1(
-                      text: "Add Event",
-                      onPlusTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Handle Add Event
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Event Added')),
+                    child: BlocConsumer<AddEccCubit, AddEccStates>(
+                      listener: (context, state) {
+                        if (state is AddEccLoaded) {
+                          context.pop();
+                          CustomSnackBar1.show(
+                            context,
+                            state.successModel.message ?? "",
                           );
+                        } else if (state is AddEccFailure) {
+                          CustomSnackBar1.show(context, state.error);
                         }
+                      },
+                      builder: (context, state) {
+                        final isLoading = state is AddEccLoading;
+                        return CustomAppButton1(
+                          text: "Add Event",
+                          isLoading: isLoading,
+                          onPlusTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              final file = _imageFile.value;
+                              final isHighlighted = _isHighlighted.value;
+
+                              if (file == null) {
+                                // Optionally show an error/toast/snackbar
+                                print('Please upload an image');
+                                return;
+                              }
+                              Map<String, dynamic> data = {
+                                "name": _eventNameController.text,
+                                "location": _locationController.text,
+                                "type": selectedTabIndex.value,
+                                "time": selectedTimeStr.value,
+                                "college": _collegeNameController.text,
+                                "description": _descriptionController.text,
+                                "dateofevent": selectedDateStr.value,
+                                "popular": isHighlighted ? 1 : 0,
+                                "link": _dateController.text,
+                                "image":
+                                    file.path, // ✅ Get path from ValueNotifier
+                              };
+                              context.read<AddEccCubit>().addEcc(data);
+                            }
+                          },
+                        );
                       },
                     ),
                   ),
@@ -369,23 +468,33 @@ class _AddEventScreenState extends State<AddEventScreen> {
     );
   }
 
-  Widget _buildTab(String title) {
-    return GestureDetector(
-      onTap: () {
-        // Handle tab switching
+  Widget _buildTab(String title, String index) {
+    return ValueListenableBuilder<String>(
+      valueListenable: selectedTabIndex,
+      builder: (context, selectedValue, _) {
+        bool isSelected = selectedValue == index;
+        return GestureDetector(
+          onTap: () {
+            selectedTabIndex.value = index;
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            margin: EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: isSelected ? Colors.white : Color(0xff666666),
+              ),
+            ),
+          ),
+        );
       },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        margin: EdgeInsets.only(right: 10),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade100,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
     );
   }
 

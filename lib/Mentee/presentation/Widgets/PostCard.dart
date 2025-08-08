@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../Models/CommunityPostsModel.dart';
+import 'CommentBottomSheet.dart';
 
 class PostCard extends StatelessWidget {
   final CommunityPosts communityPosts;
@@ -11,16 +12,14 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
+              borderRadius: BorderRadius.circular(8),
               child: CachedNetworkImage(
                 imageUrl: communityPosts.imgUrl ?? "",
                 height: 180,
@@ -84,11 +83,44 @@ class PostCard extends StatelessWidget {
                         style: const TextStyle(fontFamily: 'Segoe'),
                       ),
                       const SizedBox(width: 24),
-                      const Icon(Icons.comment_outlined, size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        communityPosts.commentsCount.toString() ?? "",
-                        style: const TextStyle(fontFamily: 'Segoe'),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            useRootNavigator: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              return DraggableScrollableSheet(
+                                initialChildSize: 0.8,
+                                minChildSize: 0.4,
+                                maxChildSize: 0.95,
+                                expand: false,
+                                builder: (_, scrollController) => Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  child: CommentBottomSheet(
+                                    postId: communityPosts.id??0,
+                                    scrollController: scrollController, // pass it down
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.comment_outlined, size: 18),
+                            const SizedBox(width: 6),
+                            Text(
+                              communityPosts.commentsCount.toString(),
+                              style: const TextStyle(fontFamily: 'Segoe'),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import '../core/network/mentee_endpoints.dart';
 import '../utils/constants.dart';
 import 'AuthService.dart';
@@ -57,6 +58,7 @@ class ApiClient {
             // }
             // Get access token from storage
             final accessToken = await AuthService.getAccessToken();
+            AppLogger.info("accesstoken: ${accessToken}");
             if (accessToken == null || accessToken.isEmpty) {
               await AuthService.logout();
               return handler.reject(

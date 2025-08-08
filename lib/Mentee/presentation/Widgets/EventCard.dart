@@ -15,29 +15,58 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 0),
-      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: eccList.popular == 1 ? Color(0xffFFF7CE) : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
-        ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Banner
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            child: CachedNetworkImage(
-              imageUrl: eccList.imgUrl ?? "",
-              height: 160,
-              fit: BoxFit.cover,
+          if (eccList.popular == 1) ...[
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                width: 150,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Color(0xffFFD700),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                ),
+                child: Row(
+                  spacing: 10,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/icons/Sparkle.png",
+                      width: 18,
+                      height: 18,
+                    ),
+                    Text("Highlighted"),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            child: SizedBox(
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(8),
+                  bottom: Radius.circular(8),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: eccList.imgUrl ?? "",
+                  height: 160,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
-
-          const SizedBox(height: 16),
-
           // Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -51,33 +80,33 @@ class EventCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           // Details
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 DetailRow(
-                  icon: Icons.calendar_today,
+                  asset: "assets/icons/calender.png",
                   bgColor: Color(0xFF3F51B5),
                   text: '${eccList.dateofevent ?? ""} ${eccList.time}',
                 ),
                 SizedBox(height: 8),
                 DetailRow(
-                  icon: Icons.location_on,
+                  asset: "assets/icons/location.png",
                   bgColor: Color(0xFF4CAF50),
                   text: eccList.location ?? "",
                 ),
                 SizedBox(height: 8),
                 DetailRow(
-                  icon: Icons.apartment,
+                  asset: "assets/icons/institution.png",
                   bgColor: Color(0xFF000000),
                   text: eccList.college ?? "",
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 15),
           // View Details button
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -89,7 +118,7 @@ class EventCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
         ],
       ),
     );

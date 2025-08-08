@@ -59,6 +59,7 @@ abstract class RemoteDataSource {
   Future<CommunityPostsModel?> getCommunityPosts(int page);
   Future<DownloadsModel?> getDownloads(int page);
   Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data);
+  Future<SuccessModel?> postComment(Map<String, dynamic> data);
   Future<TaskStatesModel?> getTaskByStates();
   Future<ProductToolTaskByDateModel?> getTaskByDate(String date);
   Future<SuccessModel?> putTaskComplete(int taskId);
@@ -73,21 +74,48 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       final value = entry.value;
 
       if (value == null) continue;
-
-      if (value is File &&
+      final isFile =
+          value is String &&
+          value.contains('/') &&
           (key.contains('image') ||
               key.contains('file') ||
+              key.contains('uploaded_file') ||
               key.contains('picture') ||
-              key.contains('payment_screenshot'))) {
-        formMap[key] = await MultipartFile.fromFile(
-          value.path,
-          filename: value.path.split('/').last,
+              key.contains('payment_screenshot'));
+
+      if (isFile) {
+        final file = await MultipartFile.fromFile(
+          value,
+          filename: value.split('/').last,
         );
+        formMap[key] = file;
       } else {
-        formMap[key] = value.toString();
+        formMap[key] = value;
       }
     }
+
+    // 🔥 Print the data before returning
+    formMap.forEach((key, value) {
+      AppLogger.log('$key -> $value');
+    });
+
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<SuccessModel?> postComment(Map<String, dynamic> data) async {
+    try {
+      final formdata = await buildFormData(data);
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.add_comment}",
+        data: formdata,
+      );
+      debugPrint('Error postComment::$res');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error postComment::$e');
+      return null;
+    }
   }
 
   @override

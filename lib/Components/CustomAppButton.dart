@@ -102,7 +102,7 @@ class CustomAppButton1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double buttonWidth = width ?? MediaQuery.of(context).size.width;
-    final double buttonHeight = height ?? 50;
+    final double buttonHeight = height ?? 48;
     final int borderRadius = radius ?? 24;
     final Color textColor = textcolor ?? Colors.white;
 
@@ -122,7 +122,7 @@ class CustomAppButton1 extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xffa855f7), Color(0xff3b82f6)],
+              colors: [Color(0xffA258F7),Color(0xff726CF7), Color(0xff4280F6)],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
@@ -8,6 +9,8 @@ import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dar
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
@@ -107,6 +110,15 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+
+    RepositoryProvider<PostCommentRepository>(
+      create: (context) => PostCommentRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+      create: (context) => StudyZoneReportImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
     RepositoryProvider<ProductToolsRepository>(
       create: (context) =>
           ProductToolsImpl(remoteDataSource: context.read<RemoteDataSource>()),
@@ -143,6 +155,9 @@ class StateInjector {
     BlocProvider<ECCCubit>(
       create: (context) => ECCCubit(context.read<ECCRepository>()),
     ),
+    BlocProvider<AddEccCubit>(
+      create: (context) => AddEccCubit(context.read<ECCRepository>()),
+    ),
     BlocProvider<StudyZoneCampusCubit>(
       create: (context) =>
           StudyZoneCampusCubit(context.read<StudyZoneCampusRepository>()),
@@ -165,6 +180,10 @@ class StateInjector {
     BlocProvider<StudyZoneReportCubit>(
       create: (context) =>
           StudyZoneReportCubit(context.read<StudyZoneReportRepository>()),
+    ),
+    BlocProvider<PostCommentCubit>(
+      create: (context) =>
+          PostCommentCubit(context.read<PostCommentRepository>()),
     ),
     BlocProvider<TaskByDateCubit>(
       create: (context) =>

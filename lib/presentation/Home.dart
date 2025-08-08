@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/newscreens/AchievementScreen.dart';
-import 'package:mentivisor/newscreens/AddPostScreen.dart';
+import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/newscreens/SessionCompletedScreen.dart';
 import 'package:mentivisor/newscreens/UpcomingSessionsScreen.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
