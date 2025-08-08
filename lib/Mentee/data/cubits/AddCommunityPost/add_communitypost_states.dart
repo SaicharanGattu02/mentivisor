@@ -2,16 +2,16 @@ import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
 
 abstract class AddCommunityPostStates {}
 
-class AddCommunityInitially extends AddCommunityPostStates {}
+class AddCommunityPostInitially extends AddCommunityPostStates {}
 
-class AddCommunityLoading extends AddCommunityPostStates {}
+class AddCommunityPostLoading extends AddCommunityPostStates {}
 
-class AddCommunityLoaded extends AddCommunityPostStates {
+class AddCommunityPostLoaded extends AddCommunityPostStates {
   SuccessModel successModel;
-  AddCommunityLoaded(this.successModel);
+  AddCommunityPostLoaded(this.successModel);
 }
 
-class AddCommunityFailure extends AddCommunityPostStates {
+class AddCommunityPostFailure extends AddCommunityPostStates {
   String error;
-  AddCommunityFailure(this.error);
+  AddCommunityPostFailure(this.error);
 }

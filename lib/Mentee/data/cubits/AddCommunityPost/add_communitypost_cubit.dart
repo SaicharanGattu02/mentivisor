@@ -4,19 +4,19 @@ import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepos
 
 class AddCommunityPostCubit extends Cubit<AddCommunityPostStates> {
   CommunityPostsRepo communityPostsRepo;
-  AddCommunityPostCubit(this.communityPostsRepo) : super(AddCommunityLoading());
+  AddCommunityPostCubit(this.communityPostsRepo) : super(AddCommunityPostLoading());
 
   Future<void> addCommunityPost(Map<String, dynamic> data) async {
-    emit(AddCommunityLoading());
+    emit(AddCommunityPostLoading());
     try {
       final response = await communityPostsRepo.addCommunityPost(data);
       if (response != null && response.status == true) {
-        emit(AddCommunityLoaded(response));
+        emit(AddCommunityPostLoaded(response));
       } else {
-        emit(AddCommunityFailure(response?.message ?? ""));
+        emit(AddCommunityPostFailure(response?.message ?? ""));
       }
     } catch (e) {
-      AddCommunityFailure(e.toString());
+      AddCommunityPostFailure(e.toString());
     }
   }
 }

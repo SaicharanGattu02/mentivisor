@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
@@ -124,6 +126,11 @@ class StateInjector {
       create: (context) =>
           ProductToolsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
+    RepositoryProvider<AddResourceRepository>(
+      create: (context) => AddResourceRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -205,6 +212,10 @@ class StateInjector {
     BlocProvider<TaskUpdateCubit>(
       create: (context) =>
           TaskUpdateCubit(context.read<ProductToolsRepository>()),
+    ),
+    BlocProvider<AddResourceCubit>(
+      create: (context) =>
+          AddResourceCubit(context.read<AddResourceRepository>()),
     ),
   ];
 }

@@ -113,12 +113,15 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       );
                     });
                   },
-                  style:  TextStyle(fontFamily: "Poppins", fontSize: 15),
+                  style: TextStyle(fontFamily: "Poppins", fontSize: 15),
                   decoration: InputDecoration(
                     hoverColor: Colors.white,
                     hintText: 'Search for any thing',
                     hintStyle: const TextStyle(color: Colors.grey),
-                    suffixIcon: const Icon(Icons.search, color: Color(0xff666666)),
+                    suffixIcon: const Icon(
+                      Icons.search,
+                      color: Color(0xff666666),
+                    ),
                     fillColor: Colors.white,
                     filled: true,
                     contentPadding: const EdgeInsets.only(right: 33, left: 20),
@@ -144,7 +147,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       ),
                     ),
                   ),
-
                 ),
               ),
               const SizedBox(height: 12),
@@ -422,7 +424,9 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.push("/add_resource");
+        },
         backgroundColor: Colors.transparent,
         child: Container(
           width: 56,

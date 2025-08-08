@@ -68,6 +68,7 @@ abstract class RemoteDataSource {
   Future<CommunityZoneTagsModel?> getCommunityZoneTags();
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
   Future<SuccessModel?> addTask(final Map<String,dynamic>data);
+  Future<SuccessModel?> addResource(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -104,6 +105,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<SuccessModel?> addResource(Map<String, dynamic> data) async {
+    try {
+      final formdata = await buildFormData(data);
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.add_book}",
+        data: formdata,
+      );
+      debugPrint('addResource::$res');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error addResource::$e');
+      return null;
+    }
   }
 
   @override

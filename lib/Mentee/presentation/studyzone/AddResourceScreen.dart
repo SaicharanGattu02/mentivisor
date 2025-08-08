@@ -1,5 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsState.dart';
+
+import '../../../Components/CustomAppButton.dart';
+import '../../../Components/CustomSnackBar.dart';
+import '../../../Components/CutomAppBar.dart';
+import '../../../utils/ImageUtils.dart';
+import '../../../utils/color_constants.dart';
+import '../Widgets/common_widgets.dart';
 
 class AddResourceScreen extends StatefulWidget {
   const AddResourceScreen({super.key});
@@ -8,237 +25,473 @@ class AddResourceScreen extends StatefulWidget {
 }
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
+  final _formKey = GlobalKey<FormState>();
   bool _useDefault = false;
-  final _resourceNameCtrl = TextEditingController();
-  final _aboutCtrl = TextEditingController();
-  final _tagCtrl = TextEditingController();
-  final List<String> _tags = [];
-  final List<String> _suggestions = [
-    'DSA',
-    'Interview',
-    'Java',
-    'React',
-    'System Design',
-    'Help',
-    'Discussion',
-    'Mentor Request',
-  ];
+  final _resourceNameController = TextEditingController();
+  final _aboutController = TextEditingController();
+  final _tagController = TextEditingController();
+  final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
+  final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
+  ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
+
+  List<String> _selectedTags = [];
+  List<String> _studyzoneTags = [];
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Drag handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: primarycolor.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                ListTile(
+                  leading: Icon(Icons.photo_library, color: primarycolor),
+                  title: const Text(
+                    'Choose from Gallery',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImageFromGallery();
+                  },
+                ),
+
+                // Camera Option
+                ListTile(
+                  leading: Icon(Icons.camera_alt, color: primarycolor),
+                  title: const Text(
+                    'Take a Photo',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImageFromCamera();
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
+      if (compressedFile != null) {
+        _imageFile.value = compressedFile;
+      }
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
+    if (pickedFile != null) {
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
+      if (compressedFile != null) {
+        _imageFile.value = compressedFile;
+      }
+    }
+  }
+
+  void _cancelImage() {
+    _imageFile.value = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        title: const Text('Add Resource'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          child: Column(
+      appBar: CustomAppBar1(title: "Add Resource", actions: []),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
             children: [
-              // Cloud graphic
-              Icon(
-                Icons.cloud_upload_outlined,
-                size: 100,
-                color: Colors.blue.shade400,
+              Image.asset("assets/images/cloud.png", width: 130, height: 150),
+              SizedBox(height: 25),
+              const Text(
+                'Banner',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff333333),
+                ),
               ),
-              const SizedBox(height: 24),
-
-              _buildUploadBox(
-                label: 'Upload your Banner here',
-                onTap: () {
-                  /* TODO: pick banner */
+              const SizedBox(height: 8),
+              ValueListenableBuilder<File?>(
+                valueListenable: _imageFile,
+                builder: (context, file, _) {
+                  return GestureDetector(
+                    onTap: file == null ? _pickImage : null,
+                    child: DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: Radius.circular(8),
+                      color: Colors.grey,
+                      strokeWidth: 1.5,
+                      dashPattern: [6, 3],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        child: Container(
+                          width: double.infinity,
+                          color: Colors.white,
+                          child: file == null
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/upload.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "Upload your Banner here ",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: labeltextColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Stack(
+                                  children: [
+                                    Image.file(
+                                      file,
+                                      width: double.infinity,
+                                      height: 180,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: GestureDetector(
+                                        onTap: _cancelImage,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.black54,
+                                          radius: 16,
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  );
                 },
               ),
-
-              const SizedBox(height: 12),
-
-              _buildLabel('Resource Name'),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _resourceNameCtrl,
-                decoration: _inputDecoration('Enter resource name'),
+              const SizedBox(height: 18),
+              buildCustomLabel('Resource Name'),
+              buildCustomTextField(
+                controller: _resourceNameController,
+                hint: "Enter Resource Name",
+                validator: (value) {
+                  if (value!.isEmpty) return 'Resource Name is required';
+                  return null;
+                },
               ),
-
-              const SizedBox(height: 16),
-              // About Resource
-              _buildLabel('About Resource'),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _aboutCtrl,
+              const SizedBox(height: 10),
+              buildCustomLabel('About Resource'),
+              TextFormField(
+                controller: _aboutController,
+                cursorColor: Colors.black,
+                keyboardType: TextInputType.multiline,
                 maxLines: 5,
-                decoration: _inputDecoration('Enter resource name'),
+                decoration: InputDecoration(hintText: 'About Resource'),
+                validator: (value) {
+                  if (value!.isEmpty) return 'About Resource is required';
+                  return null;
+                },
               ),
-
-              const SizedBox(height: 16),
-              // Tags input
-              _buildLabel('Tags'),
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
+              buildCustomLabel('Tags'),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _tagCtrl,
-                      decoration: _inputDecoration('Enter Tag'),
+                    child: buildCustomTextField(
+                      controller: _tagController,
+                      hint: "Enter Tag",
                     ),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      final tag = _tagCtrl.text.trim();
-                      if (tag.isNotEmpty && !_tags.contains(tag)) {
-                        setState(() {
-                          _tags.add(tag);
-                          _tagCtrl.clear();
-                        });
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          14,
-                        ), // adjust the radius as needed
+                  SizedBox(
+                    height: 48,
+                    width: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final tag = _tagController.text.trim();
+                        if (tag.isNotEmpty) {
+                          // context.read<CommunityTagsCubit>().addTag(tag);
+                          _tagController.clear();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        backgroundColor: const Color(0xff315DEA),
+                        padding: const EdgeInsets.all(12),
                       ),
-                      backgroundColor: const Color(0xff315DEA),
-                      padding: const EdgeInsets.all(
-                        12,
-                      ), // you can adjust padding if needed
+                      child: const Icon(
+                        Icons.add,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                     ),
-                    child: const Icon(Icons.add, size: 20, color: Colors.white),
                   ),
                 ],
               ),
-
               const SizedBox(height: 8),
-              // Selected tags
-              if (_tags.isNotEmpty)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: _tags
-                      .map(
-                        (t) => Chip(
-                          label: Text(t),
-                          onDeleted: () => setState(() => _tags.remove(t)),
-                        ),
-                      )
-                      .toList(),
-                ),
-
-              const SizedBox(height: 8),
-              // Suggest Tags
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: _suggestions
-                    .map(
-                      (t) => ActionChip(
-                        label: Text('#$t'),
-                        onPressed: () {
-                          if (!_tags.contains(t)) {
-                            setState(() => _tags.add(t));
-                          }
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-
-              const SizedBox(height: 24),
-              // Resources upload
-              _buildUploadBox(
-                label: 'Upload your Resources here',
-                onTap: () {},
-              ),
-
-              const SizedBox(height: 32),
-              // Add button
+              // Suggested tags
               Container(
-                width: double.infinity,
-                height: 48,
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8A2BE2), Color(0xFF4A90E2)],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      /* TODO: submit */
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: const Center(
-                      child: Text(
-                        'Add',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'segeo',
-                          fontWeight: FontWeight.w600,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Suggested :"),
+                    SizedBox(height: 5),
+                    BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
+                      builder: (context, state) {
+                        if (state is StudyZoneTagsLoading) {
+                          return CircularProgressIndicator();
+                        } else if (state is StudyZoneTagsLoaded) {
+                          _studyzoneTags = state.studyZoneTagsModel.tags!;
+                          return Wrap(
+                            spacing: 5,
+                            runSpacing: 0,
+                            children: _studyzoneTags.map((tag) {
+                              final isSelected = _selectedTags.contains(tag);
+                              return ChoiceChip(
+                                label: Text(tag),
+                                selected: isSelected,
+                                onSelected: (_) {},
+                                selectedColor: Colors.blue.shade100,
+                                backgroundColor: Colors.white,
+                                side: BorderSide(
+                                  color: isSelected
+                                      ? Colors.blue.shade100
+                                      : Colors.grey,
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        } else {
+                          return Text("No Tags Found");
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Image upload
+              const Text(
+                'Upload',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff333333),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ValueListenableBuilder<File?>(
+                valueListenable: _imageFile,
+                builder: (context, file, _) {
+                  return GestureDetector(
+                    onTap: file == null ? _pickImage : null,
+                    child: DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: Radius.circular(8),
+                      color: Colors.grey,
+                      strokeWidth: 1.5,
+                      dashPattern: [6, 3],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        child: Container(
+                          width: double.infinity,
                           color: Colors.white,
+                          child: file == null
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/upload.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "Upload your Resources here",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: labeltextColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Stack(
+                                  children: [
+                                    Image.file(
+                                      file,
+                                      width: double.infinity,
+                                      height: 180,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: GestureDetector(
+                                        onTap: _cancelImage,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.black54,
+                                          radius: 16,
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
+              const SizedBox(height: 24),
+              BlocConsumer<AddResourceCubit, AddResourceStates>(
+                listener: (context, state) {
+                  if (state is AddResourceLoaded) {
+                    context.pop();
+                  } else if (state is AddResourceFailure) {
+                    CustomSnackBar1.show(context, state.error);
+                  }
+                },
+                builder: (context, state) {
+                  final isLoading = state is AddResourceLoading;
+                  return CustomAppButton1(
+                    text: "Submit",
+                    isLoading: isLoading,
+                    onPlusTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        final file = _imageFile.value;
+                        final isHighlighted = _isHighlighted.value;
+                        final anonymous = _anonymousNotifier.value;
+
+                        if (file == null) {
+                          print('Please upload an image');
+                          return;
+                        }
+
+                        Map<String, dynamic> data = {
+                          "name": _resourceNameController.text,
+                          "description": _aboutController.text,
+                          "tags[]": _selectedTags,
+                          "image": file.path,
+                          "file_pdf": file.path,
+                        };
+                        context.read<AddResourceCubit>().addResource(data);
+                      }
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
       ),
     );
   }
-
-  Widget _buildLabel(String text) => Align(
-    alignment: Alignment.centerLeft,
-    child: Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 14,
-        color: Color(0xff374151E5),
-      ),
-    ),
-  );
-
-  Decoration _boxDecoration() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(8),
-  );
-
-  Widget _buildUploadBox({required String label, required VoidCallback onTap}) {
-    return DottedBorder(
-      color: Colors.grey.shade400,
-      strokeWidth: 1,
-      dashPattern: const [6, 3],
-      borderType: BorderType.RRect,
-      radius: const Radius.circular(8),
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          decoration: _boxDecoration(),
-          child: Column(
-            children: [
-              const SizedBox(height: 3),
-              Text(label, style: TextStyle(color: Color(0xff9CA3AF))),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(String hint) => InputDecoration(
-    hintText: hint,
-    filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide.none,
-    ),
-  );
 }
