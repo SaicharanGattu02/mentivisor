@@ -31,6 +31,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
+
   @override
   void initState() {
     super.initState();

@@ -55,12 +55,18 @@ import 'package:mentivisor/presentation/ProfileScreen.dart';
 // import '../presentation/WalletHistory.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/ ',
   routes: [
+    GoRoute(
+      path: '/splash',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(SplashScreen(), state);
+      },
+    ),
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SplashScreen(), state);
+        return buildSlideTransitionPage(BookSessionScreen(), state);
       },
     ),
 
@@ -114,7 +120,7 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/mentor_profile',
+      path: '/mentorprofile',
       pageBuilder: (context, state) {
         final idString = state.uri.queryParameters['id'];
         final id = int.tryParse(idString ?? '') ?? 0;
@@ -184,6 +190,12 @@ final GoRouter appRouter = GoRouter(
           ViewEventScreen(eccList: eccList),
           state,
         );
+      },
+    ),
+    GoRoute(
+      path: '/productivity_screen',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(ProductivityScreen(), state);
       },
     ),
 

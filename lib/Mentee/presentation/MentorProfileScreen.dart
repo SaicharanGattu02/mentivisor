@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 
 import '../data/cubits/MentorProfile/MentorProfileCubit.dart';
@@ -235,10 +236,21 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           return SizedBox.shrink();
         },
       ),
+
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: CustomAppButton1(text: 'Done', onPlusTap: () {}),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: SizedBox(
+            width: double.infinity,
+            child: CustomAppButton1(
+              text: 'Done',
+
+              onPlusTap: () {
+                context.push("/mentorprofile");
+                // Your action here
+              },
+            ),
+          ),
         ),
       ),
     );

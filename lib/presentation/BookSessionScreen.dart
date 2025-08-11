@@ -1,396 +1,478 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class BookSessionScreen extends StatefulWidget {
-  const BookSessionScreen({super.key});
+import '../Components/CustomAppButton.dart';
 
+class BookSessionScreen extends StatefulWidget {
   @override
-  State<BookSessionScreen> createState() => _BookSessionScreenState();
+  _BookSessionScreenState createState() => _BookSessionScreenState();
 }
 
 class _BookSessionScreenState extends State<BookSessionScreen> {
-  String? _selectedTime;
+  bool showDetails = false;
+  String? selectedDate;
+  String? selectedTime;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xfff6faff),
-              Color(0xffe0f2fe),
-            ], // Replace with your desired gradient
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+  void _toggleDetails() {
+    setState(() {
+      showDetails = !showDetails;
+    });
+  }
 
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      height: 40,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          side: const BorderSide(
-                            width: 1,
-                            color: Color(0xffe2e8f0),
-                          ),
-                          padding: EdgeInsets
-                              .zero, // Ensures no extra padding disturbs centering
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
+  void _showReportSheet(BuildContext context) {
+    String? localSelectedTime;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    selectedDate ?? 'Select a date',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'Segoe', // Corrected typo
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff222222),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Select time from the available time slots',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Segoe',
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff444444),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _buildTimeSlot('2:00 PM', localSelectedTime, (time) {
+                        setModalState(() {
+                          localSelectedTime = time;
+                        });
+                      }),
+                      _buildTimeSlot('4:30 PM', localSelectedTime, (time) {
+                        setModalState(() {
+                          localSelectedTime = time;
+                        });
+                      }),
+                      _buildTimeSlot('7:00 PM', localSelectedTime, (time) {
+                        setModalState(() {
+                          localSelectedTime = time;
+                        });
+                      }),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                      child: CustomAppButton1(
+                        text: 'Pick the Time',
+                        onPlusTap: () {
+                          if (localSelectedTime != null && selectedDate != null) {
+                            setState(() {
+                              selectedTime = localSelectedTime;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Selected time: $localSelectedTime on Jul $selectedDate'),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please select a date and time'),
+                              ),
+                            );
+                          }
                         },
-                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
-                    SizedBox(width: 50),
-                    Text(
-                      "Book a Session",
-                      style: TextStyle(
-                        fontSize:22,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "Inter",
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionTitle('Select Date'),
-                      const SizedBox(height: 8),
-                      _dateTile('Today', '3 slots available'),
-                      _dateTile('Tomorrow', '4 slots available'),
-                      _dateTile('Wed, Jan 17', '3 slots available'),
-                      _dateTile('Thu, Jan 18', '4 slots available'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionTitle('Select Time'),
-                      const SizedBox(height: 8),
-                      _timeSelector(),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionTitle('Session Type'),
-                      const SizedBox(height: 8),
-                      _sessionTypeSelector(),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionTitle('Session Goals'),
-                      const SizedBox(height: 8),
-                      _goalsField(),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _bookingSummary(),
-                const SizedBox(height: 20),
-              ],
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildTimeSlot(String time, String? selectedTime, Function(String) onTap) {
+    final isSelected = selectedTime == time;
+    return GestureDetector(
+      onTap: () => onTap(time),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFdcfce7),
+          borderRadius: BorderRadius.circular(12),
+          border: isSelected ? Border.all(color: Colors.green, width: 2) : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              time,
+              style: const TextStyle(fontSize: 14, fontFamily: 'Segoe'),
             ),
-          ),
+            if (isSelected)
+              const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Icon(Icons.check, color: Colors.green, size: 16),
+              ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _sectionTitle(String text) => Text(
-    text,
-    style: const TextStyle(
-      fontFamily: 'segeo',
-      fontSize: 18,
-      fontWeight: FontWeight.w500,
-      color: Colors.black,
-    ),
-  );
-
-  Widget _dateTile(String title, String subtitle) => Card(
-    elevation: 0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      side: BorderSide(color: Color(0xffe5e7eb)),
-    ),
-    child: ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontFamily: 'segeo',
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
+        title: const Text('Book Session'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(fontFamily: 'segeo', color: Colors.grey[700]),
-      ),
-    ),
-  );
-
-  Widget _timeSelector() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      GridView.count(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 3.5,
-        children: [
-          _timeChip('11:00 AM', true),
-          _timeChip('1:00 PM', false),
-          _timeChip('4:00 PM', false),
-          _timeChip('7:30 PM', false),
-        ],
-      ),
-      const SizedBox(height: 8),
-      const Text(
-        'All times shown in',
-        style: TextStyle(fontFamily: 'segeo', fontSize: 12, color: Colors.grey),
-      ),
-    ],
-  );
-
-  Widget _timeChip(String time, bool selected) => GestureDetector(
-    onTap: () {
-      // Add interactivity logic if needed
-    },
-    child: Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: selected ? const Color(0xFFF1EAFE) : Colors.white,
-        border: Border.all(
-          color: selected ? Colors.deepPurple : Colors.grey.shade300,
-          width: 1.5,
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      alignment: Alignment.center,
-      child: Text(
-        time,
-        style: TextStyle(
-          fontFamily: 'segeo',
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: selected ? Colors.deepPurple : Colors.black,
-        ),
-      ),
-    ),
-  );
-
-  Widget _sessionTypeSelector() => Row(
-    children: [
-      Expanded(
-        child: _sessionCard(
-          Icons.videocam,
-          'Video Call',
-          'Face-to-face interaction',
-          true,
-        ),
-      ),
-      const SizedBox(width: 12),
-      Expanded(
-        child: _sessionCard(
-          Icons.call,
-          'Audio Call',
-          'Voice-only session',
-          false,
-        ),
-      ),
-    ],
-  );
-
-  Widget _sessionCard(
-    IconData icon,
-    String title,
-    String subtitle,
-    bool selected,
-  ) => Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      border: Border.all(
-        color: selected ? Colors.deepPurple : Colors.grey.shade300,
-        width: 2,
-      ),
-      borderRadius: BorderRadius.circular(12),
-      color: selected ? const Color(0xFFF1EAFE) : Colors.white,
-    ),
-    child: Center(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Icon(icon, color: Colors.deepPurple),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'segeo',
-                    fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Available Date in July',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(fontFamily: 'segeo', fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  Widget _goalsField() => TextField(
-    maxLines: 3,
-    decoration: InputDecoration(
-      hintText: "Describe what you'd like to discuss in this session...",
-      fillColor: Colors.white,
-      filled: true,
-    ),
-  );
-
-  Widget _bookingSummary() => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const CircleAvatar(radius: 24, backgroundColor: Colors.grey),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Dr. Sarah Chen',
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontWeight: FontWeight.bold,
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xffA258F7),
+                          Color(0xff726CF7),
+                          Color(0xff4280F6),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF5F5F5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: 'This Week',
+                          items: <String>['This Week', 'Next Week'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: ShaderMask(
+                                shaderCallback: (bounds) => const LinearGradient(
+                                  colors: [
+                                    Color(0xffA258F7),
+                                    Color(0xff726CF7),
+                                    Color(0xff4280F6),
+                                  ],
+                                ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            // Handle dropdown change if needed
+                          },
+                          icon: ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              colors: [
+                                Color(0xffA258F7),
+                                Color(0xff726CF7),
+                                Color(0xff4280F6),
+                              ],
+                            ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                            child: const Icon(Icons.arrow_drop_down),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                Text(
-                  'Senior Software Engineer at Google',
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const Divider(height: 24, thickness: 0.5, color: Colors.black26),
-        _summaryRow('Type:', 'Video Call'),
-        const Divider(height: 24, thickness: 0.5, color: Colors.black26),
-        const SizedBox(height: 8),
-        _summaryRow('Session Cost:', '25', coin: true),
-        _summaryRow('Your Balance:', '150', coin: true),
-        const Divider(height: 24, thickness: 0.5, color: Colors.black26),
-        _summaryRow('After Session:', '125', coin: true),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                ],
               ),
-            ),
-            onPressed: () {},
-            child: const Text(
-              'Book Session',
-              style: TextStyle(
-                fontFamily: 'segeo',
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (var day in ['12', '13', '14', '15', '16', '17', '18'])
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedDate = day;
+                        });
+                        _showReportSheet(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffF5F5F5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text('Jul\n$day'),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Session Type',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/zoommeetimg.png', // Standardized path
+                      height: 36,
+                      width: 36,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'G-Meet',
+                      style: TextStyle(fontSize: 16, fontFamily: 'Segoe'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Card(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Session Topic',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Segoe',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        height: 250,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Describe what you\'d like to discuss in this session...',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(Icons.attach_file, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Add Attachment',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: _toggleDetails,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.white.withOpacity(0.4),
+                            child: Image.asset(
+                              'assets/images/profileimg.png', // Standardized path
+                              height: 60,
+                              width: 60,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Dr. Sarah Chen',
+                                style: TextStyle(
+                                  color: Color(0xff333333),
+                                  fontFamily: 'Segoe',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Text(
+                                'Mechanical from VIB Collage NZB',
+                                style: TextStyle(
+                                  color: Color(0xff666666),
+                                  fontFamily: 'Segoe',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (showDetails) ...[
+                      const SizedBox(height: 16),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const Text('Session Cost'),
+                          const Spacer(),
+                          Image.asset(
+                            'assets/images/GoldCoins.png',
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 15),
+                          const Text(
+                            '₹25',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Text('Your Balance'),
+                          const Spacer(),
+                          Image.asset(
+                            'assets/images/GoldCoins.png',
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 15),
+                          const Text(
+                            '₹150',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Text('Remained'),
+                          const Spacer(),
+                          Image.asset(
+                            'assets/images/GoldCoins.png',
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 15),
+                          const Text(
+                            '₹125',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
-    ),
-  );
-
-  Widget _summaryRow(String label, String value, {bool coin = false}) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(label, style: const TextStyle(fontFamily: 'segeo')),
-      Row(
-        children: [
-          const SizedBox(width: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'segeo',
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
       ),
-    ],
-  );
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: CustomAppButton1(
+            text: 'Book Session',
+            onPlusTap: () {
+              if (selectedDate != null && selectedTime != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Session booked for Jul $selectedDate at $selectedTime'),
+                  ),
+                );
+              } else {
+                _showReportSheet(context);
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
 }
