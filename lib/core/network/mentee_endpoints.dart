@@ -40,14 +40,15 @@ class APIEndpointUrls {
   static const String study_zone_campus = "${userUrl}/study-zones";
   static const String coins_pack = "${userUrl}/coin-packs";
   static const String community_zone_post = "${userUrl}/community-zone-post";
-  static const String study_zone_report_resource ="${userUrl}/study-zone-report";
+  static const String study_zone_report_resource =
+      "${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
-  static const String community_zone_tags= "${userUrl}community-zone-tags";
+  static const String community_zone_tags = "${userUrl}community-zone-tags";
   static const String add_community = "${userUrl}add-community";
   static const String task_by_date = "${userUrl}/tasks";
-  static const String task_by_states= "${userUrl}/tasks/stats";
+  static const String task_by_states = "${userUrl}/tasks/stats";
   static const String task_update = "${userUrl}/tasks/";
   static const String task_delete = "${userUrl}/tasks/";
   static const String add_task = "${userUrl}/tasks/";

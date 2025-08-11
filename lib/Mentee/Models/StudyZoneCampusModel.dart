@@ -113,7 +113,7 @@ class StudyZoneCampusData {
   int? collegeId;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  String? deletedAt;
   Uploader? uploader;
 
   StudyZoneCampusData({

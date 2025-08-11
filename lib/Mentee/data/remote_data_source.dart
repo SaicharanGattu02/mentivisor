@@ -67,7 +67,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> TaskDelete(int taskId);
   Future<CommunityZoneTagsModel?> getCommunityZoneTags();
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
-  Future<SuccessModel?> addTask(final Map<String,dynamic>data);
+  Future<SuccessModel?> addTask(final Map<String, dynamic> data);
   Future<SuccessModel?> addResource(Map<String, dynamic> data);
 }
 
@@ -545,7 +545,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SuccessModel?> addTask(final Map<String,dynamic>data) async {
+  Future<SuccessModel?> addTask(final Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.post(
@@ -560,6 +560,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);

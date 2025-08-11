@@ -8,10 +8,11 @@ class CampusMentorListCubit extends Cubit<CampusMentorListState> {
   CampusMentorListCubit(this.campusMentorListRepository)
     : super(CampusMentorListStateInitial());
 
-  Future<void> fetchCampusMentorList(String name,String scope) async {
+  Future<void> fetchCampusMentorList(String name, String scope) async {
     emit(CampusMentorListStateLoading());
     try {
-      final result = await campusMentorListRepository.getCampusMentorList(name,
+      final result = await campusMentorListRepository.getCampusMentorList(
+        name,
         scope,
       );
       if (result != null && result.status == true) {

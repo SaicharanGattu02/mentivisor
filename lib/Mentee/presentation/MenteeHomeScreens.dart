@@ -11,6 +11,7 @@ import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
 import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GetBanners/GetBannersState.dart';
+import 'Widgets/FilterButton.dart';
 
 class MenteeHomeScreen extends StatefulWidget {
   const MenteeHomeScreen({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class MenteeHomeScreen extends StatefulWidget {
 class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
+  String selectedFilter = 'On Campus';
   @override
   void initState() {
     super.initState();
@@ -217,7 +219,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
+          icon: const Icon(Icons.menu, color: Colors.black,size: 36,),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
         title: Column(
@@ -253,136 +255,181 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         ],
       ),
       drawer: Drawer(
-        child: Container(
-          color: const Color(0xFFF5F7FA),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 20,
-                      backgroundImage: AssetImage(
-                        'assets/images/profileimg.png',
+        child: SafeArea(
+          child: Container(
+            color: const Color(0xFFF7F9FE),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 20,
+                            backgroundImage: AssetImage(
+                              'assets/images/profileimg.png',
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          const Text(
+                            'Profile',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      'Profile',
-                      style: TextStyle(
+                      const SizedBox(height: 8),
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/Wallet.png",
+                        label: 'Wallet',
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              "assets/images/coinsgold.png",
+                              height: 16,
+                              width: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              '120',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () => _navigateToScreen('Wallet'),
+                      ),
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/DownloadSimple.png",
+                        label: 'Downloads',
+                        onTap: () => _navigateToScreen('Downloads'),
+                      ),
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/PencilRuler.png",
+                        label: 'Productivity Tools',
+                        onTap: () => _navigateToScreen('Productivity Tools'),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/VideoConference.png",
+                        label: 'Session Completed',
+                        onTap: () => _navigateToScreen('Session Completed'),
+                      ),
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/CalendarDots.png",
+                        label: 'Upcoming Sessions',
+                        onTap: () => _navigateToScreen('Upcoming Sessions'),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 16,
+                  ),
+                  color: Colors.white,
+                  child: _buildDrawerItem(
+                    assetpath: "assets/icons/crown.png",
+                    label: 'Exclusive Services',
+                    onTap: () => _navigateToScreen('Exclusive Services'),
+                  ),
+                ),
+                Container(
+                  padding:  EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: kCommonGradient
+                  ),
+                  child:  ListTile(
+                    contentPadding: EdgeInsets.all(0),
+                    visualDensity: VisualDensity.compact,
+                    leading: Image.asset("assets/icons/mentor.png", width: 24, height: 24),
+                    title: Text(
+                      "Become Mentor",
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                        fontFamily: "Inter",
+                        color: Colors.white,
                       ),
                     ),
-                  ],
+                    onTap: (){
+
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              _buildDrawerItem(
-                icon: Icons.account_balance_wallet,
-                label: 'Wallet',
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      "assets/images/coinsgold.png",
-                      height: 16,
-                      width: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      '120',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
+                SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 16,
+                  ),
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/Info.png",
+                        label: 'Info',
+                        onTap: () => _navigateToScreen('Info'),
                       ),
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/UserCircleCheck.png",
+                        label: 'Invite Friend',
+                        onTap: () => _navigateToScreen('Invite Friend'),
+                      ),
+                      _buildDrawerItem(
+                        assetpath: "assets/icons/UserCircleGear.png",
+                        label: 'Customer Services',
+                        onTap: () => _navigateToScreen('Customer Services'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 16,
+                  ),
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: const Icon(Icons.exit_to_app, color: Colors.red),
+                    title: const Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.red, fontFamily: "Inter"),
                     ),
-                  ],
-                ),
-                onTap: () => _navigateToScreen('Wallet'),
-              ),
-              _buildDrawerItem(
-                icon: Icons.download,
-                label: 'Downloads',
-                onTap: () => _navigateToScreen('Downloads'),
-              ),
-              _buildDrawerItem(
-                icon: Icons.work,
-                label: 'Productivity Tools',
-                onTap: () => _navigateToScreen('Productivity Tools'),
-              ),
-              _buildDrawerItem(
-                icon: Icons.check_circle_outline,
-                label: 'Session Completed',
-                onTap: () => _navigateToScreen('Session Completed'),
-              ),
-              _buildDrawerItem(
-                icon: Icons.calendar_today,
-                label: 'Upcoming Sessions',
-                onTap: () => _navigateToScreen('Upcoming Sessions'),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
-                ),
-                color: const Color(0xFFE6E6FA),
-                child: const Text(
-                  'Exclusive Services',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.purple,
-                    fontFamily: "Inter",
+                    onTap: () => _navigateToScreen('Logout'),
                   ),
                 ),
-              ),
-              _buildDrawerItem(
-                icon: Icons.info_outline,
-                label: 'Info',
-                onTap: () => _navigateToScreen('Info'),
-              ),
-              _buildDrawerItem(
-                icon: Icons.person_add,
-                label: 'Invite Friend',
-                onTap: () => _navigateToScreen('Invite Friend'),
-              ),
-              _buildDrawerItem(
-                icon: Icons.support_agent,
-                label: 'Customer Services',
-                onTap: () => _navigateToScreen('Customer Services'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.school),
-                title: const Text(
-                  'Become Mentor',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xff444444),
-                    fontFamily: "Inter",
-                  ),
-                ),
-                tileColor: const Color(0xFF6D4AFF).withOpacity(0.1),
-                textColor: const Color(0xFF6D4AFF),
-                onTap: () => _navigateToScreen('Become Mentor'),
-              ),
-              const SizedBox(height: 18),
-              ListTile(
-                leading: const Icon(Icons.exit_to_app, color: Colors.red),
-                title: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.red, fontFamily: "Inter"),
-                ),
-                onTap: () => _navigateToScreen('Logout'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -451,43 +498,41 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8EBF7),
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE8EBF7),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center, // Ensures the row is centered
-                    children: [
-                      _buildToggle('On Campus', _onCampus, () {
-                        setState(() {
-                          _onCampus = true;
-                        });
-                        context
-                            .read<CampusMentorListCubit>()
-                            .fetchCampusMentorList("", "");
-                      }),
-                      const SizedBox(width: 8),
-                      _buildToggle('Beyond Campus', !_onCampus, () {
-                        setState(() {
-                          _onCampus = false;
-                        });
-                        context
-                            .read<CampusMentorListCubit>()
-                            .fetchCampusMentorList("", "beyond");
-                      }),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // Ensures the row is centered
+                  children: [
+                    Expanded(
+                      child: FilterButton(
+                        text: 'On Campus',
+                        isSelected: selectedFilter == 'On Campus',
+                        onPressed: () {
+                          setState(() {
+                            selectedFilter = 'On Campus';
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: FilterButton(
+                        text: 'Beyond Campus',
+                        isSelected: selectedFilter == 'Beyond Campus',
+                        onPressed: () {
+                          setState(() {
+                            selectedFilter = 'Beyond Campus';
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -515,8 +560,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
               BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
                 builder: (context, state) {
                   if (state is CampusMentorListStateLoading) {
@@ -558,89 +601,97 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       return GestureDetector(
                         onTap: () =>
                             Navigator.pushNamed(context, '/mentor/${m.id}'),
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 60,
-                              backgroundColor: Colors.grey.shade200,
-                              backgroundImage:
-                                  m.profilePicUrl != null &&
-                                      m.profilePicUrl!.isNotEmpty
-                                  ? CachedNetworkImageProvider(m.profilePicUrl!)
-                                  : null,
-                              child:
-                                  (m.profilePicUrl == null ||
-                                      m.profilePicUrl!.isEmpty)
-                                  ? const Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: Colors.grey,
-                                    )
-                                  : null,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              m.name ?? '',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff333333),
+                        child: Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Color(0xffF1F5FD).withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 60,
+                                backgroundColor: Colors.grey.shade200,
+                                backgroundImage:
+                                    m.profilePicUrl != null &&
+                                        m.profilePicUrl!.isNotEmpty
+                                    ? CachedNetworkImageProvider(
+                                        m.profilePicUrl!,
+                                      )
+                                    : null,
+                                child:
+                                    (m.profilePicUrl == null ||
+                                        m.profilePicUrl!.isEmpty)
+                                    ? const Icon(
+                                        Icons.person,
+                                        size: 60,
+                                        color: Colors.grey,
+                                      )
+                                    : null,
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              m.designation ?? '',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Color(0xff555555),
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            SizedBox(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/starvector.png",
-                                  color: Colors.amber,
-                                  height: 14,
-                                  width: 14,
+                              const SizedBox(height: 8),
+                              Text(
+                                m.name ?? '',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff333333),
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  m.ratingsReceivedAvgRating?.toStringAsFixed(
-                                        1,
-                                      ) ??
-                                      '0.0',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: 'segeo',
-                                    color: Color(0xff333333),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                m.designation ?? '',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Color(0xff555555),
+                                  fontFamily: 'segeo',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/starvector.png",
+                                    color: Colors.amber,
+                                    height: 14,
+                                    width: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    m.ratingsReceivedAvgRating?.toStringAsFixed(
+                                          1,
+                                        ) ??
+                                        '0.0',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'segeo',
+                                      color: Color(0xff333333),
 
-                                    fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Image.asset(
-                                  "assets/images/coinsgold.png",
-                                  height: 16,
-                                  width: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${m.ratingsReceivedCount ?? 0}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xff666666),
-                                    fontWeight: FontWeight.w400,
+                                  const SizedBox(width: 8),
+                                  Image.asset(
+                                    "assets/images/coinsgold.png",
+                                    height: 16,
+                                    width: 16,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${m.ratingsReceivedCount ?? 0}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xff666666),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -686,19 +737,20 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   }
 
   Widget _buildDrawerItem({
-    required IconData icon,
+    required String assetpath,
     required String label,
     Widget? trailing,
     GestureTapCallback? onTap,
   }) => ListTile(
-    leading: Icon(icon),
+    contentPadding: EdgeInsets.all(0),
+    visualDensity: VisualDensity.compact,
+    leading: Image.asset(assetpath, width: 24, height: 24),
     title: Text(
       label,
       style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
         color: Color(0xff444444),
-        fontFamily: "Inter",
       ),
     ),
     trailing: trailing,

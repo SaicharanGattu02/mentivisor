@@ -40,9 +40,14 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
             : "Beyond Campus Mentors",
         actions: [],
       ),
-
-      backgroundColor: const Color(0xFFF5F8FF),
-      body: Padding(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
         child: Column(
           children: [
@@ -64,17 +69,10 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                 decoration: InputDecoration(
                   hintText: 'Search by employee name, phone',
                   prefixIcon: const Icon(Icons.search),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
-                    borderSide: BorderSide(color: primarycolor, width: 0.5),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
-                    borderSide: BorderSide(color: primarycolor, width: 0.5),
-                  ),
                 ),
               ),
             ),
+            SizedBox(height: 16),
             BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
               builder: (context, state) {
                 if (state is CampusMentorListStateLoading) {
@@ -117,89 +115,96 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                       onTap: () {
                         context.push('/mentor_profile?id=${m.id}');
                       },
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 60,
-                            backgroundColor: Colors.grey.shade200,
-                            backgroundImage:
-                                m.profilePicUrl != null &&
-                                    m.profilePicUrl!.isNotEmpty
-                                ? CachedNetworkImageProvider(m.profilePicUrl!)
-                                : null,
-                            child:
-                                (m.profilePicUrl == null ||
-                                    m.profilePicUrl!.isEmpty)
-                                ? const Icon(
-                                    Icons.person,
-                                    size: 60,
-                                    color: Colors.grey,
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            m.name ?? '',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff333333),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            m.designation ?? '',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Color(0xff555555),
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/starvector.png",
-                                color: Colors.amber,
-                                height: 14,
-                                width: 14,
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.grey,
+                              child: ClipOval(
+                                child:
+                                    (m.profilePicUrl != null &&
+                                        m.profilePicUrl!.isNotEmpty)
+                                    ? CachedNetworkImage(
+                                        imageUrl: m.profilePicUrl!,
+                                        fit: BoxFit.cover,
+                                        width: 120,
+                                        height: 120,
+                                      )
+                                    : const Icon(
+                                        Icons.person,
+                                        size: 60,
+                                        color: Colors.grey,
+                                      ),
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                m.ratingsReceivedAvgRating?.toStringAsFixed(
-                                      1,
-                                    ) ??
-                                    '0.0',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'segeo',
-                                  color: Color(0xff333333),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              m.name ?? '',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xff333333),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              m.designation ?? '',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Color(0xff555555),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/starvector.png",
+                                  color: Colors.amber,
+                                  height: 14,
+                                  width: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  m.ratingsReceivedAvgRating?.toStringAsFixed(
+                                        1,
+                                      ) ??
+                                      '0.0',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'segeo',
+                                    color: Color(0xff333333),
 
-                                  fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Image.asset(
-                                "assets/images/coinsgold.png",
-                                height: 16,
-                                width: 16,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${m.ratingsReceivedCount ?? 0}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xff666666),
-                                  fontWeight: FontWeight.w400,
+                                const SizedBox(width: 8),
+                                Image.asset(
+                                  "assets/images/coinsgold.png",
+                                  height: 16,
+                                  width: 16,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${m.ratingsReceivedCount ?? 0}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xff666666),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

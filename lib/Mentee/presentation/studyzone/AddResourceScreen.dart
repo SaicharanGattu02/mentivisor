@@ -10,7 +10,6 @@ import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsState.dart';
-
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
@@ -26,7 +25,6 @@ class AddResourceScreen extends StatefulWidget {
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _useDefault = false;
   final _resourceNameController = TextEditingController();
   final _aboutController = TextEditingController();
   final _tagController = TextEditingController();
@@ -36,6 +34,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
   List<String> _selectedTags = [];
   List<String> _studyzoneTags = [];
+
   @override
   void dispose() {
     super.dispose();
