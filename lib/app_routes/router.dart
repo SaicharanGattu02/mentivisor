@@ -53,21 +53,17 @@ import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 import 'package:mentivisor/presentation/ProfileScreen.dart';
 
+import '../presentation/Splash.dart';
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(AuthLandingScreen(), state);
+        return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
-    // GoRoute(
-    //   path: '/',
-    //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(AuthLandingScreen(), state);
-    //   },
-    // ),
     GoRoute(
       path: '/chart_screen',
       pageBuilder: (context, state) {
@@ -118,7 +114,7 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/mentorprofile',
+      path: '/mentor_profile',
       pageBuilder: (context, state) {
         final idString = state.uri.queryParameters['id'];
         final id = int.tryParse(idString ?? '') ?? 0;

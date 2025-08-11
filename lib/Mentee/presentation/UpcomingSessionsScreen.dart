@@ -7,7 +7,7 @@ class UpcomingSessionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sessions = [1, 2]; // Mock data; replace with your real list
+    final sessions = [1, 2];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
