@@ -13,6 +13,7 @@ import 'package:mentivisor/Models/StudyZoneDownloadModel_wo_log.dart';
 import 'package:mentivisor/Models/TopMentersResponseModel.dart';
 import 'package:mentivisor/Models/Years_ResponseModel.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mime/mime.dart';
 import '../../Models/EccGuestlist_Model.dart';
 import '../../Models/ExpertiseRespModel.dart';
 import '../../Models/GetCompusModel.dart';
@@ -106,6 +107,74 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
     return FormData.fromMap(formMap);
   }
+
+  // Future<FormData> buildFormData(Map<String, dynamic> data) async {
+  //   final formData = FormData();
+  //
+  //   for (final entry in data.entries) {
+  //     final key = entry.key;
+  //     final value = entry.value;
+  //
+  //     if (value == null) continue;
+  //
+  //     // 1) If it's a list (e.g., tags), add multiple entries with the same key
+  //     if (value is List) {
+  //       for (final item in value) {
+  //         formData.fields.add(MapEntry(key, item.toString()));
+  //       }
+  //       continue;
+  //     }
+  //
+  //     // 2) If it's a File, attach as MultipartFile
+  //     if (value is File) {
+  //       final path = value.path;
+  //       final filename = path.split('/').last;
+  //       final mime = lookupMimeType(path);
+  //       formData.files.add(MapEntry(
+  //         key,
+  //         await MultipartFile.fromFile(
+  //           path,
+  //           filename: filename,
+  //         ),
+  //       ));
+  //       continue;
+  //     }
+  //
+  //     // 3) If it's a String path that looks like a file and key suggests a file field
+  //     final looksLikePath = value is String && value.contains('/') && !value.startsWith('http');
+  //     final looksLikeFileKey = key.contains('image') ||
+  //         key.contains('file') ||
+  //         key.contains('uploaded_file') ||
+  //         key.contains('picture') ||
+  //         key.contains('payment_screenshot');
+  //
+  //     if (value is String && looksLikePath && looksLikeFileKey) {
+  //       final path = value;
+  //       final filename = path.split('/').last;
+  //       final mime = lookupMimeType(path);
+  //       formData.files.add(MapEntry(
+  //         key,
+  //         await MultipartFile.fromFile(
+  //           path,
+  //           filename: filename,
+  //         ),
+  //       ));
+  //       continue;
+  //     }
+  //
+  //     // 4) Fallback: add as a normal field
+  //     formData.fields.add(MapEntry(key, value.toString()));
+  //   }
+  //
+  //   // Debug print
+  //   for (final f in formData.fields) {
+  //     // Avoid printing large file content; shows only field entries
+  //     // ignore: avoid_print
+  //     print('${f.key} -> ${f.value}');
+  //   }
+  //
+  //   return formData;
+  // }
 
   @override
   Future<SuccessModel?> addResource(Map<String, dynamic> data) async {

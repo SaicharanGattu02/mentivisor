@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportCub
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportState.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
+import '../../../utils/color_constants.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/StudyZoneCampusModel.dart';
@@ -21,6 +22,13 @@ class ResourceDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar1(title: "Resource Detail", actions: []),
       body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,32 +144,33 @@ class ResourceDetailScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              ClipOval(
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black, // inner bg behind image
+                                ),
+                                clipBehavior: Clip.antiAlias,
                                 child: CachedNetworkImage(
-                                  width: 120,
-                                  height: 120,
                                   imageUrl:
                                       studyZoneCampusData
                                           .uploader
                                           ?.profilePicUrl ??
                                       "",
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) => SizedBox(
-                                    width: 120,
-                                    height: 120,
-                                    child: Center(
-                                      child: spinkits.getSpinningLinespinkit(),
-                                    ),
+                                  placeholder: (context, url) => Center(
+                                    child: spinkits.getSpinningLinespinkit(),
                                   ),
                                   errorWidget: (context, url, error) =>
-                                      Container(
-                                        width: 120,
-                                        height: 120,
-                                        color: const Color(0xffF8FAFE),
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          size: 40,
-                                          color: Colors.grey,
+                                      const ColoredBox(
+                                        color: Color(0xffF8FAFE),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.broken_image,
+                                            size: 40,
+                                            color: Colors.grey,
+                                          ),
                                         ),
                                       ),
                                 ),
@@ -242,12 +251,16 @@ class ResourceDetailScreen extends StatelessWidget {
                           vertical: 16,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Color(0xffF5F5F5),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
-                          children: const [
-                            Icon(Icons.cancel, size: 16, color: Colors.black54),
+                          children: [
+                            Image.asset(
+                              "assets/icons/FileX.png",
+                              width: 24,
+                              height: 24,
+                            ),
                             SizedBox(width: 5),
                             Text(
                               'Report Resource',
@@ -276,8 +289,6 @@ class ResourceDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-
-
 
       bottomNavigationBar: SafeArea(
         child: Padding(

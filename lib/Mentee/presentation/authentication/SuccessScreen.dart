@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
+import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/ProfileSetupScreen.dart';
 
 
 class SuccessScreen extends StatelessWidget {

@@ -70,6 +70,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
 
               SizedBox(height: 32),
 
+
               // Progress Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

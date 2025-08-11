@@ -11,7 +11,7 @@ import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
 import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
-import 'package:mentivisor/newscreens/ProfileSetupScreen.dart';
+import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/ProfileSetupScreen.dart';
 import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
 import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
@@ -28,48 +28,46 @@ import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
+import '../Mentee/presentation/authentication/AuthLandingScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
 import '../Mentee/presentation/authentication/OTPVerificationScreen.dart';
 import '../Mentee/presentation/authentication/SelecterScreen.dart';
 import '../Mentee/presentation/authentication/SignupScreen.dart';
 import '../Mentee/presentation/authentication/SuccessScreen.dart';
+import '../Mentee/presentation/authentication/profieSetup/AcadamicJourneyScreen.dart';
 import '../Mentee/presentation/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
-import '../newscreens/AcadamicJourneyScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
 import '../newscreens/InterestingScreen.dart';
 import '../newscreens/LanguageSelectionScreen.dart';
-import '../newscreens/ProfileSetupWizard.dart';
+import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
 import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
-import '../presentation/Splash.dart';
 import 'package:mentivisor/presentation/ProfileScreen.dart';
-// import '../presentation/WalletHistory.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/ ',
+  initialLocation: '/',
   routes: [
-    GoRoute(
-      path: '/splash',
-      pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SplashScreen(), state);
-      },
-    ),
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(BookSessionScreen(), state);
+        return buildSlideTransitionPage(AuthLandingScreen(), state);
       },
     ),
-
+    // GoRoute(
+    //   path: '/',
+    //   pageBuilder: (context, state) {
+    //     return buildSlideTransitionPage(AuthLandingScreen(), state);
+    //   },
+    // ),
     GoRoute(
       path: '/chart_screen',
       pageBuilder: (context, state) {

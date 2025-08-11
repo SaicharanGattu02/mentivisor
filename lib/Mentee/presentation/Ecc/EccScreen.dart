@@ -277,8 +277,23 @@ class _EccScreenState extends State<EccScreen> {
         onPressed: () {
           context.push("/addeventscreen");
         },
-        backgroundColor: _blue,
-        child: const Icon(Icons.add, size: 32),
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF975CF7),
+                Color(0xFF7A40F2), // Optional darker/lighter variation
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: const Icon(Icons.add, size: 32, color: Colors.white),
+        ),
       ),
     );
   }

@@ -30,9 +30,9 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
   void _onComplete() {
     if (_formKey.currentState!.validate()) {
       // TODO: submit data
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile completed!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Profile completed!')));
     }
   }
 
@@ -59,11 +59,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                   shape: BoxShape.circle,
                 ),
                 padding: EdgeInsets.all(16),
-                child: Icon(
-                  Icons.school,
-                  size: 40,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.school, size: 40, color: Colors.white),
               ),
               SizedBox(height: 12),
               Text(
@@ -105,7 +101,6 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                 value: 1.0,
                 minHeight: 6,
                 backgroundColor: Colors.grey[300],
-
               ),
 
               SizedBox(height: 24),
@@ -135,7 +130,9 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
+                              vertical: 8,
+                              horizontal: 12,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -183,7 +180,9 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                             decoration: InputDecoration(
                               hintText: 'Enter your college name',
                               contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 14),
+                                horizontal: 12,
+                                vertical: 14,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -210,22 +209,24 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                             items: _years
                                 .map(
                                   (y) => DropdownMenuItem(
-                                value: y,
-                                child: Text(
-                                  y,
-                                  style: TextStyle(
-                                    fontFamily: 'Segoe',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                                    value: y,
+                                    child: Text(
+                                      y,
+                                      style: TextStyle(
+                                        fontFamily: 'Segoe',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
+                                )
                                 .toList(),
                             decoration: InputDecoration(
                               hintText: 'Select your current year',
                               contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -234,7 +235,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                               _selectedYear = v;
                             }),
                             validator: (val) =>
-                            val == null ? 'Please select a year' : null,
+                                val == null ? 'Please select a year' : null,
                           ),
 
                           SizedBox(height: 16),
@@ -259,13 +260,16 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                             decoration: InputDecoration(
                               hintText: 'Enter your stream',
                               contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 14),
+                                horizontal: 12,
+                                vertical: 14,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            validator: (val) =>
-                            val!.isEmpty ? 'Please enter your stream' : null,
+                            validator: (val) => val!.isEmpty
+                                ? 'Please enter your stream'
+                                : null,
                           ),
                         ],
                       ),
@@ -298,7 +302,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                       ),
                     ),
                   ),
-                 Spacer(),
+                  Spacer(),
                   Expanded(
                     child: Container(
                       height: 48,

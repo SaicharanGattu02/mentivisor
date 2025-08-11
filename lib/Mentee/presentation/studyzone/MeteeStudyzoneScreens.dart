@@ -216,7 +216,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                   return const SizedBox.shrink();
                 },
               ),
-
               const SizedBox(height: 12),
               BlocBuilder<StudyZoneCampusCubit, StudyZoneCampusState>(
                 builder: (context, state) {
@@ -240,152 +239,142 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               (context, index) {
                                 final campusList =
                                     studyZoneData?.studyZoneCampusData![index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    context.push(
-                                      '/resource_details_screen',
-                                      extra: campusList,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 16),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadiusGeometry.circular(4),
-                                          child: CachedNetworkImage(
-                                            width: SizeConfig.screenWidth * 0.3,
-                                            height: 144,
-                                            imageUrl: campusList?.image ?? "",
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) =>
-                                                SizedBox(
-                                                  width: 120,
-                                                  height: 120,
-                                                  child: Center(
-                                                    child: spinkits
-                                                        .getSpinningLinespinkit(),
-                                                  ),
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(4),
+                                        child: CachedNetworkImage(
+                                          width: SizeConfig.screenWidth * 0.3,
+                                          height: 144,
+                                          imageUrl: campusList?.image ?? "",
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              SizedBox(
+                                                width: 120,
+                                                height: 120,
+                                                child: Center(
+                                                  child: spinkits
+                                                      .getSpinningLinespinkit(),
                                                 ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Container(
-                                                      width: 120,
-                                                      height: 120,
-                                                      color: const Color(
-                                                        0xffF8FAFE,
-                                                      ),
-                                                      child: const Icon(
-                                                        Icons.broken_image,
-                                                        size: 40,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                          ),
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                                width: 120,
+                                                height: 120,
+                                                color: const Color(0xffF8FAFE),
+                                                child: const Icon(
+                                                  Icons.broken_image,
+                                                  size: 40,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
                                         ),
-                                        // Right Content
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  campusList?.name ?? "",
-                                                  style: TextStyle(
-                                                    fontFamily: 'segeo',
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 12,
-                                                    height: 1,
-                                                    letterSpacing: 0.5,
-                                                  ),
+                                      ),
+                                      // Right Content
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                campusList?.name ?? "",
+                                                style: TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12,
+                                                  height: 1,
+                                                  letterSpacing: 0.5,
                                                 ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  campusList?.description ?? "",
-                                                  style: TextStyle(
-                                                    fontFamily: 'segeo',
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 11,
-                                                    height: 1,
-                                                  ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                campusList?.description ?? "",
+                                                style: TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 11,
+                                                  height: 1,
                                                 ),
-                                                const SizedBox(height: 12),
-                                                if ((campusList
-                                                        ?.tag
-                                                        ?.isNotEmpty ??
-                                                    false))
-                                                  Wrap(
-                                                    spacing: 8,
-                                                    runSpacing: 8,
-                                                    children: campusList!.tag!.map((
-                                                      tag,
-                                                    ) {
-                                                      return Container(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 6,
-                                                            ),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                20,
-                                                              ),
-                                                        ),
-                                                        child: Text(
-                                                          tag,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontFamily:
-                                                                    'segeo',
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                  ),
-
-                                                const SizedBox(height: 16),
-                                                Row(
-                                                  spacing: 10,
-                                                  children: [
-                                                    Expanded(
-                                                      child:
-                                                          CustomOutlinedButton(
-                                                            width: 110,
-                                                            height: 36,
-                                                            radius: 24,
-                                                            text: "View",
-                                                            onTap: () {},
+                                              ),
+                                              const SizedBox(height: 12),
+                                              if ((campusList
+                                                      ?.tag
+                                                      ?.isNotEmpty ??
+                                                  false))
+                                                Wrap(
+                                                  spacing: 8,
+                                                  runSpacing: 8,
+                                                  children: campusList!.tag!.map((
+                                                    tag,
+                                                  ) {
+                                                    return Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 6,
                                                           ),
-                                                    ),
-                                                    Expanded(
-                                                      child: CustomAppButton1(
-                                                        width: 110,
-                                                        height: 36,
-                                                        radius: 24,
-                                                        text: "Download",
-                                                        onPlusTap: () {},
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              20,
+                                                            ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                      child: Text(
+                                                        tag,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'segeo',
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
                                                 ),
-                                              ],
-                                            ),
+
+                                              const SizedBox(height: 16),
+                                              Row(
+                                                spacing: 10,
+                                                children: [
+                                                  Expanded(
+                                                    child: CustomOutlinedButton(
+                                                      width: 110,
+                                                      height: 36,
+                                                      radius: 24,
+                                                      text: "View",
+                                                      onTap: () {
+                                                        context.push(
+                                                          '/resource_details_screen',
+                                                          extra: campusList,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: CustomAppButton1(
+                                                      width: 110,
+                                                      height: 36,
+                                                      radius: 24,
+                                                      text: "Download",
+                                                      onPlusTap: () {},
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 );
                               },

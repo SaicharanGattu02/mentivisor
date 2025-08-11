@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,11 +30,26 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   final _aboutController = TextEditingController();
   final _tagController = TextEditingController();
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
+  final ValueNotifier<File?> _pickedFile = ValueNotifier<File?>(null);
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
 
   List<String> _selectedTags = [];
-  List<String> _studyzoneTags = [];
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'], // allowed formats
+    );
+
+    if (result != null && result.files.single.path != null) {
+      _pickedFile.value = File(result.files.single.path!);
+    }
+  }
+
+  void _cancelFile() {
+    _pickedFile.value = null;
+  }
 
   @override
   void dispose() {
@@ -189,8 +205,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     child: DottedBorder(
                       borderType: BorderType.RRect,
                       radius: Radius.circular(8),
-                      color: Colors.grey,
-                      strokeWidth: 1.5,
+                      color: Color(0xff4B5462),
+                      strokeWidth: 1,
                       dashPattern: [6, 3],
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -216,7 +232,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         "Upload your Banner here ",
                                         style: TextStyle(
                                           fontSize: 15,
-                                          color: labeltextColor,
+                                          color: Color(0xff9CA3AF),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -335,11 +351,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                         if (state is StudyZoneTagsLoading) {
                           return CircularProgressIndicator();
                         } else if (state is StudyZoneTagsLoaded) {
-                          _studyzoneTags = state.studyZoneTagsModel.tags!;
+                          _selectedTags = state.studyZoneTagsModel.tags!;
                           return Wrap(
                             spacing: 5,
                             runSpacing: 0,
-                            children: _studyzoneTags.map((tag) {
+                            children: state.studyZoneTagsModel.tags!.map((tag) {
                               final isSelected = _selectedTags.contains(tag);
                               return ChoiceChip(
                                 label: Text(tag),
@@ -375,41 +391,42 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               ),
               const SizedBox(height: 8),
               ValueListenableBuilder<File?>(
-                valueListenable: _imageFile,
+                valueListenable: _pickedFile,
                 builder: (context, file, _) {
                   return GestureDetector(
-                    onTap: file == null ? _pickImage : null,
+                    onTap: file == null ? _pickFile : null,
                     child: DottedBorder(
                       borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
-                      color: Colors.grey,
-                      strokeWidth: 1.5,
-                      dashPattern: [6, 3],
+                      radius: const Radius.circular(8),
+                      color: const Color(0xff4B5462),
+                      strokeWidth: 1,
+                      dashPattern: const [6, 3],
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
                         child: Container(
                           width: double.infinity,
                           color: Colors.white,
                           child: file == null
                               ? Padding(
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     vertical: 14,
                                     horizontal: 16,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Image.asset(
                                         "assets/icons/upload.png",
                                         width: 20,
                                         height: 20,
                                       ),
-                                      SizedBox(width: 10),
-                                      Text(
+                                      const SizedBox(width: 10),
+                                      const Text(
                                         "Upload your Resources here",
                                         style: TextStyle(
                                           fontSize: 15,
-                                          color: labeltextColor,
+                                          color: Color(0xff9CA3AF),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -418,18 +435,26 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                 )
                               : Stack(
                                   children: [
-                                    Image.file(
-                                      file,
-                                      width: double.infinity,
-                                      height: 180,
-                                      fit: BoxFit.cover,
+                                    Container(
+                                      height: 100,
+                                      alignment: Alignment.center,
+                                      color: const Color(0xffF8FAFE),
+                                      child: Text(
+                                        file.path.split('/').last,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black87,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
                                     Positioned(
                                       top: 8,
                                       right: 8,
                                       child: GestureDetector(
-                                        onTap: _cancelImage,
-                                        child: CircleAvatar(
+                                        onTap: _cancelFile,
+                                        child: const CircleAvatar(
                                           backgroundColor: Colors.black54,
                                           radius: 16,
                                           child: Icon(
@@ -464,21 +489,21 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     isLoading: isLoading,
                     onPlusTap: () {
                       if (_formKey.currentState!.validate()) {
-                        final file = _imageFile.value;
+                        final imagefile = _imageFile.value;
+                        final file = _pickedFile.value;
                         final isHighlighted = _isHighlighted.value;
                         final anonymous = _anonymousNotifier.value;
 
-                        if (file == null) {
-                          print('Please upload an image');
+                        if (imagefile == null && file == null) {
                           return;
                         }
 
                         Map<String, dynamic> data = {
                           "name": _resourceNameController.text,
                           "description": _aboutController.text,
-                          "tags[]": _selectedTags,
-                          "image": file.path,
-                          "file_pdf": file.path,
+                          "tag[]": _selectedTags,
+                          "image": imagefile!.path,
+                          "file_pdf": file!.path,
                         };
                         context.read<AddResourceCubit>().addResource(data);
                       }

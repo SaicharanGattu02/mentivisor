@@ -39,11 +39,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(
-                    Icons.school,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+                  child: Icon(Icons.school, color: Colors.white, size: 32),
                 ),
                 SizedBox(height: 16),
                 // Title
@@ -54,34 +50,28 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-
                   ),
                 ),
                 SizedBox(height: 24),
                 Row(
-
                   children: [
                     Text(
                       'Profile Setup',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'segeo' ,
+                        fontFamily: 'segeo',
                         color: Colors.black54,
                         fontSize: 14,
                       ),
                     ),
-
-                   Spacer(),
+                    Spacer(),
                     Text(
                       '1 of 4',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.black54, fontSize: 14),
                     ),
                   ],
                 ),
-                SizedBox(height: 10,),
+                SizedBox(height: 10),
                 // Progress bar with step indicator
                 Row(
                   children: [
@@ -92,12 +82,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           value: 0.25,
                           minHeight: 6,
                           backgroundColor: Colors.grey.shade300,
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7F00FF)),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFF7F00FF),
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(width: 8),
-
                   ],
                 ),
                 SizedBox(height: 32),
@@ -124,8 +115,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'segeo'
-
+                          fontFamily: 'segeo',
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -207,7 +197,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
@@ -222,20 +211,27 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       },
                       child: Text(
                         'Back',
-                        style: TextStyle(fontSize: 12,color: Color(0xff222222), fontFamily: 'segeo'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff222222),
+                          fontFamily: 'segeo',
+                        ),
                       ),
                     ),
                     Spacer(),
                     GestureDetector(
                       onTap: () {
-                            // replace with your route:
-                            context.push('/profilesetupwizard');
-                            // or with Navigator:
-                            // Navigator.of(context).push(MaterialPageRoute(builder: (_) => NextScreen()));
-                          },
+                        // replace with your route:
+                        context.push('/profilesetupwizard');
+                        // or with Navigator:
+                        // Navigator.of(context).push(MaterialPageRoute(builder: (_) => NextScreen()));
+                      },
 
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
@@ -253,7 +249,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                 color: Colors.white,
                                 fontSize: 14,
                                 fontFamily: 'segeo',
-
                               ),
                             ),
                             SizedBox(width: 4),
@@ -270,13 +265,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ),
               ],
             ),
-
           ),
-
         ),
       ),
-
     );
-
   }
 }

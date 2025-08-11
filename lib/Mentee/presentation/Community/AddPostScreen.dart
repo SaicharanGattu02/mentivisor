@@ -261,7 +261,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         if (state is CommunityTagsLoading) {
                           return CircularProgressIndicator();
                         } else if (state is CommunityTagsLoaded) {
-                          // Debug the state
                           debugPrint(
                             "Selected Tags in UI: ${state.selectedTags}",
                           );
