@@ -54,12 +54,25 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         break;
       case 'Customer Services':
         break;
-      case 'Become Mentor':
+      case 'BecomeMentor':
+        context.push('/becomementorscreen');
         break;
+      case 'Executive services':
+        context.push('/executiveservices');
+        break;
+      case 'info':
+        context.push('/infoscreen');
+        break;
+
       case 'Logout':
         showLogoutDialog(context);
         break;
       case 'View All':
+
+
+
+
+
         if (_onCampus == true) {
           context.push('/campus_mentor_list?scope=${""}');
         } else {
@@ -356,7 +369,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                   child: _buildDrawerItem(
                     assetpath: "assets/icons/crown.png",
                     label: 'Exclusive Services',
-                    onTap: () => _navigateToScreen('Exclusive Services'),
+                    onTap: () => _navigateToScreen('Executive services'),
                   ),
                 ),
                 Container(
@@ -378,7 +391,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () => _navigateToScreen('BecomeMentor'),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -393,7 +406,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       _buildDrawerItem(
                         assetpath: "assets/icons/Info.png",
                         label: 'Info',
-                        onTap: () => _navigateToScreen('Info'),
+                        onTap: () => _navigateToScreen('info'),
                       ),
                       _buildDrawerItem(
                         assetpath: "assets/icons/UserCircleCheck.png",
