@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
+
+import '../../../../utils/color_constants.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   @override
@@ -32,11 +35,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF9333EA), Color(0xFF3B82F6)],
-                    ),
+                    gradient:kCommonGradient,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(Icons.school, color: Colors.white, size: 32),
@@ -46,14 +45,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 Text(
                   'Join Mentivisor',
                   style: TextStyle(
-                    fontSize: 22,
-                    fontFamily: 'segeo',
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
                 SizedBox(height: 24),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Profile Setup',
@@ -64,32 +63,32 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         fontSize: 14,
                       ),
                     ),
-                    Spacer(),
                     Text(
-                      '1 of 4',
+                      '1 of 3',
                       style: TextStyle(color: Colors.black54, fontSize: 14),
                     ),
                   ],
                 ),
                 SizedBox(height: 10),
-                // Progress bar with step indicator
-                Row(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: 0.25,
-                          minHeight: 6,
-                          backgroundColor: Colors.grey.shade300,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF7F00FF),
-                          ),
-                        ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Stack(
+                    children: [
+                      Container(height: 6, color: Colors.grey.shade300),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final progress = 0.33; // 25%
+                          return Container(
+                            height: 6,
+                            width: constraints.maxWidth * progress,
+                            decoration: BoxDecoration(
+                              gradient: kCommonGradient,
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                    SizedBox(width: 8),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(height: 32),
                 // Card
@@ -113,9 +112,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       Text(
                         "What's your name?",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'segeo',
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -191,9 +189,45 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: 'Enter your full Name',
+                          hintText: 'Enter your full Name',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          errorStyle: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -204,6 +238,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
                 // Navigation buttons
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
                       onPressed: () {
@@ -218,48 +253,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         ),
                       ),
                     ),
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        // replace with your route:
+                    CustomAppButton1(
+                      text: "Next",
+                      radius: 10,
+                      width: 100,
+                      height: 42,
+                      onPlusTap: () {
                         context.push('/profilesetupwizard');
-                        // or with Navigator:
-                        // Navigator.of(context).push(MaterialPageRoute(builder: (_) => NextScreen()));
                       },
-
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Next',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontFamily: 'segeo',
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
                   ],
                 ),

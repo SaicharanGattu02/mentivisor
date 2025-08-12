@@ -49,11 +49,7 @@ class CustomAppButton1 extends StatelessWidget {
         ),
         child: Ink(
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xffA258F7),Color(0xff726CF7), Color(0xff4280F6)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
+            gradient: kCommonGradient,
             borderRadius: BorderRadius.circular(borderRadius.toDouble()),
           ),
           child: Container(
@@ -124,61 +120,55 @@ class CustomOutlinedButton extends StatelessWidget {
     final int borderRadius = radius ?? 12;
     final Color finalTextColor = textColor ?? const Color(0xFF6D6BFF);
 
-    return SizedBox(
-      width: buttonWidth,
-      height: buttonHeight,
-      child: GestureDetector(
-        onTap: isLoading ? null : onTap,
-        child: Container(
-          padding: const EdgeInsets.all(1.5), // border thickness
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xffa855f7), Color(0xff3b82f6)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            borderRadius: BorderRadius.circular(borderRadius.toDouble()),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white, // inner background
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: kCommonGradient,
+        borderRadius: BorderRadius.circular(borderRadius.toDouble()),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(1.5), // gradient border thickness
+        child: OutlinedButton(
+          onPressed: isLoading ? null : onTap,
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Colors.white,
+            side: BorderSide.none, // remove default outline
+            minimumSize: Size(buttonWidth, buttonHeight),
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius.toDouble()),
             ),
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (isLoading)
-                    const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF6D6BFF),
-                        strokeWidth: 1.5,
-                      ),
-                    )
-                  else
-                    Text(
-                      text,
-                      style: TextStyle(
-                        fontFamily: 'segeo',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: finalTextColor,
-                      ),
-                    ),
-                  if (!isLoading && icon != null) ...[
-                    const SizedBox(width: 8),
-                    Icon(icon, color: finalTextColor, size: 18),
-                  ],
-                ],
-              ),
-            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (isLoading)
+                const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF6D6BFF),
+                    strokeWidth: 1.5,
+                  ),
+                )
+              else
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: finalTextColor,
+                  ),
+                ),
+              if (!isLoading && icon != null) ...[
+                const SizedBox(width: 8),
+                Icon(icon, color: finalTextColor, size: 18),
+              ],
+            ],
           ),
         ),
       ),
     );
   }
 }
+
 

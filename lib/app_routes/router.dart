@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
+import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
@@ -19,6 +20,7 @@ import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
+import 'package:mentivisor/presentation/Splash.dart';
 import 'package:mentivisor/profileview/EditProfileScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
@@ -52,8 +54,6 @@ import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 import 'package:mentivisor/presentation/ProfileScreen.dart';
 
-import '../presentation/Splash.dart';
-
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
@@ -61,6 +61,12 @@ final GoRouter appRouter = GoRouter(
       path: '/',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/auth_landing',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(AuthLandingScreen(), state);
       },
     ),
     GoRoute(

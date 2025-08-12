@@ -83,31 +83,19 @@ class _DashboardState extends State<Dashboard> {
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(
-              _selectedIndex == 0 ? Icons.home : Icons.home_outlined,
-              size: 24,
-            ),
+            icon:Image.asset( _selectedIndex == 0 ? "assets/icons/homefilled.png":"assets/icons/homeoutline.png"),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              _selectedIndex == 1 ? Icons.menu_book : Icons.menu_book_outlined,
-              size: 24,
-            ),
+            icon:Image.asset( _selectedIndex == 1 ? "assets/icons/studyzonefilled.png":"assets/icons/studyzoneoutline.png"),
             label: 'Study Zone',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              _selectedIndex == 2 ? Icons.school : Icons.school_outlined,
-              size: 24,
-            ),
+            icon:Image.asset( _selectedIndex == 2 ? "assets/icons/eccfilled.png":"assets/icons/eccoutline.png"),
             label: 'ECC',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              _selectedIndex == 3 ? Icons.group : Icons.group_outlined,
-              size: 24,
-            ),
+            icon:Image.asset( _selectedIndex == 3 ? "assets/icons/studyzonefilled.png":"assets/icons/studyzoneoutline.png"),
             label: 'Community',
           ),
         ],

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../Components/CustomAppButton.dart';
+import '../../../../utils/color_constants.dart';
+
 class ProfileSetupWizard extends StatefulWidget {
   @override
   _ProfileSetupWizardState createState() => _ProfileSetupWizardState();
@@ -34,8 +37,6 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(height: 48),
-
-              // Header Icon
               Center(
                 child: Container(
                   width: 60,
@@ -51,10 +52,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                   child: Icon(Icons.school, color: Colors.white, size: 28),
                 ),
               ),
-
               SizedBox(height: 16),
-
-              // Title
               Center(
                 child: Text(
                   'Join Mentivisor',
@@ -67,11 +65,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                   ),
                 ),
               ),
-
               SizedBox(height: 32),
-
-
-              // Progress Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -84,7 +78,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                     ),
                   ),
                   Text(
-                    '2 of 4',
+                    '2 of 3',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -93,46 +87,28 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                   ),
                 ],
               ),
-
               SizedBox(height: 8),
-
-              // Progress Bar
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(8),
-                        ),
-                      ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Stack(
+                  children: [
+                    Container(height: 6, color: Colors.grey.shade300),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final progress = 0.33; // 25%
+                        return Container(
+                          height: 6,
+                          width: constraints.maxWidth * progress,
+                          decoration: BoxDecoration(
+                            gradient: kCommonGradient,
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.horizontal(
-                          right: Radius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-
               SizedBox(height: 32),
-
-              // Bio Card (fixed height)
               SizedBox(
                 height: 320,
                 child: Card(
@@ -169,8 +145,6 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                           ),
                         ),
                         SizedBox(height: 16),
-
-                        // Text field area
                         Expanded(
                           child: TextFormField(
                             controller: bioController,
@@ -180,30 +154,51 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.all(12),
                               hintText:
-                              'Tell us about your academic background, interests, and what you hope to achieve...',
+                                  'Tell us about your academic background, interests, and what you hope to achieve...',
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 fontFamily: 'segeo',
                                 color: Colors.black38,
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                BorderSide(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-
-                        // character counter pinned at bottom right
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Text(
-                            '${bioController.text.length}/300',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'segeo',
-                              color: Colors.black38,
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              errorStyle: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ),
@@ -212,11 +207,9 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                   ),
                 ),
               ),
-
               SizedBox(height: 24),
-
-              // Back / Next buttons
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
@@ -230,51 +223,14 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: gradientColors,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-
-                          // replace with your route:
-                          context.push('/mentivisorprofilesetup');
-                          // or with Navigator:
-                          // Navigator.of(context).push(MaterialPageRoute(builder: (_) => NextScreen()));
-
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Next',
-                              style: TextStyle(
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 18,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  CustomAppButton1(
+                    text: "Next",
+                    radius: 10,
+                    width: 100,
+                    height: 42,
+                    onPlusTap: () {
+                      context.push('/mentivisorprofilesetup');
+                    },
                   ),
                 ],
               ),

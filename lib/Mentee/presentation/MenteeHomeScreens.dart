@@ -219,7 +219,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black,size: 36,),
+          icon: const Icon(Icons.menu, color: Colors.black, size: 36),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
         title: Column(
@@ -360,17 +360,16 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                   ),
                 ),
                 Container(
-                  padding:  EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: kCommonGradient
-                  ),
-                  child:  ListTile(
+                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                  decoration: BoxDecoration(gradient: kCommonGradient),
+                  child: ListTile(
                     contentPadding: EdgeInsets.all(0),
                     visualDensity: VisualDensity.compact,
-                    leading: Image.asset("assets/icons/mentor.png", width: 24, height: 24),
+                    leading: Image.asset(
+                      "assets/icons/mentor.png",
+                      width: 24,
+                      height: 24,
+                    ),
                     title: Text(
                       "Become Mentor",
                       style: const TextStyle(
@@ -379,9 +378,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    onTap: (){
-
-                    },
+                    onTap: () {},
                   ),
                 ),
                 SizedBox(height: 20),

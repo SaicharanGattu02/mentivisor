@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../services/AuthService.dart';
+import '../../../utils/color_constants.dart';
 import '../../data/cubits/Login/LoginCubit.dart';
 import '../../data/cubits/Login/LoginState.dart';
 
@@ -64,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: const Color(0xfff6faff),
       body: SingleChildScrollView(
@@ -78,14 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  gradient: kCommonGradient,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: Image.asset(
-                  'assets/images/appicon_menty.png',
-                  height: 84,
-                  width: 92,
-                ),
+                child: Icon(Icons.school, color: Colors.white, size: 32),
               ),
               const SizedBox(height: 20),
               const Text(
@@ -94,17 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
-                  fontFamily: 'Inter',
                 ),
               ),
-              const SizedBox(height: 8),
               const Text(
                 'Sign in to your mentee account',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black54,
                   fontWeight: FontWeight.w400,
-                  fontFamily: 'Inter',
                 ),
               ),
               const SizedBox(height: 28),
@@ -127,7 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       'Email Address',
                       style: TextStyle(
                         fontSize: 15,
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -135,12 +127,51 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextField(
                       controller: emailController,
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.email_outlined,
                           color: Colors.black26,
                         ),
                         hintText: 'Enter your Email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
 
@@ -152,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: const TextStyle(
                             color: Colors.red,
                             fontSize: 12,
-                            fontFamily: 'Inter',
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -163,7 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       'Password',
                       style: TextStyle(
                         fontSize: 15,
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -193,6 +222,45 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         hintText: 'Enter your Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffE5E7EB),
+                            width: 1,
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
 
@@ -209,6 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
+
                     // Row(
                     //   children: [
                     //     Checkbox(
@@ -229,8 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     //     ),
                     //   ],
                     // ),
-
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 25),
                     BlocConsumer<LoginCubit, LoginState>(
                       listener: (context, state) async {
                         if (state is LoginSucess) {
@@ -261,34 +329,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Inter',
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                    onTap: () => context.push('/sign_up'),
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: Color(0xff9333EA),
-                        fontFamily: 'Inter',
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

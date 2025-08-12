@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 
 class AuthLandingScreen extends StatelessWidget {
@@ -86,12 +87,16 @@ class AuthLandingScreen extends StatelessWidget {
                       ),
                     ),
                     // Buttons
-                    CustomAppButton1(text: "Sign up", onPlusTap: () {}),
+                    CustomAppButton1(text: "Sign up", onPlusTap: () {
+                      context.push("/profilesetup");
+                    }),
                     const SizedBox(height: 16),
                     CustomOutlinedButton(
                       text: "Sign in",
                       radius: 24,
-                      onTap: () {},
+                      onTap: () {
+                        context.push("/login");
+                      },
                     ),
                     const SizedBox(height: 28),
                   ],
