@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import '../../../Components/CustomAppButton.dart';
-import '../../../utils/color_constants.dart';
 import '../../data/cubits/Register/Register_Cubit.dart';
 import '../../data/cubits/Register/Registor_State.dart';
 import '../Widgets/TextLableAndInputStyle.dart';
@@ -43,9 +43,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final email = emailController.text.trim();
     final mobile = mobileController.text.trim();
     final password = passwordController.text.trim();
-
     bool isValid = true;
-
     if (email.isEmpty || !email.contains('@')) {
       emailError = 'Enter a valid email address';
       showEmailError = true;
@@ -67,11 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     if (isValid) {
-      final data = {
-        "email": email,
-        "contact": mobile,
-        "password": password,
-      };
+      final data = {"email": email, "contact": mobile, "password": password};
       context.read<RegisterCubit>().registerApi(data);
     }
   }
@@ -79,7 +73,6 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: const Color(0xfff6faff),
       body: SingleChildScrollView(
@@ -94,37 +87,25 @@ class _SignupScreenState extends State<SignupScreen> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xffA258F7),
-                      Color(0xff726CF7),
-                      Color(0xff4280F6),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF9333EA), Color(0xFF3B82F6)],
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.mail_outline_rounded,
-                    size: 32,
-                    color: Colors.white,
-                  ),
-                ),
+                child: Icon(Icons.school, color: Colors.white, size: 32),
               ),
               const SizedBox(height: 20),
               const Text(
                 "Join Mentivisor",
                 style: TextStyle(
-                  fontFamily: 'segeo',
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 28),
-
               // Input Card
               Container(
                 padding: const EdgeInsets.all(16),
@@ -141,21 +122,26 @@ class _SignupScreenState extends State<SignupScreen> {
                 child: Column(
                   children: [
                     CommonPasswordTextField(
-                      hint: "Enter your email",
+                      hint: "Enter your Email",
                       icon: Icons.email_outlined,
                       isPassword: false,
+                      keyboardType: TextInputType.emailAddress,
                       controller: emailController,
                       showError: showEmailError,
                       errorKey: 'email_error',
                       errorMsg: emailError,
                     ),
-
                     const SizedBox(height: 12),
                     CommonPasswordTextField(
                       hint: "Enter your mobile number",
                       icon: Icons.phone_android_outlined,
                       isPassword: false,
                       controller: mobileController,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(10),
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                       showError: showMobileError,
                       errorKey: 'mobile_error',
                       errorMsg: mobileError,
@@ -175,7 +161,17 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
 
               const SizedBox(height: 24),
-
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
               // Terms & Conditions Checkbox
               Row(
                 children: [
@@ -188,24 +184,25 @@ class _SignupScreenState extends State<SignupScreen> {
                       onTap: () => setState(() => agree = !agree),
                       child: const Text(
                         "I agree to terms and conditions",
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(fontFamily: 'segeo', fontSize: 14),
                       ),
                     ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 8),
-
               // Get OTP Button
               BlocConsumer<RegisterCubit, RegisterState>(
                 listener: (context, state) {
                   if (state is RegisterSucess) {
+                    Map<String, dynamic> data = {
+                      "email": emailController.text,
+                      "contact": mobileController.text,
+                      "password": passwordController.text,
+                    };
                     context.pushReplacement(
-                      '/otp_verify?number=${mobileController.text}',
+                      '/otp_verify',
+                      extra: data,
                     );
                   } else if (state is RegisterFailure) {
                     CustomSnackBar.show(context, state.message);
@@ -215,41 +212,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   return CustomAppButton1(
                     isLoading: state is RegisterLoading,
                     text: "Get OTP",
-
-                    onPlusTap: validateAndSubmit,
+                    onPlusTap: state is RegisterLoading
+                        ? null
+                        : validateAndSubmit,
                   );
                 },
-              ),
-
-              const SizedBox(height: 16),
-
-              // Sign In Link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Already have an account?",
-                    style: TextStyle(
-                      fontFamily: 'segeo',
-                      fontSize: 15,
-                      color: Colors.black87,
-
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                    onTap: () => context.push("/login"),
-                    child: const Text(
-                      "Sign In",
-                      style: TextStyle(
-                        color: primarycolor,
-                        fontFamily: "Inter",
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

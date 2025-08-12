@@ -1,5 +1,4 @@
-import 'package:mentivisor/Models/CoinsPackRespModel.dart';
-
+import '../../../Models/CoinsPackRespModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class CoinsPackRepo {

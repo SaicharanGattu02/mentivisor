@@ -19,7 +19,18 @@ class ApiClient {
     ),
   );
 
-  static const List<String> _unauthenticatedEndpoints = ['/api/user-login'];
+  static const List<String> _unauthenticatedEndpoints = [
+    '/api/user-login',
+    '/api/registration-step-1',
+    '/api/registration-verify-step-2',
+    '/api/final-registration',
+    '/api/banners',
+    '/api/study-zone/tags',
+    '/api/study-zone/top-downloads',
+    '/api/guest-list-ecc',
+    '/api/community-zone-post-without-login',
+    '/api/top-mentors'
+  ];
 
   static void setupInterceptors() {
     try {

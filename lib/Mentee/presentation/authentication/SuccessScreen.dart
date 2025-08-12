@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/ProfileSetupScreen.dart';
 
-
 class SuccessScreen extends StatelessWidget {
-  const SuccessScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic> data;
+  const SuccessScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,7 @@ class SuccessScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Color(0xFF3AE37A),
               ),
-              child: const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 60,
-              ),
+              child: const Icon(Icons.check, color: Colors.white, size: 60),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -43,45 +41,22 @@ class SuccessScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   'Create Your profile to use all features',
-                  style: TextStyle(fontSize: 14, fontFamily: "segeo", color: Color(0xff374151), fontWeight: FontWeight.w500),
-                ) ,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: GestureDetector(
-
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => ProfileSetupScreen()),
-                  ),
-
-
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF9333EA), Color(0xFF3B82F6)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Text(
-                    'Create Profile',
-
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w600,
-                    ),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "segeo",
+                    color: Color(0xff374151),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomAppButton1(
+                text: "Create Profile",
+                onPlusTap: () {
+                  context.pushReplacement("/profilesetup", extra: data);
+                },
               ),
             ),
           ],

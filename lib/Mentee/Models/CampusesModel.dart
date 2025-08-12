@@ -1,10 +1,10 @@
-class GetCompusModel {
+class CampusesModel {
   bool? status;
   List<Data>? data;
 
-  GetCompusModel({this.status, this.data});
+  CampusesModel({this.status, this.data});
 
-  GetCompusModel.fromJson(Map<String, dynamic> json) {
+  CampusesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['data'] != null) {
       data = <Data>[];

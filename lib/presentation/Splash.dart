@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
             final token = await AuthService.getAccessToken();
             final role = await AuthService.getRole();
             if (token == null || token.isEmpty) {
-              context.pushReplacement('/login');
+              context.pushReplacement('/dashboard');
             } else {
               if (role == "Both") {
                 context.pushReplacement('/selected_screen');

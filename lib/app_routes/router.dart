@@ -64,6 +64,60 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(LoginScreen(), state),
+    ),
+    GoRoute(
+      path: '/sign_up',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SignupScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/profilesetup',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(ProfileSetupScreen(data: data), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/otp_verify',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(
+          OTPVerificationScreen(data: data),
+          state,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/success_screen',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(SuccessScreen(data: data), state);
+      },
+    ),
+    GoRoute(
+      path: '/profilesetupwizard',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(ProfileSetupWizard(data: data), state);
+      },
+    ),
+    GoRoute(
+      path: '/mentivisorprofilesetup',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(
+          Acadamicjourneyscreen(data: data),
+          state,
+        );
+      },
+    ),
+
+    GoRoute(
       path: '/auth_landing',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(AuthLandingScreen(), state);
@@ -127,16 +181,6 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(MentorProfileScreen(id: id), state);
       },
     ),
-    GoRoute(
-      path: '/mentivisorprofilesetup',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Acadamicjourneyscreen(), state),
-    ),
-    GoRoute(
-      path: '/profilesetupwizard',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ProfileSetupWizard(), state),
-    ),
 
     GoRoute(
       path: '/InterestingScreen',
@@ -149,22 +193,6 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(BecomeMentorScreen(), state),
     ),
 
-    GoRoute(
-      path: '/profilesetup',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ProfileSetupScreen(), state),
-    ),
-
-    GoRoute(
-      path: '/otp_verify',
-      pageBuilder: (context, state) {
-        final num = state.uri.queryParameters['number'] ?? "";
-        return buildSlideTransitionPage(
-          OTPVerificationScreen(number: num),
-          state,
-        );
-      },
-    ),
     GoRoute(
       path: '/selected_screen',
       pageBuilder: (context, state) =>
@@ -230,11 +258,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(TopicSelectionScreen(), state),
     ),
-    GoRoute(
-      path: '/success_screen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SuccessScreen(), state),
-    ),
+
     GoRoute(
       path: '/costperminute_screen',
       pageBuilder: (context, state) =>
@@ -265,17 +289,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
     ),
-    GoRoute(
-      path: '/login',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(LoginScreen(), state),
-    ),
-    GoRoute(
-      path: '/sign_up',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SignupScreen(), state),
-    ),
-
     GoRoute(
       path: '/profile',
       pageBuilder: (context, state) =>

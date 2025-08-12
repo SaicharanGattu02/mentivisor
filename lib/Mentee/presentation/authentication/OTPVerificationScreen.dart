@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Verify_Otp/Verify_Otp_State.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../../Components/CustomAppButton.dart';
-
+import '../../../Components/ShakeWidget.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
-  final String number;
-  const OTPVerificationScreen({required this.number, Key? key}) : super(key: key);
+  final Map<String, dynamic> data;
+  const OTPVerificationScreen({required this.data, Key? key}) : super(key: key);
 
   @override
   State<OTPVerificationScreen> createState() => _OTPVerificationScreenState();
@@ -14,56 +19,34 @@ class OTPVerificationScreen extends StatefulWidget {
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final List<TextEditingController> _otpControllers = List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-  bool _isButtonEnabled = false;
+  final TextEditingController otpController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < _otpControllers.length; i++) {
-      _otpControllers[i].addListener(_onOtpChanged);
-    }
+  bool _showMpinError = false;
+  bool _showMobileError = false;
+  bool _autoValidate = false;
+
+  bool _validateFields() {
+    setState(() {
+      final otp = otpController.text.trim();
+      _showMpinError = otp.isEmpty || otp.length != 4;
+    });
+    return !(_showMobileError || _showMpinError);
   }
 
   @override
   void dispose() {
-    for (final c in _otpControllers) {
-      c.dispose();
-    }
-    for (final f in _focusNodes) {
-      f.dispose();
-    }
     super.dispose();
   }
 
-  void _onOtpChanged() {
-    final isAllFilled = _otpControllers.every((c) => c.text.isNotEmpty);
-    if (isAllFilled != _isButtonEnabled) {
-      setState(() => _isButtonEnabled = isAllFilled);
-    }
-  }
-
-  void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final otp = _otpControllers.map((c) => c.text).join();
-      context.pushReplacement('/success_screen');
-    }
-  }
-
-  void _resendOtp() {
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('OTP resent successfully')),
-    );
-  }
+  void _resendOtp() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffF4F8FD),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -82,7 +65,11 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Icon(Icons.school, color: Colors.white, size: 32),
+                    child: const Icon(
+                      Icons.school,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -100,12 +87,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 const SizedBox(height: 24),
                 const Text(
                   'Enter OTP',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,  color: Color(0xff444444),
-                    fontFamily: 'segeo',),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff444444),
+                    fontFamily: 'segeo',
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'OTP sent to +91 88888... ${widget.number}',
+                  'OTP sent to +91 ${widget.data["contact"]}',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.black54,
@@ -114,39 +105,56 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(6, (index) {
-                    return SizedBox(
-                      width: 48,
-                      child: TextFormField(
-                        controller: _otpControllers[index],
-                        focusNode: _focusNodes[index],
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        maxLength: 1,
-                        decoration: const InputDecoration(
-                          counterText: '',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                          ),
-                        ),
-                        validator: (val) {
-                          if (val == null || val.isEmpty) return '';
-                          if (!RegExp(r'^[0-9]$').hasMatch(val)) return '';
-                          return null;
-                        },
-                        onChanged: (val) {
-                          if (val.length == 1 && index < 5) {
-                            _focusNodes[index + 1].requestFocus();
-                          } else if (val.isEmpty && index > 0) {
-                            _focusNodes[index - 1].requestFocus();
-                          }
-                        },
-                      ),
-                    );
-                  }),
+                PinCodeTextField(
+                  appContext: context,
+                  length: 4,
+                  controller: otpController,
+                  keyboardType: TextInputType.number,
+                  animationType: AnimationType.fade,
+                  animationDuration: Duration(milliseconds: 300),
+                  backgroundColor: Colors.transparent,
+                  enableActiveFill: true,
+                  textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  onChanged: (_) {
+                    if (_showMpinError) setState(() => _showMpinError = false);
+                  },
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(8),
+                    selectedBorderWidth: 1,
+                    borderWidth: 1,
+                    fieldHeight: 50,
+                    fieldWidth: 50,
+                    selectedColor: Colors.white,
+                    activeColor: Colors.grey,
+                    inactiveColor: Colors.white,
+                    activeFillColor: Colors.white,
+                    inactiveFillColor: Colors.white,
+                    selectedFillColor: Colors.white,
+                    fieldOuterPadding: EdgeInsets.all(5),
+                  ),
                 ),
+
+                if (_showMpinError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: ShakeWidget(
+                      key: Key('OTPEror'),
+                      duration: Duration(milliseconds: 700),
+                      child: Text(
+                        'Please enter a valid 6-digit OTP',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
@@ -157,7 +165,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       style: TextStyle(
                         color: Color(0xff34495C),
                         fontFamily: 'segeo',
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                         decoration: TextDecoration.underline,
                       ),
@@ -165,13 +173,35 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 ),
                 const Spacer(),
-                CustomAppButton1(
-                  text: 'Submit OTP',
-                  onPlusTap: _isButtonEnabled
-                      ? () {
-
-                  }
-                      : null,
+                BlocConsumer<VerifyOtpCubit, VerifyOtpState>(
+                  listener: (context, state) {
+                    if (state is verifyotpSucess) {
+                      context.push("/success_screen", extra: widget.data);
+                    } else if (state is verifyotpFailure) {
+                      CustomSnackBar1.show(context, state.message);
+                    }
+                  },
+                  builder: (context, state) {
+                    final isLoading = state is verifyotpLoading;
+                    return CustomAppButton1(
+                      isLoading: isLoading,
+                      text: 'Verify OTP',
+                      onPlusTap: isLoading
+                          ? null
+                          : () {
+                              if (_validateFields()) {
+                                Map<String, dynamic> data = {
+                                  "contact": widget.data["contact"],
+                                  "otp": otpController.text,
+                                  "fcm_token": "sjnsdsdhd",
+                                };
+                                context.read<VerifyOtpCubit>().VerifyotpApi(
+                                  data,
+                                );
+                              }
+                            },
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
               ],

@@ -1,4 +1,4 @@
-import 'package:mentivisor/Models/CoinsPackRespModel.dart';
+import '../../../Models/CoinsPackRespModel.dart';
 
 abstract class CoinsPackState {}
 

@@ -5,6 +5,8 @@ import '../../../../Components/CustomAppButton.dart';
 import '../../../../utils/color_constants.dart';
 
 class ProfileSetupWizard extends StatefulWidget {
+  final Map<String, dynamic> data;
+  const ProfileSetupWizard({required this.data, Key? key}) : super(key: key);
   @override
   _ProfileSetupWizardState createState() => _ProfileSetupWizardState();
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_states.dart';
 import 'package:mentivisor/utils/color_constants.dart';
+import '../../../services/AuthService.dart';
 import '../Widgets/EventCard.dart';
 import '../Widgets/FilterButton.dart';
 
@@ -17,7 +18,7 @@ class EccScreen extends StatefulWidget {
 class _EccScreenState extends State<EccScreen> {
   bool _onCampus = true;
   int _selectedFilter = 0;
-  String selectedFilter = 'On Campus';
+  String selectedFilter = 'On Campuses';
   final List<String> _filters = ['All', 'Active', 'Upcoming', 'Highlighted'];
 
   static const Color _blue = Color(0xFF1677FF);
@@ -66,45 +67,57 @@ class _EccScreenState extends State<EccScreen> {
                     color: Color(0xFF666666),
                   ),
                 ),
-
-                const SizedBox(height: 24),
-
-                // On Campus / Beyond Campus toggle
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE4EEFF),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FilterButton(
-                          text: 'On Campus',
-                          isSelected: selectedFilter == 'On Campus',
-                          onPressed: () {
-                            setState(() {
-                              selectedFilter = 'On Campus';
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: FilterButton(
-                          text: 'Beyond Campus',
-                          isSelected: selectedFilter == 'Beyond Campus',
-                          onPressed: () {
-                            setState(() {
-                              selectedFilter = 'Beyond Campus';
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                FutureBuilder(
+                  future: AuthService.isGuest,
+                  builder: (context, snapshot) {
+                    final isGuest = snapshot.data ?? false;
+                    if (!isGuest) {
+                      return Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          Container(
+                            height: 53,
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Color(0xffDBE5FB).withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(36),
+                            ),
+                            child: Row(
+                              spacing: 10,
+                              children: [
+                                Expanded(
+                                  child: FilterButton(
+                                    text: 'On Campuses',
+                                    isSelected: _onCampus,
+                                    onPressed: () {
+                                      setState(() {
+                                        _onCampus = true;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  child: FilterButton(
+                                    text: 'Beyond Campuses',
+                                    isSelected: !_onCampus,
+                                    onPressed: () {
+                                      setState(() {
+                                        _onCampus = false;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
                 ),
-                const SizedBox(height: 10),
-                // Updates label
+                const SizedBox(height: 20),
                 const Text(
                   'Updates',
                   style: TextStyle(
@@ -164,7 +177,6 @@ class _EccScreenState extends State<EccScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 // Search field
                 TextField(
                   decoration: InputDecoration(
@@ -273,27 +285,37 @@ class _EccScreenState extends State<EccScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push("/addeventscreen");
-        },
-        backgroundColor: Colors.transparent,
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [
-                Color(0xFF975CF7),
-                Color(0xFF7A40F2), // Optional darker/lighter variation
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      floatingActionButton: FutureBuilder(
+        future: AuthService.isGuest,
+        builder: (context, snapshot) {
+          final isGuest = snapshot.data ?? false;
+          return FloatingActionButton(
+            onPressed: () {
+              if (isGuest) {
+                context.push('/auth_landing');
+              } else {
+                context.push("/addeventscreen");
+              }
+            },
+            backgroundColor: Colors.transparent,
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF975CF7),
+                    Color(0xFF7A40F2), // Optional darker/lighter variation
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Icon(Icons.add, size: 32, color: Colors.white),
             ),
-          ),
-          child: const Icon(Icons.add, size: 32, color: Colors.white),
-        ),
+          );
+        },
       ),
     );
   }

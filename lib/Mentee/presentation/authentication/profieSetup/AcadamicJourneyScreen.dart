@@ -5,6 +5,8 @@ import '../../../../Components/CustomAppButton.dart';
 import '../../../../utils/color_constants.dart';
 
 class Acadamicjourneyscreen extends StatefulWidget {
+  final Map<String, dynamic> data;
+  const Acadamicjourneyscreen({required this.data, Key? key}) : super(key: key);
   @override
   _Acadamicjourneyscreen createState() => _Acadamicjourneyscreen();
 }

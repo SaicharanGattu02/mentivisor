@@ -8,11 +8,11 @@ class APIEndpointUrls {
   static const String login = '${apiUrl}user-login';
 
   /// auth get register
-  static const String get_compuses = "${apiUrl}campuses";
+  static const String get_compuses = "${apiUrl}Campuses";
   static const String get_years = "${apiUrl}years";
   static const String registerscreen = "${apiUrl}registration-step-1";
-  static const String verifyotp = "${apiUrl}verify-otp";
-  static const String get_banners = "${apiUrl}banners";
+  static const String verifyotp = "${apiUrl}registration-verify-step-2";
+  static const String final_registration = "${apiUrl}final-registration";
   static const String get_books = "${apiUrl}users/study-zones";
   static const String get_expertise = "${apiUrl}users/expertise";
   static const String getoncampose = "${apiUrl}list-mentor-own-campus";
@@ -32,8 +32,7 @@ class APIEndpointUrls {
   static const String wallet_money = "${apiUrl}users/my-wallet";
 
   /// Mentee
-
-  static const String get_campus_mentors = "${userUrl}mentorslist";
+  static const String get_mentors = "${userUrl}mentors";
   static const String study_zone_tags = "${userUrl}study-zone/tags";
   static const String mentor_profile = "${userUrl}mentors";
   static const String list_ecc = "${userUrl}list-ecc";
@@ -53,4 +52,14 @@ class APIEndpointUrls {
   static const String task_delete = "${userUrl}/tasks/";
   static const String add_task = "${userUrl}/tasks/";
   static const String add_book = "${userUrl}add-book";
+  static const String get_campuses = "${userUrl}campuses";
+
+  ///Guest urls
+  static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
+  static const String guest_mentors = "${apiUrl}top-mentors";
+  static const String guest_study_zone = "${apiUrl}study-zone/top-downloads";
+  static const String guest_list_ecc = "${apiUrl}guest-list-ecc?upcoming=true";
+  static const String guest_community_post =
+      "${apiUrl}community-zone-post-without-login";
+  static const String get_banners = "${apiUrl}banners";
 }

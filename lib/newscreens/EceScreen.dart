@@ -8,7 +8,7 @@ class EceScreen extends StatefulWidget {
 }
 
 class _EceScreenState extends State<EceScreen> {
-  // 0 = On Campus, 1 = Beyond Campus
+  // 0 = On Campuses, 1 = Beyond Campuses
   int _campusIndex = 0;
   // 0 = All, 1 = Active, 2 = Upcoming, 3 = Highlighted
   int _filterIndex = 0;
@@ -59,9 +59,9 @@ class _EceScreenState extends State<EceScreen> {
               // Segmented control
               Row(
                 children: [
-                  _buildSegment('On Campus', 0),
+                  _buildSegment('On Campuses', 0),
                   const SizedBox(width: 8),
-                  _buildSegment('Beyond Campus', 1),
+                  _buildSegment('Beyond Campuses', 1),
                 ],
               ),
 

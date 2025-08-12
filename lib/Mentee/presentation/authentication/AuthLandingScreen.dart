@@ -88,7 +88,7 @@ class AuthLandingScreen extends StatelessWidget {
                     ),
                     // Buttons
                     CustomAppButton1(text: "Sign up", onPlusTap: () {
-                      context.push("/profilesetup");
+                      context.push("/sign_up");
                     }),
                     const SizedBox(height: 16),
                     CustomOutlinedButton(

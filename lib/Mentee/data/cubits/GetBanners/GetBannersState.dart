@@ -1,4 +1,4 @@
-import 'package:mentivisor/Models/GetBannersRespModel.dart';
+import 'package:mentivisor/Mentee/Models/GetBannersRespModel.dart';
 
 abstract class Getbannersstate {
 }

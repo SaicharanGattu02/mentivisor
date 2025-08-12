@@ -6,6 +6,8 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import '../../../../utils/color_constants.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
+  final Map<String, dynamic> data;
+  const ProfileSetupScreen({required this.data, Key? key}) : super(key: key);
   @override
   _ProfileSetupScreenState createState() => _ProfileSetupScreenState();
 }
@@ -30,12 +32,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Logo/Icon
                 Container(
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    gradient:kCommonGradient,
+                    gradient: kCommonGradient,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(Icons.school, color: Colors.white, size: 32),
@@ -182,9 +183,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-
                       SizedBox(height: 10),
-
                       // Name input
                       TextFormField(
                         controller: _nameController,
@@ -259,7 +258,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       width: 100,
                       height: 42,
                       onPlusTap: () {
-                        context.push('/profilesetupwizard');
+                        context.push('/profilesetupwizard', extra: widget.data);
                       },
                     ),
                   ],

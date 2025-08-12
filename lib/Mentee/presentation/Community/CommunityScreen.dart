@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsStates.dart';
+import 'package:mentivisor/utils/color_constants.dart';
 
+import '../../../services/AuthService.dart';
 import '../../Models/CommunityPostsModel.dart';
 import '../Widgets/FilterButton.dart';
 import '../Widgets/PostCard.dart';
@@ -21,7 +23,7 @@ class _CommunityScreenState extends State<Communityscreen> {
   int _selectedTabIndex = 0;
 
   int _selectedFilter = 0;
-  String selectedFilter = 'On Campus';
+  String selectedFilter = 'On Campuses';
   final List<String> _filters = ['All', 'Active', 'Upcoming', 'Highlighted'];
   final List<String> _subTabs = ['All', 'Recent', 'Trending', 'Highlighted'];
 
@@ -78,42 +80,57 @@ class _CommunityScreenState extends State<Communityscreen> {
                   color: Color(0xFF666666),
                 ),
               ),
-
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE4EEFF),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: FilterButton(
-                        text: 'On Campus',
-                        isSelected: selectedFilter == 'On Campus',
-                        onPressed: () {
-                          setState(() {
-                            selectedFilter = 'On Campus';
-                          });
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: FilterButton(
-                        text: 'Beyond Campus',
-                        isSelected: selectedFilter == 'Beyond Campus',
-                        onPressed: () {
-                          setState(() {
-                            selectedFilter = 'Beyond Campus';
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+              FutureBuilder(
+                future: AuthService.isGuest,
+                builder: (context, snapshot) {
+                  final isGuest = snapshot.data ?? false;
+                  if (!isGuest) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 24),
+                        Container(
+                          height: 53,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Color(0xffDBE5FB).withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(36),
+                          ),
+                          child: Row(
+                            spacing: 10,
+                            children: [
+                              Expanded(
+                                child: FilterButton(
+                                  text: 'On Campuses',
+                                  isSelected: _onCampus,
+                                  onPressed: () {
+                                    setState(() {
+                                      _onCampus = true;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: FilterButton(
+                                  text: 'Beyond Campuses',
+                                  isSelected: !_onCampus,
+                                  onPressed: () {
+                                    setState(() {
+                                      _onCampus = false;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -125,46 +142,56 @@ class _CommunityScreenState extends State<Communityscreen> {
                       color: Color(0xFF121212),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      context.push("/addpostscreen");
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFD1A9F0), // Lighter purple start
-                            Color(0xFFE6C4F5), // Even lighter purple end
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 10,
-                        children: [
-                          const Icon(
-                            Icons.add_box_outlined,
-                            size: 24,
-                            color: Colors.white,
+                  FutureBuilder(
+                    future: AuthService.isGuest,
+                    builder: (context, snapshot) {
+                      final isGuest = snapshot.data ?? false;
+                      return GestureDetector(
+                        onTap: () {
+                          if (isGuest) {
+                            context.push('/auth_landing');
+                          } else {
+                            context.push("/addpostscreen");
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 3,
                           ),
-                          const Text(
-                            'Add',
-                            style: TextStyle(
-                              fontFamily: 'Segoe',
-                              fontSize: 16,
-                              color: Colors.white,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFFD1A9F0), // Lighter purple start
+                                Color(0xFFE6C4F5), // Even lighter purple end
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
                             ),
+                            borderRadius: BorderRadius.circular(24),
                           ),
-                        ],
-                      ),
-                    ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: 10,
+                            children: [
+                              const Icon(
+                                Icons.add_box_outlined,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                              const Text(
+                                'Add',
+                                style: TextStyle(
+                                  fontFamily: 'Segoe',
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -283,30 +310,29 @@ class _CommunityScreenState extends State<Communityscreen> {
       ),
 
       // Floating Action Button
-      floatingActionButton: Container(
-        height: 64,
-        width: 64,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [grad1, grad2, grad3],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 12,
-              offset: Offset(0, 6),
+      floatingActionButton: FutureBuilder(
+        future: AuthService.isGuest,
+        builder: (context, snapshot) {
+          final isGuest = snapshot.data ?? false;
+          return Container(
+            height: 64,
+            width: 64,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: kCommonGradient,
             ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.chat_bubble, size: 28),
-        ),
+            child: FloatingActionButton(
+              shape: CircleBorder(),
+              onPressed: () {
+                if (isGuest) {
+                } else {}
+              },
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: const Icon(Icons.chat_bubble, size: 28),
+            ),
+          );
+        },
       ),
     );
   }

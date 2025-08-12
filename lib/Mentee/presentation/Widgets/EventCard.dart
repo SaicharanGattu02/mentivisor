@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/services/AuthService.dart';
 
 import '../../Models/ECCModel.dart';
 import 'DetailRow.dart';
@@ -110,10 +111,20 @@ class EventCard extends StatelessWidget {
           // View Details button
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: CustomAppButton1(
-              text: "View Details",
-              onPlusTap: () {
-                context.push('/view_event', extra: eccList);
+            child: FutureBuilder(
+              future: AuthService.isGuest,
+              builder: (context, snapshot) {
+                final isGuest = snapshot.data ?? false;
+                return CustomAppButton1(
+                  text: "View Details",
+                  onPlusTap: () {
+                    if (isGuest) {
+                      context.push('/auth_landing');
+                    } else {
+                      context.push('/view_event', extra: eccList);
+                    }
+                  },
+                );
               },
             ),
           ),

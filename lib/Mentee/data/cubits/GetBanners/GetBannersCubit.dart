@@ -12,7 +12,7 @@ class Getbannerscubit extends Cubit<Getbannersstate> {
     emit(GetbannersStateLoading());
     try {
       final res = await _getbannersrepository.getBannersApi();
-      if (res != null) {
+      if (res != null && res.status==true) {
         emit(GetbannersStateLoaded(getbannerModel: res));
       } else {
         emit(GetbannersStateFailure(msg: "No states found."));

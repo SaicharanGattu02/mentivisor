@@ -1,4 +1,4 @@
-import 'package:mentivisor/Models/LoginResponseModel.dart';
+import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 
 import '../../remote_data_source.dart';
 

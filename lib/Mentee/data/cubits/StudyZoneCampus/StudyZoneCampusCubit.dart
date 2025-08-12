@@ -15,14 +15,14 @@ class StudyZoneCampusCubit extends Cubit<StudyZoneCampusState> {
   bool _hasNextPage = true;
   bool _isLoadingMore = false;
 
-  Future<void> fetchStudyZoneCampus(String scope, String tag) async {
+  Future<void> fetchStudyZoneCampus({String? scope, String? tag}) async {
     emit(StudyZoneCampusLoading());
     _currentPage = 1;
     try {
       final campusData = await studyZoneCampusRepository.getStudyZoneCampus(
-        scope,
-        tag,
-        _currentPage,
+        scope: scope,
+        tag: tag,
+        page: _currentPage,
       );
       if (campusData != null && campusData.status == true) {
         studyZoneCampusModel = campusData;
@@ -38,16 +38,16 @@ class StudyZoneCampusCubit extends Cubit<StudyZoneCampusState> {
     }
   }
 
-  Future<void> fetchMoreStudyZoneCampus(String scope, String tag) async {
+  Future<void> fetchMoreStudyZoneCampus({String? scope, String? tag}) async {
     if (_isLoadingMore || !_hasNextPage) return;
     _isLoadingMore = true;
     _currentPage++;
     emit(StudyZoneCampusLoadingMore(studyZoneCampusModel, _hasNextPage));
     try {
       final newData = await studyZoneCampusRepository.getStudyZoneCampus(
-        scope,
-        tag,
-        _currentPage,
+        scope: scope,
+        tag: tag,
+        page: _currentPage,
       );
       if (newData != null && newData.studyZoneData?.studyZoneCampusData?.isNotEmpty == true) {
         final combinedList = List<StudyZoneCampusData>.from(

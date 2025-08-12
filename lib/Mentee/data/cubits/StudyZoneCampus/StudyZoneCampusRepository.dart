@@ -2,7 +2,11 @@ import '../../../Models/StudyZoneCampusModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class StudyZoneCampusRepository {
-  Future<StudyZoneCampusModel?> getStudyZoneCampus(String scope, String tag,int page);
+  Future<StudyZoneCampusModel?> getStudyZoneCampus({
+    String? scope,
+    String? tag,
+    required int page,
+  });
 }
 
 class StudyZoneCampusRepositoryImpl implements StudyZoneCampusRepository {
@@ -11,11 +15,11 @@ class StudyZoneCampusRepositoryImpl implements StudyZoneCampusRepository {
   StudyZoneCampusRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<StudyZoneCampusModel?> getStudyZoneCampus(
-    String scope,
-    String tag,
-      int page
-  ) async {
-    return await remoteDataSource.getStudyZoneCampus(scope, tag,page);
+  Future<StudyZoneCampusModel?> getStudyZoneCampus({
+    String? scope,
+    String? tag,
+    required int page,
+  }) async {
+    return await remoteDataSource.getStudyZoneCampus(scope: scope, tag: tag, page: page);
   }
 }

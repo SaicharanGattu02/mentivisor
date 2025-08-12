@@ -9,6 +9,7 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusState.dart';
+import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../../utils/color_constants.dart';
@@ -36,7 +37,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   void initState() {
     super.initState();
     context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
-    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "");
+    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus();
   }
 
   @override
@@ -75,56 +76,75 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
               ),
               const SizedBox(height: 4),
               const Text(
-                'Connect and Collaborate with Peers ',
+                'Download and share your study resources',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                   color: Color(0xFF666666),
                 ),
               ),
-              const SizedBox(height: 24),
-              Container(
-                height: 53,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Color(0xffDBE5FB).withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(36),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Expanded(
-                      child: FilterButton(
-                        text: 'On Campus',
-                        isSelected: _onCampus,
-                        onPressed: () {
-                          setState(() {
-                            _onCampus = true;
-                          });
-                          context
-                              .read<StudyZoneCampusCubit>()
-                              .fetchStudyZoneCampus("", "");
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: FilterButton(
-                        text: 'Beyond Campus',
-                        isSelected: !_onCampus,
-                        onPressed: () {
-                          setState(() {
-                            _onCampus = false;
-                          });
-                          context
-                              .read<StudyZoneCampusCubit>()
-                              .fetchStudyZoneCampus("beyond", "");
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+              FutureBuilder(
+                future: AuthService.isGuest,
+                builder: (context, snapshot) {
+                  final isGuest = snapshot.data ?? false;
+                  if (!isGuest) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 24),
+                        Container(
+                          height: 53,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Color(0xffDBE5FB).withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(36),
+                          ),
+                          child: Row(
+                            spacing: 10,
+                            children: [
+                              Expanded(
+                                child: FilterButton(
+                                  text: 'On Campuses',
+                                  isSelected: _onCampus,
+                                  onPressed: () {
+                                    setState(() {
+                                      _onCampus = true;
+                                    });
+                                    context
+                                        .read<StudyZoneCampusCubit>()
+                                        .fetchStudyZoneCampus(
+                                          scope: "",
+                                          tag: "",
+                                        );
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: FilterButton(
+                                  text: 'Beyond Campuses',
+                                  isSelected: !_onCampus,
+                                  onPressed: () {
+                                    setState(() {
+                                      _onCampus = false;
+                                    });
+                                    context
+                                        .read<StudyZoneCampusCubit>()
+                                        .fetchStudyZoneCampus(
+                                          scope: "beyond",
+                                          tag: "",
+                                        );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
               ),
-
               const SizedBox(height: 12),
               SizedBox(
                 height: 48,
@@ -135,8 +155,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                     if (_debounce?.isActive ?? false) _debounce!.cancel();
                     _debounce = Timer(const Duration(milliseconds: 300), () {
                       context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
-                        "",
-                        "",
+                        scope: "",
+                        tag: "",
                       );
                     });
                   },
@@ -181,7 +201,10 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   _selectedTagIndex.value = index;
                                   context
                                       .read<StudyZoneCampusCubit>()
-                                      .fetchStudyZoneCampus("", tagItem);
+                                      .fetchStudyZoneCampus(
+                                        scope: "",
+                                        tag: tagItem,
+                                      );
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -342,33 +365,53 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                 ),
 
                                               const SizedBox(height: 16),
-                                              Row(
-                                                spacing: 10,
-                                                children: [
-                                                  Expanded(
-                                                    child: CustomOutlinedButton(
-                                                      width: 110,
-                                                      height: 36,
-                                                      radius: 24,
-                                                      text: "View",
-                                                      onTap: () {
-                                                        context.push(
-                                                          '/resource_details_screen',
-                                                          extra: campusList,
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: CustomAppButton1(
-                                                      width: 110,
-                                                      height: 36,
-                                                      radius: 24,
-                                                      text: "Download",
-                                                      onPlusTap: () {},
-                                                    ),
-                                                  ),
-                                                ],
+                                              FutureBuilder(
+                                                future: AuthService.isGuest,
+                                                builder: (context, snapshot) {
+                                                  final isGuest =
+                                                      snapshot.data ?? false;
+                                                  return Row(
+                                                    spacing: 10,
+                                                    children: [
+                                                      Expanded(
+                                                        child: CustomOutlinedButton(
+                                                          height: 38,
+                                                          width: 110,
+                                                          radius: 24,
+                                                          text: "View",
+                                                          onTap: () {
+                                                            if (isGuest) {
+                                                              context.push(
+                                                                '/auth_landing',
+                                                              );
+                                                            } else {
+                                                              context.push(
+                                                                '/resource_details_screen',
+                                                                extra:
+                                                                    campusList,
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: CustomAppButton1(
+                                                          width: 110,
+                                                          height: 38,
+                                                          radius: 24,
+                                                          text: "Download",
+                                                          onPlusTap: () {
+                                                            if (isGuest) {
+                                                              context.push(
+                                                                '/auth_landing',
+                                                              );
+                                                            } else {}
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
                                               ),
                                             ],
                                           ),
@@ -405,27 +448,37 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push("/add_resource");
-        },
-        backgroundColor: Colors.transparent,
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [
-                Color(0xFF975CF7),
-                Color(0xFF7A40F2), // Optional darker/lighter variation
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      floatingActionButton: FutureBuilder(
+        future: AuthService.isGuest,
+        builder: (context, snapshot) {
+          final isGuest = snapshot.data ?? false;
+          return FloatingActionButton(
+            onPressed: () {
+              if (isGuest) {
+                context.push('/auth_landing');
+              } else {
+                context.push("/add_resource");
+              }
+            },
+            backgroundColor: Colors.transparent,
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF975CF7),
+                    Color(0xFF7A40F2), // Optional darker/lighter variation
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Icon(Icons.add, size: 32, color: Colors.white),
             ),
-          ),
-          child: const Icon(Icons.add, size: 32, color: Colors.white),
-        ),
+          );
+        },
       ),
     );
   }

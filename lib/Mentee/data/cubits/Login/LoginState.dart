@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:mentivisor/Models/LoginResponseModel.dart';
+import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 
 abstract class LoginState extends Equatable {
   @override
