@@ -61,7 +61,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SplashScreen(), state);
+        return buildSlideTransitionPage(Acadamicjourneyscreen(data: {},), state);
       },
     ),
     GoRoute(

@@ -53,27 +53,41 @@ class MyApp extends StatelessWidget {
                 vertical: 14,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide(color: Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Color(0xffE5E7EB),
+                  width: 1,
+                ),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide(color:Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Color(0xffE5E7EB),
+                  width: 1,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide(color: Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Color(0xffE5E7EB),
+                  width: 1,
+                ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide(color:Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Color(0xffE5E7EB),
+                  width: 1,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide(color:Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Color(0xffE5E7EB),
+                  width: 1,
+                ),
               ),
               errorStyle: TextStyle(
-                fontFamily: "segeo",
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
               ),

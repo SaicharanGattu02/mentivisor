@@ -4,6 +4,7 @@ import '../../remote_data_source.dart';
 
 abstract class RegisterRepository {
   Future<RegisterModel?> RegisterApi(Map<String, dynamic> data);
+  Future<RegisterModel?> finalRegisterApi(Map<String, dynamic> data);
 }
 
 class RegisterImpl implements RegisterRepository {
@@ -11,9 +12,12 @@ class RegisterImpl implements RegisterRepository {
   RegisterImpl({required this.remoteDataSource});
 
   @override
-  Future<RegisterModel?> RegisterApi(Map<String, dynamic> data) async{
-    return await remoteDataSource.Register(data);
+  Future<RegisterModel?> RegisterApi(Map<String, dynamic> data) async {
+    return await remoteDataSource.finalRegister(data);
+  }
 
-
+  @override
+  Future<RegisterModel?> finalRegisterApi(Map<String, dynamic> data) async {
+    return await remoteDataSource.finalRegister(data);
   }
 }

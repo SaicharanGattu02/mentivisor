@@ -5,6 +5,7 @@ import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
 import 'package:mentivisor/Mentee/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 import 'package:mentivisor/Mentee/Models/WalletModel.dart';
+import 'package:mentivisor/Mentee/Models/YearsModel.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../Models/CampusesModel.dart';
@@ -27,6 +28,7 @@ import '../Models/TaskStatesModel.dart';
 abstract class RemoteDataSource {
   Future<LogInModel?> login(Map<String, dynamic> data);
   Future<RegisterModel?> Register(Map<String, dynamic> data);
+  Future<RegisterModel?> finalRegister(Map<String, dynamic> data);
   Future<Otpverifymodel?> Verifyotp(Map<String, dynamic> data);
   Future<GetBannersRespModel?> getbanners();
   Future<WalletModel?> getWallet();
@@ -53,6 +55,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> addTask(final Map<String, dynamic> data);
   Future<SuccessModel?> addResource(Map<String, dynamic> data);
   Future<CampusesModel?> getCampuses();
+  Future<YearsModel?> getYears();
   Future<CoinsPackRespModel?> getcoinspack();
 }
 
@@ -106,13 +109,25 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<YearsModel?> getYears() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.get_years}");
+      debugPrint('getYears::$res');
+      return YearsModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getYears::$e');
+      return null;
+    }
+  }
+
+  @override
   Future<CampusesModel?> getCampuses() async {
     try {
       Response res = await ApiClient.get("${APIEndpointUrls.get_campuses}");
       debugPrint('getCampuses::$res');
       return CampusesModel.fromJson(res.data);
     } catch (e) {
-      debugPrint('Error addResource::$e');
+      debugPrint('Error getCampuses::$e');
       return null;
     }
   }
@@ -267,6 +282,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<RegisterModel?> finalRegister(Map<String, dynamic> data) async {
+    final formdata = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.final_registeration}",
+        data: formdata,
+      );
+      debugPrint('finalRegister::$res');
+      return RegisterModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error finalRegister::$e');
+      return null;
+    }
+  }
+
+  @override
   Future<RegisterModel?> Register(Map<String, dynamic> data) async {
     final formdata = await buildFormData(data);
     try {
@@ -309,8 +340,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
-
 
   @override
   Future<CompusMentorListModel?> getCampusMentorList(
@@ -405,7 +434,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<ProductToolTaskByDateModel?> getTaskByDate(String date) async {

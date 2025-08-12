@@ -9,9 +9,9 @@ class APIEndpointUrls {
 
   /// auth get register
   static const String get_compuses = "${apiUrl}Campuses";
-  static const String get_years = "${apiUrl}years";
   static const String registerscreen = "${apiUrl}registration-step-1";
   static const String verifyotp = "${apiUrl}registration-verify-step-2";
+  static const String final_registeration = "${apiUrl}final-registration";
   static const String final_registration = "${apiUrl}final-registration";
   static const String get_books = "${apiUrl}users/study-zones";
   static const String get_expertise = "${apiUrl}users/expertise";
@@ -39,8 +39,7 @@ class APIEndpointUrls {
   static const String study_zone_campus = "${userUrl}/study-zones";
   static const String coins_pack = "${userUrl}/coin-packs";
   static const String community_zone_post = "${userUrl}/community-zone-post";
-  static const String study_zone_report_resource =
-      "${userUrl}/study-zone-report";
+  static const String study_zone_report_resource = "${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
@@ -52,7 +51,8 @@ class APIEndpointUrls {
   static const String task_delete = "${userUrl}/tasks/";
   static const String add_task = "${userUrl}/tasks/";
   static const String add_book = "${userUrl}add-book";
-  static const String get_campuses = "${userUrl}campuses";
+  static const String get_campuses = "${apiUrl}campuses";
+  static const String get_years = "${apiUrl}years";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

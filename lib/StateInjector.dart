@@ -3,6 +3,8 @@ import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
@@ -18,6 +20,8 @@ import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repositor
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
+import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
@@ -131,10 +135,26 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<YearsRepository>(
+      create: (context) => YearsRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<CampusesRepository>(
+      create: (context) => CampusesRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
     BlocProvider<InternetStatusBloc>(create: (context) => InternetStatusBloc()),
+    BlocProvider<YearsCubit>(
+      create: (context) => YearsCubit(context.read<YearsRepository>()),
+    ),
+    BlocProvider<CampusesCubit>(
+      create: (context) => CampusesCubit(context.read<CampusesRepository>()),
+    ),
     BlocProvider<LoginCubit>(
       create: (context) => LoginCubit(context.read<LoginRepository>()),
     ),

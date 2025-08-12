@@ -20,4 +20,18 @@ class RegisterCubit extends Cubit<RegisterState> {
       emit(RegisterFailure(message: "An error occurred: $e"));
     }
   }
+
+  Future<void> finalRegisterApi(Map<String, dynamic> data) async {
+    emit(RegisterLoading());
+    try {
+      final res = await registerRepository.finalRegisterApi(data);
+      if (res != null && res.status == true) {
+        emit(RegisterSucess(registerModel: res));
+      } else {
+        emit(RegisterFailure(message: res?.message ?? "Unknown error"));
+      }
+    } catch (e) {
+      emit(RegisterFailure(message: "An error occurred: $e"));
+    }
+  }
 }

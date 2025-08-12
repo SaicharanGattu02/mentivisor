@@ -24,6 +24,8 @@ class ApiClient {
     '/api/registration-step-1',
     '/api/registration-verify-step-2',
     '/api/final-registration',
+    '/api/campuses',
+    '/api/years',
     '/api/banners',
     '/api/study-zone/tags',
     '/api/study-zone/top-downloads',
