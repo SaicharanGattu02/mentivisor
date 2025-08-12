@@ -8,8 +8,9 @@ class BecomeMentorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFAF5FF),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xffFAF5FF),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -22,10 +23,14 @@ class BecomeMentorScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
+
+
         padding: const EdgeInsets.all(16),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+
             SizedBox(
               height: 380,
               width: 380,
@@ -39,7 +44,7 @@ class BecomeMentorScreen extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               'Nice to see you become the mentor! Let’s start with these basic details',
-              style: TextStyle(color: Colors.grey,fontSize:16, fontFamily: 'segeo',),
+              style: TextStyle(color: Color(0xff333333),fontSize:16, fontFamily: 'segeo',),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -47,25 +52,34 @@ class BecomeMentorScreen extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'segeo',fontSize: 14,color: Color(0xff444444)),
             ),
             const SizedBox(height: 18),
-            TextField(
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Explain here',
-                filled: true,
-                fillColor: const Color(0xFFF5F5F5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(
-                    color: Colors.blue,
-                    width: 1.5,
+            Center(
+              child: TextField(
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Explain here',
+                  filled: true,
+                  fillColor: Colors.white, // inside background
+                  contentPadding: EdgeInsets.all(16), // space inside
+                  // border: OutlineInputBorder(
+                  //   borderRadius: BorderRadius.circular(24), // rounded corners
+                  //   borderSide: BorderSide(
+                  //     color: Colors.grey.shade400, // default border color
+                  //     width: 1.5, // thickness
+                  //   ),
+                  // ),
+                  // enabledBorder: OutlineInputBorder(
+                  //   borderRadius: BorderRadius.circular(24),
+                  //   borderSide: BorderSide(
+                  //     color: Colors.grey.shade400, // inline border when not focused
+                  //     width: 1.5,
+                  //   ),
+                  // ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(
+                      color: Colors.blue, // border color when focused
+                      width: 1.8,
+                    ),
                   ),
                 ),
               ),
@@ -75,7 +89,6 @@ class BecomeMentorScreen extends StatelessWidget {
             onTap: () {
     context.push("/InterestingScreen");
     },
-
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),

@@ -14,7 +14,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -66,7 +65,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Row(
             children: [
               Expanded(
@@ -194,51 +192,17 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
             ),
 
             const SizedBox(height: 12),
-
-            InkWell(
-
-                onTap: () {
-                  context.push("/becomementorscreen");
-                },
-
-
-
-
-
-              borderRadius: BorderRadius.circular(24),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 14,
-                  horizontal: 24,
-                ),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFA258F7),
-                      Color(0xFF726CF7),
-                      Color(0xFF4280F6),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    "Submit",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
+            CustomAppButton1(text: "Submit", onPlusTap: (){
+              context.push("/becomementorscreen");
+            })
           ],
         ],
       ),
     );
   }
 }
+
+
+
+
+

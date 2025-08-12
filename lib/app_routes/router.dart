@@ -28,7 +28,6 @@ import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
-import '../Mentee/presentation/authentication/AuthLandingScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
 import '../Mentee/presentation/authentication/OTPVerificationScreen.dart';
 import '../Mentee/presentation/authentication/SelecterScreen.dart';

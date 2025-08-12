@@ -9,10 +9,10 @@ class InterestingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xffFAF5FF),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xffFAF5FF),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
@@ -61,9 +61,9 @@ class InterestingScreen extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: "Example: state football champion",
                 filled: true,
-                fillColor: Color(0xFFF5F5F5),
+              
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide.none,
                 ),
               ),
