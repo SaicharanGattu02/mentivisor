@@ -50,18 +50,20 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       case 'Upcoming Sessions':
         context.push("/upcoming_session");
         break;
-      case 'Info':
-        break;
       case 'Invite Friend':
         break;
       case 'Customer Services':
+        context.push('/customersscreen');
         break;
+
       case 'BecomeMentor':
         context.push('/becomementorscreen');
         break;
+
       case 'Executive services':
         context.push('/executiveservices');
         break;
+
       case 'info':
         context.push('/infoscreen');
         break;

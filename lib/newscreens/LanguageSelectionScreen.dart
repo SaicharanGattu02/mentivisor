@@ -27,33 +27,32 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Color(0xFFFAF5FF),
+      backgroundColor: const Color(0xFFFAF5FF),
       appBar: AppBar(
-        backgroundColor: Color(0xffFAF5FF),
+        backgroundColor: const Color(0xffFAF5FF),
         elevation: 0,
-        leading: BackButton(color: Colors.black87),
+        leading: const BackButton(color: Colors.black87),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Illustration (200x200)
             Center(
               child: Image.asset(
-                'assets/images/languagesscreenimg.png', // your 200×200 asset
+                'assets/images/languagesscreenimg.png',
                 width: 200,
                 height: 200,
               ),
             ),
-            SizedBox(height: 24),
-            // Title
-            Align(
-              alignment: AlignmentGeometry.directional(-1, -1),
+            const SizedBox(height: 24),
 
+            // Title
+            const Align(
+              alignment: AlignmentDirectional(-1, -1),
               child: Text(
                 "That’s Cool!",
                 style: TextStyle(
@@ -65,9 +64,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 textAlign: TextAlign.start,
               ),
             ),
-            SizedBox(height: 8),
-            Align(
-              alignment: AlignmentGeometry.directional(-1, -1),
+            const SizedBox(height: 8),
+
+            const Align(
+              alignment: AlignmentDirectional(-1, -1),
               child: Text(
                 "How many languages you know?",
                 style: TextStyle(
@@ -79,9 +79,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 textAlign: TextAlign.start,
               ),
             ),
-            SizedBox(height: 4),
-            Align(
-              alignment: AlignmentGeometry.directional(-1, -1),
+            const SizedBox(height: 4),
+
+            const Align(
+              alignment: AlignmentDirectional(-1, -1),
               child: Text(
                 "Select languages you speak",
                 style: TextStyle(
@@ -93,58 +94,43 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 textAlign: TextAlign.start,
               ),
             ),
-            SizedBox(height: 16),
-            // Language chips
+            const SizedBox(height: 16),
+
+            // Language chips (updated)
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children: _allLanguages.map((lang) {
-                    final selected = _selected.contains(lang);
-                    return ChoiceChip(
-                      color: WidgetStateProperty.all(Colors.white),
-                      label: Text(lang),
-                      selected: selected,
-                      onSelected: (_) {
+                    final isSelected = _selected.contains(lang);
+                    return _SelectablePill(
+                      text: lang,
+                      selected: isSelected,
+                      onTap: () {
                         setState(() {
-                          if (selected)
-                            _selected.remove(lang);
-                          else
-                            _selected.add(lang);
+                          isSelected ? _selected.remove(lang) : _selected.add(lang);
                         });
                       },
-                      backgroundColor: Colors.white,
-                      selectedColor: Color(0xFF1A73E8).withOpacity(0.1),
-                      labelStyle: TextStyle(
-                        color: selected ? Color(0xFF1A73E8) : Colors.black87,
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
                     );
                   }).toList(),
                 ),
               ),
             ),
-
-            // Next button
           ],
         ),
       ),
-      bottomNavigationBar: Column(mainAxisSize: MainAxisSize.min
-        ,
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
               child: InkWell(
-
                 onTap: () {
-              context.push("/topicselection");
-              },
-
+                  context.push("/topicselection");
+                },
                 borderRadius: BorderRadius.circular(24),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -163,12 +149,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   child: const Center(
                     child: Text(
                       'Next',
-
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
                         fontFamily: 'segeo',
-
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -178,6 +162,54 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// --- helper: pill chip exactly like the screenshot ---
+class _SelectablePill extends StatelessWidget {
+  final String text;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _SelectablePill({
+    required this.text,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical:11 ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected ? const Color(0xFF1A73E8) : Colors.transparent,
+            width: 1.2,
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14000000), // very subtle drop shadow
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontFamily: 'segeo',
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: selected ? const Color(0xFF1A73E8) : const Color(0xFF222222),
+          ),
+        ),
       ),
     );
   }

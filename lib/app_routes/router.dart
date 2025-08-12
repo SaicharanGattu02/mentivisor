@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
+import 'package:mentivisor/Mentee/presentation/Widgets/CustomerServiceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
@@ -219,6 +220,7 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
+
     GoRoute(
       path: '/productivity_screen',
       pageBuilder: (context, state) {
@@ -233,20 +235,29 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
+      path: '/customersscreen',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(CustomerServiceScreen(), state),
+    ),
+
+    GoRoute(
       path: '/communityscreen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Communityscreen(), state),
     ),
+
     GoRoute(
       path: '/infoscreen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(InfoScreen(), state),
     ),
+
     GoRoute(
       path: '/executiveservices',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ExclusiveServices(), state),
     ),
+
     GoRoute(
       path: '/executiveinfoservices',
       pageBuilder: (context, state) =>
@@ -264,31 +275,49 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CostPerMinuteScreen(), state),
     ),
+
     GoRoute(
       path: '/subtopicselect_screen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SubTopicSelectionScreen(), state),
     ),
+
     GoRoute(
       path: '/language_selection',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(LanguageSelectionScreen(), state),
     ),
+
     GoRoute(
       path: '/no_internet',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Nointernet(), state),
     ),
+
     GoRoute(
       path: '/session_history',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SessionHistory(), state),
     ),
+
     GoRoute(
       path: '/dashboard',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
     ),
+
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(LoginScreen(), state),
+    ),
+
+    GoRoute(
+      path: '/sign_up',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SignupScreen(), state),
+    ),
+
     GoRoute(
       path: '/profile',
       pageBuilder: (context, state) =>
