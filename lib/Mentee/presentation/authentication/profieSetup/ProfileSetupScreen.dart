@@ -65,7 +65,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       ),
                     ),
                     Text(
-                      '1 of 3',
+                      '1 of 4',
                       style: TextStyle(color: Colors.black54, fontSize: 14),
                     ),
                   ],
@@ -78,7 +78,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       Container(height: 6, color: Colors.grey.shade300),
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final progress = 0.33; // 25%
+                          final progress = 0.25;
                           return Container(
                             height: 6,
                             width: constraints.maxWidth * progress,
@@ -258,7 +258,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       width: 100,
                       height: 42,
                       onPlusTap: () {
-                        context.push('/profilesetupwizard', extra: widget.data);
+                        context.push('/profile_about', extra: widget.data);
                       },
                     ),
                   ],

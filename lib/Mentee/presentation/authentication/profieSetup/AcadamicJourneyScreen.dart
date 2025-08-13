@@ -86,7 +86,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   Text(
-                    '3 of 3',
+                    '3 of 4',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -103,7 +103,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     Container(height: 6, color: Colors.grey.shade300),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        final progress = 0.33; // 25%
+                        final progress = 0.75;
                         return Container(
                           height: 6,
                           width: constraints.maxWidth * progress,
@@ -301,7 +301,6 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
     );
   }
 
-
   void _openCollegeSelectionBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -315,7 +314,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
       ),
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.6, // Set height to 60% of screen
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: BlocBuilder<CampusesCubit, CampusesStates>(
@@ -323,7 +322,12 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                 if (state is CampusesLoading) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is CampusesFailure) {
-                  return Center(child: Text(state.error, style: TextStyle(color: Colors.red)));
+                  return Center(
+                    child: Text(
+                      state.error,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
                 } else if (state is CampusesLoaded) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +352,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                               ),
                               onTap: () {
                                 _collegeController.text =
-                                state.campusesModel.data![index].name!;
+                                    state.campusesModel.data![index].name!;
                                 Navigator.pop(context);
                               },
                             );
@@ -381,7 +385,9 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
       ),
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.6, // Set height to 60% of screen
+          height:
+              MediaQuery.of(context).size.height *
+              0.6, // Set height to 60% of screen
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: BlocBuilder<YearsCubit, YearsStates>(
@@ -390,7 +396,10 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is YearsFailure) {
                   return Center(
-                    child: Text(state.error, style: TextStyle(color: Colors.red)),
+                    child: Text(
+                      state.error,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   );
                 } else if (state is YearsLoaded) {
                   return Column(

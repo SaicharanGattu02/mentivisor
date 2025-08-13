@@ -61,7 +61,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(Acadamicjourneyscreen(data: {},), state);
+        return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
     GoRoute(
@@ -76,7 +76,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/profilesetup',
+      path: '/profile_setup',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
         return buildSlideTransitionPage(ProfileSetupScreen(data: data), state);
@@ -101,14 +101,14 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/profilesetupwizard',
+      path: '/profile_about',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
         return buildSlideTransitionPage(ProfileSetupWizard(data: data), state);
       },
     ),
     GoRoute(
-      path: '/mentivisorprofilesetup',
+      path: '/academic_journey',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
         return buildSlideTransitionPage(

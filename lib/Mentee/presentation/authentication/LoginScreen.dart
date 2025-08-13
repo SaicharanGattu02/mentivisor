@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -97,6 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black54,
+                  fontFamily: 'segeo',
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -329,6 +331,52 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Don't have an Account? ",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "SignUp",
+                          style: TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()
+                              ..shader =
+                                  const LinearGradient(
+                                    colors: [
+                                      Color(0xFFA258F7),
+                                      Color(0xFFF726CF7),
+                                      Color(0xFF4280F6),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ).createShader(
+                                    const Rect.fromLTWH(0, 0, 200, 20),
+                                  ),
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context.push('/sign_up');
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

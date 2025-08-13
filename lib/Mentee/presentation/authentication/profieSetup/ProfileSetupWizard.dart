@@ -80,7 +80,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                     ),
                   ),
                   Text(
-                    '2 of 3',
+                    '2 of 4',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -97,7 +97,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                     Container(height: 6, color: Colors.grey.shade300),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        final progress = 0.33; // 25%
+                        final progress = 0.50; // 25%
                         return Container(
                           height: 6,
                           width: constraints.maxWidth * progress,
@@ -231,7 +231,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                     width: 100,
                     height: 42,
                     onPlusTap: () {
-                      context.push('/mentivisorprofilesetup');
+                      context.push('/academic_journey');
                     },
                   ),
                 ],

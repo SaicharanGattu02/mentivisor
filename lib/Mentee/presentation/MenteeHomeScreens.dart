@@ -308,7 +308,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       padding: const EdgeInsets.only(right: 16.0),
                       child: CustomAppButton1(
                         text: "Sign Up",
-                        width: 100,
+                        width: 105,
                         height: 35,
                         onPlusTap: () {
                           context.push('/auth_landing');

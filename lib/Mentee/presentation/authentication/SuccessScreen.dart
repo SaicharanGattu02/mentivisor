@@ -55,7 +55,7 @@ class SuccessScreen extends StatelessWidget {
               child: CustomAppButton1(
                 text: "Create Profile",
                 onPlusTap: () {
-                  context.pushReplacement("/profilesetup", extra: data);
+                  context.pushReplacement("/profile_setup", extra: data);
                 },
               ),
             ),

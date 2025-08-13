@@ -13,7 +13,7 @@ class RegisterImpl implements RegisterRepository {
 
   @override
   Future<RegisterModel?> RegisterApi(Map<String, dynamic> data) async {
-    return await remoteDataSource.finalRegister(data);
+    return await remoteDataSource.Register(data);
   }
 
   @override
