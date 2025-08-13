@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../Components/CustomAppButton.dart';
 
 class CostPerMinuteScreen extends StatelessWidget {
   @override
@@ -53,13 +56,13 @@ class CostPerMinuteScreen extends StatelessWidget {
           ],
         ),
       ),
-
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: AlignmentGeometry.directional(-0.8, 1),
-            child: Text(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        child: Column(
+          spacing: 10,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
               '**Note: 5 coins 1 rupee',
               style: TextStyle(
                 fontSize: 14,
@@ -68,45 +71,14 @@ class CostPerMinuteScreen extends StatelessWidget {
                 fontFamily: 'segeo',
               ),
             ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-              child: InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFA258F7),
-                        Color(0xFF726CF7),
-                        Color(0xFF4280F6),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Next',
-
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'segeo',
-
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            CustomAppButton1(
+              text: "Next",
+              onPlusTap: () {
+                context.push(""); // Update with your actual route
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

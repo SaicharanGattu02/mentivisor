@@ -39,7 +39,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
           const SizedBox(height: 16),
           _buildFeedbackCard(context),
           const SizedBox(height: 16),
-          _buildFeedbackCard(context),
+          _buildFeedbackCard1(context),
         ],
       ),
     );
@@ -192,17 +192,188 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
             ),
 
             const SizedBox(height: 12),
-            CustomAppButton1(text: "Submit", onPlusTap: (){
-              context.push("/becomementorscreen");
-            })
+            CustomAppButton1(
+              text: "Submit",
+              onPlusTap: () {
+                context.push("/becomementorscreen");
+              },
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackCard1(
+    BuildContext context, {
+    bool showFeedbackForm = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Career Growth Strategy',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff333333),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          'With Dr. Sarah Chen',
+                          style: TextStyle(
+                            color: Color(0xff444444),
+                            fontSize: 14,
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Spacer(),
+                        Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.white,
+                              child: const Icon(
+                                Icons.check_circle_outline,
+                                color: Colors.green,
+                                size: 30,
+                              ),
+                            ),
+                            const Text(
+                              'Session completed',
+                              style: TextStyle(
+                                color: Color(0xff444444),
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'segeo',
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Jul 25 4:00 pm',
+
+                      style: TextStyle(
+                        color: Color(0xff444444),
+                        fontSize: 14,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(width: 120,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color(0xffF5F5F5),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.flag_outlined, color: Color(0xFF8B5CF6), size: 16),
+                Text(
+                  "Report Session",
+
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          if (showFeedbackForm) ...[
+            const SizedBox(height: 12),
+            // Rating stars
+            Row(
+              children:
+                  List.generate(
+                        5,
+                        (i) => Icon(
+                          Icons.star_border,
+                          size: 42,
+                          color: Colors.grey.shade400,
+                        ),
+                      )
+                      .map(
+                        (icon) => Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: icon,
+                        ),
+                      )
+                      .toList(),
+            ),
+
+            const SizedBox(height: 12),
+            TextField(
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Explain here (optional)',
+                filled: true,
+                fillColor: Color(0xFFF5F5F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide:
+                      BorderSide.none, // Remove the border line if desired
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide(
+                    color: Colors.blue, // or any color you want on focus
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+            CustomAppButton1(
+              text: "Submit",
+              onPlusTap: () {
+                context.push("/becomementorscreen");
+              },
+            ),
           ],
         ],
       ),
     );
   }
 }
-
-
-
-
-

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
 import 'package:mentivisor/newscreens/InfoScreen.dart';
 
 class ExclusiveInfoServices extends StatelessWidget {
@@ -18,156 +19,158 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5FA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // AppBar-like row
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.black87),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Expanded(
-                  child: Text(
-                    'Exclusive Services',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  fontFamily: 'segeo',),
+      body: Background(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // AppBar-like row
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.black87),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                ),
-                SizedBox(width: 48), // balance the back arrow
-              ],
-            ),
-
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: GestureDetector(onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>InfoScreen()),
-                  );
-                } ,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  Expanded(
+                    child: Text(
+                      'Exclusive Services',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  fontFamily: 'segeo',),
                     ),
-                    elevation: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Banner image
-                        ClipRRect(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12),
+                  ),
+                  SizedBox(width: 48), // balance the back arrow
+                ],
+              ),
+        
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: GestureDetector(onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>InfoScreen()),
+                    );
+                  } ,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Banner image
+                          ClipRRect(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            ),
+                            child: Image.asset(
+                              "assets/images/bannerimg.png",
+        
+                              height: 192,
+        
+                              width: 480,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          child: Image.asset(
-                            "assets/images/bannerimg.png",
-
-                            height: 192,
-
-                            width: 480,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Avatar + name
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundImage: AssetImage(
-                                      'assets/images/bannerimg.png',
+        
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Avatar + name
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 16,
+                                      backgroundImage: AssetImage(
+                                        'assets/images/bannerimg.png',
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    userName,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                      fontFamily: 'segeo',
+                                    SizedBox(width: 8),
+                                    Text(
+                                      userName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        fontFamily: 'segeo',
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(height: 12),
-
-                              // Title
-                              Text(
-                                title,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xff222222),
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: 'segeo',
+                                  ],
                                 ),
-                              ),
-
-                              SizedBox(height: 8),
-
-                              // Description text
-                              Text(
-                                description,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xff666666),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'segeo',
-                                ),
-                              ),
-
-                              SizedBox(height: 12),
-
-                              // Clickable link
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) =>ExclusiveInfoServices()),
-                                  );
-
-                                },
-                                child: Text(
-                                  'Visit this link to access the exclusive service.\nClick here',
+        
+                                SizedBox(height: 12),
+        
+                                // Title
+                                Text(
+                                  title,
                                   style: TextStyle(
-                                    decoration: TextDecoration.underline,
                                     fontSize: 14,
-                                    color: Color(0xff9D5AF7),
+                                    color: Color(0xff222222),
                                     fontWeight: FontWeight.w700,
                                     fontFamily: 'segeo',
                                   ),
                                 ),
-                              ),
-                            ],
+        
+                                SizedBox(height: 8),
+        
+                                // Description text
+                                Text(
+                                  description,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xff666666),
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'segeo',
+                                  ),
+                                ),
+        
+                                SizedBox(height: 12),
+        
+                                // Clickable link
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) =>ExclusiveInfoServices()),
+                                    );
+        
+                                  },
+                                  child: Text(
+                                    'Visit this link to access the exclusive service.\nClick here',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 14,
+                                      color: Color(0xff9D5AF7),
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'segeo',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-
-            // Footer info
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 12.0,
-                horizontal: 16.0,
+        
+              // Footer info
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal: 16.0,
+                ),
+                child: Text(
+                  'To post your services mail to rohit@gmail.com',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              child: Text(
-                'To post your services mail to rohit@gmail.com',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

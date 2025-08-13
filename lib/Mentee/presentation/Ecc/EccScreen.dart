@@ -60,7 +60,7 @@ class _EccScreenState extends State<EccScreen> {
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
                     height: 1,
-                    fontSize: 20,
+                    fontSize: 18,
                     color: Color(0xFF121212),
                   ),
                 ),

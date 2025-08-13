@@ -264,11 +264,11 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(ExclusiveInfoServices(), state),
     ),
 
-    GoRoute(
-      path: '/topicselection',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(TopicSelectionScreen(), state),
-    ),
+    // GoRoute(
+    //   path: '/topicselection',
+    //   pageBuilder: (context, state) =>
+    //       buildSlideTransitionPage(TopicSelectionScreen(), state),
+    // ),
 
     GoRoute(
       path: '/costperminute_screen',

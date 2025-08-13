@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({Key? key}) : super(key: key);
@@ -127,38 +128,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-              child: InkWell(
-                onTap: () {
-                  context.push("/topicselection");
-                },
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFA258F7),
-                        Color(0xFF726CF7),
-                        Color(0xFF4280F6),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: CustomAppButton1(text: "Next", onPlusTap: (){
+                context.push("/subtopicselect_screen");
+              })
             ),
           ),
         ],
@@ -166,6 +138,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     );
   }
 }
+
 
 // --- helper: pill chip exactly like the screenshot ---
 class _SelectablePill extends StatelessWidget {

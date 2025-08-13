@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
+
+import '../Components/CustomAppButton.dart';
 
 class SubTopicSelectionScreen extends StatefulWidget {
   const SubTopicSelectionScreen({super.key});
@@ -126,8 +129,7 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFF7F00FF), Color(0xFF00BFFF)],
@@ -138,7 +140,7 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          selectedTopic!,
+                          selectedTopic ?? "",
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 13.5,
@@ -231,54 +233,17 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CostPerMinuteScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Color(0xFFA258F7),
-                          Color(0xFF726CF7),
-                          Color(0xFF4280F6),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(28),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x26000000),
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Next',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'segeo',
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        child: CustomAppButton1(
+          text: "Next",
+          onPlusTap: () {
+            context.push("/costperminute_screen"); // Update with your actual route
+          },
         ),
       ),
     );
