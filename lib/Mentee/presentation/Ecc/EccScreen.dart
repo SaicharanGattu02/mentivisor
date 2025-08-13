@@ -188,14 +188,12 @@ class _EccScreenState extends State<EccScreen> {
                               _filters[i].toLowerCase(),
                               "",
                             );
-                            print(_filters[i].toLowerCase());
                           } else {
                             context.read<ECCCubit>().getECC(
                               "beyond",
                               _filters[i].toLowerCase(),
                               "",
                             );
-                            print(_filters[i].toLowerCase());
                           }
                         },
 
@@ -394,32 +392,4 @@ class _EccScreenState extends State<EccScreen> {
       ),
     );
   }
-
-  //
-  // Widget _buildToggleButton(String label, bool active, VoidCallback onTap) {
-  //   return Expanded(
-  //     child: GestureDetector(
-  //       onTap: onTap,
-  //       child: Container(
-  //         padding: const EdgeInsets.symmetric(vertical: 8),
-  //         decoration: BoxDecoration(
-  //           color: active ? _blue.withOpacity(0.1) : Colors.transparent,
-  //           borderRadius: BorderRadius.circular(24),
-  //           border: Border.all(color: active ? _blue : Colors.transparent),
-  //         ),
-  //         child: Center(
-  //           child: Text(
-  //             label,
-  //             style: TextStyle(
-  //               fontFamily: 'segeo',
-  //               fontWeight: FontWeight.w700,
-  //               fontSize: 14,
-  //               color: active ? _blue : Colors.black54,
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

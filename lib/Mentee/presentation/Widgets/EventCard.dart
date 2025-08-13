@@ -56,28 +56,18 @@ class EventCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: SizedBox(
               width: double.infinity,
-              child:
-              ClipRRect(
-                borderRadius:
-                BorderRadius.circular(8),
-                child: CachedNetworkImage(height: 160,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CachedNetworkImage(
+                  height: 160,
                   imageUrl: eccList.imgUrl ?? "",
                   fit: BoxFit.cover,
                   width: double.infinity,
                   placeholder: (context, url) =>
-                      Center(
-                        child: spinkits
-                            .getSpinningLinespinkit(),
-                      ),
-                  errorWidget:
-                      (
-                      context,
-                      url,
-                      error,
-                      ) => Container(height: 160,
-                    color: Colors
-                        .grey
-                        .shade100,
+                      Center(child: spinkits.getSpinningLinespinkit()),
+                  errorWidget: (context, url, error) => Container(
+                    height: 160,
+                    color: Colors.grey.shade100,
                     child: const Icon(
                       Icons.broken_image,
                       size: 40,

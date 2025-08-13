@@ -35,14 +35,23 @@ abstract class RemoteDataSource {
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
-  Future<ECCModel?> getEcc(String scope,String updates,String search,int page);
+  Future<ECCModel?> getEcc(
+    String scope,
+    String updates,
+    String search,
+    int page,
+  );
   Future<SuccessModel?> addEcc(Map<String, dynamic> data);
   Future<StudyZoneCampusModel?> getStudyZoneCampus({
     String? scope,
     String? tag,
     required int page,
   });
-  Future<CommunityPostsModel?> getCommunityPosts(int page);
+  Future<CommunityPostsModel?> getCommunityPosts(
+    String scope,
+    String post,
+    int page,
+  );
   Future<DownloadsModel?> getDownloads(int page);
   Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data);
   Future<SuccessModel?> postComment(Map<String, dynamic> data);
@@ -225,13 +234,17 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<CommunityPostsModel?> getCommunityPosts(int page) async {
+  Future<CommunityPostsModel?> getCommunityPosts(
+    String scope,
+    String post,
+    int page,
+  ) async {
     try {
       final token = await AuthService.getAccessToken();
       Response res;
       if (token != null) {
         res = await ApiClient.get(
-          "${APIEndpointUrls.community_zone_post}?page=${page}",
+          "${APIEndpointUrls.community_zone_post}?scope=${scope}&${post}=true&page=${page}",
         );
       } else {
         res = await ApiClient.get(
@@ -247,12 +260,19 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ECCModel?> getEcc(String scope,String updates,String search,int page) async {
+  Future<ECCModel?> getEcc(
+    String scope,
+    String updates,
+    String search,
+    int page,
+  ) async {
     try {
       Response res;
       final token = await AuthService.getAccessToken();
       if (token != null) {
-        res = await ApiClient.get("${APIEndpointUrls.list_ecc}?scope=${scope}&${updates}=true&search=${search}&page=${page}");
+        res = await ApiClient.get(
+          "${APIEndpointUrls.list_ecc}?scope=${scope}&${updates}=true&search=${search}&page=${page}",
+        );
       } else {
         res = await ApiClient.get(
           "${APIEndpointUrls.guest_list_ecc}?page=${page}",

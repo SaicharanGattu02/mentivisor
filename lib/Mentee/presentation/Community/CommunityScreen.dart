@@ -20,16 +20,14 @@ class Communityscreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<Communityscreen> {
   bool _onCampus = true;
-  int _selectedTabIndex = 0;
-
   int _selectedFilter = 0;
   String selectedFilter = 'On Campuses';
-  final List<String> _filters = ['All','Upcoming', 'Highlighted'];
+  final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
 
   @override
   void initState() {
     super.initState();
-    context.read<CommunityPostsCubit>().getCommunityPosts();
+    context.read<CommunityPostsCubit>().getCommunityPosts("", "");
   }
 
   @override
@@ -40,7 +38,7 @@ class _CommunityScreenState extends State<Communityscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE0F0FF), // Match image background
+      backgroundColor: const Color(0xFFE0F0FF),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -97,6 +95,11 @@ class _CommunityScreenState extends State<Communityscreen> {
                                   text: 'On Campuses',
                                   isSelected: _onCampus,
                                   onPressed: () {
+                                    final selectedUpdate =
+                                        _filters[_selectedFilter].toLowerCase();
+                                    context
+                                        .read<CommunityPostsCubit>()
+                                        .getCommunityPosts("", selectedUpdate);
                                     setState(() {
                                       _onCampus = true;
                                     });
@@ -108,6 +111,14 @@ class _CommunityScreenState extends State<Communityscreen> {
                                   text: 'Beyond Campuses',
                                   isSelected: !_onCampus,
                                   onPressed: () {
+                                    final selectedUpdate =
+                                        _filters[_selectedFilter].toLowerCase();
+                                    context
+                                        .read<CommunityPostsCubit>()
+                                        .getCommunityPosts(
+                                          "beyond",
+                                          selectedUpdate,
+                                        );
                                     setState(() {
                                       _onCampus = false;
                                     });
@@ -140,48 +151,44 @@ class _CommunityScreenState extends State<Communityscreen> {
                     future: AuthService.isGuest,
                     builder: (context, snapshot) {
                       final isGuest = snapshot.data ?? false;
-                      return GestureDetector(
-                        onTap: () {
+                      return ElevatedButton.icon(
+                        onPressed: () {
                           if (isGuest) {
                             context.push('/auth_landing');
                           } else {
                             context.push("/addpostscreen");
                           }
                         },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 3,
+                            vertical: 8,
                           ),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFFD1A9F0), // Lighter purple start
-                                Color(0xFFE6C4F5), // Even lighter purple end
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
+                          backgroundColor: Color(0xffEDD9FF),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            spacing: 10,
-                            children: [
-                              const Icon(
-                                Icons.add_box_outlined,
-                                size: 24,
-                                color: Colors.white,
-                              ),
-                              const Text(
-                                'Add',
-                                style: TextStyle(
-                                  fontFamily: 'Segoe',
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          surfaceTintColor: Colors.transparent,
+                        ),
+                        icon: Container(padding: EdgeInsets.symmetric(),
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(color: Color(0xff9B40EF),borderRadius: BorderRadius.circular(4)),
+                          child: Icon(
+                            Icons.add_box_outlined,size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                        label: const Text(
+                          'Add',
+                          style: TextStyle(
+                            fontFamily: 'Segoe',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xff9B40EF),
                           ),
                         ),
                       );
@@ -218,7 +225,19 @@ class _CommunityScreenState extends State<Communityscreen> {
                       selected: selected,
                       onSelected: (_) {
                         setState(() => _selectedFilter = i);
+                        if (_onCampus == true) {
+                          context.read<CommunityPostsCubit>().getCommunityPosts(
+                            "",
+                            _filters[i].toLowerCase(),
+                          );
+                        } else {
+                          context.read<CommunityPostsCubit>().getCommunityPosts(
+                            "beyond",
+                            _filters[i].toLowerCase(),
+                          );
+                        }
                       },
+
                       selectedColor: const Color(0xFF4076ED).withOpacity(0.1),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
@@ -234,8 +253,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                 ),
               ),
               const SizedBox(height: 12),
-
-              // Post list
               BlocBuilder<CommunityPostsCubit, CommunityPostsStates>(
                 builder: (context, state) {
                   if (state is CommunityPostsLoading) {
@@ -248,6 +265,35 @@ class _CommunityScreenState extends State<Communityscreen> {
                               .communityPostsModel;
                     final communityposts =
                         communityPostsModel.data?.communityposts;
+                    if (communityposts?.length == 0) {
+                      return Center(
+                        child: Column(
+                          spacing: 10,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Oops !',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              textAlign: TextAlign.center,
+                              'No Data Found!',
+                              style: TextStyle(
+                                color: primarycolor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     return Expanded(
                       child: NotificationListener<ScrollNotification>(
                         onNotification: (scrollInfo) {
@@ -255,9 +301,23 @@ class _CommunityScreenState extends State<Communityscreen> {
                               scrollInfo.metrics.maxScrollExtent * 0.9) {
                             if (state is CommunityPostsLoaded &&
                                 state.hasNextPage) {
-                              context
-                                  .read<CommunityPostsCubit>()
-                                  .fetchMoreCommunityPosts();
+                              final selectedUpdate = _filters[_selectedFilter]
+                                  .toLowerCase();
+                              if (_onCampus == true) {
+                                context
+                                    .read<CommunityPostsCubit>()
+                                    .fetchMoreCommunityPosts(
+                                      "",
+                                      selectedUpdate,
+                                    );
+                              } else {
+                                context
+                                    .read<CommunityPostsCubit>()
+                                    .fetchMoreCommunityPosts(
+                                      "beyond",
+                                      selectedUpdate,
+                                    );
+                              }
                             }
                             return false;
                           }

@@ -16,12 +16,15 @@ class CommunityPostsCubit extends Cubit<CommunityPostsStates> {
   bool _hasNextPage = true;
   bool _isLoadingMore = false;
 
-
-  Future<void> getCommunityPosts() async {
+  Future<void> getCommunityPosts(String scope, String post) async {
     emit(CommunityPostsLoading());
     _currentPage = 1; // Reset to first page on initial load
     try {
-      final response = await communityPostsRepo.getCommunityPosts(_currentPage);
+      final response = await communityPostsRepo.getCommunityPosts(
+        scope,
+        post,
+        _currentPage,
+      );
       if (response != null && response.status == true) {
         communityPostsModel = response;
         _hasNextPage =
@@ -35,8 +38,7 @@ class CommunityPostsCubit extends Cubit<CommunityPostsStates> {
     }
   }
 
-  // Method to fetch more community posts (pagination)
-  Future<void> fetchMoreCommunityPosts() async {
+  Future<void> fetchMoreCommunityPosts(String scope, String post) async {
     if (_isLoadingMore || !_hasNextPage)
       return; // Prevent multiple simultaneous fetches
     _isLoadingMore = true;
@@ -47,6 +49,8 @@ class CommunityPostsCubit extends Cubit<CommunityPostsStates> {
 
     try {
       final newData = await communityPostsRepo.getCommunityPosts(
+        scope,
+        post,
         _currentPage,
       ); // Fetch data for the current page
       if (newData != null && newData.data?.communityposts?.isNotEmpty == true) {

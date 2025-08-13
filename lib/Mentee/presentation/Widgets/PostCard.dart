@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/services/AuthService.dart';
 
+import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
 import 'CommentBottomSheet.dart';
 
@@ -21,10 +22,21 @@ class PostCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: CachedNetworkImage(
+              height: 160,
               imageUrl: communityPosts.imgUrl ?? "",
-              height: 180,
-              width: double.infinity,
               fit: BoxFit.cover,
+              width: double.infinity,
+              placeholder: (context, url) =>
+                  Center(child: spinkits.getSpinningLinespinkit()),
+              errorWidget: (context, url, error) => Container(
+                height: 160,
+                color: Colors.grey.shade100,
+                child: const Icon(
+                  Icons.broken_image,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+              ),
             ),
           ),
           Padding(
