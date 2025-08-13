@@ -178,7 +178,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                           height: 20,
                           decoration: BoxDecoration(color: Color(0xff9B40EF),borderRadius: BorderRadius.circular(4)),
                           child: Icon(
-                            Icons.add_box_outlined,size: 16,
+                            Icons.add,size: 16,
                             color: Colors.white,
                           ),
                         ),

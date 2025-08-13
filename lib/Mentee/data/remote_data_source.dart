@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
@@ -32,7 +31,7 @@ abstract class RemoteDataSource {
   Future<Otpverifymodel?> Verifyotp(Map<String, dynamic> data);
   Future<GetBannersRespModel?> getbanners();
   Future<WalletModel?> getWallet();
-  Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
+  Future<CompusMentorListModel?> getCampusMentorList(String scope, String search,);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(
@@ -42,11 +41,10 @@ abstract class RemoteDataSource {
     int page,
   );
   Future<SuccessModel?> addEcc(Map<String, dynamic> data);
-  Future<StudyZoneCampusModel?> getStudyZoneCampus({
-    String? scope,
-    String? tag,
-    required int page,
-  });
+  Future<StudyZoneCampusModel?> getStudyZoneCampus(
+    String scope,
+    String tag, String search, int page,
+  );
   Future<CommunityPostsModel?> getCommunityPosts(
     String scope,
     String post,
@@ -363,15 +361,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<CompusMentorListModel?> getCampusMentorList(
-    String name,
-    String scope,
+    String scope, String search,
   ) async {
     try {
       Response res;
       final token = await AuthService.getAccessToken();
       if (token != null) {
         res = await ApiClient.get(
-          "${APIEndpointUrls.get_mentors}?name=${name}&scope=${scope}",
+          "${APIEndpointUrls.get_mentors}?scope=${scope}&search=${search}",
         );
       } else {
         res = await ApiClient.get("${APIEndpointUrls.guest_mentors}");
@@ -417,17 +414,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<StudyZoneCampusModel?> getStudyZoneCampus({
-    String? scope,
-    String? tag,
-    required int page,
-  }) async {
+  Future<StudyZoneCampusModel?> getStudyZoneCampus(
+    String scope,
+    String tag,String search, int page,
+  ) async {
     try {
       Response res;
       final token = await AuthService.getAccessToken();
       if (token != null) {
         res = await ApiClient.get(
-          "${APIEndpointUrls.study_zone_campus}?scope=${scope}&tag=${tag}&page=${page}",
+          "${APIEndpointUrls.study_zone_campus}?scope=${scope}&tag=${tag}&search=${search}&page=${page}",
         );
       } else {
         res = await ApiClient.get(

@@ -36,7 +36,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   void initState() {
     super.initState();
     context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
-    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus();
+    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
   }
 
   @override
@@ -110,10 +110,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     });
                                     context
                                         .read<StudyZoneCampusCubit>()
-                                        .fetchStudyZoneCampus(
-                                          scope: "",
-                                          tag: "",
-                                        );
+                                        .fetchStudyZoneCampus("", "", "");
                                   },
                                 ),
                               ),
@@ -127,10 +124,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     });
                                     context
                                         .read<StudyZoneCampusCubit>()
-                                        .fetchStudyZoneCampus(
-                                          scope: "beyond",
-                                          tag: "",
-                                        );
+                                        .fetchStudyZoneCampus("beyond", "", "");
                                   },
                                 ),
                               ),
@@ -153,10 +147,30 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                   onChanged: (query) {
                     if (_debounce?.isActive ?? false) _debounce!.cancel();
                     _debounce = Timer(const Duration(milliseconds: 300), () {
-                      context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
-                        scope: "",
-                        tag: "",
-                      );
+                      final tagsState = context
+                          .read<StudyZoneTagsCubit>()
+                          .state;
+                      String selectedTag = "";
+
+                      if (tagsState is StudyZoneTagsLoaded &&
+                          _selectedTagIndex.value >= 0 &&
+                          _selectedTagIndex.value <
+                              (tagsState.studyZoneTagsModel.tags?.length ??
+                                  0)) {
+                        selectedTag = tagsState
+                            .studyZoneTagsModel
+                            .tags![_selectedTagIndex.value];
+                      }
+
+                      if (_onCampus) {
+                        context
+                            .read<StudyZoneCampusCubit>()
+                            .fetchStudyZoneCampus("", selectedTag, query);
+                      } else {
+                        context
+                            .read<StudyZoneCampusCubit>()
+                            .fetchStudyZoneCampus("beyond", selectedTag, query);
+                      }
                     });
                   },
                   style: TextStyle(fontFamily: "Poppins", fontSize: 15),
@@ -198,12 +212,19 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               return GestureDetector(
                                 onTap: () {
                                   _selectedTagIndex.value = index;
-                                  context
-                                      .read<StudyZoneCampusCubit>()
-                                      .fetchStudyZoneCampus(
-                                        scope: "",
-                                        tag: tagItem,
-                                      );
+                                  if (_onCampus == true) {
+                                    context
+                                        .read<StudyZoneCampusCubit>()
+                                        .fetchStudyZoneCampus("", tagItem, "");
+                                  } else {
+                                    context
+                                        .read<StudyZoneCampusCubit>()
+                                        .fetchStudyZoneCampus(
+                                          "beyond",
+                                          tagItem,
+                                          "",
+                                        );
+                                  }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -253,6 +274,35 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                         : (state as StudyZoneCampusLoadingMore)
                               .studyZoneCampusModel;
                     final studyZoneData = studyZoneCampusModel.studyZoneData;
+                    if (studyZoneData?.studyZoneCampusData?.length == 0) {
+                      return Center(
+                        child: Column(
+                          spacing: 10,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Oops !',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              textAlign: TextAlign.center,
+                              'No Data Found!',
+                              style: TextStyle(
+                                color: primarycolor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     return Expanded(
                       child: CustomScrollView(
                         slivers: [

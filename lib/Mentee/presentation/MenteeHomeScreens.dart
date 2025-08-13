@@ -599,8 +599,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   Expanded(
                                     child: FilterButton(
                                       text: 'On Campuses',
-                                      isSelected: selectedFilter == 'On Campuses',
+                                      isSelected:
+                                          selectedFilter == 'On Campuses',
                                       onPressed: () {
+                                        context
+                                            .read<CampusMentorListCubit>()
+                                            .fetchCampusMentorList("", "");
                                         setState(() {
                                           selectedFilter = 'On Campuses';
                                         });
@@ -613,6 +617,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       isSelected:
                                           selectedFilter == 'Beyond Campuses',
                                       onPressed: () {
+                                        context
+                                            .read<CampusMentorListCubit>()
+                                            .fetchCampusMentorList(
+                                              "beyond",
+                                              "",
+                                            );
                                         setState(() {
                                           selectedFilter = 'Beyond Campuses';
                                         });

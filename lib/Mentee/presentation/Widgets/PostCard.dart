@@ -13,28 +13,62 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return  Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0),
+      decoration: BoxDecoration(
+        color: communityPosts.popular == 1 ? Color(0xffFFF7CE) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-              height: 160,
-              imageUrl: communityPosts.imgUrl ?? "",
-              fit: BoxFit.cover,
-              width: double.infinity,
-              placeholder: (context, url) =>
-                  Center(child: spinkits.getSpinningLinespinkit()),
-              errorWidget: (context, url, error) => Container(
+          if (communityPosts.popular == 1) ...[
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                width: 150,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Color(0xffFFD700),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                ),
+                child: Row(
+                  spacing: 10,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/icons/Sparkle.png",
+                      width: 18,
+                      height: 18,
+                    ),
+                    Text("Highlighted"),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
                 height: 160,
-                color: Colors.grey.shade100,
-                child: const Icon(
-                  Icons.broken_image,
-                  size: 40,
-                  color: Colors.grey,
+                imageUrl: communityPosts.imgUrl ?? "",
+                fit: BoxFit.cover,
+                width: double.infinity,
+                placeholder: (context, url) =>
+                    Center(child: spinkits.getSpinningLinespinkit()),
+                errorWidget: (context, url, error) => Container(
+                  height: 160,
+                  color: Colors.grey.shade100,
+                  child: const Icon(
+                    Icons.broken_image,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ),

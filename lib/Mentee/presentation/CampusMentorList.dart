@@ -26,9 +26,10 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
   @override
   void initState() {
     super.initState();
+    print("scopeType=${widget.scope}");
     context.read<CampusMentorListCubit>().fetchCampusMentorList(
-      "",
       "${widget.scope}",
+      "",
     );
   }
 
@@ -65,10 +66,8 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     cursorColor: primarycolor,
                     onChanged: (query) {
                       if (_debounce?.isActive ?? false) _debounce!.cancel();
-                      _debounce = Timer(const Duration(milliseconds: 300), () {
-                        context
-                            .read<CampusMentorListCubit>()
-                            .fetchCampusMentorList(query, "${widget.scope}");
+                      _debounce = Timer(const Duration(milliseconds: 300),() {
+                        context.read<CampusMentorListCubit>().fetchCampusMentorList("${widget.scope}",query,);
                       });
                     },
                     style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
@@ -123,9 +122,9 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                           final m = list[i];
                           return GestureDetector(
                             onTap: () {
-                              if(isGuest){
+                              if (isGuest) {
                                 context.push('/auth_landing');
-                              }else{
+                              } else {
                                 context.push('/mentor_profile?id=${m.id}');
                               }
                             },
