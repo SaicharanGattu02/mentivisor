@@ -16,7 +16,7 @@ class CommunityPostsCubit extends Cubit<CommunityPostsStates> {
   bool _hasNextPage = true;
   bool _isLoadingMore = false;
 
-  // Method to get community posts (initial fetch)
+
   Future<void> getCommunityPosts() async {
     emit(CommunityPostsLoading());
     _currentPage = 1; // Reset to first page on initial load

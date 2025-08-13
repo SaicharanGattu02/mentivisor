@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,18 +18,23 @@ class EccScreen extends StatefulWidget {
 }
 
 class _EccScreenState extends State<EccScreen> {
+  String searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
   bool _onCampus = true;
   int _selectedFilter = 0;
   String selectedFilter = 'On Campuses';
-  final List<String> _filters = ['All', 'Active', 'Upcoming', 'Highlighted'];
-
-  static const Color _blue = Color(0xFF1677FF);
-  static const Color _lightBlue = Color(0xFFE4EEFF);
-
+  final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
+  Timer? _debounce;
   @override
   void initState() {
     super.initState();
-    context.read<ECCCubit>().getECC();
+    context.read<ECCCubit>().getECC("", "", "");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
   }
 
   @override
@@ -90,6 +97,14 @@ class _EccScreenState extends State<EccScreen> {
                                     text: 'On Campuses',
                                     isSelected: _onCampus,
                                     onPressed: () {
+                                      final selectedUpdate =
+                                          _filters[_selectedFilter]
+                                              .toLowerCase();
+                                      context.read<ECCCubit>().getECC(
+                                        "",
+                                        selectedUpdate,
+                                        "",
+                                      );
                                       setState(() {
                                         _onCampus = true;
                                       });
@@ -101,6 +116,14 @@ class _EccScreenState extends State<EccScreen> {
                                     text: 'Beyond Campuses',
                                     isSelected: !_onCampus,
                                     onPressed: () {
+                                      final selectedUpdate =
+                                          _filters[_selectedFilter]
+                                              .toLowerCase();
+                                      context.read<ECCCubit>().getECC(
+                                        "beyond",
+                                        selectedUpdate,
+                                        "",
+                                      );
                                       setState(() {
                                         _onCampus = false;
                                       });
@@ -129,14 +152,12 @@ class _EccScreenState extends State<EccScreen> {
                 ),
 
                 const SizedBox(height: 12),
-
-                // Filter chips
                 SizedBox(
                   height: 32,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _filters.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    separatorBuilder: (_, __) => SizedBox(width: 8),
                     itemBuilder: (context, i) {
                       final selected = i == _selectedFilter;
                       return ChoiceChip(
@@ -161,7 +182,23 @@ class _EccScreenState extends State<EccScreen> {
                         selected: selected,
                         onSelected: (_) {
                           setState(() => _selectedFilter = i);
+                          if (_onCampus == true) {
+                            context.read<ECCCubit>().getECC(
+                              "",
+                              _filters[i].toLowerCase(),
+                              "",
+                            );
+                            print(_filters[i].toLowerCase());
+                          } else {
+                            context.read<ECCCubit>().getECC(
+                              "beyond",
+                              _filters[i].toLowerCase(),
+                              "",
+                            );
+                            print(_filters[i].toLowerCase());
+                          }
                         },
+
                         selectedColor: const Color(0xFF4076ED).withOpacity(0.1),
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -177,23 +214,47 @@ class _EccScreenState extends State<EccScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Search field
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Colors.black38,
-                    ),
-                    prefixIcon: const Icon(Icons.search, color: Colors.black38),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+
+                SizedBox(
+                  height: 48,
+                  child: TextField(
+                    controller: _searchController,
+                    cursorColor: primarycolor,
+                    onChanged: (query) {
+                      if (_debounce?.isActive ?? false) _debounce!.cancel();
+                      _debounce = Timer(const Duration(milliseconds: 300), () {
+                        final selectedUpdate = _filters[_selectedFilter]
+                            .toLowerCase();
+                        if (_onCampus == true) {
+                          context.read<ECCCubit>().getECC(
+                            "",
+                            selectedUpdate,
+                            query,
+                          );
+                        } else {
+                          context.read<ECCCubit>().getECC(
+                            "beyond",
+                            selectedUpdate,
+                            query,
+                          );
+                        }
+                      });
+                    },
+                    style: TextStyle(fontFamily: "Poppins", fontSize: 15),
+                    decoration: InputDecoration(
+                      hoverColor: Colors.white,
+                      hintText: 'Search by name or location',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Color(0xff666666),
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding: const EdgeInsets.only(
+                        right: 33,
+                        left: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -245,7 +306,21 @@ class _EccScreenState extends State<EccScreen> {
                             if (scrollInfo.metrics.pixels >=
                                 scrollInfo.metrics.maxScrollExtent * 0.9) {
                               if (state is ECCLoaded && state.hasNextPage) {
-                                context.read<ECCCubit>().fetchMoreECC();
+                                final selectedUpdate = _filters[_selectedFilter]
+                                    .toLowerCase();
+                                if (_onCampus == true) {
+                                  context.read<ECCCubit>().fetchMoreECC(
+                                    "",
+                                    selectedUpdate,
+                                    "",
+                                  );
+                                } else {
+                                  context.read<ECCCubit>().getECC(
+                                    "beyond",
+                                    selectedUpdate,
+                                    "",
+                                  );
+                                }
                               }
                               return false;
                             }
@@ -320,30 +395,31 @@ class _EccScreenState extends State<EccScreen> {
     );
   }
 
-  Widget _buildToggleButton(String label, bool active, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: active ? _blue.withOpacity(0.1) : Colors.transparent,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: active ? _blue : Colors.transparent),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: active ? _blue : Colors.black54,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  //
+  // Widget _buildToggleButton(String label, bool active, VoidCallback onTap) {
+  //   return Expanded(
+  //     child: GestureDetector(
+  //       onTap: onTap,
+  //       child: Container(
+  //         padding: const EdgeInsets.symmetric(vertical: 8),
+  //         decoration: BoxDecoration(
+  //           color: active ? _blue.withOpacity(0.1) : Colors.transparent,
+  //           borderRadius: BorderRadius.circular(24),
+  //           border: Border.all(color: active ? _blue : Colors.transparent),
+  //         ),
+  //         child: Center(
+  //           child: Text(
+  //             label,
+  //             style: TextStyle(
+  //               fontFamily: 'segeo',
+  //               fontWeight: FontWeight.w700,
+  //               fontSize: 14,
+  //               color: active ? _blue : Colors.black54,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

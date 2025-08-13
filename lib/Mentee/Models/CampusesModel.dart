@@ -1,30 +1,28 @@
 class CampusesModel {
   bool? status;
-  List<Data>? data;
+  List<CampusData>? data;
 
   CampusesModel({this.status, this.data});
 
   CampusesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
+    if (json['data'] != null &&
+        json['data'] is Map &&
+        json['data']['data'] != null) {
+      data = (json['data']['data'] as List)
+          .map((e) => CampusData.fromJson(e))
+          .toList();
+    } else {
+      data = [];
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    return data;
+    return {'status': status, 'data': data?.map((v) => v.toJson()).toList()};
   }
 }
 
-class Data {
+class CampusData {
   int? id;
   String? name;
   String? state;
@@ -33,22 +31,23 @@ class Data {
   String? pincode;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  dynamic deletedAt;
   int? activeStatus;
 
-  Data(
-      {this.id,
-        this.name,
-        this.state,
-        this.city,
-        this.dist,
-        this.pincode,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus});
+  CampusData({
+    this.id,
+    this.name,
+    this.state,
+    this.city,
+    this.dist,
+    this.pincode,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
+  CampusData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['Name'];
     state = json['State'];
@@ -62,17 +61,17 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['Name'] = this.name;
-    data['State'] = this.state;
-    data['City'] = this.city;
-    data['Dist'] = this.dist;
-    data['pincode'] = this.pincode;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    return data;
+    return {
+      'id': id,
+      'Name': name,
+      'State': state,
+      'City': city,
+      'Dist': dist,
+      'pincode': pincode,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'deleted_at': deletedAt,
+      'active_status': activeStatus,
+    };
   }
 }

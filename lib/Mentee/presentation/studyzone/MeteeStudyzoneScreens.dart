@@ -30,7 +30,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   bool _onCampus = true;
   final ValueNotifier<int> _selectedTagIndex = ValueNotifier<int>(-1);
 
-  final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
 
   @override
@@ -43,7 +42,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   @override
   void dispose() {
     _selectedTagIndex.dispose();
-    _searchController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 

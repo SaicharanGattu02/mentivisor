@@ -35,7 +35,7 @@ abstract class RemoteDataSource {
   Future<CompusMentorListModel?> getCampusMentorList(String name, String scope);
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
-  Future<ECCModel?> getEcc(int page);
+  Future<ECCModel?> getEcc(String scope,String updates,String search,int page);
   Future<SuccessModel?> addEcc(Map<String, dynamic> data);
   Future<StudyZoneCampusModel?> getStudyZoneCampus({
     String? scope,
@@ -247,12 +247,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ECCModel?> getEcc(int page) async {
+  Future<ECCModel?> getEcc(String scope,String updates,String search,int page) async {
     try {
       Response res;
       final token = await AuthService.getAccessToken();
       if (token != null) {
-        res = await ApiClient.get("${APIEndpointUrls.list_ecc}?page=${page}");
+        res = await ApiClient.get("${APIEndpointUrls.list_ecc}?scope=${scope}&${updates}=true&search=${search}&page=${page}");
       } else {
         res = await ApiClient.get(
           "${APIEndpointUrls.guest_list_ecc}?page=${page}",

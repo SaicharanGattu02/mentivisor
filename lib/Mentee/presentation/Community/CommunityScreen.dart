@@ -24,13 +24,7 @@ class _CommunityScreenState extends State<Communityscreen> {
 
   int _selectedFilter = 0;
   String selectedFilter = 'On Campuses';
-  final List<String> _filters = ['All', 'Active', 'Upcoming', 'Highlighted'];
-  final List<String> _subTabs = ['All', 'Recent', 'Trending', 'Highlighted'];
-
-  // Gradient colors for FAB
-  static const Color grad1 = Color(0xFFA258F7);
-  static const Color grad2 = Color(0xFF726CF7);
-  static const Color grad3 = Color(0xFF4280F6);
+  final List<String> _filters = ['All','Upcoming', 'Highlighted'];
 
   @override
   void initState() {

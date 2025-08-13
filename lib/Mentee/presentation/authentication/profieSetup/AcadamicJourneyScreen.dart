@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Register/Registor_State.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 
 import '../../../../Components/CustomAppButton.dart';
 import '../../../../utils/color_constants.dart';
@@ -24,10 +25,13 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
   final _collegeController = TextEditingController();
   final _yearController = TextEditingController();
   final _steamController = TextEditingController();
+  int? _collegeId;
+  int? _yearId;
 
   @override
   void initState() {
     super.initState();
+    AppLogger.log("Final data:${widget.data}");
     context.read<CampusesCubit>().getCampuses();
     context.read<YearsCubit>().getYears();
   }
@@ -56,9 +60,8 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
-              // Top icon + title
               SizedBox(height: 16),
-              // Logo/Icon
+
               Container(
                 width: 64,
                 height: 64,
@@ -274,6 +277,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
               BlocConsumer<RegisterCubit, RegisterState>(
                 listener: (context, state) {
                   if (state is RegisterSucess) {
+                    context.go('/login');
                     CustomSnackBar1.show(
                       context,
                       state.registerModel.message ?? "",
@@ -290,7 +294,33 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     radius: 10,
                     width: 200,
                     height: 42,
-                    onPlusTap: () {},
+                    onPlusTap: () {
+                      if (_yearController.text.isEmpty) {
+                        CustomSnackBar1.show(
+                          context,
+                          "Please select your year.",
+                        );
+                      } else if (_steamController.text.isEmpty) {
+                        CustomSnackBar1.show(
+                          context,
+                          "Please enter your stream.",
+                        );
+                      } else if (_collegeController.text.isEmpty) {
+                        CustomSnackBar1.show(
+                          context,
+                          "Please select your college.",
+                        );
+                      } else {
+                        final Map<String, dynamic> data = {
+                          ...widget.data,
+                          "year": _yearId,
+                          "stream": _steamController.text.trim(),
+                          "college": _collegeId,
+                          "fcm_token": "sfsbdfbsjkdbfa",
+                        };
+                        context.read<RegisterCubit>().finalRegisterApi(data);
+                      }
+                    },
                   );
                 },
               ),
@@ -321,13 +351,6 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
               builder: (context, state) {
                 if (state is CampusesLoading) {
                   return Center(child: CircularProgressIndicator());
-                } else if (state is CampusesFailure) {
-                  return Center(
-                    child: Text(
-                      state.error,
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
                 } else if (state is CampusesLoaded) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,6 +376,8 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                               onTap: () {
                                 _collegeController.text =
                                     state.campusesModel.data![index].name!;
+                                _collegeId =
+                                    state.campusesModel.data![index].id;
                                 Navigator.pop(context);
                               },
                             );
@@ -360,6 +385,13 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                         ),
                       ),
                     ],
+                  );
+                } else if (state is CampusesFailure) {
+                  return Center(
+                    child: Text(
+                      state.error,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   );
                 } else {
                   return Container();
@@ -426,6 +458,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                               onTap: () {
                                 _yearController.text =
                                     state.yearsModel.data![index].name!;
+                                _yearId = state.yearsModel.data![index].id;
                                 Navigator.pop(context);
                               },
                             );

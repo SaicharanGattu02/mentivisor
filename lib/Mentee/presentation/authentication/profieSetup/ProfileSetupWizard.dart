@@ -1,5 +1,8 @@
+import 'dart:developer' as AppLogger;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 
 import '../../../../Components/CustomAppButton.dart';
 import '../../../../utils/color_constants.dart';
@@ -17,6 +20,7 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
   @override
   void initState() {
     super.initState();
+    AppLogger.log("Final data:${widget.data}");
     bioController.addListener(() => setState(() {}));
   }
 
@@ -231,7 +235,16 @@ class _ProfileSetupWizardState extends State<ProfileSetupWizard> {
                     width: 100,
                     height: 42,
                     onPlusTap: () {
-                      context.push('/academic_journey');
+                      if(bioController.text.isEmpty){
+                        CustomSnackBar1.show(context, "Please enter your bio.");
+                      }else{
+                        final Map<String,dynamic> data={
+                          ...widget.data,
+                          "bio":bioController.text.trim(),
+                        };
+                        context.push('/academic_journey',extra:data);
+                      }
+
                     },
                   ),
                 ],
