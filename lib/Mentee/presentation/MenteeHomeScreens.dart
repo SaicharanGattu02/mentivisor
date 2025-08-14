@@ -341,24 +341,31 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       color: Colors.white,
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 20,
-                                backgroundImage: AssetImage(
-                                  'assets/images/profileimg.png',
+                          GestureDetector(
+                            onTap: () {
+                              context.pop();
+                              context.push("/profile");
+
+                            },
+                            child: Row(
+                              children: [
+                                const CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: AssetImage(
+                                    'assets/images/profileimg.png',
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                'Profile',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
+                                const SizedBox(width: 12),
+                                const Text(
+                                  'Profile',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 8),
                           _buildDrawerItem(
@@ -814,37 +821,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildToggle(String label, bool active, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: active
-                ? const Color(0xFF4076ED).withOpacity(0.1)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: active ? const Color(0xFF4076ED) : Colors.transparent,
-            ),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Segoe',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: active ? const Color(0xFF4076ED) : Colors.black54,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 

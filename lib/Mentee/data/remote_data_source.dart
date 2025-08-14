@@ -11,6 +11,8 @@ import '../Models/CampusesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
+import '../Models/GetExpertiseModel.dart';
+import '../Models/MenteeProfileModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
@@ -31,7 +33,10 @@ abstract class RemoteDataSource {
   Future<Otpverifymodel?> Verifyotp(Map<String, dynamic> data);
   Future<GetBannersRespModel?> getbanners();
   Future<WalletModel?> getWallet();
-  Future<CompusMentorListModel?> getCampusMentorList(String scope, String search,);
+  Future<CompusMentorListModel?> getCampusMentorList(
+    String scope,
+    String search,
+  );
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(
@@ -43,7 +48,9 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> addEcc(Map<String, dynamic> data);
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
-    String tag, String search, int page,
+    String tag,
+    String search,
+    int page,
   );
   Future<CommunityPostsModel?> getCommunityPosts(
     String scope,
@@ -64,6 +71,10 @@ abstract class RemoteDataSource {
   Future<CampusesModel?> getCampuses();
   Future<YearsModel?> getYears();
   Future<CoinsPackRespModel?> getcoinspack();
+  Future<GetExpertiseModel?> getExpertiseSubCategory(int id);
+  Future<GetExpertiseModel?> getExpertiseCategory(String search, int page);
+  Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data);
+  Future<MenteeProfileModel?> getMenteeProfile();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -81,6 +92,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
               key.contains('file') ||
               key.contains('uploaded_file') ||
               key.contains('picture') ||
+              key.contains('resume') ||
               key.contains('payment_screenshot'));
 
       if (isFile) {
@@ -94,7 +106,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       }
     }
 
-    // 🔥 Print the data before returning
     formMap.forEach((key, value) {
       AppLogger.log('$key -> $value');
     });
@@ -165,6 +176,37 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return CommunityZoneTagsModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getCommunityZoneTags::$e');
+      return null;
+    }
+  }
+
+  @override
+  Future<GetExpertiseModel?> getExpertiseCategory(
+    String search,
+    int page,
+  ) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_expertise}?search=${search}&page=${page}",
+      );
+      debugPrint('get Expertise Category::$res');
+      return GetExpertiseModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error Expertise Category ::$e');
+      return null;
+    }
+  }
+
+  @override
+  Future<GetExpertiseModel?> getExpertiseSubCategory(int id) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_expertise}/${id}",
+      );
+      debugPrint('get Expertise Sub Category::$res');
+      return GetExpertiseModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error Expertise Sub Category ::$e');
       return null;
     }
   }
@@ -361,7 +403,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<CompusMentorListModel?> getCampusMentorList(
-    String scope, String search,
+    String scope,
+    String search,
   ) async {
     try {
       Response res;
@@ -416,7 +459,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
-    String tag,String search, int page,
+    String tag,
+    String search,
+    int page,
   ) async {
     try {
       Response res;
@@ -479,6 +524,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<MenteeProfileModel?> getMenteeProfile() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.mentee_profile}");
+      AppLogger.log('get Mentee Profile ::${res.data}');
+      return MenteeProfileModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get Mentee Profile ::${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> putTaskComplete(int taskId) async {
     try {
       Response res = await ApiClient.put(
@@ -524,6 +581,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.become_mentor}",
+        data: formData,
+      );
+      AppLogger.log('Become Mentor ::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Become Mentor ::${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> postStudyZoneReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
     try {
@@ -539,7 +612,4 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
-
-
 }

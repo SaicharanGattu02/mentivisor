@@ -1,24 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/BecomeMentor/become_mentor_state.dart';
 
-import '../Components/CustomAppButton.dart';
+import '../../../Components/CustomAppButton.dart';
+import '../../../Components/CutomAppBar.dart';
+import '../../data/cubits/BecomeMentor/become_mentor_cubit.dart';
 
-class CostPerMinuteScreen extends StatelessWidget {
+class CostPerMinuteScreen extends StatefulWidget {
+  final Map<String, dynamic> data;
+  CostPerMinuteScreen({super.key, required this.data});
+  @override
+  State<CostPerMinuteScreen> createState() => _CostPerMinuteScreenState();
+}
+
+class _CostPerMinuteScreenState extends State<CostPerMinuteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Cost Per Minute',
-          style: TextStyle(
-            fontFamily: 'segeo',
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: Color(0xffFAF5FF),
-      ),
+      appBar: CustomAppBar1(title: 'Cost Per Minute', actions: []),
+
       body: Padding(
         padding: const EdgeInsets.all(8.0),
 
@@ -71,10 +74,22 @@ class CostPerMinuteScreen extends StatelessWidget {
                 fontFamily: 'segeo',
               ),
             ),
-            CustomAppButton1(
-              text: "Next",
-              onPlusTap: () {
-                context.push(""); // Update with your actual route
+            BlocConsumer<BecomeMentorCubit, BecomeMentorStates>(
+              listener: (context, state) {
+                if (state is BecomeMentorSuccess) {
+                  context.go('/mentor_review');
+                } else if (state is BecomeMentorFailure) {
+                  CustomSnackBar1.show(context, state.error);
+                }
+              },
+              builder: (context, state) {
+                return CustomAppButton1(
+                  isLoading: state is BecomeMentorLoading,
+                  text: "Okay",
+                  onPlusTap: () {
+                    context.read<BecomeMentorCubit>().becomeMentor(widget.data);
+                  },
+                );
               },
             ),
           ],

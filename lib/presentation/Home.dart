@@ -1,7 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mentivisor/newscreens/AchievementScreen.dart';
+import 'package:mentivisor/Mentee/presentation/becomeMentor/BecomeMentorData.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/SessionCompletedScreen.dart';
 import 'package:mentivisor/Mentee/presentation/UpcomingSessionsScreen.dart';
@@ -190,16 +190,16 @@ class _HomeState extends State<Home> {
                   MaterialPageRoute(builder: (_) => UpcomingSessionsScreen()),
                 ),
               ),
-              _buildStatCard(
-                'Goals Achieved',
-                '5',
-                [Color(0xFF22C55E), Color(0xFF16A34A)],
-                Icons.star_border,
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => AchievementScreen()),
-                ),
-              ),
+              // _buildStatCard(
+              //   'Goals Achieved',
+              //   '5',
+              //   [Color(0xFF22C55E), Color(0xFF16A34A)],
+              //   Icons.star_border,
+              //   () => Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (_) => AchievementScreen()),
+              //   ),
+              // ),
               _buildStatCard(
                 'Coin Balance',
                 '150',

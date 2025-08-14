@@ -9,26 +9,26 @@ import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
-import 'package:mentivisor/newscreens/BecomeMentorScreen.dart';
+import 'package:mentivisor/Mentee/presentation/becomeMentor/BecomeMentorScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
-import 'package:mentivisor/newscreens/CostPerMinuteScreen.dart';
+import 'package:mentivisor/Mentee/presentation/becomeMentor/CostPerMinuteScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/ProfileSetupScreen.dart';
-import 'package:mentivisor/newscreens/SubTopicSelectionScreen.dart';
-import 'package:mentivisor/newscreens/TopicSelectionScreen.dart';
+import 'package:mentivisor/Mentee/presentation/becomeMentor/ExpertiseSelection.dart';
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
 import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/presentation/BuyCoins.dart';
 import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/presentation/Splash.dart';
-import 'package:mentivisor/profileview/EditProfileScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
+import '../Mentee/presentation/Profile/EditProfileScreen.dart';
+import '../Mentee/presentation/Profile/ProfileScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
@@ -37,6 +37,9 @@ import '../Mentee/presentation/authentication/SelecterScreen.dart';
 import '../Mentee/presentation/authentication/SignupScreen.dart';
 import '../Mentee/presentation/authentication/SuccessScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/AcadamicJourneyScreen.dart';
+import '../Mentee/presentation/becomeMentor/BecomeMentorData.dart';
+import '../Mentee/presentation/becomeMentor/LanguageSelectionScreen.dart';
+import '../Mentee/presentation/becomeMentor/MentorReview.dart';
 import '../Mentee/presentation/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
@@ -45,15 +48,14 @@ import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../newscreens/ExclusiveServices.dart';
 import '../newscreens/ExclusiveServicesInfo.dart';
 import '../newscreens/InfoScreen.dart';
-import '../newscreens/InterestingScreen.dart';
-import '../newscreens/LanguageSelectionScreen.dart';
+import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
 import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
-import 'package:mentivisor/presentation/ProfileScreen.dart';
+
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -152,6 +154,11 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(SessionCompletedScreen(), state),
     ),
     GoRoute(
+      path: '/mentor_review',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(MentorReview(), state),
+    ),
+    GoRoute(
       path: '/upcoming_session',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(UpcomingSessionsScreen(), state),
@@ -184,9 +191,11 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/InterestingScreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(InterestingScreen(), state),
+      path: '/interesting_screen',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(InterestingScreen(data: data), state);
+      },
     ),
     GoRoute(
       path: '/becomementorscreen',
@@ -264,28 +273,42 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(ExclusiveInfoServices(), state),
     ),
 
-    // GoRoute(
-    //   path: '/topicselection',
-    //   pageBuilder: (context, state) =>
-    //       buildSlideTransitionPage(TopicSelectionScreen(), state),
-    // ),
-
     GoRoute(
-      path: '/costperminute_screen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(CostPerMinuteScreen(), state),
+      path: '/cost_per_minute_screen',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(CostPerMinuteScreen(data: data), state);
+      },
     ),
 
     GoRoute(
       path: '/subtopicselect_screen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SubTopicSelectionScreen(), state),
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(
+          SubTopicSelectionScreen(data: data),
+          state,
+        );
+      },
     ),
 
     GoRoute(
       path: '/language_selection',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(LanguageSelectionScreen(), state),
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(
+          LanguageSelectionScreen(data: data),
+          state,
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/become_mentor_data',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(BecomeMentorData(data: data), state);
+      },
     ),
 
     GoRoute(

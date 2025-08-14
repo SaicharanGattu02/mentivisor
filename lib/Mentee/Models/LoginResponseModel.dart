@@ -49,7 +49,7 @@ class User {
   String? name;
   String? email;
   int? contact;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   String? refreshToken;
   String? webFcmToken;
   String? deviceFcmToken;
@@ -60,11 +60,11 @@ class User {
   int? collegeId;
   String? year;
   String? stream;
-  Null? gender;
+  dynamic gender;
   String? status;
   String? profilePic;
-  Null? state;
-  Null? city;
+  dynamic  state;
+  dynamic city;
   Null? country;
   String? saasId;
   Null? emailOtp;

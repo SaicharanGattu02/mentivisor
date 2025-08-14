@@ -23,12 +23,19 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRep
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
+import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
+import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
+import 'Mentee/data/cubits/Expertise/ExpertiseCategory/expertise_category_cubit.dart';
+import 'Mentee/data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category_cubit.dart';
+import 'Mentee/data/cubits/Expertise/expertise_repository.dart';
 import 'Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
 import 'Mentee/data/cubits/GetBanners/GetBannersRepository.dart';
 import 'Mentee/data/cubits/Login/LoginCubit.dart';
 import 'Mentee/data/cubits/Login/LoginRepository.dart';
+import 'Mentee/data/cubits/MenteeProfile/MenteeProfileCubit.dart';
+import 'Mentee/data/cubits/MenteeProfile/MenteeProfileRepository.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
@@ -145,6 +152,18 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<ExpertiseRepo>(
+      create: (context) =>
+          ExpertiseImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<BecomeMentorRepository>(
+      create: (context) =>
+          BecomeMentorImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<MenteeProfileRepository>(
+      create: (context) =>
+          MenteeProfileImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -236,6 +255,22 @@ class StateInjector {
     BlocProvider<AddResourceCubit>(
       create: (context) =>
           AddResourceCubit(context.read<AddResourceRepository>()),
+    ),
+    BlocProvider<ExpertiseCategoryCubit>(
+      create: (context) =>
+          ExpertiseCategoryCubit(context.read<ExpertiseRepo>()),
+    ),
+    BlocProvider<ExpertiseSubCategoryCubit>(
+      create: (context) =>
+          ExpertiseSubCategoryCubit(context.read<ExpertiseRepo>()),
+    ),
+    BlocProvider<BecomeMentorCubit>(
+      create: (context) =>
+          BecomeMentorCubit(context.read<BecomeMentorRepository>()),
+    ),
+    BlocProvider<MenteeProfileCubit>(
+      create: (context) =>
+          MenteeProfileCubit(context.read<MenteeProfileRepository>()),
     ),
   ];
 }
