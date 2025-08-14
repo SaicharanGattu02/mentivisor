@@ -22,7 +22,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
         child: Column(
           children: [
             CircleAvatar(
-              radius: 20,
+              radius: 60,
               child: Image.asset("assets/images/profile.png"),
             ),
             Text(
