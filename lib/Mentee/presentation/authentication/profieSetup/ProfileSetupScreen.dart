@@ -1,4 +1,3 @@
-
 import 'dart:developer' as AppLogger;
 import 'dart:io';
 
@@ -101,9 +100,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(File(pickedFile.path));
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
       if (compressedFile != null) {
         _imageFile.value = compressedFile;
       }
@@ -111,9 +114,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
     if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(File(pickedFile.path));
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
       if (compressedFile != null) {
         _imageFile.value = compressedFile;
       }
@@ -150,7 +157,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     gradient: kCommonGradient,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(Icons.school, color: Colors.white, size: 32),
+                  child: const Icon(
+                    Icons.school,
+                    color: Colors.white,
+                    size: 32,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -192,7 +203,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           return Container(
                             height: 6,
                             width: constraints.maxWidth * progress,
-                            decoration: BoxDecoration(gradient: kCommonGradient),
+                            decoration: BoxDecoration(
+                              gradient: kCommonGradient,
+                            ),
                           );
                         },
                       ),
@@ -219,7 +232,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     children: [
                       const Text(
                         "What's your name?",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
@@ -249,20 +265,27 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                     shape: BoxShape.circle,
                                     gradient: file == null
                                         ? const LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [Color(0xFF9333EA), Color(0xFF3B82F6)],
-                                    )
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFF9333EA),
+                                              Color(0xFF3B82F6),
+                                            ],
+                                          )
                                         : null,
                                     image: file != null
                                         ? DecorationImage(
-                                      image: FileImage(file),
-                                      fit: BoxFit.cover,
-                                    )
+                                            image: FileImage(file),
+                                            fit: BoxFit.cover,
+                                          )
                                         : null,
                                   ),
                                   child: file == null
-                                      ? const Icon(Icons.person, color: Colors.white70, size: 48)
+                                      ? const Icon(
+                                          Icons.person,
+                                          color: Colors.white70,
+                                          size: 48,
+                                        )
                                       : null,
                                 );
                               },
@@ -276,7 +299,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                   color: Colors.white,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.camera_alt, size: 20, color: Color(0xFF7F00FF)),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  size: 20,
+                                  color: Color(0xFF7F00FF),
+                                ),
                               ),
                             ),
                           ],
@@ -303,17 +330,29 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           hintText: 'Enter your full Name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                            borderSide: const BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                            borderSide: const BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                            borderSide: const BorderSide(
+                              color: Color(0xffE5E7EB),
+                              width: 1,
+                            ),
                           ),
-                          errorStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                          errorStyle: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ],
@@ -344,9 +383,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       height: 42,
                       onPlusTap: () {
                         if (_nameController.text.trim().isEmpty) {
-                          CustomSnackBar1.show(context, "Please enter your name.");
+                          CustomSnackBar1.show(
+                            context,
+                            "Please enter your name.",
+                          );
                         } else if (_imageFile.value == null) {
-                          CustomSnackBar1.show(context, "Please select a profile picture.");
+                          CustomSnackBar1.show(
+                            context,
+                            "Please select a profile picture.",
+                          );
                         } else {
                           final Map<String, dynamic> data = {
                             ...widget.data,

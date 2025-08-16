@@ -94,7 +94,7 @@ class _EccScreenState extends State<EccScreen> {
                               children: [
                                 Expanded(
                                   child: FilterButton(
-                                    text: 'On Campuses',
+                                    text: 'On Campus',
                                     isSelected: _onCampus,
                                     onPressed: () {
                                       final selectedUpdate =
@@ -113,7 +113,7 @@ class _EccScreenState extends State<EccScreen> {
                                 ),
                                 Expanded(
                                   child: FilterButton(
-                                    text: 'Beyond Campuses',
+                                    text: 'Beyond Campus',
                                     isSelected: !_onCampus,
                                     onPressed: () {
                                       final selectedUpdate =

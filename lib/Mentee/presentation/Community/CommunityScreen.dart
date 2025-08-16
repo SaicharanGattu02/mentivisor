@@ -92,7 +92,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                             children: [
                               Expanded(
                                 child: FilterButton(
-                                  text: 'On Campuses',
+                                  text: 'On Campus',
                                   isSelected: _onCampus,
                                   onPressed: () {
                                     final selectedUpdate =
@@ -108,7 +108,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                               ),
                               Expanded(
                                 child: FilterButton(
-                                  text: 'Beyond Campuses',
+                                  text: 'Beyond Campus',
                                   isSelected: !_onCampus,
                                   onPressed: () {
                                     final selectedUpdate =

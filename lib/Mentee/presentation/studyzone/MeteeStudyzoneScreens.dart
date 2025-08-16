@@ -102,7 +102,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                             children: [
                               Expanded(
                                 child: FilterButton(
-                                  text: 'On Campuses',
+                                  text: 'On Campus',
                                   isSelected: _onCampus,
                                   onPressed: () {
                                     setState(() {
@@ -116,7 +116,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               ),
                               Expanded(
                                 child: FilterButton(
-                                  text: 'Beyond Campuses',
+                                  text: 'Beyond Campus',
                                   isSelected: !_onCampus,
                                   onPressed: () {
                                     setState(() {

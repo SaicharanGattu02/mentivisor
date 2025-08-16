@@ -51,7 +51,7 @@ import '../newscreens/InfoScreen.dart';
 import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
 import '../Mentee/presentation/SessionCompletedScreen.dart';
-import '../presentation/BookSessionScreen.dart';
+import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';

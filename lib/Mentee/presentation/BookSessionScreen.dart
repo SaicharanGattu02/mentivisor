@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../Components/CustomAppButton.dart';
+import '../../Components/CustomAppButton.dart';
 
 class BookSessionScreen extends StatefulWidget {
   @override
@@ -81,13 +81,16 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       child: CustomAppButton1(
                         text: 'Pick the Time',
                         onPlusTap: () {
-                          if (localSelectedTime != null && selectedDate != null) {
+                          if (localSelectedTime != null &&
+                              selectedDate != null) {
                             setState(() {
                               selectedTime = localSelectedTime;
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Selected time: $localSelectedTime on Jul $selectedDate'),
+                                content: Text(
+                                  'Selected time: $localSelectedTime on Jul $selectedDate',
+                                ),
                               ),
                             );
                             Navigator.pop(context);
@@ -111,7 +114,11 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
     );
   }
 
-  Widget _buildTimeSlot(String time, String? selectedTime, Function(String) onTap) {
+  Widget _buildTimeSlot(
+    String time,
+    String? selectedTime,
+    Function(String) onTap,
+  ) {
     final isSelected = selectedTime == time;
     return GestureDetector(
       onTap: () => onTap(time),
@@ -178,7 +185,10 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       borderRadius: BorderRadius.circular(22),
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xffF5F5F5),
                         borderRadius: BorderRadius.circular(20),
@@ -186,20 +196,32 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: 'This Week',
-                          items: <String>['This Week', 'Next Week'].map((String value) {
+                          items: <String>['This Week', 'Next Week'].map((
+                            String value,
+                          ) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: ShaderMask(
-                                shaderCallback: (bounds) => const LinearGradient(
-                                  colors: [
-                                    Color(0xffA258F7),
-                                    Color(0xff726CF7),
-                                    Color(0xff4280F6),
-                                  ],
-                                ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
+                                      colors: [
+                                        Color(0xffA258F7),
+                                        Color(0xff726CF7),
+                                        Color(0xff4280F6),
+                                      ],
+                                    ).createShader(
+                                      Rect.fromLTWH(
+                                        0,
+                                        0,
+                                        bounds.width,
+                                        bounds.height,
+                                      ),
+                                    ),
                                 child: Text(
                                   value,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             );
@@ -208,13 +230,21 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             // Handle dropdown change if needed
                           },
                           icon: ShaderMask(
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [
-                                Color(0xffA258F7),
-                                Color(0xff726CF7),
-                                Color(0xff4280F6),
-                              ],
-                            ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                            shaderCallback: (bounds) =>
+                                const LinearGradient(
+                                  colors: [
+                                    Color(0xffA258F7),
+                                    Color(0xff726CF7),
+                                    Color(0xff4280F6),
+                                  ],
+                                ).createShader(
+                                  Rect.fromLTWH(
+                                    0,
+                                    0,
+                                    bounds.width,
+                                    bounds.height,
+                                  ),
+                                ),
                             child: const Icon(Icons.arrow_drop_down),
                           ),
                         ),
@@ -312,7 +342,10 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                const Icon(Icons.attach_file, color: Colors.grey),
+                                const Icon(
+                                  Icons.attach_file,
+                                  color: Colors.grey,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Add Attachment',
@@ -463,7 +496,9 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
               if (selectedDate != null && selectedTime != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Session booked for Jul $selectedDate at $selectedTime'),
+                    content: Text(
+                      'Session booked for Jul $selectedDate at $selectedTime',
+                    ),
                   ),
                 );
               } else {

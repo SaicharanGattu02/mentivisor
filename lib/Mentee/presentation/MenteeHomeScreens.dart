@@ -605,24 +605,24 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 children: [
                                   Expanded(
                                     child: FilterButton(
-                                      text: 'On Campuses',
+                                      text: 'On Campus',
                                       isSelected:
-                                          selectedFilter == 'On Campuses',
+                                          selectedFilter == 'On Campus',
                                       onPressed: () {
                                         context
                                             .read<CampusMentorListCubit>()
                                             .fetchCampusMentorList("", "");
                                         setState(() {
-                                          selectedFilter = 'On Campuses';
+                                          selectedFilter = 'On Campus';
                                         });
                                       },
                                     ),
                                   ),
                                   Expanded(
                                     child: FilterButton(
-                                      text: 'Beyond Campuses',
+                                      text: 'Beyond Campus',
                                       isSelected:
-                                          selectedFilter == 'Beyond Campuses',
+                                          selectedFilter == 'Beyond Campus',
                                       onPressed: () {
                                         context
                                             .read<CampusMentorListCubit>()
@@ -631,7 +631,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                               "",
                                             );
                                         setState(() {
-                                          selectedFilter = 'Beyond Campuses';
+                                          selectedFilter = 'Beyond Campus';
                                         });
                                       },
                                     ),

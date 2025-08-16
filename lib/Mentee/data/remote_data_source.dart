@@ -12,6 +12,7 @@ import '../Models/CampusesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
+import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
@@ -26,6 +27,7 @@ import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/TaskStatesModel.dart';
+import '../Models/WeeklySlotsModel.dart';
 
 abstract class RemoteDataSource {
   Future<LogInModel?> login(Map<String, dynamic> data);
@@ -77,6 +79,8 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data);
   Future<MenteeProfileModel?> getMenteeProfile();
   Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
+  Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id);
+  Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -113,6 +117,35 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<DailySlotsModel?> getDailySlots(int mentor_id, String date) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.weekly_slots}/${mentor_id}?date=${date}",
+      );
+      AppLogger.log('getDailySlots: ${res.data}');
+      return DailySlotsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getDailySlots:${e}');
+      return null;
+    }
+  }
+
+
+  @override
+  Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.weekly_slots}/${mentor_id}",
+      );
+      AppLogger.log('getWeeklySlots: ${res.data}');
+      return WeeklySlotsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getWeeklySlots:${e}');
+      return null;
+    }
   }
 
   @override
@@ -616,7 +649,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ExclusiveServicesModel?> exclusiveServiceList(String search,int page) async {
+  Future<ExclusiveServicesModel?> exclusiveServiceList(
+    String search,
+    int page,
+  ) async {
     try {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.get_Exclusive_services}?search=${search}&page=${page}",

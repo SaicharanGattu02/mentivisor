@@ -50,6 +50,7 @@ class APIEndpointUrls {
   static const String become_mentor = "${userUrl}become-mentor";
   static const String mentee_profile = "${userUrl}user-profile";
   static const String get_Exclusive_services = "${userUrl}services";
+  static const String weekly_slots = "${userUrl}mentor/weekly-slots";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

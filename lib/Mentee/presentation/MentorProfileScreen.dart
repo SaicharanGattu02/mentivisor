@@ -243,10 +243,9 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           child: SizedBox(
             width: double.infinity,
             child: CustomAppButton1(
-              text: 'Done',
-
+              text: 'Book Session',
               onPlusTap: () {
-                context.push("/mentorprofile");
+                context.push("/book_sessions_screen");
                 // Your action here
               },
             ),
