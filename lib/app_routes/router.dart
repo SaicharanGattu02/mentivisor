@@ -48,6 +48,8 @@ import '../Mentee/presentation/becomeMentor/ProfileRejected.dart';
 import '../Mentee/presentation/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/presentation/CoinHistoryScreen.dart';
 import '../Mentor/presentation/CouponCard.dart';
+import '../Mentor/presentation/CouponCongratsScreen.dart';
+import '../Mentor/presentation/CouponsHomeScreen.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
@@ -66,7 +68,7 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/',
+      path: '/couponsscreen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
       },
@@ -77,6 +79,10 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CoinHistoryScreen(), state),
     ),
+
+
+
+
     GoRoute(
       path: '/coupons',
       pageBuilder: (context, state) =>
@@ -453,6 +459,17 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(MenteeListScreen(), state);
       },
     ),
+    GoRoute(
+      path: '/couponscongrats',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(CouponCongratsScreen(), state),
+    ),
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(CouponsHomeScreen(), state),
+    ),
+
   ],
 );
 
