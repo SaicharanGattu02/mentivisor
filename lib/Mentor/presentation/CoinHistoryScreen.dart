@@ -21,8 +21,11 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
         shadowColor: const Color(0x11000000),
         leadingWidth: 56,
         leading: IconButton(
-
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF222222), size: 20),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF222222),
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
@@ -35,13 +38,13 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
             color: Color(0xFF121212),
           ),
         ),
-
       ),
 
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [Color(0xFFF6F8FF), Color(0xFFF4F5FA)],
           ),
         ),
@@ -55,7 +58,8 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
                   const Text(
                     'Recent',
                     style: TextStyle(
-                      fontFamily: 'segoe', // corrected "segeo" → "segoe" (check your font name)
+                      fontFamily:
+                          'segoe', // corrected "segeo" → "segoe" (check your font name)
                       fontSize: 18,
 
                       fontWeight: FontWeight.w700,
@@ -66,7 +70,7 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
                   IconButton(
                     onPressed: _openFilterSheet,
                     tooltip: 'Filter',
-                    icon:  Image.asset(
+                    icon: Image.asset(
                       "images/filterimg.png",
                       color: Color(0xFF4076ED),
                       height: 24, // optional, adjust size
@@ -166,7 +170,11 @@ class CoinHistoryCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_rounded, size: 14, color: Color(0xFF98A2B3)),
+                      const Icon(
+                        Icons.calendar_today_rounded,
+                        size: 14,
+                        color: Color(0xFF98A2B3),
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         dateLabel,
@@ -212,10 +220,7 @@ class CoinHistoryCard extends StatelessWidget {
 }
 
 class _FilterSheet extends StatefulWidget {
-  const _FilterSheet({
-    required this.initialValue,
-    required this.onApply,
-  });
+  const _FilterSheet({required this.initialValue, required this.onApply});
 
   final String initialValue;
   final ValueChanged<String> onApply;
@@ -225,7 +230,12 @@ class _FilterSheet extends StatefulWidget {
 }
 
 class _FilterSheetState extends State<_FilterSheet> {
-  final List<String> options = const ['All Time', 'This Week', 'This Month', 'This Quarter'];
+  final List<String> options = const [
+    'All Time',
+    'This Week',
+    'This Month',
+    'This Quarter',
+  ];
   late String selected;
 
   @override
@@ -242,7 +252,6 @@ class _FilterSheetState extends State<_FilterSheet> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -269,18 +278,15 @@ class _FilterSheetState extends State<_FilterSheet> {
           ),
           const SizedBox(height: 8),
 
-          ...options.map((o) => _CheckRow(
-            label: o,
-            checked: selected == o,
-            onChanged: (_) => setState(() => selected = o),
-          )),
+          ...options.map(
+            (o) => _CheckRow(
+              label: o,
+              checked: selected == o,
+              onChanged: (_) => setState(() => selected = o),
+            ),
+          ),
           const SizedBox(height: 14),
-    CustomAppButton1(
-    text: "Apply", onPlusTap: () {
-
-    },
-    ),
-
+          CustomAppButton1(text: "Apply", onPlusTap: () {}),
         ],
       ),
     );
@@ -311,7 +317,9 @@ class _CheckRow extends StatelessWidget {
               value: checked,
               onChanged: (v) => onChanged(v ?? false),
               visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
               side: const BorderSide(color: Color(0xFF98A2B3), width: 1),
               activeColor: const Color(0xFF7F00FF),
               checkColor: Colors.white,
