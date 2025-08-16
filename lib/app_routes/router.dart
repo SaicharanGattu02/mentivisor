@@ -42,6 +42,8 @@ import '../Mentee/presentation/becomeMentor/BecomeMentorData.dart';
 import '../Mentee/presentation/becomeMentor/LanguageSelectionScreen.dart';
 import '../Mentee/presentation/becomeMentor/MentorReview.dart';
 import '../Mentee/presentation/studyzone/ResourceDetailScreen.dart';
+import '../Mentor/presentation/CoinHistoryScreen.dart';
+import '../Mentor/presentation/CouponCard.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
@@ -62,9 +64,21 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SplashScreen(), state);
+        return buildSlideTransitionPage(CouponsScreen(), state);
       },
     ),
+
+    GoRoute(
+      path: '/coinhistory',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(CoinHistoryScreen(), state),
+    ),
+    GoRoute(
+      path: '/coupons',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(CouponsScreen(), state),
+    ),
+
     GoRoute(
       path: '/login',
       pageBuilder: (context, state) =>

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
 import 'package:mentivisor/Mentee/Models/ExclusiveServicesModel.dart';
+import 'package:mentivisor/Mentee/Models/ExclusiveservicedetailsModel.dart';
 import 'package:mentivisor/Mentee/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 import 'package:mentivisor/Mentee/Models/WalletModel.dart';
@@ -83,6 +84,7 @@ abstract class RemoteDataSource {
   Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id);
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
   Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
+  Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
   Future<SuccessModel?> sessionBooking(
     int mentor_id,
@@ -721,6 +723,19 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return ExclusiveServicesModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('exclusive service::${e}');
+      return null;
+    }
+  }
+  @override
+  Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_Exclusive_services}/${id}",
+      );
+      AppLogger.log('get exclusive details::${res.data}');
+      return ExclusiveservicedetailsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('exclusive details::${e}');
       return null;
     }
   }
