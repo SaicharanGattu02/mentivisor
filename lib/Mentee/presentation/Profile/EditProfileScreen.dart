@@ -136,8 +136,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5FA),
-      appBar: CustomAppBar1(title: "Edit Profile", actions: []),
+      backgroundColor: Color(0xFFF2F4FD),
+      appBar: CustomAppBar1(
+        title: "Edit Profile",
+        actions: [],
+        color: Color(0xFFF2F4FD),
+      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -245,6 +249,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: BlocConsumer<MenteeProfileUpdateCubit, MenteeProfileUpdateState>(
           listener: (context, state) {
             if (state is MenteeProfileUpdateSuccess) {
+              context.read<MenteeProfileCubit>().fetchMenteeProfile();
               CustomSnackBar1.show(context, state.successModel.message ?? "");
               context.pop();
             } else if (state is MenteeProfileUpdateFailure) {
@@ -266,7 +271,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       "bio": _bioController.text.trim(),
                       "email": _emailController.text.trim(),
                       "phone": _phoneController.text.trim(),
-                      "profile_pic": _image?.path ?? imagePath,
+                      "image": _image?.path ?? imagePath,
                       "college_id": widget.collegeId,
                     };
                     context

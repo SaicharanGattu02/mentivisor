@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'color_constants.dart';
 
@@ -112,3 +113,46 @@ class InputDecorationUtils {
   }
 }
 
+String capitalize(String value) {
+  if (value.isEmpty) return "";
+  return value[0].toUpperCase() + value.substring(1).toLowerCase();
+}
+
+
+class DateHelper {
+
+  static String formatDateTime(String? rawTime) {
+    if (rawTime == null || rawTime.isEmpty) return "";
+    try {
+      final dateTime = DateTime.parse(rawTime);
+      return DateFormat('dd MMM yyyy • hh:mm a').format(dateTime);
+    } catch (e) {
+      return rawTime;
+    }
+  }
+
+
+  static String timeAgo(String? rawTime) {
+    if (rawTime == null || rawTime.isEmpty) return "";
+    try {
+      final dateTime = DateTime.parse(rawTime);
+      final Duration diff = DateTime.now().difference(dateTime);
+
+      if (diff.inSeconds < 60) {
+        return "just now";
+      } else if (diff.inMinutes < 60) {
+        return "${diff.inMinutes}m ago";
+      } else if (diff.inHours < 24) {
+        return "${diff.inHours}h ago";
+      } else if (diff.inDays == 1) {
+        return "yesterday";
+      } else if (diff.inDays < 7) {
+        return "${diff.inDays}d ago";
+      } else {
+        return DateFormat('dd MMM yyyy').format(dateTime);
+      }
+    } catch (e) {
+      return rawTime;
+    }
+  }
+}

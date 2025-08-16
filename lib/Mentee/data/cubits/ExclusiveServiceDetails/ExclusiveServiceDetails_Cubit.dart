@@ -8,7 +8,7 @@ class ExclusiveservicedetailsCubit extends Cubit<ExclusiveservicedetailsState> {
   ExclusiveservicedetailsCubit(this.exclusiveservicedetailsRepository)
     : super(ExclusiveservicedetailsStateIntially());
 
-  Future<void> getexclusivedetails(int id) async {
+  Future<void> exclusiveServiceDetails(int id) async {
     emit(ExclusiveservicedetailsStateLoading());
     try {
       final response = await exclusiveservicedetailsRepository

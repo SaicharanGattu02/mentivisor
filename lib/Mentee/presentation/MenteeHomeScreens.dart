@@ -9,10 +9,14 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
+import '../../utils/constants.dart';
+import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
 import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GetBanners/GetBannersState.dart';
+import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'Widgets/FilterButton.dart';
 
 class MenteeHomeScreen extends StatefulWidget {
@@ -23,6 +27,10 @@ class MenteeHomeScreen extends StatefulWidget {
 }
 
 class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
+  ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
+  ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
+  ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
   String selectedFilter = 'On Campuses';
@@ -31,6 +39,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     super.initState();
     context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
     context.read<Getbannerscubit>().getbanners();
+    context.read<MenteeProfileCubit>().fetchMenteeProfile();
   }
 
   void _navigateToScreen(String name) {
@@ -54,10 +63,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         break;
       case 'Customer Services':
         context.push('/customersscreen');
-        break;
-
-      case 'BecomeMentor':
-        context.push('/becomementorscreen');
         break;
 
       case 'Executive services':
@@ -267,39 +272,57 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       ),
                     ],
                   )
-                : Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.menu,
-                          color: Colors.black,
-                          size: 36,
-                        ),
-                        onPressed: () =>
-                            _scaffoldKey.currentState?.openDrawer(),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Hello!',
-                            style: TextStyle(
-                              color: Color(0xff666666),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                : BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
+                    builder: (context, state) {
+                      if (state is MenteeProfileLoaded) {
+                        final menteeProfile = state.menteeProfileModel.data;
+                        _mentorStatus.value =
+                            menteeProfile?.user?.mentorStatus ?? "none";
+                        _mentorProfileUrl.value =
+                            menteeProfile?.user?.profilePicUrl ?? "";
+                        _mentorProfileName.value =
+                            menteeProfile?.user?.name ?? "";
+                        return Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.menu,
+                                color: Colors.black,
+                                size: 36,
+                              ),
+                              onPressed: () =>
+                                  _scaffoldKey.currentState?.openDrawer(),
                             ),
-                          ),
-                          Text(
-                            'Guest',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hello!',
+                                  style: TextStyle(
+                                    color: Color(0xff666666),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  capitalize(
+                                    menteeProfile?.user?.name ?? "User",
+                                  ),
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        );
+                      } else if (state is MenteeProfileFailure) {
+                        return Center(child: Text(state.message));
+                      }
+                      return SizedBox.shrink();
+                    },
                   ),
 
             actions: [
@@ -345,24 +368,57 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                             onTap: () {
                               context.pop();
                               context.push("/profile");
-
                             },
                             child: Row(
                               children: [
-                                const CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: AssetImage(
-                                    'assets/images/profileimg.png',
-                                  ),
+                                ValueListenableBuilder<String?>(
+                                  valueListenable: _mentorProfileUrl,
+                                  builder: (context, url, _) {
+                                    return CachedNetworkImage(
+                                      imageUrl: url ?? "", // listen for updates
+                                      imageBuilder: (context, imageProvider) =>
+                                          CircleAvatar(
+                                            radius: 20,
+                                            backgroundImage: imageProvider,
+                                          ),
+                                      placeholder: (context, url) =>
+                                          CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor: Colors.grey,
+                                            child: SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: Center(
+                                                child: spinkits
+                                                    .getSpinningLinespinkit(),
+                                              ),
+                                            ),
+                                          ),
+                                      errorWidget: (context, url, error) =>
+                                          const CircleAvatar(
+                                            radius: 20,
+                                            backgroundImage: AssetImage(
+                                              "assets/images/profile.png",
+                                            ),
+                                          ),
+                                    );
+                                  },
                                 ),
                                 const SizedBox(width: 12),
-                                const Text(
-                                  'Profile',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
+                                ValueListenableBuilder<String?>(
+                                  valueListenable: _mentorProfileName,
+                                  builder: (context, name, _) {
+                                    return Text(
+                                      capitalize(name ?? 'Profile'),
+
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xff4B5462),
+                                        fontFamily: "segeo",
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -442,31 +498,50 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         onTap: () => _navigateToScreen('Executive services'),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 16,
-                      ),
-                      decoration: BoxDecoration(gradient: kCommonGradient),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(0),
-                        visualDensity: VisualDensity.compact,
-                        leading: Image.asset(
-                          "assets/icons/mentor.png",
-                          width: 24,
-                          height: 24,
-                        ),
-                        title: Text(
-                          "Become Mentor",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () => _navigateToScreen('BecomeMentor'),
-                      ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _mentorStatus,
+                      builder: (context, status, _) {
+                        if (status != "approval") {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: kCommonGradient,
+                            ),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              visualDensity: VisualDensity.compact,
+                              leading: Image.asset(
+                                "assets/icons/mentor.png",
+                                width: 24,
+                                height: 24,
+                              ),
+                              title: const Text(
+                                "Become Mentor",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              onTap: () {
+                                if (status == "") {
+                                  context.push('/becomementorscreen');
+                                } else if (status == "inreview") {
+                                  context.push('/in_review');
+                                } else if (status == "rejected") {
+                                  context.push('/profile_rejected');
+                                }
+                              },
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
+
                     SizedBox(height: 20),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -606,8 +681,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   Expanded(
                                     child: FilterButton(
                                       text: 'On Campus',
-                                      isSelected:
-                                          selectedFilter == 'On Campus',
+                                      isSelected: selectedFilter == 'On Campus',
                                       onPressed: () {
                                         context
                                             .read<CampusMentorListCubit>()

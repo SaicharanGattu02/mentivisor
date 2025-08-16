@@ -7,14 +7,17 @@ import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_state.dart';
 
+import '../../utils/color_constants.dart';
+
 class ExclusiveServices extends StatefulWidget {
   @override
   State<ExclusiveServices> createState() => _ExclusiveServicesScreenState();
 }
 
 class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
-  final _searchCtrl = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -25,22 +28,8 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   @override
   void dispose() {
     _debounce?.cancel();
-    _searchCtrl.dispose();
+    searchController.dispose();
     super.dispose();
-  }
-
-  void _onSearchChanged(String q) {
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 350), () {
-      context.read<ExclusiveservicelistCubit>().getExclusiveServiceList(q.trim());
-    });
-    setState(() {}); // just to refresh the clear icon visibility
-  }
-
-  void _clearSearch() {
-    _searchCtrl.clear();
-    context.read<ExclusiveservicelistCubit>().getExclusiveServiceList("");
-    setState(() {});
   }
 
   @override
@@ -49,6 +38,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
       backgroundColor: const Color(0xFFF4F5FA),
       appBar: CustomAppBar1(title: "Exclusive Services", actions: const []),
       body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -56,129 +46,119 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
             colors: [Color(0xFFF6F8FF), Color(0xFFF4F5FA)],
           ),
         ),
-        child: BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
-          builder: (context, state) {
-            if (state is ExclusiveserviceStateLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is ExclusiveserviceStateFailure) {
-              return Center(child: Text(state.msg ?? 'Failed to load'));
-            }
-            if (state is! ExclusiveserviceStateLoaded) {
-              return const Center(child: Text('No data available'));
-            }
-
-            final list = state.exclusiveServicesModel.data?.data ?? [];
-            return CustomScrollView(
-              slivers: [
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
-                    child: Center(
-                      child: Text(
-                        "To Post your Services mail to rohit@gmail.com",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 12,
-                          color: Color(0xFF7B7F8C),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 48,
+              child: TextField(
+                controller: searchController,
+                cursorColor: primarycolor,
+                onChanged: (query) {
+                  if (_debounce?.isActive ?? false) _debounce!.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 300), () {
+                    context
+                        .read<ExclusiveservicelistCubit>()
+                        .getExclusiveServiceList(query);
+                  });
+                },
+                style: TextStyle(fontFamily: "Poppins", fontSize: 15),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide.none, // removes default border line
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide.none,
+                  ),
+                  hoverColor: Colors.white,
+                  hintText: "Search by Name",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Color(0xff666666),
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: const EdgeInsets.only(right: 33, left: 20),
                 ),
 
-                // WORKING search field (kept identical styling)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF0E1240).withOpacity(0.10),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: _searchCtrl,
-                        onChanged: _onSearchChanged,
-                        onSubmitted: (v) => context
-                            .read<ExclusiveservicelistCubit>()
-                            .getExclusiveServiceList(v.trim()),
-                        cursorColor: const Color(0xFF222222),
-                        style: const TextStyle(fontFamily: 'segeo', fontSize: 14),
-                        decoration: InputDecoration(
-                          prefixIcon:
-                          const Icon(Icons.search, color: Color(0xFF9AA0A6)),
-                          hintText: 'Search by Name Here',
-                          hintStyle: const TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 14,
-                            color: Color(0xFF9AA0A6),
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.only(top: 12),
-                          // optional clear button (not in mock, but handy)
-                          suffixIcon: _searchCtrl.text.isEmpty
-                              ? null
-                              : IconButton(
-                            onPressed: _clearSearch,
-                            icon: const Icon(Icons.clear, color: Color(0xFF9AA0A6)),
-                            splashRadius: 18,
+              ),
+            ),
+            BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
+              builder: (context, state) {
+                if (state is ExclusiveserviceStateLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is ExclusiveserviceStateFailure) {
+                  return Center(child: Text(state.msg ?? 'Failed to load'));
+                } else if (state is! ExclusiveserviceStateLoaded) {
+                  return const Center(child: Text('No data available'));
+                } else {
+                  final list = state.exclusiveServicesModel.data?.data ?? [];
+                  return Expanded(
+                    child: CustomScrollView(
+                      slivers: [
+                        const SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
+                        if (list.isEmpty)
+                          const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 48),
+                              child: Center(
+                                child: Text('No exclusive services found'),
+                              ),
+                            ),
+                          )
+                        else
+                          SliverPadding(
+                            padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                            sliver: SliverList.separated(
+                              itemCount: list.length,
+                              separatorBuilder: (_, __) =>
+                              const SizedBox(height: 16),
+                              itemBuilder: (context, index) {
+                                final serviceList = list[index];
+                                return _ServiceCard(
+                                  imageUrl: serviceList.imageUrl ?? '',
+                                  authorName: serviceList.name ?? '',
+                                  title: serviceList.name ?? '',
+                                  description: serviceList.description ?? '',
+                                  onTap: () {
+                                    context.push(
+                                      '/service_details?id=${serviceList.id}',
+                                    ); // pass whole model (optional)
+                                  },
+                                );
+                              },
+                            ),
+                          ),
 
-                if (list.isEmpty)
-                  const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 48),
-                      child: Center(child: Text('No exclusive services found')),
+                        if (state is ExclusiveserviceStateLoadingMore)
+                          const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.all(24.0),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.6,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  )
-                else
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                    sliver: SliverList.separated(
-                      itemCount: list.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 16),
-                      itemBuilder: (context, index) {
-                        final s = list[index];
-                        return _ServiceCard(
-                          imageUrl: s.imageUrl ?? '',
-                          authorName: s.name ?? 'Suraj',
-                          title: s.name ?? 'A Travel Tricking',
-                          description: s.description ?? '',
-                          onTap: () {
-                            context.push('/executiveinfoservices${s.id}', extra: s); // pass whole model (optional)
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                  );
+                }
+              },
+            ),
 
-                if (state is ExclusiveserviceStateLoadingMore)
-                  const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(24.0),
-                      child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 1.6),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
+          ],
         ),
       ),
     );
@@ -229,19 +209,26 @@ class _ServiceCard extends StatelessWidget {
                     width: double.infinity,
                     child: imageUrl.isNotEmpty
                         ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (c, _) => const Center(
-                        child: SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(strokeWidth: 1.8),
-                        ),
-                      ),
-                      errorWidget: (c, _, __) =>
-                      const Icon(Icons.broken_image_outlined, color: Colors.grey),
-                    )
-                        : const Icon(Icons.broken_image_outlined, color: Colors.grey),
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (c, _) => const Center(
+                              child: SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.8,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (c, _, __) => const Icon(
+                              Icons.broken_image_outlined,
+                              color: Colors.grey,
+                            ),
+                          )
+                        : const Icon(
+                            Icons.broken_image_outlined,
+                            color: Colors.grey,
+                          ),
                   ),
                 ),
               ),

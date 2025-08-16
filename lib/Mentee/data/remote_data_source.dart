@@ -617,12 +617,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<SuccessModel?> menteeProfileUpdate(
     final Map<String, dynamic> data,
   ) async {
-    final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.put(
         APIEndpointUrls.mentee_profile_update,
-        data: formData,
-        options: Options(contentType: Headers.formUrlEncodedContentType),
+        data: data,
       );
       AppLogger.log('Mentee Profile Update ::${res.data}');
       return SuccessModel.fromJson(res.data);

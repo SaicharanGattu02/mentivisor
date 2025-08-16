@@ -42,16 +42,17 @@ class _ProfileScreen1State extends State<ProfileScreen> {
       appBar: CustomAppBar1(
         title: "Profile",
         actions: [],
-        color: Color(0xffF2F4FD),
+        color: Color(0xFFF2F4FD),
       ),
-      body: Background1( gradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color(0xFFF9F5FF),
-          Color(0xFFF2F4FD),
-        ],
-      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Color(0xFFFAF5FF), Color(0xFFF2F4FD)],
+            stops: [0.0, 1.0],
+          ),
+        ),
         child: BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
           builder: (context, state) {
             if (state is MenteeProfileLoading) {
@@ -64,43 +65,65 @@ class _ProfileScreen1State extends State<ProfileScreen> {
               return Column(
                 children: [
                   SizedBox(height: 20),
-                  CachedNetworkImage(
-                    imageUrl: menteeProfile?.user?.profilePicUrl ?? "",
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) => Container(
-                      width: 100,
-                      height: 100,
+                  Center(
+                    child: Stack(
                       alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey,
-                      ),
-                      child: Center(child: spinkits.getSpinningLinespinkit()),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      width: 100,
-                      height: 100,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage("assets/images/profile.png"),
-                          fit: BoxFit.cover,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: menteeProfile?.user?.profilePicUrl ?? "",
+                          imageBuilder: (context, imageProvider) => Container(
+                            padding: EdgeInsets.all(12),
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => Container(
+                            width: 120,
+                            height: 120,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(shape: BoxShape.circle),
+                            child: Center(
+                              child: spinkits.getSpinningLinespinkit(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            width: 120,
+                            height: 120,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/profile.png"),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+
+                        if (menteeProfile?.user?.mentorStatus ==
+                            "approval") ...[
+                          Positioned(
+                            right: -0,
+                            bottom: 0,
+                            child: Image.asset(
+                              'assets/images/become_mentor_medol.png',
+                              width: 32,
+                              height: 32,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
+
                   SizedBox(height: 8),
-        
+
                   Text(
                     menteeProfile?.user?.name ?? "UnKnown",
                     style: TextStyle(
@@ -121,9 +144,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-        
+
                   SizedBox(height: 12),
-        
+
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
@@ -137,7 +160,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-        
+
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -194,6 +217,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                         ),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide.none,
+                          backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -205,9 +229,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-        
+
                   const SizedBox(height: 16),
-        
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ValueListenableBuilder<bool>(
@@ -236,11 +260,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                     "Post",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w400,
                                       fontFamily: 'segeo',
-                                      color: value
-                                          ? const Color(0xff4A7CF6)
-                                          : const Color(0xff444444),
+                                      color: Color(0xff444444),
                                     ),
                                   ),
                                 ),
@@ -257,7 +279,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                     border: Border(
                                       bottom: BorderSide(
                                         color: !value
-                                            ? Theme.of(context).primaryColor
+                                            ? primarycolor
                                             : Colors.transparent,
                                         width: 2,
                                       ),
@@ -267,11 +289,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                     "Resources",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w400,
                                       fontFamily: 'segeo',
-                                      color: !value
-                                          ? const Color(0xff4A7CF6)
-                                          : const Color(0xff444444),
+                                      color: Color(0xff444444),
                                     ),
                                   ),
                                 ),
@@ -282,7 +302,6 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       },
                     ),
                   ),
-        
                   Expanded(
                     child: ValueListenableBuilder<bool>(
                       valueListenable: isPost,
@@ -301,11 +320,18 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                           ?.user
                                           ?.communityPost?[index];
                                       return Container(
-                                        margin: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
+                                        ),
+                                        margin: EdgeInsets.symmetric(
                                           horizontal: 16,
+                                          vertical: 10,
                                         ),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                           color: Colors.white,
                                         ),
                                         child: Column(
@@ -313,9 +339,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             ClipRRect(
-                                              borderRadius: BorderRadius.circular(
-                                                8,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               child: CachedNetworkImage(
                                                 height: 160,
                                                 imageUrl:
@@ -326,19 +351,18 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                     spinkits
                                                         .getSpinningLinespinkit(),
                                                 errorWidget:
-                                                    (
-                                                      context,
-                                                      url,
-                                                      error,
-                                                    ) => Container(
-                                                      height: 160,
-                                                      color: Colors.grey.shade100,
-                                                      child: const Icon(
-                                                        Icons.broken_image,
-                                                        size: 40,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
+                                                    (context, url, error) =>
+                                                        Container(
+                                                          height: 160,
+                                                          color: Colors
+                                                              .grey
+                                                              .shade100,
+                                                          child: const Icon(
+                                                            Icons.broken_image,
+                                                            size: 40,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
                                               ),
                                             ),
                                             Padding(
@@ -351,7 +375,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                     children: [
                                                       CachedNetworkImage(
                                                         imageUrl:
-                                                            menteePosts?.image ??
+                                                            menteePosts
+                                                                ?.image ??
                                                             "",
                                                         imageBuilder:
                                                             (
@@ -390,17 +415,17 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                   ),
                                                             ),
                                                       ),
-        
+
                                                       SizedBox(width: 8),
-                                                      Text(
-                                                        "",
-                                                        style: TextStyle(
-                                                          fontFamily: 'Segoe',
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
+                                                      // Text(
+                                                      //   menteePosts?. ?? "",
+                                                      //   style: TextStyle(
+                                                      //     fontFamily: 'Segoe',
+                                                      //     fontWeight:
+                                                      //         FontWeight.w600,
+                                                      //     fontSize: 14,
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
                                                   const SizedBox(height: 4),
@@ -408,7 +433,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                     menteePosts?.heading ?? "",
                                                     style: TextStyle(
                                                       fontFamily: 'Segoe',
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 16,
                                                       color: Color(0xFF222222),
                                                     ),
@@ -422,7 +448,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                       fontFamily: 'Segoe',
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       fontSize: 14,
                                                       color: Color(0xFF666666),
                                                     ),
@@ -453,9 +480,15 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       Row(
                                                         children: [
                                                           IconButton(
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            visualDensity:
+                                                                VisualDensity
+                                                                    .compact,
                                                             onPressed: () {
                                                               showModalBottomSheet(
-                                                                context: context,
+                                                                context:
+                                                                    context,
                                                                 isScrollControlled:
                                                                     true,
                                                                 useRootNavigator:
@@ -471,7 +504,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                         0.4,
                                                                     maxChildSize:
                                                                         0.95,
-                                                                    expand: false,
+                                                                    expand:
+                                                                        false,
                                                                     builder:
                                                                         (
                                                                           _,
@@ -496,17 +530,27 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                             comments:
                                                                                 (menteePosts?.comments ??
                                                                                         [])
-                                                                                    .cast<
-                                                                                      Map<
-                                                                                        String,
-                                                                                        dynamic
-                                                                                      >
-                                                                                    >(),
-                                                                            postId:
-                                                                                menteePosts?.id ??
-                                                                                0,
+                                                                                    .map(
+                                                                                      (
+                                                                                        comments,
+                                                                                      ) => {
+                                                                                        "name":
+                                                                                            comments.user?.name ??
+                                                                                            "Unknown",
+                                                                                        "profile":
+                                                                                            comments.user?.profilePicUrl ??
+                                                                                            "assets/images/profile.png",
+                                                                                        "comment":
+                                                                                            comments.content ??
+                                                                                            "",
+                                                                                        "time":
+                                                                                            comments.createdAt ??
+                                                                                            "",
+                                                                                      },
+                                                                                    )
+                                                                                    .toList(),
                                                                             scrollController:
-                                                                                scrollController, // pass it down
+                                                                                scrollController,
                                                                           ),
                                                                         ),
                                                                   );
@@ -522,7 +566,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           SizedBox(width: 6),
                                                           Text(
                                                             menteePosts
-                                                                    ?.feedbackCount
+                                                                    ?.messageCount
                                                                     .toString() ??
                                                                 "0",
                                                             style: TextStyle(
@@ -530,7 +574,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                 0xff666666,
                                                               ),
                                                               fontWeight:
-                                                                  FontWeight.w400,
+                                                                  FontWeight
+                                                                      .w400,
                                                               fontSize: 14,
                                                             ),
                                                           ),
@@ -572,49 +617,60 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                           right: 16,
                                         ),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(24),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
                                           color: Colors.white,
                                         ),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(
-                                                4,
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 16,
+                                                horizontal: 12,
                                               ),
-                                              child: CachedNetworkImage(
-                                                width:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.width *
-                                                    0.3,
-                                                height: 144,
-                                                imageUrl: campusList?.image ?? "",
-                                                fit: BoxFit.cover,
-                                                placeholder: (context, url) =>
-                                                    SizedBox(
-                                                      width: 120,
-                                                      height: 120,
-                                                      child: Center(
-                                                        child: spinkits
-                                                            .getSpinningLinespinkit(),
-                                                      ),
-                                                    ),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Container(
-                                                          width: 120,
-                                                          height: 120,
-                                                          color: const Color(
-                                                            0xffF8FAFE,
-                                                          ),
-                                                          child: const Icon(
-                                                            Icons.broken_image,
-                                                            size: 40,
-                                                            color: Colors.grey,
-                                                          ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                                child: CachedNetworkImage(
+                                                  width:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.3,
+                                                  height: 144,
+                                                  imageUrl:
+                                                      campusList?.image ?? "",
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      SizedBox(
+                                                        width: 120,
+                                                        height: 120,
+                                                        child: Center(
+                                                          child: spinkits
+                                                              .getSpinningLinespinkit(),
                                                         ),
+                                                      ),
+                                                  errorWidget:
+                                                      (
+                                                        context,
+                                                        url,
+                                                        error,
+                                                      ) => Container(
+                                                        width: 120,
+                                                        height: 120,
+                                                        color: const Color(
+                                                          0xffF8FAFE,
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.broken_image,
+                                                          size: 40,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                ),
                                               ),
                                             ),
                                             Expanded(
@@ -650,7 +706,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 12),
-        
+
                                                     if (campusList
                                                             ?.tag
                                                             ?.isNotEmpty ??
@@ -664,27 +720,29 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           return Container(
                                                             padding:
                                                                 const EdgeInsets.symmetric(
-                                                                  horizontal: 12,
+                                                                  horizontal:
+                                                                      12,
                                                                   vertical: 6,
                                                                 ),
-                                                            decoration: BoxDecoration(
-                                                              color: Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    20,
-                                                                  ),
-                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        20,
+                                                                      ),
+                                                                ),
                                                             child: Text(
                                                               tag,
-                                                              style:
-                                                                  const TextStyle(
-                                                                    fontFamily:
-                                                                        'segeo',
-                                                                    fontSize: 12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                  ),
+                                                              style: const TextStyle(
+                                                                fontFamily:
+                                                                    'segeo',
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
                                                             ),
                                                           );
                                                         }).toList(),
@@ -702,15 +760,20 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                 onTap: () {},
                                                               ),
                                                         ),
-                                                        const SizedBox(width: 10),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
                                                         Expanded(
-                                                          child: CustomAppButton1(
-                                                            width: 110,
-                                                            height: 38,
-                                                            radius: 24,
-                                                            text: "Download",
-                                                            onPlusTap: () {},
-                                                          ),
+                                                          child:
+                                                              CustomAppButton1(
+                                                                width: 110,
+                                                                height: 38,
+                                                                radius: 24,
+                                                                text:
+                                                                    "Download",
+                                                                onPlusTap:
+                                                                    () {},
+                                                              ),
                                                         ),
                                                       ],
                                                     ),

@@ -41,6 +41,8 @@ import '../Mentee/presentation/authentication/profieSetup/AcadamicJourneyScreen.
 import '../Mentee/presentation/becomeMentor/BecomeMentorData.dart';
 import '../Mentee/presentation/becomeMentor/LanguageSelectionScreen.dart';
 import '../Mentee/presentation/becomeMentor/MentorReview.dart';
+import '../Mentee/presentation/becomeMentor/ProfileInReview.dart';
+import '../Mentee/presentation/becomeMentor/ProfileRejected.dart';
 import '../Mentee/presentation/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/presentation/CoinHistoryScreen.dart';
 import '../Mentor/presentation/CouponCard.dart';
@@ -222,6 +224,16 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(Selecterscreen(), state),
     ),
     GoRoute(
+      path: '/in_review',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(InReview(), state),
+    ),
+    GoRoute(
+      path: '/profile_rejected',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ProfileRejected(), state),
+    ),
+    GoRoute(
       path: '/edit_profile',
       pageBuilder: (context, state) {
         final collegeId =
@@ -287,9 +299,12 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/executiveinfoservices',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ExclusiveInfoServices(), state),
+      path: '/service_details',
+      pageBuilder: (context, state) {
+        final idString = state.uri.queryParameters['id'];
+        final id = int.tryParse(idString ?? '') ?? 0;
+        return buildSlideTransitionPage(ExclusiveServiceDetails(id: id), state);
+      },
     ),
 
     GoRoute(
