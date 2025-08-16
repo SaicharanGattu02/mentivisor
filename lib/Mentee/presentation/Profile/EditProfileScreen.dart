@@ -244,44 +244,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
             ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: BlocConsumer<MenteeProfileUpdateCubit, MenteeProfileUpdateState>(
-          listener: (context, state) {
-            if (state is MenteeProfileUpdateSuccess) {
-              context.read<MenteeProfileCubit>().fetchMenteeProfile();
-              CustomSnackBar1.show(context, state.successModel.message ?? "");
-              context.pop();
-            } else if (state is MenteeProfileUpdateFailure) {
-              CustomSnackBar1.show(context, state.message ?? "");
-            }
-          },
-          builder: (context, state) {
-            final isLoading = state is MenteeProfileUpdateLoading;
-            return SizedBox(
-              width: double.infinity,
-              child: CustomAppButton1(
-                text: isLoading ? "Updating..." : "Submit",
-                onPlusTap: () {
-                  if (_formKey.currentState!.validate() && !isLoading) {
-                    final data = {
-                      "name": _nameController.text.trim(),
-                      "year": _yearController.text.trim(),
-                      "stream": _streamController.text.trim(),
-                      "bio": _bioController.text.trim(),
-                      "email": _emailController.text.trim(),
-                      "phone": _phoneController.text.trim(),
-                      "image": _image?.path ?? imagePath,
-                      "college_id": widget.collegeId,
-                    };
-                    context
-                        .read<MenteeProfileUpdateCubit>()
-                        .updateMenteeProfile(data);
-                  }
-                },
-              ),
-            );
-          },
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: BlocConsumer<MenteeProfileUpdateCubit, MenteeProfileUpdateState>(
+            listener: (context, state) {
+              if (state is MenteeProfileUpdateSuccess) {
+                context.read<MenteeProfileCubit>().fetchMenteeProfile();
+                CustomSnackBar1.show(context, state.successModel.message ?? "");
+                context.pop();
+              } else if (state is MenteeProfileUpdateFailure) {
+                CustomSnackBar1.show(context, state.message ?? "");
+              }
+            },
+            builder: (context, state) {
+              final isLoading = state is MenteeProfileUpdateLoading;
+              return SizedBox(
+                width: double.infinity,
+                child: CustomAppButton1(
+                  text: isLoading ? "Updating..." : "Submit",
+                  onPlusTap: () {
+                    if (_formKey.currentState!.validate() && !isLoading) {
+                      final data = {
+                        "name": _nameController.text.trim(),
+                        "year": _yearController.text.trim(),
+                        "stream": _streamController.text.trim(),
+                        "bio": _bioController.text.trim(),
+                        "email": _emailController.text.trim(),
+                        "phone": _phoneController.text.trim(),
+                        "image": _image?.path ?? imagePath,
+                        "college_id": widget.collegeId,
+                      };
+                      context
+                          .read<MenteeProfileUpdateCubit>()
+                          .updateMenteeProfile(data);
+                    }
+                  },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

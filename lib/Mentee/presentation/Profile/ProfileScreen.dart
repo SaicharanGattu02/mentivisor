@@ -5,14 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
-import 'package:mentivisor/Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
+
 import 'package:mentivisor/utils/color_constants.dart';
 
 import '../../../Components/CustomAppButton.dart';
-import '../../../utils/media_query_helper.dart';
+
 import '../../../utils/spinkittsLoader.dart';
 import '../Widgets/CommentBottomSheet.dart';
-import '../Widgets/CommonBackground.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -38,6 +37,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: CustomAppBar1(
         title: "Profile",
@@ -229,9 +229,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ValueListenableBuilder<bool>(
@@ -302,6 +300,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: ValueListenableBuilder<bool>(
                       valueListenable: isPost,
@@ -625,11 +624,14 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 16,
-                                                horizontal: 12,
+                                              padding: EdgeInsets.only(
+                                                left: 10,
+                                                top: 16,
+                                                bottom: 16,
                                               ),
                                               child: ClipRRect(
                                                 borderRadius:
@@ -639,8 +641,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       MediaQuery.of(
                                                         context,
                                                       ).size.width *
-                                                      0.3,
-                                                  height: 144,
+                                                      0.25,
+                                                  height: 130,
                                                   imageUrl:
                                                       campusList?.image ?? "",
                                                   fit: BoxFit.cover,
@@ -676,7 +678,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                             Expanded(
                                               child: Padding(
                                                 padding: const EdgeInsets.all(
-                                                  10.0,
+                                                  8.0,
                                                 ),
                                                 child: Column(
                                                   crossAxisAlignment:
@@ -705,8 +707,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                         height: 1,
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 12),
-
+                                                    SizedBox(height: 12),
                                                     if (campusList
                                                             ?.tag
                                                             ?.isNotEmpty ??
@@ -719,7 +720,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                         ) {
                                                           return Container(
                                                             padding:
-                                                                const EdgeInsets.symmetric(
+                                                                EdgeInsets.symmetric(
                                                                   horizontal:
                                                                       12,
                                                                   vertical: 6,
@@ -747,33 +748,28 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           );
                                                         }).toList(),
                                                       ),
-                                                    const SizedBox(height: 16),
+                                                    SizedBox(height: 16),
                                                     Row(
+                                                      spacing: 3,
                                                       children: [
                                                         Expanded(
-                                                          child:
-                                                              CustomOutlinedButton(
-                                                                height: 38,
-                                                                width: 110,
-                                                                radius: 24,
-                                                                text: "View",
-                                                                onTap: () {},
-                                                              ),
+                                                          child: CustomOutlinedButton(
+                                                            radius: 24,
+                                                            height: 38,
+                                                            // width: width*0.15,
+                                                            text: "View",
+                                                            onTap: () {},
+                                                          ),
                                                         ),
-                                                        const SizedBox(
-                                                          width: 10,
-                                                        ),
+
                                                         Expanded(
-                                                          child:
-                                                              CustomAppButton1(
-                                                                width: 110,
-                                                                height: 38,
-                                                                radius: 24,
-                                                                text:
-                                                                    "Download",
-                                                                onPlusTap:
-                                                                    () {},
-                                                              ),
+                                                          child: CustomAppButton1(
+                                                            radius: 24,
+                                                            height: 38,
+                                                            // width: width*0.15,
+                                                            text: "Download",
+                                                            onPlusTap: () {},
+                                                          ),
                                                         ),
                                                       ],
                                                     ),

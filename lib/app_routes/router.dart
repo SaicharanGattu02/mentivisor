@@ -304,8 +304,13 @@ final GoRouter appRouter = GoRouter(
       path: '/service_details',
       pageBuilder: (context, state) {
         final idString = state.uri.queryParameters['id'];
+        final title = state.uri.queryParameters['title'] ?? "";
         final id = int.tryParse(idString ?? '') ?? 0;
-        return buildSlideTransitionPage(ExclusiveServiceDetails(id: id), state);
+
+        return buildSlideTransitionPage(
+          ExclusiveServiceDetails(id: id, title: title),
+          state,
+        );
       },
     ),
 

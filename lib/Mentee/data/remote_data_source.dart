@@ -738,7 +738,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.get_Exclusive_services}/${id}",
+        "${APIEndpointUrls.get_Exclusive_services_details}/${id}",
       );
       AppLogger.log('get exclusive details::${res.data}');
       return ExclusiveservicedetailsModel.fromJson(res.data);

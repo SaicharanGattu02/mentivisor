@@ -86,13 +86,12 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                   filled: true,
                   contentPadding: const EdgeInsets.only(right: 33, left: 20),
                 ),
-
               ),
             ),
             BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
               builder: (context, state) {
                 if (state is ExclusiveserviceStateLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 } else if (state is ExclusiveserviceStateFailure) {
                   return Center(child: Text(state.msg ?? 'Failed to load'));
                 } else if (state is! ExclusiveserviceStateLoaded) {
@@ -122,7 +121,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                             sliver: SliverList.separated(
                               itemCount: list.length,
                               separatorBuilder: (_, __) =>
-                              const SizedBox(height: 16),
+                                  const SizedBox(height: 16),
                               itemBuilder: (context, index) {
                                 final serviceList = list[index];
                                 return _ServiceCard(
@@ -132,7 +131,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                                   description: serviceList.description ?? '',
                                   onTap: () {
                                     context.push(
-                                      '/service_details?id=${serviceList.id}',
+                                      '/service_details?id=${serviceList.id}&title=${serviceList.name ?? ''}',
                                     ); // pass whole model (optional)
                                   },
                                 );
@@ -157,7 +156,6 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                 }
               },
             ),
-
           ],
         ),
       ),
