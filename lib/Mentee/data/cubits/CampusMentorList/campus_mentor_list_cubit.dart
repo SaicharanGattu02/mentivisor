@@ -5,14 +5,14 @@ import 'campus_mentor_list_state.dart';
 class CampusMentorListCubit extends Cubit<CampusMentorListState> {
   final CampusMentorListRepository campusMentorListRepository;
 
-  CampusMentorListCubit(this.campusMentorListRepository)
-    : super(CampusMentorListStateInitial());
+  CampusMentorListCubit(this.campusMentorListRepository) : super(CampusMentorListStateInitial());
 
-  Future<void> fetchCampusMentorList(String scope, String search,) async {
+  Future<void> fetchCampusMentorList(String scope, String search) async {
     emit(CampusMentorListStateLoading());
     try {
       final result = await campusMentorListRepository.getCampusMentorList(
-     scope,search
+        scope,
+        search,
       );
       if (result != null && result.status == true) {
         emit(CampusMentorListStateLoaded(campusMentorListModel: result));

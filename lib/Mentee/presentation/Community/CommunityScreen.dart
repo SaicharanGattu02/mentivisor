@@ -42,7 +42,7 @@ class _CommunityScreenState extends State<Communityscreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -173,14 +173,15 @@ class _CommunityScreenState extends State<Communityscreen> {
                           shadowColor: Colors.transparent,
                           surfaceTintColor: Colors.transparent,
                         ),
-                        icon: Container(padding: EdgeInsets.symmetric(),
+                        icon: Container(
+                          padding: EdgeInsets.symmetric(),
                           width: 20,
                           height: 20,
-                          decoration: BoxDecoration(color: Color(0xff9B40EF),borderRadius: BorderRadius.circular(4)),
-                          child: Icon(
-                            Icons.add,size: 16,
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: Color(0xff9B40EF),
+                            borderRadius: BorderRadius.circular(4),
                           ),
+                          child: Icon(Icons.add, size: 16, color: Colors.white),
                         ),
                         label: const Text(
                           'Add',

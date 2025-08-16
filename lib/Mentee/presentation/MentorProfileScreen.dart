@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Mentee/Models/MenteeProfileModel.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 
 import '../data/cubits/MentorProfile/MentorProfileCubit.dart';
 import '../data/cubits/MentorProfile/MentorProfileState.dart';
@@ -181,26 +183,26 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8),
-                            Wrap(
-                              runSpacing: 10,
-                              spacing: 8,
-                              children: (mentorData?.todaySlots ?? [] ?? [])
-                                  .map((slot) => _buildTimeSlot(slot))
-                                  .toList(), // Today's slots from data
-                            ),
+                            // Wrap(
+                            //   runSpacing: 10,
+                            //   spacing: 8,
+                            //   children: (mentorData?.todaySlots ?? [] ?? [])
+                            //       .map((slot) => _buildTimeSlot(slot))
+                            //       .toList(), // Today's slots from data
+                            // ),
                             SizedBox(height: 16),
                             Text(
                               'Tomorrow',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8),
-                            Wrap(
-                              runSpacing: 10,
-                              spacing: 8,
-                              children: (mentorData?.tomorrowSlots ?? [])
-                                  .map((slot) => _buildTimeSlot1(slot))
-                                  .toList(), // Tomorrow's slots from data
-                            ),
+                            // Wrap(
+                            //   runSpacing: 10,
+                            //   spacing: 8,
+                            //   children: (mentorData?.tomorrowSlots ?? [])
+                            //       .map((slot) => _buildTimeSlot1(slot))
+                            //       .toList(), // Tomorrow's slots from data
+                            // ),
                             // SizedBox(height: 8),
                             // Text(
                             //   '${mentorData.other_slots_count ?? 0} more slots this week',
@@ -236,19 +238,31 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           return SizedBox.shrink();
         },
       ),
-
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: SizedBox(
-            width: double.infinity,
-            child: CustomAppButton1(
-              text: 'Book Session',
-              onPlusTap: () {
-                context.push("/book_sessions_screen");
-                // Your action here
-              },
-            ),
+          child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
+            builder: (context, state) {
+              final mentorData = (state is MentorProfileLoaded)
+                  ? state.mentorProfileModel.data
+                  : null;
+
+              return SizedBox(
+                width: double.infinity,
+                child: CustomAppButton1(
+                  text: 'Book Session',
+                  onPlusTap: mentorData == null
+                      ? null // disable until loaded
+                      : () {
+                          context.push(
+                            '/book_sessions_screen',
+                            extra:
+                                mentorData, // << pass the exact object you have
+                          );
+                        },
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -315,16 +329,16 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     );
   }
 
-  Widget _buildTimeSlot(String time) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Color(0xFFdcfce7),
-        borderRadius: BorderRadius.circular(36),
-      ),
-      child: Text(time, style: TextStyle(color: Color(0xFF15803d))),
-    );
-  }
+  // Widget _buildTimeSlot(String time) {
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //     decoration: BoxDecoration(
+  //       color: Color(0xFFdcfce7),
+  //       borderRadius: BorderRadius.circular(36),
+  //     ),
+  //     child: Text(time, style: TextStyle(color: Color(0xFF15803d))),
+  //   );
+  // }
 
   Widget _buildTimeSlot1(String time) {
     return Container(

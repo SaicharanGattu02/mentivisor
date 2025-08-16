@@ -8,7 +8,6 @@ class CampusMentorListStateLoading extends CampusMentorListState {}
 
 class CampusMentorListStateLoaded extends CampusMentorListState {
   final CompusMentorListModel campusMentorListModel;
-
   CampusMentorListStateLoaded({required this.campusMentorListModel});
 }
 

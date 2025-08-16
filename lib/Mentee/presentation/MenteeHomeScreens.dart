@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
-import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
@@ -15,9 +14,12 @@ import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
 import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GetBanners/GetBannersState.dart';
+import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
+import '../data/cubits/GuestMentors/guest_mentors_states.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'Widgets/FilterButton.dart';
+import 'Widgets/MentorGridGuest.dart';
 
 class MenteeHomeScreen extends StatefulWidget {
   const MenteeHomeScreen({Key? key}) : super(key: key);
@@ -33,14 +35,29 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
-  String selectedFilter = 'On Campuses';
+  String selectedFilter = 'On Campus';
+
   @override
   void initState() {
     super.initState();
-    context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
     context.read<Getbannerscubit>().getbanners();
     context.read<MenteeProfileCubit>().fetchMenteeProfile();
+    getDetails();
   }
+
+  Future<void> getDetails() async {
+    final isGuest = await AuthService.isGuest;
+    if (isGuest) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<GuestMentorsCubit>().fetchGuestMentorList();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
+      });
+    }
+  }
+
 
   void _navigateToScreen(String name) {
     switch (name) {
@@ -91,141 +108,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
-  }
-
-  void showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          elevation: 4.0,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 14.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: SizedBox(
-            width: 300.0,
-            height: 230.0,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // Power Icon Positioned Above Dialog
-                Positioned(
-                  top: -35.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: Container(
-                    width: 70.0,
-                    height: 70.0,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 6.0, color: Colors.white),
-                      shape: BoxShape.circle,
-                      color: Colors.red.shade100, // Light red background
-                    ),
-                    child: const Icon(
-                      Icons.power_settings_new,
-                      size: 40.0,
-                      color: Colors.red, // Power icon color
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  top: 30.0, // Moves content down
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 15.0),
-                        Text(
-                          "Logout",
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w700,
-                            color: primarycolor,
-                            fontFamily: "roboto_serif",
-                          ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        const Text(
-                          "Are you sure you want to logout?",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black54,
-                            fontFamily: "roboto_serif",
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-
-                        // Buttons Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            // No Button (Filled)
-                            SizedBox(
-                              width: 100,
-                              child: ElevatedButton(
-                                onPressed: () => Navigator.pop(context),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      primarycolor, // Filled button color
-                                  foregroundColor: Colors.white, // Text color
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 10,
-                                  ),
-                                ),
-                                child: const Text(
-                                  "No",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "roboto_serif",
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // Yes Button (Outlined)
-                            SizedBox(
-                              width: 100,
-                              child: OutlinedButton(
-                                onPressed: () async {
-                                  await AuthService.logout();
-                                  context.go("/login");
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: primarycolor, // Text color
-                                  side: BorderSide(
-                                    color: primarycolor,
-                                  ), // Border color
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 10,
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Yes",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "roboto_serif",
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -745,152 +627,209 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       ),
                     ],
                   ),
-                  BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
-                    builder: (context, state) {
-                      if (state is CampusMentorListStateLoading) {
-                        return const SizedBox(
-                          height: 200,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      } else if (state is CampusMentorListStateFailure) {
-                        return SizedBox(
-                          height: 200,
-                          child: Center(
-                            child: Text(state.msg ?? 'Failed to load'),
-                          ),
-                        );
-                      }
-                      final list =
-                          (state as CampusMentorListStateLoaded)
-                              .campusMentorListModel
-                              .data
-                              ?.campusMentorData ??
-                          [];
-                      if (list.isEmpty) {
-                        return const SizedBox(
-                          height: 200,
-                          child: Center(child: Text('No mentors found')),
-                        );
-                      }
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: list.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                              childAspectRatio: 0.75,
-                            ),
-                        itemBuilder: (ctx, i) {
-                          final m = list[i];
-                          return GestureDetector(
-                            onTap: () {
-                              if (isGuest) {
-                                context.push('/auth_landing');
-                              } else {
-                                context.push('/mentor_profile?id=${m.id}');
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Color(0xffF1F5FD).withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 60,
-                                    backgroundColor: Colors.grey.shade200,
-                                    backgroundImage:
-                                        m.profilePicUrl != null &&
-                                            m.profilePicUrl!.isNotEmpty
-                                        ? CachedNetworkImageProvider(
-                                            m.profilePicUrl!,
-                                          )
-                                        : null,
-                                    child:
-                                        (m.profilePicUrl == null ||
-                                            m.profilePicUrl!.isEmpty)
-                                        ? const Icon(
-                                            Icons.person,
-                                            size: 60,
-                                            color: Colors.grey,
-                                          )
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    m.name ?? '',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xff333333),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    m.designation ?? '',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Color(0xff555555),
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/starvector.png",
-                                        color: Colors.amber,
-                                        height: 14,
-                                        width: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        m.ratingsReceivedAvgRating
-                                                ?.toStringAsFixed(1) ??
-                                            '0.0',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'segeo',
-                                          color: Color(0xff333333),
-
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Image.asset(
-                                        "assets/images/coinsgold.png",
-                                        height: 16,
-                                        width: 16,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '${m.ratingsReceivedCount ?? 0}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xff666666),
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                  if (isGuest) ...[
+                    BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
+                      builder: (context, state) {
+                        if (state is GuestMentorsLoading || state is GuestMentorsInitial) {
+                          return const SizedBox(
+                            height: 200,
+                            child: Center(child: CircularProgressIndicator()),
                           );
-                        },
-                      );
-                    },
-                  ),
+                        }
+                        if (state is GuestMentorsFailure) {
+                          return SizedBox(
+                            height: 200,
+                            child: Center(child: Text(state.msg ?? 'Failed to load')),
+                          );
+                        }
+                        if (state is GuestMentorsLoaded) {
+                          final list = state.guestMentorsModel.data?.mentors ?? [];
+                          if (list.isEmpty) {
+                            return const SizedBox(
+                              height: 200,
+                              child: Center(child: Text('No mentors found')),
+                            );
+                          }
+                          return MentorGridGuest(
+                            mentors: list,
+                            onTapMentor: (m) => context.push('/auth_landing'),
+                          );
+                        }
+                        return const SizedBox(height: 200);
+                      },
+                    ),
+                  ],
+                  if (!isGuest) ...[
+                    BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
+                      builder: (context, state) {
+                        if (state is CampusMentorListStateLoading ||
+                            state is CampusMentorListStateInitial) {
+                          return const SizedBox(
+                            height: 200,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        if (state is CampusMentorListStateFailure) {
+                          return SizedBox(
+                            height: 200,
+                            child: Center(child: Text(state.msg ?? 'Failed to load')),
+                          );
+                        }
+                        if (state is CampusMentorListStateLoaded) {
+                          final list = state.campusMentorListModel.data?.mentors_list ?? [];
+                          if (list.isEmpty) {
+                            return const SizedBox(
+                              height: 200,
+                              child: Center(child: Text('No mentors found')),
+                            );
+                          }
+                          return MentorGridCampus(
+                            mentors_list: list,
+                            onTapMentor: (m) => context.push('/mentor_profile?id=${m.userId}'),
+                          );
+                        }
+                        return const SizedBox(height: 200);
+                      },
+                    ),
+                  ]
+
                 ],
               ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          elevation: 4.0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 14.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: SizedBox(
+            width: 300.0,
+            height: 230.0,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Power Icon Positioned Above Dialog
+                Positioned(
+                  top: -35.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Container(
+                    width: 70.0,
+                    height: 70.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 6.0, color: Colors.white),
+                      shape: BoxShape.circle,
+                      color: Colors.red.shade100, // Light red background
+                    ),
+                    child: const Icon(
+                      Icons.power_settings_new,
+                      size: 40.0,
+                      color: Colors.red, // Power icon color
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  top: 30.0, // Moves content down
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 15.0),
+                        Text(
+                          "Logout",
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w700,
+                            color: primarycolor,
+                            fontFamily: "roboto_serif",
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        const Text(
+                          "Are you sure you want to logout?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.black54,
+                            fontFamily: "roboto_serif",
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+
+                        // Buttons Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // No Button (Filled)
+                            SizedBox(
+                              width: 100,
+                              child: ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      primarycolor, // Filled button color
+                                  foregroundColor: Colors.white, // Text color
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "No",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "roboto_serif",
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Yes Button (Outlined)
+                            SizedBox(
+                              width: 100,
+                              child: OutlinedButton(
+                                onPressed: () async {
+                                  await AuthService.logout();
+                                  context.go("/login");
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: primarycolor, // Text color
+                                  side: BorderSide(
+                                    color: primarycolor,
+                                  ), // Border color
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Yes",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "roboto_serif",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -919,3 +858,5 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     onTap: onTap,
   );
 }
+
+

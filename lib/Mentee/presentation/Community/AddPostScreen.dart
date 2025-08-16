@@ -15,18 +15,6 @@ import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../Widgets/common_widgets.dart';
 
-// Import your own utils/widgets as you already do
-// import 'package:mentivisor/Components/CustomSnackBar.dart';
-// import 'package:mentivisor/Components/CutomAppBar.dart';
-// import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
-// import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_states.dart';
-// import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
-// import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_states.dart';
-// import '../../../utils/ImageUtils.dart';
-// import '../../../utils/color_constants.dart';
-
-// If you replaced CustomAppButton1 as shown above, import it here.
-
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({Key? key}) : super(key: key);
 

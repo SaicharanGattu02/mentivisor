@@ -22,6 +22,8 @@ import 'package:mentivisor/presentation/PurchasePage.dart';
 import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
 import 'package:mentivisor/presentation/Splash.dart';
 import '../Components/NoInternet.dart';
+import '../Mentee/Models/MenteeProfileModel.dart';
+import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
@@ -66,7 +68,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(CouponsScreen(), state);
+        return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
 
@@ -411,10 +413,13 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(PurchaseSuccessPage(), state),
     ),
+
     GoRoute(
       path: '/book_sessions_screen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(BookSessionScreen(), state),
+      pageBuilder: (context, state) {
+        final data = state.extra as MentorData; // cast back to Data
+        return buildSlideTransitionPage(BookSessionScreen(data: data), state);
+      },
     ),
 
     //// Mentor routes

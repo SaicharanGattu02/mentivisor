@@ -43,7 +43,7 @@ class _EccScreenState extends State<EccScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),

@@ -1,5 +1,7 @@
 import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
 
+import '../../../Models/SessionBookingModel.dart';
+
 abstract class SessionBookingStates {}
 
 class SessionBookingInitially extends SessionBookingStates {}
@@ -7,8 +9,8 @@ class SessionBookingInitially extends SessionBookingStates {}
 class SessionBookingLoading extends SessionBookingStates {}
 
 class SessionBookingLoaded extends SessionBookingStates {
-  SuccessModel successModel;
-  SessionBookingLoaded(this.successModel);
+  SessionBookingModel sessionBookingModel;
+  SessionBookingLoaded(this.sessionBookingModel);
 }
 
 class SessionBookingFailure extends SessionBookingStates {

@@ -15,9 +15,11 @@ import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
 import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
+import '../Models/GuestMentorsModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
 import '../Models/SelectSlotModel.dart';
+import '../Models/SessionBookingModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
@@ -42,6 +44,7 @@ abstract class RemoteDataSource {
     String scope,
     String search,
   );
+  Future<GuestMentorsModel?> getGuestMentorsList();
   Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(
@@ -81,16 +84,12 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data);
   Future<MenteeProfileModel?> getMenteeProfile();
   Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
-  Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id);
+  Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''});
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
   Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
-  Future<SuccessModel?> sessionBooking(
-    int mentor_id,
-    int slot_id,
-    Map<String, dynamic> data,
-  );
+  Future<SessionBookingModel?> sessionBooking(int mentor_id, int slot_id);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -131,18 +130,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SuccessModel?> sessionBooking(
+  Future<SessionBookingModel?> sessionBooking(
     int mentor_id,
     int slot_id,
-    Map<String, dynamic> data,
   ) async {
     try {
       Response res = await ApiClient.post(
-        "${APIEndpointUrls.book_slot}/${mentor_id}?slot_id=${slot_id}",
-        data: data,
+        "${APIEndpointUrls.book_slot}?mentor_id=${mentor_id}&slot_id=${slot_id}",
       );
       AppLogger.log('sessionBooking: ${res.data}');
-      return SuccessModel.fromJson(res.data);
+      return SessionBookingModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('sessionBooking:${e}');
       return null;
@@ -167,7 +164,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.weekly_slots}/${mentor_id}?date=${date}",
+        "${APIEndpointUrls.daily_slots}/${mentor_id}?date=${date}",
       );
       AppLogger.log('getDailySlots: ${res.data}');
       return DailySlotsModel.fromJson(res.data);
@@ -178,10 +175,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id) async {
+  Future<WeeklySlotsModel?> getWeeklySlots(
+    int mentorId, {
+    String week = '',
+  }) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.weekly_slots}/${mentor_id}",
+        "${APIEndpointUrls.weekly_slots}/${mentorId}?week=${week}",
       );
       AppLogger.log('getWeeklySlots: ${res.data}');
       return WeeklySlotsModel.fromJson(res.data);
@@ -480,20 +480,27 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<GuestMentorsModel?> getGuestMentorsList() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.guest_mentors}");
+      AppLogger.log('getGuestMentorsList::${res.data}');
+      return GuestMentorsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getGuestMentorsList::${e}');
+
+      return null;
+    }
+  }
+
+  @override
   Future<CompusMentorListModel?> getCampusMentorList(
     String scope,
     String search,
   ) async {
     try {
-      Response res;
-      final token = await AuthService.getAccessToken();
-      if (token != null) {
-        res = await ApiClient.get(
-          "${APIEndpointUrls.get_mentors}?scope=${scope}&search=${search}",
-        );
-      } else {
-        res = await ApiClient.get("${APIEndpointUrls.guest_mentors}");
-      }
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_mentors}?scope=${scope}&search=${search}",
+      );
       AppLogger.log('get CampusMentorList::${res.data}');
       return CompusMentorListModel.fromJson(res.data);
     } catch (e) {
@@ -525,7 +532,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<MentorProfileModel?> getMentorProfile(int id) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.mentor_profile}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.mentor_profile}/${id}",
+      );
       AppLogger.log('get MentorProfile::${res.data}/${id}');
       return MentorProfileModel.fromJson(res.data);
     } catch (e) {
@@ -724,6 +733,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id) async {
     try {

@@ -26,7 +26,6 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
   @override
   void initState() {
     super.initState();
-    print("scopeType=${widget.scope}");
     context.read<CampusMentorListCubit>().fetchCampusMentorList(
       "${widget.scope}",
       "",
@@ -66,8 +65,10 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     cursorColor: primarycolor,
                     onChanged: (query) {
                       if (_debounce?.isActive ?? false) _debounce!.cancel();
-                      _debounce = Timer(const Duration(milliseconds: 300),() {
-                        context.read<CampusMentorListCubit>().fetchCampusMentorList("${widget.scope}",query,);
+                      _debounce = Timer(const Duration(milliseconds: 300), () {
+                        context
+                            .read<CampusMentorListCubit>()
+                            .fetchCampusMentorList("${widget.scope}", query);
                       });
                     },
                     style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
@@ -98,7 +99,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                         (state as CampusMentorListStateLoaded)
                             .campusMentorListModel
                             .data
-                            ?.campusMentorData ??
+                            ?.mentors_list ??
                         [];
                     if (list.isEmpty) {
                       return const SizedBox(
@@ -120,12 +121,14 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                             ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
+                          final url = m.user?.profilePicUrl?.trim();
+                          final hasPic = url != null && url.isNotEmpty;
                           return GestureDetector(
                             onTap: () {
                               if (isGuest) {
                                 context.push('/auth_landing');
                               } else {
-                                context.push('/mentor_profile?id=${m.id}');
+                                context.push('/mentor_profile?id=${m.userId}');
                               }
                             },
                             child: Container(
@@ -136,29 +139,21 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               ),
                               child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 60,
-                                    backgroundColor: Colors.grey,
-                                    child: ClipOval(
-                                      child:
-                                          (m.profilePicUrl != null &&
-                                              m.profilePicUrl!.isNotEmpty)
-                                          ? CachedNetworkImage(
-                                              imageUrl: m.profilePicUrl!,
-                                              fit: BoxFit.cover,
-                                              width: 120,
-                                              height: 120,
-                                            )
-                                          : const Icon(
-                                              Icons.person,
-                                              size: 60,
-                                              color: Colors.grey,
-                                            ),
-                                    ),
-                                  ),
+                                CircleAvatar(
+                                radius: 60,
+                                backgroundColor: Colors.grey.shade200,
+                                backgroundImage: hasPic ? CachedNetworkImageProvider(url) : null,
+                                child: hasPic
+                                    ? null
+                                    : const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.grey,
+                                ),
+                              ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    m.name ?? '',
+                                    m.user?.name ?? '',
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       fontSize: 16,
@@ -168,7 +163,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    m.designation ?? '',
+                                    m.user?.designation ?? '',
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       color: Color(0xff555555),
@@ -187,7 +182,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        m.ratingsReceivedAvgRating
+                                        m.averageRating
                                                 ?.toStringAsFixed(1) ??
                                             '0.0',
                                         style: const TextStyle(
@@ -206,7 +201,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        '${m.ratingsReceivedCount ?? 0}',
+                                        '${m.averageRating ?? 0}',
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Color(0xff666666),

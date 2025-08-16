@@ -1,17 +1,17 @@
 class MentorProfileModel {
   bool? status;
-  Data? data;
+  MentorData? data;
 
   MentorProfileModel({this.status, this.data});
 
   MentorProfileModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? MentorData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = this.status;
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -19,7 +19,7 @@ class MentorProfileModel {
   }
 }
 
-class Data {
+class MentorData {
   int? id;
   int? userId;
   String? reasonForBecomeMentor;
@@ -28,23 +28,23 @@ class Data {
   String? linkedIn;
   String? gitHub;
   String? resume;
-  List<String>? languages;  // Corrected 'langages' to 'languages'
+  List<String>? languages;
   String? coinsPerMinute;
   String? createdAt;
   String? updatedAt;
-  String? deletedAt;  // Replaced with String as 'Null' is not appropriate here
+  String? deletedAt;
   int? activeStatus;
   String? resumeUrl;
-  List<String>? todaySlots;  // Replaced 'Null' with String or other relevant type
-  List<String>? tomorrowSlots;  // Replaced 'Null' with String or other relevant type
+  List<Slot>? todaySlots;
+  List<Slot>? tomorrowSlots;
   int? averageRating;
   int? totalReviews;
-  List<String>? reviews;  // Replaced 'Null' with String or other relevant type
+  List<dynamic>? reviews;
   User? user;
-  List<String>? expertises;  // Replaced 'Null' with String or other relevant type
-  List<String>? ratings;  // Replaced 'Null' with String or other relevant type
+  List<dynamic>? expertises;
+  List<dynamic>? ratings;
 
-  Data({
+  MentorData({
     this.id,
     this.userId,
     this.reasonForBecomeMentor,
@@ -70,7 +70,7 @@ class Data {
     this.ratings,
   });
 
-  Data.fromJson(Map<String, dynamic> json) {
+  MentorData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     reasonForBecomeMentor = json['reason_for_become_mentor'];
@@ -79,50 +79,82 @@ class Data {
     linkedIn = json['linked_in'];
     gitHub = json['git_hub'];
     resume = json['resume'];
-    languages = List<String>.from(json['langages'] ?? []);  // Corrected to handle languages properly
+    languages = List<String>.from(json['langages'] ?? []);
     coinsPerMinute = json['coins_per_minute'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
     activeStatus = json['active_status'];
     resumeUrl = json['resume_url'];
-    todaySlots = List<String>.from(json['today_slots'] ?? []);  // Handle slots properly
-    tomorrowSlots = List<String>.from(json['tomorrow_slots'] ?? []);  // Handle slots properly
+    todaySlots = (json['today_slots'] as List<dynamic>?)
+        ?.map((e) => Slot.fromJson(e))
+        .toList();
+    tomorrowSlots = (json['tomorrow_slots'] as List<dynamic>?)
+        ?.map((e) => Slot.fromJson(e))
+        .toList();
     averageRating = json['average_rating'];
     totalReviews = json['total_reviews'];
-    reviews = List<String>.from(json['reviews'] ?? []);  // Handle reviews properly
+    reviews = json['reviews'] ?? [];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
-    expertises = List<String>.from(json['expertises'] ?? []);  // Handle expertises properly
-    ratings = List<String>.from(json['ratings'] ?? []);  // Handle ratings properly
+    expertises = json['expertises'] ?? [];
+    ratings = json['ratings'] ?? [];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['reason_for_become_mentor'] = this.reasonForBecomeMentor;
-    data['achivements'] = this.achivements;
-    data['portfolio'] = this.portfolio;
-    data['linked_in'] = this.linkedIn;
-    data['git_hub'] = this.gitHub;
-    data['resume'] = this.resume;
-    data['langages'] = this.languages;
-    data['coins_per_minute'] = this.coinsPerMinute;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['resume_url'] = this.resumeUrl;
-    data['today_slots'] = this.todaySlots;
-    data['tomorrow_slots'] = this.tomorrowSlots;
-    data['average_rating'] = this.averageRating;
-    data['total_reviews'] = this.totalReviews;
-    data['reviews'] = this.reviews;
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['reason_for_become_mentor'] = reasonForBecomeMentor;
+    data['achivements'] = achivements;
+    data['portfolio'] = portfolio;
+    data['linked_in'] = linkedIn;
+    data['git_hub'] = gitHub;
+    data['resume'] = resume;
+    data['langages'] = languages;
+    data['coins_per_minute'] = coinsPerMinute;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
+    data['active_status'] = activeStatus;
+    data['resume_url'] = resumeUrl;
+    data['today_slots'] = todaySlots?.map((e) => e.toJson()).toList();
+    data['tomorrow_slots'] = tomorrowSlots?.map((e) => e.toJson()).toList();
+    data['average_rating'] = averageRating;
+    data['total_reviews'] = totalReviews;
+    data['reviews'] = reviews;
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
-    data['expertises'] = this.expertises;
-    data['ratings'] = this.ratings;
+    data['expertises'] = expertises;
+    data['ratings'] = ratings;
+    return data;
+  }
+}
+
+class Slot {
+  int? id;
+  String? date;
+  String? startTime;
+  String? endTime;
+  String? status;
+
+  Slot({this.id, this.date, this.startTime, this.endTime, this.status});
+
+  Slot.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    date = json['date'];
+    startTime = json['start_time'];
+    endTime = json['end_time'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['date'] = date;
+    data['start_time'] = startTime;
+    data['end_time'] = endTime;
+    data['status'] = status;
     return data;
   }
 }
@@ -158,6 +190,7 @@ class User {
   int? activeStatus;
   String? lastLoginAt;
   String? profilePicUrl;
+  String? mentorStatus; // <-- new field
 
   User({
     this.id,
@@ -190,6 +223,7 @@ class User {
     this.activeStatus,
     this.lastLoginAt,
     this.profilePicUrl,
+    this.mentorStatus,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -223,40 +257,42 @@ class User {
     activeStatus = json['active_status'];
     lastLoginAt = json['last_login_at'];
     profilePicUrl = json['profile_pic_url'];
+    mentorStatus = json['mentor_status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['contact'] = this.contact;
-    data['email_verified_at'] = this.emailVerifiedAt;
-    data['refresh_token'] = this.refreshToken;
-    data['web_fcm_token'] = this.webFcmToken;
-    data['device_fcm_token'] = this.deviceFcmToken;
-    data['role'] = this.role;
-    data['designation'] = this.designation;
-    data['exp'] = this.exp;
-    data['bio'] = this.bio;
-    data['college_id'] = this.collegeId;
-    data['year'] = this.year;
-    data['stream'] = this.stream;
-    data['gender'] = this.gender;
-    data['status'] = this.status;
-    data['profile_pic'] = this.profilePic;
-    data['state'] = this.state;
-    data['city'] = this.city;
-    data['country'] = this.country;
-    data['saas_id'] = this.saasId;
-    data['email_otp'] = this.emailOtp;
-    data['expired_time'] = this.expiredTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['last_login_at'] = this.lastLoginAt;
-    data['profile_pic_url'] = this.profilePicUrl;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['contact'] = contact;
+    data['email_verified_at'] = emailVerifiedAt;
+    data['refresh_token'] = refreshToken;
+    data['web_fcm_token'] = webFcmToken;
+    data['device_fcm_token'] = deviceFcmToken;
+    data['role'] = role;
+    data['designation'] = designation;
+    data['exp'] = exp;
+    data['bio'] = bio;
+    data['college_id'] = collegeId;
+    data['year'] = year;
+    data['stream'] = stream;
+    data['gender'] = gender;
+    data['status'] = status;
+    data['profile_pic'] = profilePic;
+    data['state'] = state;
+    data['city'] = city;
+    data['country'] = country;
+    data['saas_id'] = saasId;
+    data['email_otp'] = emailOtp;
+    data['expired_time'] = expiredTime;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
+    data['active_status'] = activeStatus;
+    data['last_login_at'] = lastLoginAt;
+    data['profile_pic_url'] = profilePicUrl;
+    data['mentor_status'] = mentorStatus;
     return data;
   }
 }

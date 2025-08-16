@@ -20,6 +20,8 @@ import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
@@ -182,12 +184,20 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<GuestMentorsRepository>(
+      create: (context) => GuestMentorsRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
     BlocProvider<InternetStatusBloc>(create: (context) => InternetStatusBloc()),
     BlocProvider<YearsCubit>(
       create: (context) => YearsCubit(context.read<YearsRepository>()),
+    ),
+    BlocProvider<GuestMentorsCubit>(
+      create: (context) => GuestMentorsCubit(context.read<GuestMentorsRepository>()),
     ),
     BlocProvider<CampusesCubit>(
       create: (context) => CampusesCubit(context.read<CampusesRepository>()),

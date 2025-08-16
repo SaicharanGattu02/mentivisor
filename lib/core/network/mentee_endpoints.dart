@@ -55,8 +55,9 @@ class APIEndpointUrls {
 
 
   static const String weekly_slots = "${userUrl}mentor/weekly-slots";
+  static const String daily_slots = "${userUrl}mentor/daily-slots";
   static const String select_slot = "${userUrl}select-slot";
-  static const String book_slot = "${userUrl}book-slot";
+  static const String book_slot = "${userUrl}session/book-slot";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
