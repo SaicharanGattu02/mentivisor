@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
+import 'package:mentivisor/Mentee/Models/ExclusiveServicesModel.dart';
 import 'package:mentivisor/Mentee/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 import 'package:mentivisor/Mentee/Models/WalletModel.dart';
@@ -75,6 +76,7 @@ abstract class RemoteDataSource {
   Future<GetExpertiseModel?> getExpertiseCategory(String search, int page);
   Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data);
   Future<MenteeProfileModel?> getMenteeProfile();
+  Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -609,6 +611,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     } catch (e) {
       AppLogger.error('StudyZone Report ::${e}');
 
+      return null;
+    }
+  }
+
+  @override
+  Future<ExclusiveServicesModel?> exclusiveServiceList(String search,int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_Exclusive_services}?search=${search}&page=${page}",
+      );
+      AppLogger.log('get exclusive service::${res.data}');
+      return ExclusiveServicesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('exclusive service::${e}');
       return null;
     }
   }

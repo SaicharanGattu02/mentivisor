@@ -4,7 +4,7 @@ import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepos
 
 class AddCommunityPostCubit extends Cubit<AddCommunityPostStates> {
   CommunityPostsRepo communityPostsRepo;
-  AddCommunityPostCubit(this.communityPostsRepo) : super(AddCommunityPostLoading());
+  AddCommunityPostCubit(this.communityPostsRepo) : super(AddCommunityPostInitially());
 
   Future<void> addCommunityPost(Map<String, dynamic> data) async {
     emit(AddCommunityPostLoading());

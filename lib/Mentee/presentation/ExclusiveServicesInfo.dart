@@ -4,7 +4,7 @@ import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
 import 'package:mentivisor/newscreens/InfoScreen.dart';
 
 class ExclusiveInfoServices extends StatelessWidget {
-  // Replace with your real data or pass in via constructor
+
   final String bannerUrl =
       'https://via.placeholder.com/412x180.png?text=Traveling+Banner';
   final String userName = 'Suraj';

@@ -15,6 +15,8 @@ import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dar
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
@@ -152,6 +154,11 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<ExclusiveserviceslistRepo>(
+      create: (context) => ExclusiveImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
     RepositoryProvider<ExpertiseRepo>(
       create: (context) =>
           ExpertiseImpl(remoteDataSource: context.read<RemoteDataSource>()),
@@ -271,6 +278,10 @@ class StateInjector {
     BlocProvider<MenteeProfileCubit>(
       create: (context) =>
           MenteeProfileCubit(context.read<MenteeProfileRepository>()),
+    ),
+    BlocProvider<ExclusiveservicelistCubit>(
+      create: (context) =>
+          ExclusiveservicelistCubit(context.read<ExclusiveserviceslistRepo>()),
     ),
   ];
 }

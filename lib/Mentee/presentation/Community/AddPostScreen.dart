@@ -1,29 +1,37 @@
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mentivisor/Components/CustomAppButton.dart';
-import 'package:mentivisor/Components/CustomSnackBar.dart';
-import 'package:mentivisor/Components/CutomAppBar.dart';
-import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
-import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_states.dart';
-import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
-import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_states.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../Components/CustomAppButton.dart';
+import '../../../Components/CustomSnackBar.dart';
+import '../../../Components/CutomAppBar.dart';
 import '../../../utils/ImageUtils.dart';
-import '../../../utils/color_constants.dart';
+import '../../data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
+import '../../data/cubits/AddCommunityPost/add_communitypost_states.dart';
+import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
+import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../Widgets/common_widgets.dart';
+
+// Import your own utils/widgets as you already do
+// import 'package:mentivisor/Components/CustomSnackBar.dart';
+// import 'package:mentivisor/Components/CutomAppBar.dart';
+// import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
+// import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_states.dart';
+// import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
+// import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_states.dart';
+// import '../../../utils/ImageUtils.dart';
+// import '../../../utils/color_constants.dart';
+
+// If you replaced CustomAppButton1 as shown above, import it here.
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({Key? key}) : super(key: key);
 
   @override
-  _AddPostScreenState createState() => _AddPostScreenState();
+  State<AddPostScreen> createState() => _AddPostScreenState();
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
@@ -34,13 +42,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
-  ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
 
+  final ImagePicker _picker = ImagePicker();
   List<String> _selectedTags = [];
 
   @override
   void initState() {
     super.initState();
+    // Safe: only reads, doesn’t subscribe
     context.read<CommunityTagsCubit>().getCommunityTags();
   }
 
@@ -49,18 +59,21 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _headingController.dispose();
     _describeController.dispose();
     _tagController.dispose();
+    _imageFile.dispose();
+    _isHighlighted.dispose();
+    _anonymousNotifier.dispose();
     super.dispose();
   }
 
-  final ImagePicker _picker = ImagePicker();
   Future<void> _pickImage() async {
+    if (!mounted) return;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       backgroundColor: Colors.white,
-      builder: (BuildContext context) {
+      builder: (BuildContext ctx) {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -68,59 +81,51 @@ class _AddPostScreenState extends State<AddPostScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Drag handle
                 Center(
                   child: Container(
                     width: 40,
                     height: 4,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: primarycolor.withOpacity(0.3),
+                      color: const Color(0xFF315DEA).withOpacity(0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
                 ),
                 ListTile(
-                  leading: Icon(Icons.photo_library, color: primarycolor),
+                  leading: const Icon(
+                    Icons.photo_library,
+                    color: Color(0xff315DEA),
+                  ),
                   title: const Text(
                     'Choose from Gallery',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w400,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(ctx);
                     _pickImageFromGallery();
                   },
                 ),
-
-                // Camera Option
                 ListTile(
-                  leading: Icon(Icons.camera_alt, color: primarycolor),
+                  leading: const Icon(
+                    Icons.camera_alt,
+                    color: Color(0xff315DEA),
+                  ),
                   title: const Text(
                     'Take a Photo',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w400,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(ctx);
                     _pickImageFromCamera();
                   },
                 ),
@@ -138,12 +143,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
       source: ImageSource.gallery,
     );
     if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        _imageFile.value = compressedFile;
-      }
+      final File raw = File(pickedFile.path);
+      final File? compressed = await ImageUtils.compressImage(raw);
+      if (!mounted) return;
+      if (compressed != null) _imageFile.value = compressed;
     }
   }
 
@@ -152,12 +155,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
       source: ImageSource.camera,
     );
     if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        _imageFile.value = compressedFile;
-      }
+      final File raw = File(pickedFile.path);
+      final File? compressed = await ImageUtils.compressImage(raw);
+      if (!mounted) return;
+      if (compressed != null) _imageFile.value = compressed;
     }
   }
 
@@ -168,7 +169,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: "Add Post", actions: []),
+      appBar: CustomAppBar1(title: "Add Post", actions: const []),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -185,26 +186,34 @@ class _AddPostScreenState extends State<AddPostScreen> {
               buildCustomLabel('Heading'),
               buildCustomTextField(
                 controller: _headingController,
-                hint: "Write an heading",
+                hint: "Write a heading",
                 validator: (value) {
-                  if (value!.isEmpty) return 'Heading is required';
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Heading is required';
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 10),
+
               buildCustomLabel('Describe'),
               TextFormField(
                 controller: _describeController,
                 cursorColor: Colors.black,
                 keyboardType: TextInputType.multiline,
                 maxLines: 5,
-                decoration: InputDecoration(hintText: 'Describe your Post'),
+                decoration: const InputDecoration(
+                  hintText: 'Describe your Post',
+                ),
                 validator: (value) {
-                  if (value!.isEmpty) return 'Describe is required';
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Describe is required';
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 10),
+
               buildCustomLabel('Tags'),
               const SizedBox(height: 8),
               Row(
@@ -244,9 +253,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 ],
               ),
               const SizedBox(height: 8),
-              // Suggested tags
+
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -254,16 +263,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Suggested :"),
-                    SizedBox(height: 5),
+                    const Text("Suggested :"),
+                    const SizedBox(height: 5),
                     BlocBuilder<CommunityTagsCubit, CommunityTagsStates>(
                       builder: (context, state) {
                         if (state is CommunityTagsLoading) {
-                          return CircularProgressIndicator();
-                        } else if (state is CommunityTagsLoaded) {
-                          debugPrint(
-                            "Selected Tags in UI: ${state.selectedTags}",
+                          return const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           );
+                        } else if (state is CommunityTagsLoaded) {
                           _selectedTags = state.selectedTags;
                           return Wrap(
                             spacing: 5,
@@ -291,15 +301,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             }).toList(),
                           );
                         } else {
-                          return Text("No Tags Found");
+                          return const Text("No Tags Found");
                         }
                       },
                     ),
                   ],
                 ),
               ),
+
               const SizedBox(height: 24),
-              // Image upload
+
               const Text(
                 'Image',
                 style: TextStyle(
@@ -309,6 +320,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+
               ValueListenableBuilder<File?>(
                 valueListenable: _imageFile,
                 builder: (context, file, _) {
@@ -316,33 +328,37 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     onTap: file == null ? _pickImage : null,
                     child: DottedBorder(
                       borderType: BorderType.RRect,
-                      radius: Radius.circular(36),
+                      radius: const Radius.circular(36),
                       color: Colors.grey,
                       strokeWidth: 1.5,
-                      dashPattern: [6, 3],
+                      dashPattern: const [6, 3],
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(36)),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(36),
+                        ),
                         child: Container(
                           width: double.infinity,
-                          color: Color(0xffF5F5F5),
+                          color: const Color(0xffF5F5F5),
                           child: file == null
                               ? Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                                    children: const [
                                       Text(
                                         "Upload image in 16:9 or 4:3",
                                         style: TextStyle(
                                           fontSize: 15,
-                                          color: labeltextColor,
+                                          color: Color(0xff6D6D6D),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       SizedBox(width: 8),
                                       Icon(
                                         Icons.upload_rounded,
-                                        color: labeltextColor,
+                                        color: Color(0xff6D6D6D),
                                       ),
                                     ],
                                   ),
@@ -360,7 +376,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                       right: 8,
                                       child: GestureDetector(
                                         onTap: _cancelImage,
-                                        child: CircleAvatar(
+                                        child: const CircleAvatar(
                                           backgroundColor: Colors.black54,
                                           radius: 16,
                                           child: Icon(
@@ -379,56 +395,65 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   );
                 },
               ),
+
               const SizedBox(height: 24),
+
               Container(
-                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                  bottom: 10,
+                  top: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Post this anonymous',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff333333),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Post this anonymous',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff333333),
+                            ),
                           ),
-                        ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: _anonymousNotifier,
-                          builder: (context, value, child) {
-                            return Transform.scale(
-                              scale: 0.5,
-                              child: Switch(
-                                value: value,
-                                onChanged: (v) => _anonymousNotifier.value = v,
-                                activeColor: const Color(0xff315DEA),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    const Text(
-                      'Viewer can’t see who posted it',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: Color(0xff666666),
+                          SizedBox(height: 2),
+                          Text(
+                            'Viewer can’t see who posted it',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: Color(0xff666666),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _anonymousNotifier,
+                      builder: (context, value, child) {
+                        return Transform.scale(
+                          scale: 0.9,
+                          child: Switch(
+                            value: value,
+                            onChanged: (v) => _anonymousNotifier.value = v,
+                            activeColor: const Color(0xff315DEA),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
+
               const SizedBox(height: 24),
 
-              // Highlight post
               ValueListenableBuilder<bool>(
                 valueListenable: _isHighlighted,
                 builder: (context, value, _) {
@@ -440,57 +465,70 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           if (val != null) _isHighlighted.value = val;
                         },
                       ),
-                      Text('Highlight Post'),
-                      SizedBox(width: 8),
-                      Text('Available coins 3000'),
+                      const Text('Highlight Post'),
+                      const SizedBox(width: 8),
+                      const Text('Available coins 3000'),
                     ],
                   );
                 },
               ),
 
               const SizedBox(height: 32),
-              BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
-                listener: (context, state) {
-                  if (state is AddCommunityPostLoaded) {
-                    context.pop();
-                  }else if(state is AddCommunityPostFailure){
-                    CustomSnackBar1.show(context, state.error);
-                  }
-                },
-                builder: (context, state) {
-                  final isLoading = state is AddCommunityPostLoading;
-                  return CustomAppButton1(
-                    text: "Post It",
-                    isLoading: isLoading,
-                    onPlusTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        final file = _imageFile.value;
-                        final isHighlighted = _isHighlighted.value;
-                        final anonymous = _anonymousNotifier.value;
 
-                        if (file == null) {
-                          print('Please upload an image');
-                          return;
-                        }
-
-                        Map<String, dynamic> data = {
-                          "heading": _headingController.text,
-                          "description": _describeController.text,
-                          "anonymous": anonymous ? 1 : 0,
-                          "popular": isHighlighted ? 1 : 0,
-                          "tags[]": _selectedTags,
-                          "image": file.path,
-                        };
-                        context.read<AddCommunityPostCubit>().addCommunityPost(
-                          data,
-                        );
-                      }
-                    },
-                  );
-                },
-              ),
               const SizedBox(height: 16),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 36),
+          child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
+            listener: (context, state) {
+              if (state is AddCommunityPostLoaded) {
+                if (!mounted) return;
+                context.pop(); // success
+              } else if (state is AddCommunityPostFailure) {
+                if (!mounted) return;
+                CustomSnackBar1.show(context, state.error);
+              }
+            },
+            builder: (context, state) {
+              final isLoading = state is AddCommunityPostLoading;
+
+              return CustomAppButton1(
+                text: "Post It",
+                isLoading: isLoading,
+                onPlusTap: () {
+                  // Prevent multiple submits visually & functionally
+                  if (isLoading) return;
+
+                  FocusScope.of(context).unfocus();
+
+                  if (!(_formKey.currentState?.validate() ?? false)) return;
+
+                  final file = _imageFile.value;
+                  if (file == null) {
+                    CustomSnackBar1.show(context, 'Please upload an image');
+                    return;
+                  }
+
+                  final isHighlighted = _isHighlighted.value;
+                  final anonymous = _anonymousNotifier.value;
+
+                  final data = <String, dynamic>{
+                    "heading": _headingController.text.trim(),
+                    "description": _describeController.text.trim(),
+                    "anonymous": anonymous ? 1 : 0,
+                    "popular": isHighlighted ? 1 : 0,
+                    "tags[]": _selectedTags,
+                    "image": file.path,
+                  };
+
+                  context.read<AddCommunityPostCubit>().addCommunityPost(data);
+                },
+              );
+            },
           ),
         ),
       ),

@@ -16,13 +16,8 @@ class APIEndpointUrls {
   static const String get_books = "${apiUrl}users/study-zones";
   static const String getoncampose = "${apiUrl}list-mentor-own-campus";
   static const String gettopmentors = "${apiUrl}top-mentors";
-
   static const String studyzonedownload_wl =
       "${apiUrl}users/study-zone/download";
-
-  static const String studyzonetags_wol = "${apiUrl}study-zone/tags";
-  static const String studyzonedownloads_wol =
-      "${apiUrl}study-zone/top-downloads";
   static const String eccguestlist = "${apiUrl}guest-list-ecc";
   static const String guestcommunitytags_wol =
       "${apiUrl}community-zone-tags-without-login";
@@ -54,6 +49,7 @@ class APIEndpointUrls {
   static const String get_expertise = "${userUrl}expertise";
   static const String become_mentor = "${userUrl}become-mentor";
   static const String mentee_profile = "${userUrl}user-profile";
+  static const String get_Exclusive_services = "${userUrl}services";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
