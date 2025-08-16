@@ -4,14 +4,16 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
 
+import '../../../utils/constants.dart';
+
 class CommentBottomSheet extends StatefulWidget {
-  final int postId;
+  final int? postId;
   final ScrollController scrollController;
-  final List<Map<String, dynamic>> comments;
+  final List<dynamic> comments;
 
   const CommentBottomSheet({
     super.key,
-    required this.postId,
+    this.postId,
     required this.scrollController,
     required this.comments,
   });
@@ -26,6 +28,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
   @override
   void initState() {
+    debugPrint("postId=${widget.postId}");
     super.initState();
     _comments = List.from(widget.comments);
   }
@@ -92,7 +95,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${comment['name']}   ${comment['time']}',
+                                      '${comment['name']}  ${DateHelper.timeAgo(comment['time'])}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Segoe',
@@ -120,69 +123,73 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
               ),
             ),
 
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Write a comment...',
-                      hintStyle: const TextStyle(fontFamily: 'Segoe'),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey.shade100,
-                    ),
-                  ),
-                ),
-                BlocConsumer<PostCommentCubit, PostCommentStates>(
-                  listener: (context, state) {
-                    if (state is PostCommentLoaded) {
-                      CustomSnackBar1.show(
-                        context,
-                        state.successModel.message ?? "",
-                      );
-                      // Add to local list (optimistic UI update)
-                      _addComment(_controller.text.trim());
-                    } else if (state is PostCommentFailure) {
-                      CustomSnackBar1.show(context, state.error ?? "");
-                    }
-                  },
-                  builder: (context, state) {
-                    final isLoading = state is PostCommentLoading;
-                    return isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : IconButton(
-                            icon: const Icon(
-                              Icons.send,
-                              color: Color(0xFF4076ED),
+            widget.postId == null
+                ? const SizedBox.shrink() // nothing shown
+                : Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            hintText: 'Write a comment...',
+                            hintStyle: const TextStyle(fontFamily: 'Segoe'),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
                             ),
-                            onPressed: () {
-                              if (_controller.text.trim().isNotEmpty) {
-                                final text = _controller.text.trim();
-                                Map<String, dynamic> data = {
-                                  "community_id": widget.postId,
-                                  "comment": text,
-                                };
-                                context.read<PostCommentCubit>().postComment(
-                                  data,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                          ),
+                        ),
+                      ),
+                      BlocConsumer<PostCommentCubit, PostCommentStates>(
+                        listener: (context, state) {
+                          if (state is PostCommentLoaded) {
+                            CustomSnackBar1.show(
+                              context,
+                              state.successModel.message ?? "",
+                            );
+                            // Add to local list (optimistic UI update)
+                            _addComment(_controller.text.trim());
+                          } else if (state is PostCommentFailure) {
+                            CustomSnackBar1.show(context, state.error ?? "");
+                          }
+                        },
+                        builder: (context, state) {
+                          final isLoading = state is PostCommentLoading;
+                          return isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : IconButton(
+                                  icon: const Icon(
+                                    Icons.send,
+                                    color: Color(0xFF4076ED),
+                                  ),
+                                  onPressed: () {
+                                    if (_controller.text.trim().isNotEmpty) {
+                                      final text = _controller.text.trim();
+                                      Map<String, dynamic> data = {
+                                        "community_id": widget.postId,
+                                        "comment": text,
+                                      };
+                                      context
+                                          .read<PostCommentCubit>()
+                                          .postComment(data);
+                                    }
+                                  },
                                 );
-                              }
-                            },
-                          );
-                  },
-                ),
-              ],
-            ),
+                        },
+                      ),
+                    ],
+                  ),
           ],
         ),
       ),

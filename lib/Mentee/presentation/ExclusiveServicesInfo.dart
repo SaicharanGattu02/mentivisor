@@ -1,55 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
-import 'package:mentivisor/newscreens/InfoScreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
 
-class ExclusiveInfoServices extends StatelessWidget {
+import '../data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
+import 'Widgets/CommonBackground.dart';
 
-  final String bannerUrl =
-      'https://via.placeholder.com/412x180.png?text=Traveling+Banner';
-  final String userName = 'Suraj';
-  final String title = 'A Travel Tricking';
-  final String description = '''
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum venenatis justo sed quam dignissim tincidunt. Nunc eget lorem ac enim lacinia facilisis. Nunc congue orci vitae ligula pretium facilisis. Nulla ut odio eget magna molestie ornare. Nullam eget ligula dictum ex venenatis maximus.
-Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac dolor. Vestibulum vel imperdiet urna. Ut rhoncus metus ante sollicitudin, nec luctus ligula feugiat. Duis gravida ornare mi a consequat. Nam ac lorem laoreet, efficitur nisi dignissim, aliquam libero.
-  ''';
-  final String linkUrl = 'https://yourlink.com';
+class ExclusiveServiceDetails extends StatefulWidget {
+  final int id;
+  const ExclusiveServiceDetails({super.key, required this.id});
 
+  @override
+  State<ExclusiveServiceDetails> createState() =>
+      _ExclusiveServiceDetailsState();
+}
+
+class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
+  @override
+  void initState() {
+    context.read<ExclusiveservicedetailsCubit>().exclusiveServiceDetails(
+      widget.id,
+    );
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF4F5FA),
+      appBar: CustomAppBar1(title: "Exclusive Service Details", actions: []),
       body: Background(
         child: SafeArea(
           child: Column(
             children: [
-              // AppBar-like row
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black87),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Exclusive Services',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  fontFamily: 'segeo',),
-                    ),
-                  ),
-                  SizedBox(width: 48), // balance the back arrow
-                ],
-              ),
-        
+
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: GestureDetector(onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>InfoScreen()),
-                    );
-                  } ,
+                  child: GestureDetector(
+                    onTap: () {},
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -65,14 +51,14 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
                             ),
                             child: Image.asset(
                               "assets/images/bannerimg.png",
-        
+
                               height: 192,
-        
+
                               width: 480,
                               fit: BoxFit.cover,
                             ),
                           ),
-        
+
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Column(
@@ -89,7 +75,7 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
                                     ),
                                     SizedBox(width: 8),
                                     Text(
-                                      userName,
+                                      "userName",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
@@ -98,12 +84,12 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
                                     ),
                                   ],
                                 ),
-        
+
                                 SizedBox(height: 12),
-        
+
                                 // Title
                                 Text(
-                                  title,
+                                  "title",
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xff222222),
@@ -111,12 +97,12 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
                                     fontFamily: 'segeo',
                                   ),
                                 ),
-        
+
                                 SizedBox(height: 8),
-        
+
                                 // Description text
                                 Text(
-                                  description,
+                                  "description",
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Color(0xff666666),
@@ -124,17 +110,13 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
                                     fontFamily: 'segeo',
                                   ),
                                 ),
-        
+
                                 SizedBox(height: 12),
-        
+
                                 // Clickable link
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) =>ExclusiveInfoServices()),
-                                    );
-        
+
                                   },
                                   child: Text(
                                     'Visit this link to access the exclusive service.\nClick here',
@@ -156,7 +138,7 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
                   ),
                 ),
               ),
-        
+
               // Footer info
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -176,4 +158,3 @@ Ut vitae viverra lorem. Maecenas et lectus sapien pharetra cursus sit amet ac do
     );
   }
 }
-

@@ -42,7 +42,6 @@ class Background extends StatelessWidget {
   }
 }
 
-
 class Background1 extends StatelessWidget {
   final Widget child;
   final String? bgImagePath;
@@ -67,9 +66,10 @@ class Background1 extends StatelessWidget {
             opacity: 0.15,
             child: Container(
               decoration: BoxDecoration(
-                // ✅ If gradient provided, use it; else fallback to bgColor
                 gradient: gradient,
-                color: gradient == null ? (bgColor ?? const Color(0xffFFF8EC)) : null,
+                color: gradient == null
+                    ? (bgColor ?? const Color(0xffFFF8EC))
+                    : null,
               ),
             ),
           ),
@@ -79,3 +79,4 @@ class Background1 extends StatelessWidget {
     );
   }
 }
+
