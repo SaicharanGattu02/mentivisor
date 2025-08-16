@@ -3,14 +3,14 @@ import 'package:mentivisor/Mentee/data/cubits/DailySlots/daily_slots_states.dart
 
 import '../BookSession/session_repository.dart';
 
-class WeeklySlotsCubit extends Cubit<DailySlotsStates> {
+class DailySlotsCubit extends Cubit<DailySlotsStates> {
   SessionBookingRepo sessionBookingRepo;
-  WeeklySlotsCubit(this.sessionBookingRepo) : super(DailySlotsInitially());
+  DailySlotsCubit(this.sessionBookingRepo) : super(DailySlotsInitially());
 
-  Future<void> getDailySlots(int mentor_id,String date) async {
+  Future<void> getDailySlots(int mentor_id, String date) async {
     emit(DailySlotsLoading());
     try {
-      final response = await sessionBookingRepo.getDailySlots(mentor_id,date);
+      final response = await sessionBookingRepo.getDailySlots(mentor_id, date);
       if (response != null && response.status == true) {
         emit(DailySlotsLoaded(response));
       } else {

@@ -1,8 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentee/Models/DailySlotsModel.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/BookSession/book_session_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/BookSession/session_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
@@ -20,9 +23,11 @@ import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveSer
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/SelectSlot/select_slot_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
+import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
@@ -30,6 +35,7 @@ import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
+import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
 import 'Mentee/data/cubits/Expertise/ExpertiseCategory/expertise_category_cubit.dart';
 import 'Mentee/data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category_cubit.dart';
 import 'Mentee/data/cubits/Expertise/expertise_repository.dart';
@@ -156,9 +162,8 @@ class StateInjector {
       ),
     ),
     RepositoryProvider<ExclusiveserviceslistRepo>(
-      create: (context) => ExclusiveImpl(
-        remoteDataSource: context.read<RemoteDataSource>(),
-      ),
+      create: (context) =>
+          ExclusiveImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
     RepositoryProvider<ExpertiseRepo>(
       create: (context) =>
@@ -171,6 +176,11 @@ class StateInjector {
     RepositoryProvider<MenteeProfileRepository>(
       create: (context) =>
           MenteeProfileImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<SessionBookingRepo>(
+      create: (context) => SessionBookingRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
     ),
   ];
 
@@ -287,6 +297,19 @@ class StateInjector {
     BlocProvider<MenteeProfileUpdateCubit>(
       create: (context) =>
           MenteeProfileUpdateCubit(context.read<MenteeProfileRepository>()),
+    ),
+    BlocProvider<WeeklySlotsCubit>(
+      create: (context) => WeeklySlotsCubit(context.read<SessionBookingRepo>()),
+    ),
+    BlocProvider<DailySlotsCubit>(
+      create: (context) => DailySlotsCubit(context.read<SessionBookingRepo>()),
+    ),
+    BlocProvider<SelectSlotCubit>(
+      create: (context) => SelectSlotCubit(context.read<SessionBookingRepo>()),
+    ),
+    BlocProvider<SessionBookingCubit>(
+      create: (context) =>
+          SessionBookingCubit(context.read<SessionBookingRepo>()),
     ),
   ];
 }

@@ -16,6 +16,7 @@ import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
+import '../Models/SelectSlotModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
 import '../../core/network/mentee_endpoints.dart';
 import '../Models/CompusMentorListModel.dart';
@@ -82,6 +83,12 @@ abstract class RemoteDataSource {
   Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id);
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
   Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
+  Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
+  Future<SuccessModel?> sessionBooking(
+    int mentor_id,
+    int slot_id,
+    Map<String, dynamic> data,
+  );
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -122,6 +129,39 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<SuccessModel?> sessionBooking(
+    int mentor_id,
+    int slot_id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.book_slot}/${mentor_id}?slot_id=${slot_id}",
+        data: data,
+      );
+      AppLogger.log('sessionBooking: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('sessionBooking:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.select_slot}/${mentor_id}?slot_id=${slot_id}",
+      );
+      AppLogger.log('selectSlot: ${res.data}');
+      return SelectSlotModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('selectSlot:${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date) async {
     try {
       Response res = await ApiClient.get(
@@ -134,7 +174,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id) async {
