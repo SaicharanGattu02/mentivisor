@@ -1,7 +1,23 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileState.dart';
+import '../../../Components/CustomSnackBar.dart';
+import '../../../utils/ImageUtils.dart';
+import '../../../utils/color_constants.dart';
+import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../../data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
+
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  final int collegeId;
+  const EditProfileScreen({Key? key, required this.collegeId})
+    : super(key: key);
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -9,211 +25,300 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameController;
-  late TextEditingController _collegeController;
-  late TextEditingController _yearController;
-  late TextEditingController _bioController;
-  bool _imageRemoved = false;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _yearController = TextEditingController();
+  final TextEditingController _streamController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  File? _image;
+  String? imagePath;
+  final ImagePicker _picker = ImagePicker();
+
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: 'Shiva');
-    _collegeController = TextEditingController(text: 'Shiva SVR College');
-    _yearController = TextEditingController(text: '2019');
-    _bioController = TextEditingController(
-      text: 'A bio is a short description of a person\'s life, work, and interests…',
-    );
+    context.read<MenteeProfileCubit>().fetchMenteeProfile().then((userData) {
+      if (userData != null) {
+        final data = userData.data;
+        setState(() {
+          _nameController.text = data?.user?.name ?? "";
+          _emailController.text = data?.user?.email ?? "";
+          _phoneController.text = data?.user?.contact?.toString() ?? "";
+          _streamController.text = data?.user?.stream ?? "";
+          _yearController.text = data?.user?.year ?? "";
+          _bioController.text = data?.user?.bio ?? "";
+          imagePath = data?.user?.profilePicUrl ?? "";
+        });
+      }
+      setState(() => isLoading = false);
+    });
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _collegeController.dispose();
     _yearController.dispose();
+    _streamController.dispose();
     _bioController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo_library, color: primarycolor),
+                title: const Text("Choose from Gallery"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImageFromGallery();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt, color: primarycolor),
+                title: const Text("Take a Photo"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImageFromCamera();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
+      if (compressedFile != null) {
+        setState(() => _image = compressedFile);
+      }
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
+    if (pickedFile != null) {
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
+      if (compressedFile != null) {
+        setState(() => _image = compressedFile);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5FA),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black87),
-        centerTitle: true,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: Color(0xff121212),
-            fontFamily: 'segeo',
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // avatar + remove button
-              Center(
-                child: Stack(
-                  alignment: Alignment.topRight,
+      appBar: CustomAppBar1(title: "Edit Profile", actions: []),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
                   children: [
-                    if (!_imageRemoved)
-                      const CircleAvatar(
-                        radius: 64,
-                        backgroundImage: AssetImage('images/profileimg.png'),
-                      ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.white,
-                        child: IconButton(
-                          icon: const Icon(Icons.remove_circle, size: 18, color: Colors.black),
-                          onPressed: () => setState(() => _imageRemoved = true),
+                    // Profile Pic
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: _image != null
+                              ? FileImage(_image!)
+                              : (imagePath?.startsWith('http') ?? false)
+                              ? CachedNetworkImageProvider(imagePath!)
+                              : const AssetImage('assets/images/profile.png')
+                                    as ImageProvider,
                         ),
-                      ),
+                        Positioned(
+                          bottom: 4,
+                          right: 4,
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: primarycolor,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    _buildField(
+                      "Name",
+                      _nameController,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? "Name required" : null,
+                    ),
+                    _buildField(
+                      "Stream",
+                      _streamController,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? "Stream required" : null,
+                    ),
+                    _buildField(
+                      "Year",
+                      _yearController,
+                      keyboard: TextInputType.number,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? "Year required" : null,
+                    ),
+                    _buildField(
+                      "Email",
+                      _emailController,
+                      keyboard: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return "Email required";
+                        final emailRegex = RegExp(
+                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                        );
+                        return emailRegex.hasMatch(v)
+                            ? null
+                            : "Enter valid email";
+                      },
+                    ),
+                    _buildField(
+                      "Phone",
+                      _phoneController,
+                      keyboard: TextInputType.phone,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return "Phone required";
+                        if (v.length < 10) return "Enter valid phone";
+                        return null;
+                      },
+                    ),
+                    _buildField(
+                      "Bio",
+                      _bioController,
+                      maxLines: 4,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? "Bio required" : null,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Name
-              const Text(
-                'Name',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xff374151),
-                ),
+            ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        child: BlocConsumer<MenteeProfileUpdateCubit, MenteeProfileUpdateState>(
+          listener: (context, state) {
+            if (state is MenteeProfileUpdateSuccess) {
+              CustomSnackBar1.show(context, state.successModel.message ?? "");
+              context.pop();
+            } else if (state is MenteeProfileUpdateFailure) {
+              CustomSnackBar1.show(context, state.message ?? "");
+            }
+          },
+          builder: (context, state) {
+            final isLoading = state is MenteeProfileUpdateLoading;
+            return SizedBox(
+              width: double.infinity,
+              child: CustomAppButton1(
+                text: isLoading ? "Updating..." : "Submit",
+                onPlusTap: () {
+                  if (_formKey.currentState!.validate() && !isLoading) {
+                    final data = {
+                      "name": _nameController.text.trim(),
+                      "year": _yearController.text.trim(),
+                      "stream": _streamController.text.trim(),
+                      "bio": _bioController.text.trim(),
+                      "email": _emailController.text.trim(),
+                      "phone": _phoneController.text.trim(),
+                      "profile_pic": _image?.path ?? imagePath,
+                      "college_id": widget.collegeId,
+                    };
+                    context
+                        .read<MenteeProfileUpdateCubit>()
+                        .updateMenteeProfile(data);
+                  }
+                },
               ),
-              const SizedBox(height: 4),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                validator: (v) => v == null || v.isEmpty ? 'Name required' : null,
-              ),
-              const SizedBox(height: 16),
-
-              // College Name
-              const Text(
-                'College Name',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xff374151),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextFormField(
-                controller: _collegeController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                validator: (v) => v == null || v.isEmpty ? 'College Name required' : null,
-              ),
-              const SizedBox(height: 16),
-
-              // Year
-              const Text(
-                'Year',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xff374151),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextFormField(
-                controller: _yearController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (v) => v == null || v.isEmpty ? 'Year required' : null,
-              ),
-              const SizedBox(height: 16),
-
-              // Bio
-              const Text(
-                'Bio',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xff374151),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextFormField(
-                controller: _bioController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText:
-                  "A bio is a short description of a person's life, work, and interests, commonly used on professional and social media platforms.",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                maxLines: 5,
-                validator: (v) => v == null || v.isEmpty ? 'Bio required' : null,
-              ),
-              const SizedBox(height: 24),
-
-              // Save button
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       if (_formKey.currentState!.validate()) {
-              //         // Save profile changes
-              //         Navigator.pop(context);
-              //       }
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       padding: const EdgeInsets.symmetric(vertical: 16),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(12),
-              //       ),
-              //     ),
-              //     child: const Text('Save Changes'),
-              //   ),
-              // ),
-            ],
-          ),
+            );
+          },
         ),
+      ),
+    );
+  }
+
+  Widget _buildField(
+    String label,
+    TextEditingController controller, {
+    String? Function(String?)? validator,
+    TextInputType keyboard = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'segeo',
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Color(0xff374151),
+            ),
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            keyboardType: keyboard,
+            maxLines: maxLines,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

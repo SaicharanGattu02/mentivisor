@@ -157,7 +157,7 @@ class PostCard extends StatelessWidget {
                                         horizontal: 16,
                                         vertical: 12,
                                       ),
-                                      child: CommentBottomSheet(
+                                      child: CommentBottomSheet(comments: [],
                                         postId: communityPosts.id ?? 0,
                                         scrollController:
                                             scrollController, // pass it down

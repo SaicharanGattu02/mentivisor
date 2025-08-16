@@ -49,6 +49,7 @@ class APIEndpointUrls {
   static const String get_expertise = "${userUrl}expertise";
   static const String become_mentor = "${userUrl}become-mentor";
   static const String mentee_profile = "${userUrl}user-profile";
+  static const String mentee_profile_update = "${userUrl}profile/update";
   static const String get_Exclusive_services = "${userUrl}services";
   static const String weekly_slots = "${userUrl}mentor/weekly-slots";
 

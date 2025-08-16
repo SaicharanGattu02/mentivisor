@@ -17,6 +17,7 @@ import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
@@ -36,7 +37,7 @@ import 'Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
 import 'Mentee/data/cubits/GetBanners/GetBannersRepository.dart';
 import 'Mentee/data/cubits/Login/LoginCubit.dart';
 import 'Mentee/data/cubits/Login/LoginRepository.dart';
-import 'Mentee/data/cubits/MenteeProfile/MenteeProfileCubit.dart';
+import 'Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import 'Mentee/data/cubits/MenteeProfile/MenteeProfileRepository.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
@@ -282,6 +283,10 @@ class StateInjector {
     BlocProvider<ExclusiveservicelistCubit>(
       create: (context) =>
           ExclusiveservicelistCubit(context.read<ExclusiveserviceslistRepo>()),
+    ),
+    BlocProvider<MenteeProfileUpdateCubit>(
+      create: (context) =>
+          MenteeProfileUpdateCubit(context.read<MenteeProfileRepository>()),
     ),
   ];
 }

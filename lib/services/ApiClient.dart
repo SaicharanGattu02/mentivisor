@@ -156,13 +156,22 @@ class ApiClient {
     }
   }
 
-  static Future<Response> put(String path, {dynamic data}) async {
+  static Future<Response> put(
+      String path, {
+        dynamic data,
+        Options? options, // ✅ allow passing custom options
+      }) async {
     try {
-      return await _dio.put(path, data: data);
+      return await _dio.put(
+        path,
+        data: data,
+        options: options,
+      );
     } catch (e) {
       return _handleError(e);
     }
   }
+
 
   static Future<Response> delete(String path) async {
     try {

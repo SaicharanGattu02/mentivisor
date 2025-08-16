@@ -81,6 +81,7 @@ abstract class RemoteDataSource {
   Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
   Future<WeeklySlotsModel?> getWeeklySlots(int mentor_id);
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
+  Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -98,6 +99,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
               key.contains('file') ||
               key.contains('uploaded_file') ||
               key.contains('picture') ||
+              key.contains('profile_pic') ||
               key.contains('resume') ||
               key.contains('payment_screenshot'));
 
@@ -566,6 +568,25 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return MenteeProfileModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('get Mentee Profile ::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> menteeProfileUpdate(
+    final Map<String, dynamic> data,
+  ) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.put(
+        APIEndpointUrls.mentee_profile_update,
+        data: formData,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+      AppLogger.log('Mentee Profile Update ::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Mentee Profile Update  ::${e}');
       return null;
     }
   }

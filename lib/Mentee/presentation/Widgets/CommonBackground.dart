@@ -47,12 +47,14 @@ class Background1 extends StatelessWidget {
   final Widget child;
   final String? bgImagePath;
   final Color? bgColor;
+  final Gradient? gradient; // ✅ new
 
   const Background1({
     super.key,
     required this.child,
     this.bgImagePath,
     this.bgColor,
+    this.gradient, // ✅ new
   });
 
   @override
@@ -65,7 +67,9 @@ class Background1 extends StatelessWidget {
             opacity: 0.15,
             child: Container(
               decoration: BoxDecoration(
-              color: bgColor??Color(0xffFFF8EC)
+                // ✅ If gradient provided, use it; else fallback to bgColor
+                gradient: gradient,
+                color: gradient == null ? (bgColor ?? const Color(0xffFFF8EC)) : null,
               ),
             ),
           ),

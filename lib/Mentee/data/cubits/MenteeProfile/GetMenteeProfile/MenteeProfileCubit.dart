@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'MenteeProfileRepository.dart';
+import '../../../../Models/MenteeProfileModel.dart';
+import '../MenteeProfileRepository.dart';
 import 'MenteeProfileState.dart';
 
 class MenteeProfileCubit extends Cubit<MenteeProfileState> {
@@ -9,12 +10,13 @@ class MenteeProfileCubit extends Cubit<MenteeProfileState> {
   MenteeProfileCubit(this.menteeProfileRepository)
     : super(MenteeProfileInitial());
 
-  Future<void> fetchMenteeProfile() async {
+  Future<MenteeProfileModel?> fetchMenteeProfile() async {
     emit(MenteeProfileLoading());
     try {
       final menteeProfile = await menteeProfileRepository.getMenteeProfile();
       if (menteeProfile != null && menteeProfile.status == true) {
         emit(MenteeProfileLoaded(menteeProfileModel: menteeProfile));
+        return menteeProfile;
       } else {
         emit(
           MenteeProfileFailure(
@@ -25,5 +27,6 @@ class MenteeProfileCubit extends Cubit<MenteeProfileState> {
     } catch (e) {
       emit(MenteeProfileFailure(message: 'An error occurred: $e'));
     }
+    return null;
   }
 }

@@ -56,7 +56,6 @@ import '../Mentee/presentation/DashBoard.dart';
 import '../presentation/Details.dart';
 import '../presentation/SessionHistory.dart';
 
-
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
@@ -209,9 +208,15 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(Selecterscreen(), state),
     ),
     GoRoute(
-      path: '/editprofile',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(EditProfileScreen(), state),
+      path: '/edit_profile',
+      pageBuilder: (context, state) {
+        final collegeId =
+            int.tryParse(state.uri.queryParameters['collegeId'] ?? '') ?? 0;
+        return buildSlideTransitionPage(
+          EditProfileScreen(collegeId: collegeId),
+          state,
+        );
+      },
     ),
     GoRoute(
       path: '/addeventscreen',

@@ -7,11 +7,13 @@ import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.da
 class CommentBottomSheet extends StatefulWidget {
   final int postId;
   final ScrollController scrollController;
+  final List<Map<String, dynamic>> comments;
 
   const CommentBottomSheet({
     super.key,
     required this.postId,
     required this.scrollController,
+    required this.comments,
   });
 
   @override
@@ -20,21 +22,13 @@ class CommentBottomSheet extends StatefulWidget {
 
 class _CommentBottomSheetState extends State<CommentBottomSheet> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _comments = [
-    {
-      "name": "Ramesh",
-      "profile": "assets/images/profileimg.png",
-      "comment":
-          "Seen many students struggle to for clear road map for the data",
-      "time": "4 Days ago",
-    },
-    {
-      "name": "Ramesh",
-      "profile": "assets/images/profileimg.png",
-      "comment": "OK i will given the clarity",
-      "time": "2 Days ago",
-    },
-  ];
+  late List<Map<String, dynamic>> _comments;
+
+  @override
+  void initState() {
+    super.initState();
+    _comments = List.from(widget.comments);
+  }
 
   void _addComment(String text) {
     setState(() {
@@ -71,59 +65,61 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
+              child: CustomScrollView(
                 controller: widget.scrollController,
-                shrinkWrap: true,
-                itemCount: _comments.length,
-                itemBuilder: (context, index) {
-                  final comment = _comments[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 16,
-                          backgroundImage: AssetImage(comment['profile']),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final comment = _comments[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 16,
+                              backgroundImage: AssetImage(comment['profile']),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${comment['name']}   ${comment['time']}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Segoe',
-                                    fontSize: 13,
-                                  ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  comment['comment'],
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Segoe',
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${comment['name']}   ${comment['time']}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Segoe',
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      comment['comment'],
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Segoe',
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                },
+                      );
+                    }, childCount: _comments.length),
+                  ),
+                ],
               ),
             ),
+
             Row(
               children: [
                 Expanded(
@@ -151,6 +147,8 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                         context,
                         state.successModel.message ?? "",
                       );
+                      // Add to local list (optimistic UI update)
+                      _addComment(_controller.text.trim());
                     } else if (state is PostCommentFailure) {
                       CustomSnackBar1.show(context, state.error ?? "");
                     }
@@ -158,7 +156,11 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                   builder: (context, state) {
                     final isLoading = state is PostCommentLoading;
                     return isLoading
-                        ? CircularProgressIndicator()
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : IconButton(
                             icon: const Icon(
                               Icons.send,
@@ -166,9 +168,10 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                             ),
                             onPressed: () {
                               if (_controller.text.trim().isNotEmpty) {
-                                // _addComment(_controller.text.trim());
+                                final text = _controller.text.trim();
                                 Map<String, dynamic> data = {
                                   "community_id": widget.postId,
+                                  "comment": text,
                                 };
                                 context.read<PostCommentCubit>().postComment(
                                   data,
