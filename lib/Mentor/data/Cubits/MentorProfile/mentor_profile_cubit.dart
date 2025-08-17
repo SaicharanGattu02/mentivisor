@@ -2,9 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_states.dart';
 
-class MentorProfileCubit extends Cubit<MentorProfileStates> {
+class MentorProfileCubit1 extends Cubit<MentorProfileStates> {
   MentorProfileRepo mentorProfileRepo;
-  MentorProfileCubit(this.mentorProfileRepo) : super(MentorProfileInitially());
+  MentorProfileCubit1(this.mentorProfileRepo) : super(MentorProfileInitially());
 
   Future<void> getMentorProfile() async {
     emit(MentorProfileLoading());

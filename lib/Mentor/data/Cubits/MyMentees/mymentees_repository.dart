@@ -17,7 +17,7 @@ class MyMenteesRepoImpl implements MyMenteesRepo {
   }
 
   @override
-  Future<SuccessModel?> reportMentee(Map<String, dynamic> data) {
+  Future<SuccessModel?> reportMentee(Map<String, dynamic> data) async{
     return await mentorRemoteDataSource.reportMentee(data);
   }
 }

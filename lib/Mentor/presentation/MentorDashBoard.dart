@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/AppDrawer.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Mentee/presentation/Community/CommunityScreen.dart';
 import 'MentorHomeScreen.dart';
@@ -53,97 +54,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
       onWillPop: _onWillPop,
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              // Drawer Header
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color(0xFFE5E8F9),
-                ), // Light gradient background
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage(
-                        'assets/profile_image.png',
-                      ), // Replace with your image
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Profile', // Text for the profile section
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Drawer Menu Items
-              ListTile(
-                leading: Icon(Icons.account_circle),
-                title: Text('Profile'),
-                onTap: () {
-                  // Navigate to Profile screen
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.group),
-                title: Text('My Mentees'),
-                onTap: () {
-                  context.pop();
-                  context.push("/mentees_list");
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.feedback),
-                title: Text('Feedback'),
-                onTap: () {
-                  // Navigate to Feedback screen
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.history),
-                title: Text('Coin History'),
-                onTap: () {
-                  // Navigate to Coin History screen
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.card_giftcard),
-                title: Text('Coupon'),
-                onTap: () {
-                  // Navigate to Coupon screen
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.info),
-                title: Text('Info'),
-                onTap: () {
-                  // Navigate to Info screen
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Update Mentor Profile'),
-                onTap: () {
-                  // Navigate to Update Mentor Profile screen
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.exit_to_app, color: Colors.red),
-                title: Text('Logout', style: TextStyle(color: Colors.red)),
-                onTap: () {
-                  // Handle logout
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: const AppDrawer(),
         appBar: AppBar(
           backgroundColor: const Color(0xffF7F9FE),
           elevation: 0,

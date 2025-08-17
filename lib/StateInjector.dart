@@ -72,6 +72,8 @@ import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
+import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
+import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'Mentor/data/MentorRemoteDataSource.dart';
 
 class StateInjector {
@@ -221,6 +223,11 @@ class StateInjector {
     ),
     RepositoryProvider<MyMenteesRepo>(
       create: (context) => MyMenteesRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<MentorProfileRepo>(
+      create: (context) => MentorProfileRepoImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
@@ -375,6 +382,9 @@ class StateInjector {
     ),
     BlocProvider<ReportMenteeCubit>(
       create: (context) => ReportMenteeCubit(context.read<MyMenteesRepo>()),
+    ),
+    BlocProvider<MentorProfileCubit1>(
+      create: (context) => MentorProfileCubit1(context.read<MentorProfileRepo>()),
     ),
   ];
 }

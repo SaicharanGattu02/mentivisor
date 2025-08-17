@@ -1,4 +1,6 @@
-import 'package:mentivisor/Mentee/Models/MentorProfileModel.dart';
+
+
+import '../../../../Mentor/Models/MentorProfileModel.dart';
 
 abstract class MentorProfileStates {}
 
@@ -7,7 +9,7 @@ class MentorProfileInitially extends MentorProfileStates {}
 class MentorProfileLoading extends MentorProfileStates {}
 
 class MentorProfileLoaded extends MentorProfileStates {
-  MentorProfileModel mentorProfileModel;
+  MentorprofileModel mentorProfileModel;
   MentorProfileLoaded(this.mentorProfileModel);
 }
 

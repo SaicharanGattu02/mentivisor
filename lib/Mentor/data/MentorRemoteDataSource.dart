@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:mentivisor/core/network/mentor_endpoints.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
-import '../../Mentee/Models/MentorProfileModel.dart';
 import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/FeedbackModel.dart';
+import '../Models/MentorProfileModel.dart';
 import '../Models/MyMenteesModel.dart';
 import '../Models/SessionsModel.dart';
 
 abstract class MentorRemoteDataSource {
   Future<SessionsModel?> getSessions(String type);
-  Future<MentorProfileModel?> getMentorProfile();
+  Future<MentorprofileModel?> getMentorProfile();
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data);
   Future<FeedbackModel?> getFeedback(int user_id);
   Future<MyMenteesModel?> getMyMentees();
@@ -84,7 +84,9 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   @override
   Future<FeedbackModel?> getFeedback(int user_id) async {
     try {
-      Response res = await ApiClient.get("${MentorEndpointsUrls.feedback}");
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.feedback}/${user_id}",
+      );
       AppLogger.log('getFeedback: ${res.data}');
       return FeedbackModel.fromJson(res.data);
     } catch (e) {
@@ -109,13 +111,13 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<MentorProfileModel?> getMentorProfile() async {
+  Future<MentorprofileModel?> getMentorProfile() async {
     try {
       Response res = await ApiClient.get(
         "${MentorEndpointsUrls.mentor_profile}",
       );
       AppLogger.log('getMentorProfile: ${res.data}');
-      return MentorProfileModel.fromJson(res.data);
+      return MentorprofileModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('getMentorProfile:${e}');
       return null;

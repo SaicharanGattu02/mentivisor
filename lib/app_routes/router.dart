@@ -10,6 +10,7 @@ import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/BecomeMentorScreen.dart';
+import 'package:mentivisor/Mentor/presentation/FeedbackScreen.dart';
 import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/CostPerMinuteScreen.dart';
@@ -52,6 +53,7 @@ import '../Mentor/presentation/CouponCongratsScreen.dart';
 import '../Mentor/presentation/CouponsHomeScreen.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
+import '../Mentor/presentation/MentorProfileScreen.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
@@ -460,7 +462,18 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CouponCongratsScreen(), state),
     ),
-
+    GoRoute(
+      path: '/feedback',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(FeedbackScreen(userId: 76), state);
+      },
+    ),
+    GoRoute(
+      path: '/mentor_profile_screen',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(MentorProfileScreen1(), state);
+      },
+    ),
   ],
 );
 
