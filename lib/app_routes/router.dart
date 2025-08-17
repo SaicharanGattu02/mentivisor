@@ -17,7 +17,6 @@ import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/Profil
 import 'package:mentivisor/Mentee/presentation/becomeMentor/ExpertiseSelection.dart';
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
 import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
-import 'package:mentivisor/Splash.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
@@ -25,7 +24,6 @@ import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
-import '../Mentee/presentation/PaymentSuccessfully.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
@@ -54,18 +52,20 @@ import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
 import '../Mentor/presentation/ShoppingCouponScreen.dart';
-import '../Mentee/presentation/InfoScreen.dart';
+import '../Mentor/presentation/SlotsBookingScreen.dart';
+import '../Splash.dart';
 import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
 import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/',
+      path: '/splashscreen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
       },
@@ -111,27 +111,12 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
+
     GoRoute(
       path: '/success_screen',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
         return buildSlideTransitionPage(SuccessScreen(data: data), state);
-      },
-    ),
-    GoRoute(
-      path: '/payment_successfully',
-      pageBuilder: (context, state) {
-        final title = state.uri.queryParameters['title'] ?? "";
-        final subTitle = state.uri.queryParameters['subTitle'] ?? "";
-        final nextRoute = state.uri.queryParameters['next'] ?? "";
-        return buildSlideTransitionPage(
-          PaymentSuccessScreen(
-            title: title,
-            subTitle: subTitle,
-            nextRoute: nextRoute,
-          ),
-          state,
-        );
       },
     ),
     GoRoute(
@@ -158,6 +143,7 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(AuthLandingScreen(), state);
       },
     ),
+
     GoRoute(
       path: '/downloads',
       pageBuilder: (context, state) {
@@ -206,7 +192,6 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
-
     GoRoute(
       path: '/mentor_profile',
       pageBuilder: (context, state) {
@@ -297,13 +282,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Communityscreen(), state),
     ),
-
-    GoRoute(
-      path: '/infoscreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(InfoScreen(), state),
-    ),
-
     GoRoute(
       path: '/executiveservices',
       pageBuilder: (context, state) =>
@@ -367,7 +345,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Nointernet(), state),
     ),
-
     GoRoute(
       path: '/dashboard',
       pageBuilder: (context, state) =>
@@ -385,11 +362,13 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SignupScreen(), state),
     ),
+
     GoRoute(
       path: '/profile',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ProfileScreen(), state),
     ),
+
     GoRoute(
       path: '/wallet_screen',
       pageBuilder: (context, state) =>
@@ -400,6 +379,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(BuyCoinsScreens(), state),
     ),
+
     GoRoute(
       path: '/book_sessions_screen',
       pageBuilder: (context, state) {
@@ -453,7 +433,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/',
+      path: '/shoppingcouponscreen',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ShoppingCouponScreen(), state),
     ),
@@ -464,6 +444,15 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(MentorProfileScreen1(), state);
       },
     ),
+
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(SlotsBookingScreen(), state);
+      },
+    ),
+
+
   ],
 );
 
