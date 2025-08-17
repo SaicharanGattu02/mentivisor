@@ -11,25 +11,21 @@ import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/BecomeMentorScreen.dart';
 import 'package:mentivisor/Mentor/presentation/FeedbackScreen.dart';
-import 'package:mentivisor/newscreens/ChartScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/CostPerMinuteScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/ProfileSetupScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/ExpertiseSelection.dart';
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
 import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
-import 'package:mentivisor/presentation/BuyCoins.dart';
-import 'package:mentivisor/presentation/PurchasePage.dart';
-import 'package:mentivisor/presentation/PurchaseSuccessPage.dart';
-import 'package:mentivisor/presentation/Splash.dart';
+import 'package:mentivisor/Splash.dart';
 import '../Components/NoInternet.dart';
-import '../Mentee/Models/MenteeProfileModel.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
+import '../Mentee/presentation/PaymentSuccessfully.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
@@ -58,14 +54,12 @@ import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
 import '../Mentor/presentation/ShoppingCouponScreen.dart';
-import '../newscreens/InfoScreen.dart';
+import '../Mentee/presentation/InfoScreen.dart';
 import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
 import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
-import '../presentation/Details.dart';
-import '../presentation/SessionHistory.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -125,6 +119,22 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/payment_successfully',
+      pageBuilder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? "";
+        final subTitle = state.uri.queryParameters['subTitle'] ?? "";
+        final nextRoute = state.uri.queryParameters['next'] ?? "";
+        return buildSlideTransitionPage(
+          PaymentSuccessScreen(
+            title: title,
+            subTitle: subTitle,
+            nextRoute: nextRoute,
+          ),
+          state,
+        );
+      },
+    ),
+    GoRoute(
       path: '/profile_about',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
@@ -146,12 +156,6 @@ final GoRouter appRouter = GoRouter(
       path: '/auth_landing',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(AuthLandingScreen(), state);
-      },
-    ),
-    GoRoute(
-      path: '/chart_screen',
-      pageBuilder: (context, state) {
-        return buildSlideTransitionPage(ChartScreen(), state);
       },
     ),
     GoRoute(
@@ -202,6 +206,7 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
+
     GoRoute(
       path: '/mentor_profile',
       pageBuilder: (context, state) {
@@ -364,12 +369,6 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/session_history',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(SessionHistory(), state),
-    ),
-
-    GoRoute(
       path: '/dashboard',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(Dashboard(), state),
@@ -386,13 +385,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(SignupScreen(), state),
     ),
-
     GoRoute(
       path: '/profile',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(ProfileScreen(), state),
     ),
-
     GoRoute(
       path: '/wallet_screen',
       pageBuilder: (context, state) =>
@@ -404,30 +401,9 @@ final GoRouter appRouter = GoRouter(
           buildSlideTransitionPage(BuyCoinsScreens(), state),
     ),
     GoRoute(
-      path: '/details',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Details(), state),
-    ),
-    GoRoute(
-      path: '/buy_coins',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(BuyCoinsScreen(), state),
-    ),
-    GoRoute(
-      path: '/purchase_screen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(PurchasePage(), state),
-    ),
-    GoRoute(
-      path: '/purchase_success_screen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(PurchaseSuccessPage(), state),
-    ),
-
-    GoRoute(
       path: '/book_sessions_screen',
       pageBuilder: (context, state) {
-        final data = state.extra as MentorData; // cast back to Data
+        final data = state.extra as MentorData;
         return buildSlideTransitionPage(BookSessionScreen(data: data), state);
       },
     ),

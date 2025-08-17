@@ -1,8 +1,17 @@
+import 'dart:developer' as AppLogger;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_state.dart';
+import 'package:mentivisor/Mentee/data/cubits/Payment/payment_states.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+import '../../Components/CustomSnackBar.dart';
+import '../data/cubits/Payment/payment_cubit.dart';
 
 class BuyCoinsScreens extends StatefulWidget {
   const BuyCoinsScreens({Key? key}) : super(key: key);
@@ -12,24 +21,73 @@ class BuyCoinsScreens extends StatefulWidget {
 }
 
 class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
+  late Razorpay _razorpay;
+  final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<int> selectedIndexNotifier = ValueNotifier<int>(-1);
   int _selectedIndex = -1;
 
   @override
   void initState() {
     super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CoinsPackCubit>().fetchCoinsPack();
     });
   }
 
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    AppLogger.log(
+      "✅ Payment successful: ${response.paymentId} ${response.signature}",
+    );
+    Map<String, dynamic> data = {
+      "razorpay_order_id": response.orderId,
+      "razorpay_payment_id": response.paymentId,
+      "razorpay_signature": response.signature,
+    };
+    context.read<PaymentCubit>().verifyPayment(data);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    AppLogger.log("❌ Payment failed: ${response.message}");
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    AppLogger.log("💼 External wallet selected: ${response.walletName}");
+  }
+
+  void _openCheckout(String key, String order_id, int amount) {
+    var options = {
+      'key': '$key',
+      'amount': amount,
+      'currency': 'INR',
+      // 'name': service_name,
+      'order_id': '$order_id',
+      'description': 'purchase',
+      'timeout': 60,
+      // 'prefill': {'contact': mobile, 'email': email},
+    };
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      AppLogger.log('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: "Buy Coins", actions: []),
+      appBar: CustomAppBar1(
+        title: "Buy Coins",
+        actions: [],
+        color: Color(0xffFFF8EC),
+      ),
       backgroundColor: Color(0xffFFF8EC),
       body: Column(
         children: [
-          // Top illustration
           Container(
             margin: const EdgeInsets.all(16),
             height: 200,
@@ -74,18 +132,16 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                       itemCount: packs.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
+                            crossAxisCount: 3,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.65,
+                            childAspectRatio: 0.68,
                           ),
-
                       itemBuilder: (context, index) {
                         final coinspack = packs[index];
                         final selected = index == _selectedIndex;
-
                         return GestureDetector(
-                          onTap: () => setState(() => _selectedIndex = index),
+                          onTap: () => setState(() =>selectedIndexNotifier.value = index,),
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
@@ -99,7 +155,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                               children: [
                                 Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(16),
@@ -158,7 +214,6 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                                     ),
                                   ),
                                 ),
-
                                 Text(
                                   'for ${coinspack.discountPercent?.toString() ?? "0"}  ${coinspack.offerPrice?.toString() ?? "0"}',
                                   style: TextStyle(
@@ -188,6 +243,39 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: BlocConsumer<PaymentCubit, PaymentStates>(
+            listener: (context, state) {
+              isLoadingNotifier.value = state is PaymentLoading;
+              if (state is PaymentCreated) {
+                final payment_created_data = state.createPaymentModel;
+                // call _openCheckout() here
+              } else if (state is PaymentVerified) {
+                context.pushReplacement(
+                  '/success_screen'
+                      '?title=${Uri.encodeComponent("Payment is Done Successfully")}'
+                      '&subTitle=${Uri.encodeComponent("Please check your profile for the owned services")}'
+                      '&next=/dashboard?initialTab=3',
+                );
+              } else if (state is PaymentFailure) {
+                CustomSnackBar1.show(context, state.error);
+              }
+            },
+            builder: (context, state) {
+              return CustomAppButton1(text: 'Submit', onPlusTap: () {
+                final selectedIndex = selectedIndexNotifier.value;
+                if (selectedIndex == -1) {
+                  CustomSnackBar1.show(context, "Please select a pack");
+                  return;
+                }
+                // ✅ call create payment with selected pack
+              });
+            },
+          ),
+        ),
       ),
     );
   }

@@ -2,7 +2,7 @@ import '../../../Models/WalletModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class WalletmoneyRepository {
-  Future<WalletModel?> getWallet();
+  Future<WalletModel?> getWallet(int id,int page);
 }
 
 class walletmoneyImpl implements WalletmoneyRepository {
@@ -11,7 +11,7 @@ class walletmoneyImpl implements WalletmoneyRepository {
   walletmoneyImpl({required this.remoteDataSource});
 
   @override
-  Future<WalletModel?> getWallet() async {
-    return await remoteDataSource.getWallet();
+  Future<WalletModel?> getWallet(int id,int page) async {
+    return await remoteDataSource.getWallet(id,page);
   }
 }

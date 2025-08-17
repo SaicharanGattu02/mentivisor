@@ -5,11 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
-
 import 'package:mentivisor/utils/color_constants.dart';
-
 import '../../../Components/CustomAppButton.dart';
-
 import '../../../utils/spinkittsLoader.dart';
 import '../Widgets/CommentBottomSheet.dart';
 
@@ -753,23 +750,29 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       spacing: 3,
                                                       children: [
                                                         Expanded(
-                                                          child: CustomOutlinedButton(
-                                                            radius: 24,
-                                                            height: 38,
-                                                            // width: width*0.15,
-                                                            text: "View",
-                                                            onTap: () {},
-                                                          ),
+                                                          child:
+                                                              CustomOutlinedButton(
+                                                                radius: 24,
+                                                                height: 38,
+                                                                text: "View",
+                                                                onTap: () {
+                                                                  context.push(
+                                                                    '/downloads',
+                                                                  );
+                                                                },
+                                                              ),
                                                         ),
 
                                                         Expanded(
-                                                          child: CustomAppButton1(
-                                                            radius: 24,
-                                                            height: 38,
-                                                            // width: width*0.15,
-                                                            text: "Download",
-                                                            onPlusTap: () {},
-                                                          ),
+                                                          child:
+                                                              CustomAppButton1(
+                                                                radius: 24,
+                                                                height: 38,
+                                                                text:
+                                                                    "Download",
+                                                                onPlusTap:
+                                                                    () {},
+                                                              ),
                                                         ),
                                                       ],
                                                     ),

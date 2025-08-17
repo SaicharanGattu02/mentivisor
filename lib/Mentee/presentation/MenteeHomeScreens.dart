@@ -85,20 +85,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       case 'Executive services':
         context.push('/executiveservices');
         break;
-
       case 'info':
         context.push('/infoscreen');
         break;
-
       case 'Logout':
         showLogoutDialog(context);
-        break;
-      case 'View All':
-        if (_onCampus == true) {
-          context.push('/campus_mentor_list?scope=${""}');
-        } else {
-          context.push('/campus_mentor_list?scope=${"beyond"}');
-        }
         break;
     }
   }

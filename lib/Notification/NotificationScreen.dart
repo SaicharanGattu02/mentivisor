@@ -22,7 +22,6 @@ class NotificationScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // ── Session Section ─────────────────────
           const Text(
             'Session',
             style: TextStyle(

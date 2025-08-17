@@ -6,16 +6,15 @@ class StudyZoneCampusModel {
 
   StudyZoneCampusModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    studyZoneData = json['data'] != null
-        ? new StudyZoneData.fromJson(json['data'])
-        : null;
+    studyZoneData =
+    json['data'] != null ? StudyZoneData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.studyZoneData != null) {
-      data['data'] = this.studyZoneData!.toJson();
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
+    if (studyZoneData != null) {
+      data['data'] = studyZoneData!.toJson();
     }
     return data;
   }
@@ -24,15 +23,16 @@ class StudyZoneCampusModel {
 class StudyZoneData {
   int? currentPage;
   List<StudyZoneCampusData>? studyZoneCampusData;
+
   String? firstPageUrl;
   int? from;
   int? lastPage;
   String? lastPageUrl;
   List<Links>? links;
-  Null? nextPageUrl;
+  String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
@@ -57,7 +57,7 @@ class StudyZoneData {
     if (json['data'] != null) {
       studyZoneCampusData = <StudyZoneCampusData>[];
       json['data'].forEach((v) {
-        studyZoneCampusData!.add(new StudyZoneCampusData.fromJson(v));
+        studyZoneCampusData!.add(StudyZoneCampusData.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -67,7 +67,7 @@ class StudyZoneData {
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
+        links!.add(Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -79,24 +79,24 @@ class StudyZoneData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.studyZoneCampusData != null) {
-      data['data'] = this.studyZoneCampusData!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = {};
+    data['current_page'] = currentPage;
+    if (studyZoneCampusData != null) {
+      data['data'] = studyZoneCampusData!.map((v) => v.toJson()).toList();
     }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
+    data['first_page_url'] = firstPageUrl;
+    data['from'] = from;
+    data['last_page'] = lastPage;
+    data['last_page_url'] = lastPageUrl;
+    if (links != null) {
+      data['links'] = links!.map((v) => v.toJson()).toList();
     }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
+    data['next_page_url'] = nextPageUrl;
+    data['path'] = path;
+    data['per_page'] = perPage;
+    data['prev_page_url'] = prevPageUrl;
+    data['to'] = to;
+    data['total'] = total;
     return data;
   }
 }
@@ -136,7 +136,7 @@ class StudyZoneCampusData {
     id = json['id'];
     name = json['name'];
     image = json['image'];
-    tag = json['tag'].cast<String>();
+    tag = json['tag'] != null ? List<String>.from(json['tag']) : [];
     filePdf = json['file_pdf'];
     description = json['description'];
     uploadedBy = json['uploaded_by'];
@@ -145,27 +145,26 @@ class StudyZoneCampusData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
-    uploader = json['uploader'] != null
-        ? new Uploader.fromJson(json['uploader'])
-        : null;
+    uploader =
+    json['uploader'] != null ? Uploader.fromJson(json['uploader']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['image'] = this.image;
-    data['tag'] = this.tag;
-    data['file_pdf'] = this.filePdf;
-    data['description'] = this.description;
-    data['uploaded_by'] = this.uploadedBy;
-    data['downloads_count'] = this.downloadsCount;
-    data['college_id'] = this.collegeId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    if (this.uploader != null) {
-      data['uploader'] = this.uploader!.toJson();
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['image'] = image;
+    data['tag'] = tag;
+    data['file_pdf'] = filePdf;
+    data['description'] = description;
+    data['uploaded_by'] = uploadedBy;
+    data['downloads_count'] = downloadsCount;
+    data['college_id'] = collegeId;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
+    if (uploader != null) {
+      data['uploader'] = uploader!.toJson();
     }
     return data;
   }
@@ -175,33 +174,31 @@ class Uploader {
   int? id;
   String? name;
   String? email;
-  int? contact;
-  bool? emailVerifiedAt;
+  String? contact;
+  String? emailVerifiedAt;
   String? refreshToken;
   String? webFcmToken;
   String? deviceFcmToken;
   String? role;
   String? designation;
   int? exp;
-  Null? bio;
+  String? bio;
   int? collegeId;
   String? year;
   String? stream;
-  Null? gender;
+  String? gender;
   String? status;
   String? profilePic;
-  Null? state;
-  Null? city;
-  Null? country;
+  String? state;
+  String? city;
+  String? country;
   String? saasId;
-  Null? emailOtp;
-  Null? expiredTime;
+  String? emailOtp;
+  String? expiredTime;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  String? deletedAt;
   int? activeStatus;
-  String? lastLoginAt;
-  String? profilePicUrl;
 
   Uploader({
     this.id,
@@ -232,75 +229,69 @@ class Uploader {
     this.updatedAt,
     this.deletedAt,
     this.activeStatus,
-    this.lastLoginAt,
-    this.profilePicUrl,
   });
 
   Uploader.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     email = json['email'];
-    contact = json['contact'];
-    emailVerifiedAt = json['email_verified_at'];
+    contact = json['contact']?.toString();
+    emailVerifiedAt = json['email_verified_at']?.toString();
     refreshToken = json['refresh_token'];
     webFcmToken = json['web_fcm_token'];
     deviceFcmToken = json['device_fcm_token'];
     role = json['role'];
     designation = json['designation'];
     exp = json['exp'];
-    bio = json['bio'];
+    bio = json['bio']?.toString();
     collegeId = json['college_id'];
     year = json['year'];
     stream = json['stream'];
-    gender = json['gender'];
+    gender = json['gender']?.toString();
     status = json['status'];
     profilePic = json['profile_pic'];
-    state = json['state'];
-    city = json['city'];
-    country = json['country'];
+    state = json['state']?.toString();
+    city = json['city']?.toString();
+    country = json['country']?.toString();
     saasId = json['saas_id'];
-    emailOtp = json['email_otp'];
-    expiredTime = json['expired_time'];
+    emailOtp = json['email_otp']?.toString();
+    expiredTime = json['expired_time']?.toString();
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
+    deletedAt = json['deleted_at']?.toString();
     activeStatus = json['active_status'];
-    lastLoginAt = json['last_login_at'];
-    profilePicUrl = json['profile_pic_url'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['contact'] = this.contact;
-    data['email_verified_at'] = this.emailVerifiedAt;
-    data['refresh_token'] = this.refreshToken;
-    data['web_fcm_token'] = this.webFcmToken;
-    data['device_fcm_token'] = this.deviceFcmToken;
-    data['role'] = this.role;
-    data['designation'] = this.designation;
-    data['exp'] = this.exp;
-    data['bio'] = this.bio;
-    data['college_id'] = this.collegeId;
-    data['year'] = this.year;
-    data['stream'] = this.stream;
-    data['gender'] = this.gender;
-    data['status'] = this.status;
-    data['profile_pic'] = this.profilePic;
-    data['state'] = this.state;
-    data['city'] = this.city;
-    data['country'] = this.country;
-    data['saas_id'] = this.saasId;
-    data['email_otp'] = this.emailOtp;
-    data['expired_time'] = this.expiredTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['last_login_at'] = this.lastLoginAt;
-    data['profile_pic_url'] = this.profilePicUrl;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['contact'] = contact;
+    data['email_verified_at'] = emailVerifiedAt;
+    data['refresh_token'] = refreshToken;
+    data['web_fcm_token'] = webFcmToken;
+    data['device_fcm_token'] = deviceFcmToken;
+    data['role'] = role;
+    data['designation'] = designation;
+    data['exp'] = exp;
+    data['bio'] = bio;
+    data['college_id'] = collegeId;
+    data['year'] = year;
+    data['stream'] = stream;
+    data['gender'] = gender;
+    data['status'] = status;
+    data['profile_pic'] = profilePic;
+    data['state'] = state;
+    data['city'] = city;
+    data['country'] = country;
+    data['saas_id'] = saasId;
+    data['email_otp'] = emailOtp;
+    data['expired_time'] = expiredTime;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
+    data['active_status'] = activeStatus;
     return data;
   }
 }
@@ -319,10 +310,10 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['label'] = label;
+    data['active'] = active;
     return data;
   }
 }

@@ -96,7 +96,7 @@ class CustomOutlinedButton extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
   final double? width;
-  final double? height; // fully customizable (or content-driven if null)
+  final double? height;
   final int radius;
   final bool isLoading;
   final IconData? icon;

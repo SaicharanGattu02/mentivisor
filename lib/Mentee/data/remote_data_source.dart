@@ -13,6 +13,7 @@ import '../Models/CampusesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
+import '../Models/CreatePaymentModel.dart';
 import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
 import '../Models/GuestMentorsModel.dart';
@@ -39,7 +40,7 @@ abstract class RemoteDataSource {
   Future<RegisterModel?> finalRegister(Map<String, dynamic> data);
   Future<Otpverifymodel?> Verifyotp(Map<String, dynamic> data);
   Future<GetBannersRespModel?> getbanners();
-  Future<WalletModel?> getWallet();
+  Future<WalletModel?> getWallet(int id, int page);
   Future<CompusMentorListModel?> getCampusMentorList(
     String scope,
     String search,
@@ -90,6 +91,8 @@ abstract class RemoteDataSource {
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
   Future<SessionBookingModel?> sessionBooking(int mentor_id, int slot_id);
+  Future<CreatePaymentModel?> createPayment(Map<String, dynamic> data);
+  Future<SuccessModel?> verifyPayment(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -571,9 +574,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<WalletModel?> getWallet() async {
+  Future<WalletModel?> getWallet(int id, int page) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.wallet_money}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.wallet_money}?achievements=${id}&page=${page}",
+      );
       AppLogger.log('get walletmoney::${res.data}');
       return WalletModel.fromJson(res.data);
     } catch (e) {
@@ -626,6 +631,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<SuccessModel?> menteeProfileUpdate(
     final Map<String, dynamic> data,
   ) async {
+    // final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.put(
         APIEndpointUrls.mentee_profile_update,
@@ -712,6 +718,38 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('StudyZone Report ::${e}');
+
+      return null;
+    }
+  }
+  @override
+  Future<CreatePaymentModel?> createPayment(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.create_paymenet}",
+        data: formData,
+      );
+      AppLogger.log('create Payment ::${res.data}');
+      return CreatePaymentModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('create Payment  ::${e}');
+
+      return null;
+    }
+  }
+  @override
+  Future<SuccessModel?> verifyPayment(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.verify_paymenet}",
+        data: formData,
+      );
+      AppLogger.log('verify Payment ::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('verify Payment  ::${e}');
 
       return null;
     }

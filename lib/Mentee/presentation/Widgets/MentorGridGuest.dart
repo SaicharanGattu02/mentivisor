@@ -16,7 +16,10 @@ class MentorGridGuest extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: mentors?.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16, childAspectRatio: 0.75,
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.7,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
@@ -28,7 +31,8 @@ class MentorGridGuest extends StatelessWidget {
             name: m?.name ?? '',
             designation: m?.designation ?? '',
             imageProvider: hasPic ? CachedNetworkImageProvider(url!) : null,
-            rating: (m?.ratingsReceivedCount ?? 0).toDouble(), // adjust if you have separate average
+            rating: (m?.ratingsReceivedCount ?? 0)
+                .toDouble(), // adjust if you have separate average
             ratingCount: m?.ratingsReceivedCount ?? 0,
           ),
         );
@@ -40,7 +44,10 @@ class MentorGridGuest extends StatelessWidget {
 class MentorGridCampus extends StatelessWidget {
   final List<MentorsList>? mentors_list;
   final void Function(MentorsList) onTapMentor;
-  const MentorGridCampus({required this.mentors_list, required this.onTapMentor});
+  const MentorGridCampus({
+    required this.mentors_list,
+    required this.onTapMentor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +56,10 @@ class MentorGridCampus extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: mentors_list?.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16, childAspectRatio: 0.75,
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.7,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
@@ -61,8 +71,9 @@ class MentorGridCampus extends StatelessWidget {
             name: m?.user?.name ?? '',
             designation: m?.user?.designation ?? '',
             imageProvider: hasPic ? CachedNetworkImageProvider(url!) : null,
-            rating: double.parse(m?.averageRating.toString() ?? ""),     // average
-            ratingCount: 0,   // <-- add correct count field in your model if available
+            rating: double.parse(m?.averageRating.toString() ?? ""), // average
+            ratingCount:
+                0, // <-- add correct count field in your model if available
           ),
         );
       },
@@ -88,9 +99,9 @@ class _MentorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: const Color(0xffF1F5FD).withOpacity(0.6),
+        color: Color(0xffF1F5FD).withOpacity(0.6),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -110,7 +121,9 @@ class _MentorCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xff333333),
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Color(0xff333333),
             ),
           ),
           const SizedBox(height: 4),
@@ -120,25 +133,41 @@ class _MentorCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Color(0xff555555), fontFamily: 'segeo', fontWeight: FontWeight.w400,
+              color: Color(0xff555555),
+              fontFamily: 'segeo',
+              fontWeight: FontWeight.w400,
             ),
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("assets/images/starvector.png", color: Colors.amber, height: 14, width: 14),
+              Image.asset(
+                "assets/images/starvector.png",
+                color: Colors.amber,
+                height: 14,
+                width: 14,
+              ),
               const SizedBox(width: 4),
               Text(
                 rating.toStringAsFixed(1),
-                style: const TextStyle(fontSize: 12, fontFamily: 'segeo', color: Color(0xff333333), fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'segeo',
+                  color: Color(0xff333333),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(width: 8),
               Image.asset("assets/images/coinsgold.png", height: 16, width: 16),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Text(
                 '$ratingCount',
-                style: const TextStyle(fontSize: 12, color: Color(0xff666666), fontWeight: FontWeight.w400),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xff666666),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ],
           ),

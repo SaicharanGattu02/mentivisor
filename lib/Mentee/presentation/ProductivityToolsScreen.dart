@@ -67,7 +67,11 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: 'Productivity Tools', actions: []),
+      appBar: CustomAppBar1(
+        title: 'Productivity Tools',
+        actions: [],
+        color: Color(0xFFEFF6FF),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -311,99 +315,53 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                       ),
                                     ),
                                     builder: (context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom, // Handle keyboard
-                                          left: 16,
-                                          right: 16,
-                                          top: 16,
-                                        ),
-                                        child: Column(
-                                          mainAxisSize:
-                                              MainAxisSize.min, // Fit content
-                                          children: [
-                                            // Text field for task description
-                                            _buildTextField(
-                                              controller: _taskNameController,
-                                              hint: "Enter Task Name",
-                                            ),
-                                            const SizedBox(height: 16),
-                                            // Row with Cancel and Done buttons
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: CustomOutlinedButton(
-                                                    text: "Cancel",
-                                                    onTap: () {
-                                                      context.pop();
-                                                    },
+                                      return SafeArea(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom, // Handle keyboard
+                                            left: 16,
+                                            right: 16,
+                                            top: 16,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize:
+                                                MainAxisSize.min, // Fit content
+                                            children: [
+                                              // Text field for task description
+                                              _buildTextField(
+                                                controller: _taskNameController,
+                                                hint: "Enter Task Name",
+                                              ),
+                                              const SizedBox(height: 16),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: CustomOutlinedButton(
+                                                      radius: 24,
+                                                      text: "Cancel",
+                                                      onTap: () {
+                                                        context.pop();
+                                                      },
+                                                    ),
                                                   ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ), // Spacing between buttons
-                                                Expanded(
-                                                  child:
-                                                      BlocConsumer<
-                                                        TaskUpdateCubit,
-                                                        TaskUpdateStates
-                                                      >(
-                                                        listener: (context, state) async {
-                                                          if (state
-                                                              is TaskUpdateSuccess) {
-                                                            final formattedDate =
-                                                                DateFormat(
-                                                                  'yyyy-MM-dd',
-                                                                ).format(
-                                                                  _selectedDateNotifier
-                                                                      .value,
-                                                                );
-                                                            await context
-                                                                .read<
-                                                                  TaskByDateCubit
-                                                                >()
-                                                                .fetchTasksByDate(
-                                                                  formattedDate,
-                                                                );
-                                                            context.pop();
-                                                          } else if (state
-                                                              is TaskUpdateFailure) {
-                                                            CustomSnackBar1.show(
-                                                              context,
-                                                              state.msg,
-                                                            );
-                                                          }
-                                                        },
-                                                        builder: (context, state) {
-                                                          return ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        20,
-                                                                    vertical:
-                                                                        12,
-                                                                  ),
-                                                              backgroundColor:
-                                                                  const Color(
-                                                                    0xff9333EA,
-                                                                  ),
-                                                              shadowColor: Colors
-                                                                  .transparent,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      24,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ), // Spacing between buttons
+                                                  Expanded(
+                                                    child:
+                                                        BlocConsumer<
+                                                          TaskUpdateCubit,
+                                                          TaskUpdateStates
+                                                        >(
+                                                          listener: (context, state) async {
+                                                            if (state
+                                                                is TaskUpdateSuccess) {
                                                               final formattedDate =
                                                                   DateFormat(
                                                                     'yyyy-MM-dd',
@@ -411,64 +369,112 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                                     _selectedDateNotifier
                                                                         .value,
                                                                   );
-                                                              final Map<
-                                                                String,
-                                                                dynamic
-                                                              >
-                                                              data = {
-                                                                "task_date":
-                                                                    formattedDate,
-                                                                "title":
-                                                                    _taskNameController
-                                                                        .text,
-                                                              };
-                                                              context
+                                                              await context
                                                                   .read<
-                                                                    TaskUpdateCubit
+                                                                    TaskByDateCubit
                                                                   >()
-                                                                  .addTask(
-                                                                    data,
+                                                                  .fetchTasksByDate(
+                                                                    formattedDate,
                                                                   );
-                                                            },
-                                                            child:
-                                                                state
-                                                                    is TaskUpdateLoading
-                                                                ? const SizedBox(
-                                                                    width: 20,
-                                                                    height: 20,
-                                                                    child: CircularProgressIndicator(
-                                                                      color: Color(
-                                                                        0xffF5F5F5,
-                                                                      ),
-                                                                      strokeWidth:
-                                                                          2,
+                                                              context.pop();
+                                                            } else if (state
+                                                                is TaskUpdateFailure) {
+                                                              CustomSnackBar1.show(
+                                                                context,
+                                                                state.msg,
+                                                              );
+                                                            }
+                                                          },
+                                                          builder: (context, state) {
+                                                            return ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          20,
+                                                                      vertical:
+                                                                          12,
                                                                     ),
-                                                                  )
-                                                                : Text(
-                                                                    "Submit",
-                                                                    style: TextStyle(
-                                                                      color: Color(
-                                                                        0xffF5F5F5,
-                                                                      ),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontFamily:
-                                                                          "segeo",
+                                                                backgroundColor:
+                                                                    const Color(
+                                                                      0xff9333EA,
                                                                     ),
-                                                                  ),
-                                                          );
-                                                        },
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 16,
-                                            ), // Bottom padding
-                                          ],
+                                                                shadowColor: Colors
+                                                                    .transparent,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        24,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                final formattedDate =
+                                                                    DateFormat(
+                                                                      'yyyy-MM-dd',
+                                                                    ).format(
+                                                                      _selectedDateNotifier
+                                                                          .value,
+                                                                    );
+                                                                final Map<
+                                                                  String,
+                                                                  dynamic
+                                                                >
+                                                                data = {
+                                                                  "task_date":
+                                                                      formattedDate,
+                                                                  "title":
+                                                                      _taskNameController
+                                                                          .text,
+                                                                };
+                                                                context
+                                                                    .read<
+                                                                      TaskUpdateCubit
+                                                                    >()
+                                                                    .addTask(
+                                                                      data,
+                                                                    );
+                                                              },
+                                                              child:
+                                                                  state
+                                                                      is TaskUpdateLoading
+                                                                  ? const SizedBox(
+                                                                      width: 20,
+                                                                      height:
+                                                                          20,
+                                                                      child: CircularProgressIndicator(
+                                                                        color: Color(
+                                                                          0xffF5F5F5,
+                                                                        ),
+                                                                        strokeWidth:
+                                                                            2,
+                                                                      ),
+                                                                    )
+                                                                  : Text(
+                                                                      "Submit",
+                                                                      style: TextStyle(
+                                                                        color: Color(
+                                                                          0xffF5F5F5,
+                                                                        ),
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontFamily:
+                                                                            "segeo",
+                                                                      ),
+                                                                    ),
+                                                            );
+                                                          },
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 16,
+                                              ), // Bottom padding
+                                            ],
+                                          ),
                                         ),
                                       );
                                     },
@@ -817,12 +823,15 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
 
   Widget _buildStatCard(String title, String value, Color color) {
     return Container(
+      height: 140,
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(Icons.task, color: Colors.blue),
           SizedBox(height: 8),

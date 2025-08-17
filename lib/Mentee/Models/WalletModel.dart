@@ -21,15 +21,15 @@ class WalletModel {
 
 class Data {
   Wallet? wallet;
-  CreditedCoins? creditedCoins;
+  Transactions? transactions;
 
-  Data({this.wallet, this.creditedCoins});
+  Data({this.wallet, this.transactions});
 
   Data.fromJson(Map<String, dynamic> json) {
     wallet =
     json['wallet'] != null ? new Wallet.fromJson(json['wallet']) : null;
-    creditedCoins = json['credited_coins'] != null
-        ? new CreditedCoins.fromJson(json['credited_coins'])
+    transactions = json['transactions'] != null
+        ? new Transactions.fromJson(json['transactions'])
         : null;
   }
 
@@ -38,8 +38,8 @@ class Data {
     if (this.wallet != null) {
       data['wallet'] = this.wallet!.toJson();
     }
-    if (this.creditedCoins != null) {
-      data['credited_coins'] = this.creditedCoins!.toJson();
+    if (this.transactions != null) {
+      data['transactions'] = this.transactions!.toJson();
     }
     return data;
   }
@@ -67,24 +67,24 @@ class Wallet {
   }
 }
 
-class CreditedCoins {
+class Transactions {
   int? currentPage;
-  List<CoinsHistory>? coinsHistory;
+  List<TransectionsData>? transectionsData;
   String? firstPageUrl;
   int? from;
   int? lastPage;
   String? lastPageUrl;
   List<Links>? links;
-  Null? nextPageUrl;
+  String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
-  CreditedCoins(
+  Transactions(
       {this.currentPage,
-        this.coinsHistory,
+        this.transectionsData,
         this.firstPageUrl,
         this.from,
         this.lastPage,
@@ -97,12 +97,12 @@ class CreditedCoins {
         this.to,
         this.total});
 
-  CreditedCoins.fromJson(Map<String, dynamic> json) {
+  Transactions.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
-      coinsHistory = <CoinsHistory>[];
+      transectionsData = <TransectionsData>[];
       json['data'].forEach((v) {
-        coinsHistory!.add(new CoinsHistory.fromJson(v));
+        transectionsData!.add(new TransectionsData.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -126,8 +126,8 @@ class CreditedCoins {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['current_page'] = this.currentPage;
-    if (this.coinsHistory != null) {
-      data['data'] = this.coinsHistory!.map((v) => v.toJson()).toList();
+    if (this.transectionsData != null) {
+      data['data'] = this.transectionsData!.map((v) => v.toJson()).toList();
     }
     data['first_page_url'] = this.firstPageUrl;
     data['from'] = this.from;
@@ -146,7 +146,7 @@ class CreditedCoins {
   }
 }
 
-class CoinsHistory {
+class TransectionsData {
   int? id;
   int? userId;
   String? activity;
@@ -157,7 +157,7 @@ class CoinsHistory {
   String? createdAt;
   String? updatedAt;
 
-  CoinsHistory(
+  TransectionsData(
       {this.id,
         this.userId,
         this.activity,
@@ -168,7 +168,7 @@ class CoinsHistory {
         this.createdAt,
         this.updatedAt});
 
-  CoinsHistory.fromJson(Map<String, dynamic> json) {
+  TransectionsData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     activity = json['activity'];

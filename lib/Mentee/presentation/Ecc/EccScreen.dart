@@ -83,12 +83,11 @@ class _EccScreenState extends State<EccScreen> {
                         children: [
                           const SizedBox(height: 24),
                           Container(
-                            height: 53,
-                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Color(0xffDBE5FB).withOpacity(0.4),
-                              borderRadius: BorderRadius.circular(36),
+                              color:  Color(0xFFE8EBF7),
+                              borderRadius: BorderRadius.circular(30),
                             ),
+                            padding: const EdgeInsets.all(4),
                             child: Row(
                               spacing: 10,
                               children: [

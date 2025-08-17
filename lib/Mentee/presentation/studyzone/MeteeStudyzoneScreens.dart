@@ -91,11 +91,10 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       children: [
                         const SizedBox(height: 24),
                         Container(
-                          height: 53,
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Color(0xffDBE5FB).withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(36),
+                            color: const Color(0xFFE8EBF7),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                           child: Row(
                             spacing: 10,
@@ -339,8 +338,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               Container(
                                                 width: 120,
                                                 height: 120,
-                                                color: const Color(0xffF8FAFE),
-                                                child: const Icon(
+                                                color:  Color(0xffF8FAFE),
+                                                child:  Icon(
                                                   Icons.broken_image,
                                                   size: 40,
                                                   color: Colors.grey,
@@ -351,7 +350,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       // Right Content
                                       Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
+                                          padding: const EdgeInsets.only(top: 10.0,bottom: 10,left: 5),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -412,21 +411,18 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                     );
                                                   }).toList(),
                                                 ),
-
-                                              const SizedBox(height: 16),
+                                              SizedBox(height: 16),
                                               FutureBuilder(
                                                 future: AuthService.isGuest,
                                                 builder: (context, snapshot) {
                                                   final isGuest =
                                                       snapshot.data ?? false;
                                                   return Row(
-                                                    spacing: 10,
+                                                    spacing: 3,
                                                     children: [
                                                       Expanded(
                                                         child: CustomOutlinedButton(
-                                                          height: 38,
-                                                          width: 110,
-                                                          radius: 24,
+                                                          radius: 24,height: 38,
                                                           text: "View",
                                                           onTap: () {
                                                             if (isGuest) {
@@ -445,9 +441,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                       ),
                                                       Expanded(
                                                         child: CustomAppButton1(
-                                                          width: 110,
-                                                          height: 38,
-                                                          radius: 24,
+                                                          radius: 24,height: 38,
                                                           text: "Download",
                                                           onPlusTap: () {
                                                             if (isGuest) {

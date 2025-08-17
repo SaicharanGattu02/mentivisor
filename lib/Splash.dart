@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
-import '../services/AuthService.dart';
+import 'services/AuthService.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

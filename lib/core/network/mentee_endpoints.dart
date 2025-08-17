@@ -49,11 +49,12 @@ class APIEndpointUrls {
   static const String mentee_profile_update = "${userUrl}profile/update";
   static const String get_Exclusive_services = "${userUrl}services";
   static const String get_Exclusive_services_details = "${userUrl}services";
-
   static const String weekly_slots = "${userUrl}mentor/weekly-slots";
   static const String daily_slots = "${userUrl}mentor/daily-slots";
   static const String select_slot = "${userUrl}select-slot";
   static const String book_slot = "${userUrl}session/book-slot";
+  static const String create_paymenet = "${userUrl}razorpay/order";
+  static const String verify_paymenet = "${userUrl}razorpay/verify";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

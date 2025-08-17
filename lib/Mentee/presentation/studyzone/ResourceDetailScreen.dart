@@ -156,7 +156,7 @@ class ResourceDetailScreen extends StatelessWidget {
                                   imageUrl:
                                       studyZoneCampusData
                                           .uploader
-                                          ?.profilePicUrl ??
+                                          ?.profilePic ??
                                       "",
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Center(
@@ -241,8 +241,7 @@ class ResourceDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 15),
+                    SizedBox(height: 15),
                     GestureDetector(
                       onTap: () => _showReportSheet(context),
                       child: Container(
