@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_states.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/AppDrawer.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Mentee/presentation/Community/CommunityScreen.dart';
+import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'MentorHomeScreen.dart';
 import 'MySessionsScreen.dart';
 
@@ -23,6 +26,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _selectedIndex);
+    context.read<MentorProfileCubit1>().getMentorProfile();
   }
 
   void _onItemTapped(int index) {
@@ -57,33 +61,47 @@ class _MentorDashboardState extends State<MentorDashboard> {
         drawer: const AppDrawer(),
         appBar: AppBar(
           backgroundColor: const Color(0xffF7F9FE),
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
-            onPressed: _toggleDrawerOrExit,
-          ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'Hello!',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Inter",
-                ),
-              ),
-              Text(
-                'Vijay',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Inter",
-                ),
-              ),
-            ],
+          automaticallyImplyLeading: false,
+          title: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
+            builder: (context, state) {
+              final user_data = state is MentorProfileLoaded
+                  ? state.mentorProfileModel.data
+                  : null;
+              return Row(
+                spacing: 6,
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(Icons.menu, color: Colors.black, size: 34),
+                    onPressed: _toggleDrawerOrExit,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hello!',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          height: 1,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        user_data?.name ?? "User",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          height: 1,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
           ),
           actions: [
             IconButton(
@@ -104,11 +122,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             HapticFeedback.lightImpact();
             setState(() => _selectedIndex = i);
           },
-          children: [
-            MentorHomeScreen(),
-            MySessionsScreen(),
-            Communityscreen(),
-          ],
+          children: [MentorHomeScreen(), MySessionsScreen(), Communityscreen()],
         ),
         bottomNavigationBar: _buildBottomNav(),
       ),

@@ -33,6 +33,7 @@ import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/FeedBack/feedback_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ReportMentee/report_mentee_cubit.dart';
@@ -384,7 +385,14 @@ class StateInjector {
       create: (context) => ReportMenteeCubit(context.read<MyMenteesRepo>()),
     ),
     BlocProvider<MentorProfileCubit1>(
-      create: (context) => MentorProfileCubit1(context.read<MentorProfileRepo>()),
+      create: (context) =>
+          MentorProfileCubit1(context.read<MentorProfileRepo>()),
+    ),
+    BlocProvider<MentorDashboardCubit>(
+      create: (context) => MentorDashboardCubit(
+        getbannerscubit: Getbannerscubit(context.read<Getbannersrepository>()),
+        sessionCubit: SessionCubit(context.read<SessionSRepo>()),
+      ),
     ),
   ];
 }

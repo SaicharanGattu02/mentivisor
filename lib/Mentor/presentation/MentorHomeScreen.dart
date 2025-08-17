@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashbaord_states.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsStates.dart';
+import 'package:mentivisor/Mentor/presentation/MentorDashBoard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
@@ -24,8 +27,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<Getbannerscubit>().getbanners();
-    context.read<SessionCubit>().getSessions("upcoming");
+    context.read<MentorDashboardCubit>().fetchDashboard();
   }
 
   @override
@@ -72,166 +74,175 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
             colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            BlocBuilder<Getbannerscubit, Getbannersstate>(
-              builder: (context, state) {
-                if (state is GetbannersStateLoading) {
-                  return const SizedBox(
-                    height: 180,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                if (state is GetbannersStateFailure) {
-                  return SizedBox(
-                    height: 180,
-                    child: Center(child: Text(state.msg)),
-                  );
-                }
-                final banners =
-                    (state as GetbannersStateLoaded).getbannerModel.data ?? [];
-                if (banners.isEmpty) {
-                  return const SizedBox(
-                    height: 180,
-                    child: Center(child: Text("No banners available")),
-                  );
-                }
-                return Column(
-                  children: [
-                    CarouselSlider.builder(
-                      itemCount: banners.length,
-                      itemBuilder: (ctx, i, _) {
-                        final b = banners[i];
-                        return GestureDetector(
-                          onTap: () {
-                            if (b.link != null) _launchUrl(b.link!);
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              b.imgUrl ?? '',
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              errorBuilder: (_, __, ___) => Container(
-                                color: Colors.grey[200],
-                                alignment: Alignment.center,
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  color: Colors.grey,
+        child: BlocBuilder<MentorDashboardCubit, MentorDashBoardState>(
+          builder: (context, state) {
+            if (state is MentorDashBoardLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is MentorDashBoardLoaded) {
+              final banners_data = state.getBannersRespModel;
+              final session_data = state.sessionsModel;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Column(
+                    children: [
+                      CarouselSlider.builder(
+                        itemCount: banners_data?.data?.length,
+                        itemBuilder: (ctx, i, _) {
+                          final b = banners_data?.data?[i];
+                          return GestureDetector(
+                            onTap: () {
+                              if (b?.link != null) _launchUrl(b?.link ?? "");
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(
+                                b?.imgUrl ?? '',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                errorBuilder: (_, __, ___) => Container(
+                                  color: Colors.grey[200],
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                      options: CarouselOptions(
-                        height: 180,
-                        autoPlay: true,
-                        autoPlayInterval: const Duration(seconds: 4),
-                        viewportFraction: 1.0,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ValueListenableBuilder<int>(
-                      valueListenable: _currentIndex,
-                      builder: (context, currentIndex, _) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(banners.length, (index) {
-                            final isFirst = index == 0;
-                            final isLast = index == banners.length - 1;
-                            final isNear = (index - currentIndex).abs() <= 1;
-
-                            if (!isFirst && !isLast && !isNear) {
-                              return const SizedBox.shrink();
-                            }
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              height: SizeConfig.screenHeight * 0.008,
-                              width: currentIndex == index
-                                  ? SizeConfig.screenWidth * 0.05
-                                  : SizeConfig.screenWidth * 0.014,
-                              decoration: BoxDecoration(
-                                color: currentIndex == index
-                                    ? primarycolor
-                                    : Colors.grey.shade400,
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            );
-                          }),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Upcoming Session',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'segeo',
-              ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: BlocBuilder<SessionCubit, SessionStates>(
-                builder: (context, state) {
-                  if (state is SessionLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state is SessionLoaded) {
-                    final Sessions = state.sessionsModel.data;
-                    if (Sessions?.length == 0) {
-                      return Center(child: Column());
-                    }
-                    return CustomScrollView(
-                      slivers: [
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            final session = Sessions?[index];
-                            final duration = calculateDuration(
-                              session?.startTime ?? "",
-                              session?.endTime ?? "",
-                            );
-                            return SessionCard(
-                              status: 'Upcoming',
-                              sessionDate: session?.date ?? "",
-                              sessionTime: '${duration} Minutes to go',
-                              sessionName:
-                                  'G-Meet with Suresh from SVG Collage',
-                              sessionImage:
-                                  session?.mentee?.menteeProfile ??
-                                  "", // Image for upcoming sessions
-                              sessionTopics: session?.topics ?? "",
-                              reason: '',
-                              buttonText:
-                                  'Message from ${session?.mentee?.name ?? ""}',
-                              buttonIcon: 'assets/icons/chaticon.png',
-                              remainingTime:
-                                  '${duration} Minutes to go', // Time remaining for upcoming session
-                            );
-                          }, childCount: Sessions?.length),
+                          );
+                        },
+                        options: CarouselOptions(
+                          height: 180,
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 4),
+                          viewportFraction: 1.0,
                         ),
-                      ],
-                    );
-                  } else {
-                    return Center(child: Text("No Data Found"));
-                  }
-                },
-              ),
-            ),
-          ],
+                      ),
+                      const SizedBox(height: 8),
+                      ValueListenableBuilder<int>(
+                        valueListenable: _currentIndex,
+                        builder: (context, currentIndex, _) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              banners_data?.data?.length ?? 0,
+                              (index) {
+                                final isFirst = index == 0;
+                                final isLast =
+                                    index ==
+                                    (banners_data?.data?.length ?? 0) - 1;
+                                final isNear =
+                                    (index - currentIndex).abs() <= 1;
+
+                                if (!isFirst && !isLast && !isNear) {
+                                  return const SizedBox.shrink();
+                                }
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 3,
+                                  ),
+                                  height: SizeConfig.screenHeight * 0.008,
+                                  width: currentIndex == index
+                                      ? SizeConfig.screenWidth * 0.05
+                                      : SizeConfig.screenWidth * 0.014,
+                                  decoration: BoxDecoration(
+                                    color: currentIndex == index
+                                        ? primarycolor
+                                        : Colors.grey.shade400,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                  Text(
+                    'Upcoming Session',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'segeo',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: session_data?.data?.length == 0
+                        ? Center(
+                            child: Column(
+                              spacing: 6,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset("assets/images/nodata.png"),
+                                Text(
+                                  "No mentees in sight!",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff666666),
+                                  ),
+                                ),
+                                Text(
+                                  "Share your profile for good reach",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff444444),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : CustomScrollView(
+                            slivers: [
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate((
+                                  context,
+                                  index,
+                                ) {
+                                  final session = session_data?.data?[index];
+                                  final duration = calculateDuration(
+                                    session?.startTime ?? "",
+                                    session?.endTime ?? "",
+                                  );
+                                  return SessionCard(
+                                    status: 'Upcoming',
+                                    sessionDate: session?.date ?? "",
+                                    sessionTime: '${duration} Minutes to go',
+                                    sessionName:
+                                        'G-Meet with Suresh from SVG Collage',
+                                    sessionImage:
+                                        session?.mentee?.menteeProfile ??
+                                        "", // Image for upcoming sessions
+                                    sessionTopics: session?.topics ?? "",
+                                    reason: '',
+                                    buttonText:
+                                        'Message from ${session?.mentee?.name ?? ""}',
+                                    buttonIcon: 'assets/icons/chaticon.png',
+                                    remainingTime:
+                                        '${duration} Minutes to go', // Time remaining for upcoming session
+                                  );
+                                }, childCount: session_data?.data?.length),
+                              ),
+                            ],
+                          ),
+                  ),
+                ],
+              );
+            } else {
+              return Center(child: Text("No Data"));
+            }
+          },
         ),
       ),
     );
   }
-
 }

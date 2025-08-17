@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_states.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
-  // Colors picked to match the screenshot
   static const _textColor = Color(0xFF4D4F55);
   static const _labelBlue = Color(0xFF3C506B);
   static const _separatorStart = Color(0xFFF7F8FE);
@@ -30,51 +33,56 @@ class AppDrawer extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Header (white block, avatar + "Profile")
-              Container(
-                width: double.infinity,
-                color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage('assets/profile_image.png'),
-                    ),
-                    const SizedBox(width: 14),
-                    Text(
-                      'Profile',
-                      style: const TextStyle(
-                        fontFamily: 'segeo',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: _labelBlue,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              _Separator(),
-
-              // Scrollable items
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white
-                      ),
+                      decoration: BoxDecoration(color: Colors.white),
                       child: Column(
                         children: [
-                          _DrawerItem(
-                            icon: Icons.person_outline,
-                            title: 'Profile',
+                          GestureDetector(
                             onTap: () {
                               context.pop();
                               context.push("/mentor_profile_screen");
                             },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child:
+                                  BlocBuilder<
+                                    MentorProfileCubit1,
+                                    MentorProfileStates
+                                  >(
+                                    builder: (context, state) {
+                                      final user_data =
+                                          state is MentorProfileLoaded
+                                          ? state.mentorProfileModel
+                                          : null;
+                                      return Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 30,
+                                            backgroundImage:
+                                                CachedNetworkImageProvider(
+                                                  user_data?.data?.profilePic ??
+                                                      "",
+                                                ),
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Text(
+                                            user_data?.data?.name ?? "",
+                                            style: const TextStyle(
+                                              fontFamily: 'segeo',
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                              color: _labelBlue,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                            ),
                           ),
                           _DrawerItem(
                             icon: Icons.groups_outlined,
@@ -97,9 +105,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                     _Separator(),
                     Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white
-                      ),
+                      decoration: BoxDecoration(color: Colors.white),
                       child: Column(
                         children: [
                           _DrawerItem(
@@ -122,21 +128,15 @@ class AppDrawer extends StatelessWidget {
                       ),
                     ),
 
-
                     _Separator(),
 
                     // Section label "Info"
-                    _SectionLabel(
-                      icon: Icons.info_outline,
-                      label: 'Info',
-                    ),
+                    _SectionLabel(icon: Icons.info_outline, label: 'Info'),
 
                     _Separator(),
 
                     Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white
-                      ),
+                      decoration: BoxDecoration(color: Colors.white),
                       child: _DrawerItem(
                         icon: Icons.trending_up_outlined,
                         title: 'Update Mentor Profile',
@@ -178,7 +178,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 35,)
+              SizedBox(height: 35),
             ],
           ),
         ),
@@ -213,11 +213,7 @@ class _DrawerItem extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
 
-  const _DrawerItem({
-    required this.icon,
-    required this.title,
-    this.onTap,
-  });
+  const _DrawerItem({required this.icon, required this.title, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -260,9 +256,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white
-      ),
+      decoration: BoxDecoration(color: Colors.white),
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
       child: Row(
         children: [
