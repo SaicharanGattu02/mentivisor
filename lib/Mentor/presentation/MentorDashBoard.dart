@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentor/presentation/widgets/AppDrawer.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Mentee/presentation/Community/CommunityScreen.dart';
 import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
+import 'CouponsHomeScreen.dart';
 import 'MentorHomeScreen.dart';
 import 'MySessionsScreen.dart';
 
@@ -122,7 +123,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             HapticFeedback.lightImpact();
             setState(() => _selectedIndex = i);
           },
-          children: [MentorHomeScreen(), MySessionsScreen(), Communityscreen()],
+          children: [MentorHomeScreen(), MySessionsScreen(), Communityscreen(),CouponsHomeScreen()],
         ),
         bottomNavigationBar: _buildBottomNav(),
       ),

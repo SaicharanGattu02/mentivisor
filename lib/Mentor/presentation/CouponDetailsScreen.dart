@@ -10,8 +10,8 @@ const TextStyle buttonTextStyle = TextStyle(
   letterSpacing: 0.2,
 );
 
-class ShoppingCouponScreen extends StatelessWidget {
-  const ShoppingCouponScreen({super.key});
+class CouponDetailsScreen extends StatelessWidget {
+  const CouponDetailsScreen({super.key});
 
   void _showConfirmDialog(BuildContext context) {
     showGeneralDialog(
@@ -63,7 +63,6 @@ class ShoppingCouponScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // rounded inner banner with white padding (as in screenshot)
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -72,25 +71,22 @@ class ShoppingCouponScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                // Replace asset path with your asset; the developer bundle included /mnt/data/shoppingscreenimg.PNG
                 child: Image.asset(
-                  'images/shoppingimgbannerimg.png',
+                  'assets/images/shoppingimgbannerimg.png',
                   height: 140,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-
             const SizedBox(height: 14),
-
             // logo + title row
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // replace with your logo asset
                 Image.asset(
-                  'images/gmailimg.png',
+                  'assets/images/gmailimg.png',
                   width: 28,
                   height: 20,
                   fit: BoxFit.contain,
@@ -113,8 +109,8 @@ class ShoppingCouponScreen extends StatelessWidget {
             // description text - left aligned and with softer color
             const Text(
               "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-                  "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
-                  "when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+              "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
+              "when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontFamily: 'segeo',
@@ -126,92 +122,53 @@ class ShoppingCouponScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-                const SizedBox(height: 6),
+            Row(
+              spacing: 12,
+              children: [
+                Expanded(
+                  child: DashedOutlinedButton(
+                    height: 32,
+                    radius: 24,
+                    bgColor: Color(0xFFFFF6CF),
+                    borderColor: Color(0xFF999999),
+                    textColor: Color(0xFF333333),
+                    text: 'Worth of ₹ 500',
+                    onTap: () {
+                      // your tap handler
+                    },
+                  ),
+                ),
 
-                Row(
-                  spacing: 12,
-                  children: [
-                    Expanded(
-                      child: DashedOutlinedButton(
-                        height: 32,
-                        radius: 24,
-                        bgColor:  Color(0xFFFFF6CF),
-                        borderColor:  Color(0xFF999999),
-                        textColor:  Color(0xFF333333),
-                        text: 'Worth of ₹ 500',
-                        onTap: () {
-                          // your tap handler
-                        },
-                      ),
-                    ),
+                Expanded(
+                  child: DashedOutlinedButton(
+                    height: 32,
+                    radius: 24,
+                    bgColor: const Color(0xFFF5F5F5),
+                    borderColor: const Color(0xFF999999),
+                    textColor: const Color(0xFF333333),
+                    text: 'For 1000 Coins',
+                    onTap: () {
+                      // your tap handler
+                    },
+                  ),
+                ),
 
-                    Expanded(
-                      child: DashedOutlinedButton(
-                        height: 32,
-                        radius: 24,
-                        bgColor: const Color(0xFFF5F5F5),
-                        borderColor: const Color(0xFF999999),
-                        textColor: const Color(0xFF333333),
-                        text: 'For 1000 Coins',
-                        onTap: () {
-                          // your tap handler
-                        },
-                      ),
-                    ),
-
-                    Expanded(
-                      child: CustomOutlinedButton1(
-                        height: 32,
-                        radius: 24,
-                        bgColor: const Color(0xFF9333EA), // filled CTA
-                        borderColor: const Color(0xFF9333EA),
-                        textColor: const Color(0xFFFFFFFF),
-                        text: 'Buy Now',
-                        onTap: () {
-                          _showConfirmDialog(context);
-                        },
-                      ),
-                    ),
-                  ],
+                Expanded(
+                  child: CustomOutlinedButton1(
+                    height: 32,
+                    radius: 24,
+                    bgColor: const Color(0xFF9333EA), // filled CTA
+                    borderColor: const Color(0xFF9333EA),
+                    textColor: const Color(0xFFFFFFFF),
+                    text: 'Buy Now',
+                    onTap: () {
+                      _showConfirmDialog(context);
+                    },
+                  ),
                 ),
               ],
             ),
-
-
-
-      ),
-    );
-  }
-}
-
-// ---------- small helper widgets ----------
-
-class _Pill extends StatelessWidget {
-  final String label;
-  final Color background;
-  final Color textColor;
-
-  const _Pill({
-    required this.label,
-    required this.background,
-    required this.textColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.transparent),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: textColor,
+          ],
         ),
       ),
     );
@@ -245,10 +202,9 @@ class _ConfirmDialog extends StatelessWidget {
               height: 56,
               child: Center(
                 child: Image.asset(
-                  'images/vectorbadge.png', // your tag icon asset
+                  'assets/images/vectorbadge.png', // your tag icon asset
                   width: 28,
                   height: 28,
-
                 ),
               ),
             ),

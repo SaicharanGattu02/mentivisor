@@ -56,7 +56,7 @@ class SessionCard extends StatelessWidget {
         context.push("/session_details");
       },
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 2,
         child: Padding(
           padding: const EdgeInsets.all(15),

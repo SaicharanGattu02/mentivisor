@@ -32,7 +32,6 @@ class CouponCongratsScreen extends StatelessWidget {
           ),
         ),
       ),
-
       // Body gradient
       body: Container(
         decoration: const BoxDecoration(

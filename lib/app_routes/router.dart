@@ -51,7 +51,7 @@ import '../Mentor/presentation/MentorProfileScreen.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
-import '../Mentor/presentation/ShoppingCouponScreen.dart';
+import '../Mentor/presentation/CouponDetailsScreen.dart';
 import '../Mentor/presentation/SlotsBookingScreen.dart';
 import '../Splash.dart';
 import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
@@ -435,7 +435,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/shoppingcouponscreen',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(ShoppingCouponScreen(), state),
+          buildSlideTransitionPage(CouponDetailsScreen(), state),
     ),
 
     GoRoute(
@@ -446,7 +446,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/',
+      path: '/coupon_details',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SlotsBookingScreen(), state);
       },

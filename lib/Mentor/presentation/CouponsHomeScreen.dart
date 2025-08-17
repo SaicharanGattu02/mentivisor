@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CouponsHomeScreen extends StatelessWidget {
   const CouponsHomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      // If you need a top bar, add an AppBar here.
       body: Container(
+        height: height,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFEFF6FF), // #EFF6FF
-              Color(0xFFF5F6FF), // #F5F6FF
-              Color(0xFFFAF5FF), // #FAF5FF
-            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
           ),
         ),
         child: SafeArea(
@@ -39,13 +37,13 @@ class CouponsHomeScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: _StatCard(textColor:Colors.black ,
+                      child: _StatCard(
+                        textColor: Colors.black,
                         bgColor: const Color(0xFFFFE7B6), // warm yellow
                         title: 'Total Coins',
                         value: '28,000',
-
                         trailing: Image.asset(
-                          'images/groupcoins.png',
+                          'assets/images/groupcoins.png',
                           height: 36,
                           fit: BoxFit.contain,
                         ),
@@ -54,13 +52,13 @@ class CouponsHomeScreen extends StatelessWidget {
                     const SizedBox(width: 12),
 
                     Expanded(
-                      child: _StatCard(textColor:Color(0xffFFFFFF),
-                        bgColor:  Color(0xFF4076ED), // light blue
+                      child: _StatCard(
+                        textColor: Color(0xffFFFFFF),
+                        bgColor: Color(0xFF4076ED), // light blue
                         title: 'This Month',
                         value: '6800',
-                        trailing:
-                        Image.asset(
-                          'images/groupcoins.png',
+                        trailing: Image.asset(
+                          'assets/images/groupcoins.png',
                           height: 36,
                           fit: BoxFit.contain,
                         ),
@@ -88,7 +86,6 @@ class CouponsHomeScreen extends StatelessWidget {
                     ),
                     SizedBox(width: 12),
                     Expanded(
-
                       child: Text(
                         '+ 15% from last month',
                         style: TextStyle(
@@ -115,7 +112,6 @@ class CouponsHomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 // 2x2 grid of category cards
                 GridView.count(
                   crossAxisCount: 2,
@@ -127,20 +123,19 @@ class CouponsHomeScreen extends StatelessWidget {
                   children: const [
                     _CategoryCard(
                       title: 'Shopping',
-                      // put your illustration here
-                      asset: 'images/bagsimg.png',
+                      asset: 'assets/images/bagsimg.png',
                     ),
                     _CategoryCard(
                       title: 'Restaurant',
-                      asset: 'images/personimg.png',
+                      asset: 'assets/images/personimg.png',
                     ),
                     _CategoryCard(
                       title: 'Grocery',
-                      asset: 'images/grosary.png',
+                      asset: 'assets/images/grosary.png',
                     ),
                     _CategoryCard(
                       title: 'Travel',
-                      asset: 'images/travelscreen.png',
+                      asset: 'assets/images/travelscreen.png',
                     ),
                   ],
                 ),
@@ -197,17 +192,17 @@ class _StatCard extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontFamily: 'segeo',
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color:textColor,
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontFamily: 'segeo',
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -229,54 +224,46 @@ class _StatCard extends StatelessWidget {
 class _CategoryCard extends StatelessWidget {
   final String title;
   final String asset;
-
-
-  const _CategoryCard({
-    required this.title,
-    required this.asset,
-
-  });
-
-
+  const _CategoryCard({required this.title, required this.asset});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F0E1240),
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: Image.asset(
-                asset,
-                fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: () {
+        context.push('/coupon_details');
+      },
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0F0E1240),
+              blurRadius: 14,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(child: Image.asset(asset, fit: BoxFit.contain)),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontFamily: 'segeo',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF222222),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontFamily: 'segeo',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF222222),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
