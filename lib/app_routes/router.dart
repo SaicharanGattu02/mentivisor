@@ -68,20 +68,16 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/couponsscreen',
+      path: '/',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
-
     GoRoute(
       path: '/coinhistory',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CoinHistoryScreen(), state),
     ),
-
-
-
 
     GoRoute(
       path: '/coupons',
@@ -463,11 +459,6 @@ final GoRouter appRouter = GoRouter(
       path: '/couponscongrats',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CouponCongratsScreen(), state),
-    ),
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(CouponsHomeScreen(), state),
     ),
 
   ],

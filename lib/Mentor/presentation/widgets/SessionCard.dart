@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../utils/color_constants.dart';
@@ -90,8 +91,8 @@ class SessionCard extends StatelessWidget {
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      sessionImage,
+                    child: CachedNetworkImage(
+                      imageUrl: sessionImage,
                       width: 60,
                       height: 60,
                       fit: BoxFit.cover,

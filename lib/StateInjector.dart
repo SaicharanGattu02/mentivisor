@@ -32,6 +32,12 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRep
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/FeedBack/feedback_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/ReportMentee/report_mentee_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsRepository.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
@@ -65,11 +71,16 @@ import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/remote_data_source.dart';
+import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
+import 'Mentor/data/MentorRemoteDataSource.dart';
 
 class StateInjector {
   static final repositoryProviders = <RepositoryProvider>[
     RepositoryProvider<RemoteDataSource>(
       create: (context) => RemoteDataSourceImpl(),
+    ),
+    RepositoryProvider<MentorRemoteDataSource>(
+      create: (context) => MentorRemoteDataSourceImpl(),
     ),
     RepositoryProvider<LoginRepository>(
       create: (context) => LogInRepositoryImpl(
@@ -196,6 +207,23 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+
+    ///Mentor Repositories
+    RepositoryProvider<SessionSRepo>(
+      create: (context) => SessionSRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<FeedBackRepository>(
+      create: (context) => FeedBackRepositoryImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<MyMenteesRepo>(
+      create: (context) => MyMenteesRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -204,7 +232,8 @@ class StateInjector {
       create: (context) => YearsCubit(context.read<YearsRepository>()),
     ),
     BlocProvider<GuestMentorsCubit>(
-      create: (context) => GuestMentorsCubit(context.read<GuestMentorsRepository>()),
+      create: (context) =>
+          GuestMentorsCubit(context.read<GuestMentorsRepository>()),
     ),
     BlocProvider<CampusesCubit>(
       create: (context) => CampusesCubit(context.read<CampusesRepository>()),
@@ -332,6 +361,20 @@ class StateInjector {
       create: (context) => ExclusiveservicedetailsCubit(
         context.read<ExclusiveservicedetailsRepository>(),
       ),
+    ),
+
+    ///Mentor cubitsss
+    BlocProvider<SessionCubit>(
+      create: (context) => SessionCubit(context.read<SessionSRepo>()),
+    ),
+    BlocProvider<FeedbackCubit>(
+      create: (context) => FeedbackCubit(context.read<FeedBackRepository>()),
+    ),
+    BlocProvider<MyMenteeCubit>(
+      create: (context) => MyMenteeCubit(context.read<MyMenteesRepo>()),
+    ),
+    BlocProvider<ReportMenteeCubit>(
+      create: (context) => ReportMenteeCubit(context.read<MyMenteesRepo>()),
     ),
   ];
 }

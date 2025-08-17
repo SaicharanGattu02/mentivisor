@@ -1,6 +1,4 @@
 class APIEndpointUrls {
-  static const String baseUrl = 'http://192.168.80.42:8000/';
-
   static const String apiUrl = 'api/';
   static const String userUrl = '${apiUrl}users/';
 
@@ -12,7 +10,6 @@ class APIEndpointUrls {
   static const String registerscreen = "${apiUrl}registration-step-1";
   static const String verifyotp = "${apiUrl}registration-verify-step-2";
   static const String final_registeration = "${apiUrl}final-registration";
-  static const String final_registration = "${apiUrl}final-registration";
   static const String get_books = "${apiUrl}users/study-zones";
   static const String getoncampose = "${apiUrl}list-mentor-own-campus";
   static const String gettopmentors = "${apiUrl}top-mentors";
@@ -52,7 +49,6 @@ class APIEndpointUrls {
   static const String mentee_profile_update = "${userUrl}profile/update";
   static const String get_Exclusive_services = "${userUrl}services";
   static const String get_Exclusive_services_details = "${userUrl}services";
-
 
   static const String weekly_slots = "${userUrl}mentor/weekly-slots";
   static const String daily_slots = "${userUrl}mentor/daily-slots";

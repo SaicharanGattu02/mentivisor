@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import '../core/network/api_config.dart';
 import '../core/network/mentee_endpoints.dart';
 import '../utils/constants.dart';
 import 'AuthService.dart';
@@ -9,7 +10,7 @@ import 'AuthService.dart';
 class ApiClient {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: "${APIEndpointUrls.baseUrl}",
+      baseUrl: "${ApiConfig.baseUrl}",
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
       headers: {"Content-Type": "application/json"},
