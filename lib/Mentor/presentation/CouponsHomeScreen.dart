@@ -36,15 +36,14 @@ class CouponsHomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Two stat cards
                 Row(
                   children: [
                     Expanded(
-                      child: _StatCard(
+                      child: _StatCard(textColor:Colors.black ,
                         bgColor: const Color(0xFFFFE7B6), // warm yellow
                         title: 'Total Coins',
                         value: '28,000',
-                        // replace with your art
+
                         trailing: Image.asset(
                           'images/groupcoins.png',
                           height: 36,
@@ -53,12 +52,14 @@ class CouponsHomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
+
                     Expanded(
-                      child: _StatCard(
-                        bgColor: const Color(0xFFBFD1FF), // light blue
+                      child: _StatCard(textColor:Color(0xffFFFFFF),
+                        bgColor:  Color(0xFF4076ED), // light blue
                         title: 'This Month',
                         value: '6800',
-                        trailing: Image.asset(
+                        trailing:
+                        Image.asset(
                           'images/groupcoins.png',
                           height: 36,
                           fit: BoxFit.contain,
@@ -81,20 +82,20 @@ class CouponsHomeScreen extends StatelessWidget {
                           fontFamily: 'segeo',
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF7B7F8C),
+                          color: Color(0xff575757),
                         ),
                       ),
                     ),
                     SizedBox(width: 12),
                     Expanded(
+
                       child: Text(
                         '+ 15% from last month',
-                        textAlign: TextAlign.right,
                         style: TextStyle(
                           fontFamily: 'segeo',
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF7B7F8C),
+                          color: Color(0xff575757),
                         ),
                       ),
                     ),
@@ -159,12 +160,14 @@ class _StatCard extends StatelessWidget {
     required this.title,
     required this.value,
     required this.trailing,
+    required this.textColor,
   });
 
   final Color bgColor;
   final String title;
   final String value;
   final Widget trailing;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -194,21 +197,21 @@ class _StatCard extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontFamily: 'segeo',
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF222222),
+                    color:textColor,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontFamily: 'segeo',
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF121212),
+                    color: textColor,
                   ),
                 ),
               ],
@@ -224,13 +227,17 @@ class _StatCard extends StatelessWidget {
 
 /// Category tile used in the grid
 class _CategoryCard extends StatelessWidget {
+  final String title;
+  final String asset;
+
+
   const _CategoryCard({
     required this.title,
     required this.asset,
+
   });
 
-  final String title;
-  final String asset;
+
 
   @override
   Widget build(BuildContext context) {

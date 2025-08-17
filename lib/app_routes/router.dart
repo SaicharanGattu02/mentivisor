@@ -57,6 +57,7 @@ import '../Mentor/presentation/MentorProfileScreen.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
+import '../Mentor/presentation/ShoppingCouponScreen.dart';
 import '../newscreens/InfoScreen.dart';
 import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
@@ -468,6 +469,19 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(FeedbackScreen(userId: 76), state);
       },
     ),
+    GoRoute(
+      path: '/couponshome',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(CouponsHomeScreen(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ShoppingCouponScreen(), state),
+    ),
+
     GoRoute(
       path: '/mentor_profile_screen',
       pageBuilder: (context, state) {
