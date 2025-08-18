@@ -409,7 +409,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/mentees_list',
+      path: '/menteelistscreen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(MenteeListScreen(), state);
       },

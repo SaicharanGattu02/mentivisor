@@ -232,6 +232,12 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
+    RepositoryProvider<MyMenteesRepo>(
+      create: (context) => MyMenteesRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -387,6 +393,10 @@ class StateInjector {
     BlocProvider<MentorProfileCubit1>(
       create: (context) =>
           MentorProfileCubit1(context.read<MentorProfileRepo>()),
+    ),
+    BlocProvider<MyMenteeCubit>(
+      create: (context) =>
+          MyMenteeCubit(context.read<MyMenteesRepo>()),
     ),
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(

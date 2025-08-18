@@ -12,7 +12,7 @@ class MyMenteeCubit extends Cubit<MyMenteeStates> {
     try {
       final response = await myMenteesRepo.getMyMentees();
       if (response != null) {
-        // emit(MyMenteeLoaded(myMenteesRepo));
+        emit(MyMenteeLoaded(response)); // <<— emit the data
       } else {
         emit(MyMenteeFailure("Getting MyMentees Failed!"));
       }
