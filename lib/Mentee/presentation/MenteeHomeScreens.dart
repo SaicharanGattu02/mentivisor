@@ -196,17 +196,27 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                             ),
                           )
                         : IconButton(
-                            icon: const Icon(
-                              Icons.notifications_outlined,
-                              color: Colors.black,
+                      icon: Icon(
+                        Icons.pentagon_rounded,
+                        color: primarycolor,
+                      ),
+                      onPressed: () {
+                        // your logic here
+                      },
+                    ),
+
+                    IconButton(
+                      icon: const Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.black,
+                      ),
+                      onPressed: () =>
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Notifications clicked'),
                             ),
-                            onPressed: () =>
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Notifications clicked'),
-                                  ),
-                                ),
                           ),
+                    ),
                   ],
                 ),
                 drawer: Drawer(
@@ -538,7 +548,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                   );
                                               setState(() {
                                                 selectedFilter = 'On Campus';
-                                                context.read<MenteeDashboardCubit>().fetchDashboard();
+                                                context
+                                                    .read<
+                                                      MenteeDashboardCubit
+                                                    >()
+                                                    .fetchDashboard();
                                               });
                                             },
                                           ),
@@ -550,11 +564,20 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 selectedFilter ==
                                                 'Beyond Campus',
                                             onPressed: () {
-                                              context.read<CampusMentorListCubit>().fetchCampusMentorList("beyond", "",);
+                                              context
+                                                  .read<CampusMentorListCubit>()
+                                                  .fetchCampusMentorList(
+                                                    "beyond",
+                                                    "",
+                                                  );
                                               setState(() {
                                                 selectedFilter =
                                                     'Beyond Campus';
-                                                context.read<MenteeDashboardCubit>().fetchDashboard();
+                                                context
+                                                    .read<
+                                                      MenteeDashboardCubit
+                                                    >()
+                                                    .fetchDashboard();
                                               });
                                             },
                                           ),
