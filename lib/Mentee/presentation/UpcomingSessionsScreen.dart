@@ -62,10 +62,9 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                           padding: EdgeInsets.all(8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                             children: [
                               Container(
-                                width: SizeConfig.screenWidth * 0.6,
+                                width: SizeConfig.screenWidth * 0.55,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -165,9 +164,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 8),
                               Container(
-                                width: SizeConfig.screenWidth * 0.25,
+                                width: SizeConfig.screenWidth * 0.32,
                                 child: Column(
                                   children: [
                                     ClipOval(
@@ -208,7 +206,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     SizedBox(height: 12),
                                     CustomAppButton1(
                                       height: 45,
-                                      width: SizeConfig.screenWidth * 0.34,
+                                      width: SizeConfig.screenWidth * 0.32,
                                       text: "Join Session",
                                       onPlusTap: () async {
                                         final url = upComingSessions.zoomLink;
