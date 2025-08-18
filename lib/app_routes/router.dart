@@ -23,7 +23,9 @@ import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
+import '../Mentee/presentation/InfoScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
+import '../Mentee/presentation/PaymentSuccessfully.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
@@ -120,6 +122,18 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/payment_success',
+      pageBuilder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? "";
+        final subTitle = state.uri.queryParameters['subTitle'] ?? "";
+        final nextRoute = state.uri.queryParameters['next'] ?? "";
+        return buildSlideTransitionPage(
+          PaymentSuccessScreen(title: title, subTitle: subTitle, nextRoute: nextRoute),
+          state,
+        );
+      },
+    ),
+    GoRoute(
       path: '/profile_about',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
@@ -141,6 +155,13 @@ final GoRouter appRouter = GoRouter(
       path: '/auth_landing',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(AuthLandingScreen(), state);
+      },
+    ),
+
+ GoRoute(
+      path: '/info',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(InfoScreen(), state);
       },
     ),
 

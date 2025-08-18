@@ -11,6 +11,7 @@ import 'package:mentivisor/Mentee/data/cubits/Payment/payment_states.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../Components/CustomSnackBar.dart';
+import '../../services/AuthService.dart';
 import '../data/cubits/Payment/payment_cubit.dart';
 
 class BuyCoinsScreens extends StatefulWidget {
@@ -24,11 +25,15 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
   late Razorpay _razorpay;
   final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<int> selectedIndexNotifier = ValueNotifier<int>(-1);
-  int _selectedIndex = -1;
+  final ValueNotifier<String> amount = ValueNotifier<String>("");
+  final ValueNotifier<String?> userNameNotifier = ValueNotifier<String?>("");
+  final ValueNotifier<String?> userEmailNotifier = ValueNotifier<String?>("");
+  final ValueNotifier<String?> userMobileNotifier = ValueNotifier<String?>("");
 
   @override
   void initState() {
     super.initState();
+    getUserDetails();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -37,6 +42,12 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CoinsPackCubit>().fetchCoinsPack();
     });
+  }
+
+  Future<void> getUserDetails() async {
+    userNameNotifier.value = await AuthService.getName();
+    userEmailNotifier.value = await AuthService.getEmail();
+    userMobileNotifier.value = await AuthService.getMobile();
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
@@ -59,16 +70,19 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
     AppLogger.log("💼 External wallet selected: ${response.walletName}");
   }
 
-  void _openCheckout(String key, String order_id, int amount) {
+  void _openCheckout(String key, int amount, String order_id) {
     var options = {
       'key': '$key',
       'amount': amount,
       'currency': 'INR',
-      // 'name': service_name,
+      'name': userNameNotifier.value,
       'order_id': '$order_id',
       'description': 'purchase',
       'timeout': 60,
-      // 'prefill': {'contact': mobile, 'email': email},
+      'prefill': {
+        'contact': userMobileNotifier.value ?? "",
+        'email': userEmailNotifier.value ?? "",
+      },
     };
     try {
       _razorpay.open(options);
@@ -100,8 +114,6 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
               ),
             ),
           ),
-
-          // Section title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Align(
@@ -116,8 +128,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
               ),
             ),
           ),
-
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Expanded(
             child: BlocBuilder<CoinsPackCubit, CoinsPackState>(
               builder: (context, state) {
@@ -125,7 +136,6 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is CoinsPackStateLoaded) {
                   final packs = state.coinsPackRespModel.data ?? [];
-
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: GridView.builder(
@@ -139,95 +149,139 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                           ),
                       itemBuilder: (context, index) {
                         final coinspack = packs[index];
-                        final selected = index == _selectedIndex;
-                        return GestureDetector(
-                          onTap: () => setState(() =>selectedIndexNotifier.value = index,),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? const Color(0xffA351EE)
-                                  : const Color(0xffFFF8EC),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/GoldCoins.png",
-                                        width: 32,
-                                        height: 32,
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        coinspack.coins?.toString() ?? "0",
-                                        style: const TextStyle(
-                                          fontFamily: 'segeo',
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      const Text(
-                                        'Coins',
-                                        style: TextStyle(
-                                          fontFamily: 'segeo',
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                        return ValueListenableBuilder<int>(
+                          valueListenable: selectedIndexNotifier,
+                          builder: (context, value, child) {
+                            final selected = index == value;
+                            return GestureDetector(
+                              onTap: () {
+                                selectedIndexNotifier.value = index;
+                                amount.value = coinspack.offerPrice ?? "";
+                              },
 
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: selected
-                                        ? Colors.white
-                                        : const Color(0xffA351EE),
-                                    borderRadius: BorderRadius.circular(36),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${coinspack.discountPercent?.toString() ?? "0"}% off',
-                                      style: TextStyle(
-                                        fontFamily: 'segeo',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                        color: selected
-                                            ? const Color(0xff340063)
-                                            : Colors.white,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: selected
+                                      ? const Color(0xffA351EE)
+                                      : const Color(0xffFFF8EC),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.asset(
+                                            "assets/images/GoldCoins.png",
+                                            width: 32,
+                                            height: 32,
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            coinspack.coins?.toString() ?? "0",
+                                            style: const TextStyle(
+                                              fontFamily: 'segeo',
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Coins',
+                                            style: TextStyle(
+                                              fontFamily: 'segeo',
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
+
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: selected
+                                            ? Colors.white
+                                            : const Color(0xffA351EE),
+                                        borderRadius: BorderRadius.circular(36),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '${coinspack.discountPercent?.toString() ?? "0"}% off',
+                                          style: TextStyle(
+                                            fontFamily: 'segeo',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                            color: selected
+                                                ? const Color(0xff340063)
+                                                : Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'For ',
+                                            style: TextStyle(
+                                              fontFamily: 'Segoe UI',
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 10,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                '₹${coinspack.offerPrice?.toString() ?? "0"} ',
+                                            style: TextStyle(
+                                              fontFamily: 'Segoe UI',
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 10,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              color: selected
+                                                  ? Color(0xffF3E8FF)
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                '₹${coinspack.originalPrice?.toString() ?? "0"}',
+                                            style: TextStyle(
+                                              fontFamily: 'Segoe UI',
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 12,
+                                              height: 1.0,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  'for ${coinspack.discountPercent?.toString() ?? "0"}  ${coinspack.offerPrice?.toString() ?? "0"}',
-                                  style: TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: selected
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -245,36 +299,60 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
         ],
       ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: BlocConsumer<PaymentCubit, PaymentStates>(
-            listener: (context, state) {
-              isLoadingNotifier.value = state is PaymentLoading;
-              if (state is PaymentCreated) {
-                final payment_created_data = state.createPaymentModel;
-                // call _openCheckout() here
-              } else if (state is PaymentVerified) {
-                context.pushReplacement(
-                  '/success_screen'
-                      '?title=${Uri.encodeComponent("Payment is Done Successfully")}'
-                      '&subTitle=${Uri.encodeComponent("Please check your profile for the owned services")}'
-                      '&next=/dashboard?initialTab=3',
-                );
-              } else if (state is PaymentFailure) {
-                CustomSnackBar1.show(context, state.error);
-              }
-            },
-            builder: (context, state) {
-              return CustomAppButton1(text: 'Submit', onPlusTap: () {
-                final selectedIndex = selectedIndexNotifier.value;
-                if (selectedIndex == -1) {
-                  CustomSnackBar1.show(context, "Please select a pack");
-                  return;
-                }
-                // ✅ call create payment with selected pack
-              });
-            },
-          ),
+        child: ValueListenableBuilder<int>(
+          valueListenable: selectedIndexNotifier,
+          builder: (context, value, child) {
+            if (value == -1) {
+              return const SizedBox.shrink();
+            } else {
+              return SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                  child: BlocConsumer<PaymentCubit, PaymentStates>(
+                    listener: (context, state) {
+                      isLoadingNotifier.value = state is PaymentLoading;
+                      if (state is PaymentCreated) {
+                        final payment_created_data = state.createPaymentModel;
+                        _openCheckout(
+                          payment_created_data.rAZORPAYKEY ?? "",
+                          payment_created_data.amount ?? 0,
+                          payment_created_data.orderId ?? "",
+                        );
+                      } else if (state is PaymentVerified) {
+                        context.read<CoinsPackCubit>().fetchCoinsPack();
+                        context.pushReplacement(
+                          '/payment_success'
+                          '?title=${Uri.encodeComponent("Payment is Done Successfully")}',
+                        );
+                      } else if (state is PaymentFailure) {
+                        CustomSnackBar1.show(context, state.error);
+                      }
+                    },
+                    builder: (context, state) {
+                      return CustomAppButton1(isLoading: state is PaymentLoading,
+                        text: 'Submit',
+                        onPlusTap: () {
+                          final selectedIndex = selectedIndexNotifier.value;
+                          if (selectedIndex == -1) {
+                            CustomSnackBar1.show(
+                              context,
+                              "Please select a pack",
+                            );
+                            return;
+                          } else {
+                            final Map<String, dynamic> data = {
+                              "amount": amount.value,
+                            };
+                            context.read<PaymentCubit>().createPayment(data);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ),
     );

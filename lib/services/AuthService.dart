@@ -10,6 +10,8 @@ class AuthService {
   static const String _role = "role";
   static const String _userId = "user_id";
   static const String _userName = "user_name";
+  static const String _email = "email";
+  static const String _mobile = "mobile";
 
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
@@ -31,6 +33,12 @@ class AuthService {
   /// get Name
   static Future<String?> getName() async {
     return await _storage.read(key: _userName);
+  }
+  static Future<String?> getEmail() async {
+    return await _storage.read(key: _email);
+  }
+  static Future<String?> getMobile() async {
+    return await _storage.read(key: _mobile);
   }
 
   /// Get stored refresh token
@@ -59,7 +67,7 @@ class AuthService {
     String refreshToken,
     int expiresIn,
     String role,
-    int userid, String userName,
+    int userid, String userName, String email,int mobile
   ) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
     await _storage.write(key: _refreshTokenKey, value: refreshToken);
@@ -67,6 +75,8 @@ class AuthService {
     await _storage.write(key: _tokenExpiryKey, value: expiresIn.toString());
     await _storage.write(key: _userName, value: userName.toString());
     await _storage.write(key: _userId, value: userid.toString());
+    await _storage.write(key: _email, value: email.toString());
+    await _storage.write(key: _mobile, value: mobile.toString());
   }
 
   /// Refresh token

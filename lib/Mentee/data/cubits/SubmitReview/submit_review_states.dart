@@ -12,12 +12,16 @@ class SubmitReviewSuccess extends SubmitReviewStates {
   ReviewSubmitModel reviewSubmitModel;
   SubmitReviewSuccess(this.reviewSubmitModel);
 }
-class SessionReportReviewSuccess extends SubmitReviewStates {
+class SessionReportSuccess extends SubmitReviewStates {
   SuccessModel successModel;
-  SessionReportReviewSuccess(this.successModel);
+  SessionReportSuccess(this.successModel);
 }
 
 class SubmitReviewFailure extends SubmitReviewStates {
   String error;
   SubmitReviewFailure(this.error);
+}
+class SubmitReportFailure extends SubmitReviewStates {
+  String error;
+  SubmitReportFailure(this.error);
 }

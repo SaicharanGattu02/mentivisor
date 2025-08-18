@@ -11,6 +11,7 @@ import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/
 import '../../../Components/CustomSnackBar.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
+import '../../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../../data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 
@@ -252,6 +253,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 listener: (context, state) {
                   if (state is MenteeProfileUpdateSuccess) {
                     context.read<MenteeProfileCubit>().fetchMenteeProfile();
+                    context.read<MenteeDashboardCubit>().fetchDashboard();
                     CustomSnackBar1.show(
                       context,
                       state.successModel.message ?? "",
@@ -276,7 +278,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             "bio": _bioController.text.trim(),
                             "email": _emailController.text.trim(),
                             "phone": _phoneController.text.trim(),
-                            "image": _image?.path ?? imagePath,
+                            "profile_pic": _image?.path ?? imagePath,
                             "college_id": widget.collegeId,
                           };
                           context

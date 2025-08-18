@@ -51,7 +51,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                         final upComingSessions =
                             state.upComingSessionModel.data?[index];
                         if (upComingSessions == null) {
-                          return const SizedBox.shrink(); // Handle null gracefully
+                          return const SizedBox.shrink();
                         }
                         return Container(
                           margin: const EdgeInsets.only(bottom: 16),
@@ -59,18 +59,22 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(8),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                             children: [
-                              Expanded(
+                              Container(
+                                width: SizeConfig.screenWidth * 0.6,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
                                       upComingSessions.topics?.isNotEmpty ??
                                               false
-                                          ? upComingSessions.topics!
+                                          ? upComingSessions.topics ?? ""
                                           : "No topics specified",
                                       style: TextStyle(
                                         fontSize:
@@ -83,6 +87,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     const SizedBox(height: 6),
 
                                     Text(
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                       capitalize(
                                         upComingSessions.mentor?.name ??
                                             "Unknown Mentor",
@@ -159,62 +165,68 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 16),
-                              Column(
-                                children: [
-                                  ClipOval(
-                                    child: CachedNetworkImage(
-                                      width: 56, // Consistent size
-                                      height: 56,
-                                      imageUrl:
-                                          upComingSessions
-                                              .mentor
-                                              ?.mentorProfile ??
-                                          "",
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => Container(
+                              SizedBox(width: 8),
+                              Container(
+                                width: SizeConfig.screenWidth * 0.25,
+                                child: Column(
+                                  children: [
+                                    ClipOval(
+                                      child: CachedNetworkImage(
                                         width: 56,
                                         height: 56,
-                                        color: Colors.grey.shade200,
-                                        child: const Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                  Colors.blue,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                            width: 56,
-                                            height: 56,
-                                            color: Colors.grey.shade200,
-                                            child: Image.asset(
-                                              "assets/images/profile.png",
-                                              fit: BoxFit.cover,
+                                        imageUrl:
+                                            upComingSessions
+                                                .mentor
+                                                ?.mentorProfile ??
+                                            "",
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Container(
+                                          width: 56,
+                                          height: 56,
+                                          color: Colors.grey.shade200,
+                                          child: const Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    Colors.blue,
+                                                  ),
                                             ),
                                           ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                              width: 56,
+                                              height: 56,
+                                              color: Colors.grey.shade200,
+                                              child: Image.asset(
+                                                "assets/images/profile.png",
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  CustomAppButton1(
-                                    width: SizeConfig.screenWidth * 0.2,
-                                    text: "Join Session",
-                                    onPlusTap: () async {
-                                      final url = upComingSessions.zoomLink;
-                                      if (url != null &&
-                                          await canLaunchUrl(Uri.parse(url))) {
-                                        await launchUrl(Uri.parse(url));
-                                      } else {
-                                        CustomSnackBar1.show(
-                                          context,
-                                          "Unable to open Zoom link",
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ],
+                                    SizedBox(height: 12),
+                                    CustomAppButton1(
+                                      height: 45,
+                                      width: SizeConfig.screenWidth * 0.34,
+                                      text: "Join Session",
+                                      onPlusTap: () async {
+                                        final url = upComingSessions.zoomLink;
+                                        if (url != null &&
+                                            await canLaunchUrl(
+                                              Uri.parse(url),
+                                            )) {
+                                          await launchUrl(Uri.parse(url));
+                                        } else {
+                                          CustomSnackBar1.show(
+                                            context,
+                                            "Unable to open Zoom link",
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),

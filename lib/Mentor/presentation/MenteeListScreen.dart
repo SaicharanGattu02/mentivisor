@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
-import '../Models/MyMenteesModel.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import '../data/Cubits/MyMentees/mymentees_cubit.dart';
 import '../data/Cubits/MyMentees/mymentees_states.dart';
-import 'widgets/MenteeCard.dart';
 
 class MenteeListScreen extends StatefulWidget {
   const MenteeListScreen({super.key});
@@ -28,21 +27,50 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
         builder: (context, state) {
           if (state is MyMenteeLoading) {
             return const Center(child: CircularProgressIndicator());
-          }else if(state is MyMenteeLoaded){
-              return ListView.separated(
-              itemCount: state.myMenteesModel.data?.length??0,
+          }else if (state is MyMenteeLoaded) {
+            final mentees = state.myMenteesModel.data ?? [];
+            AppLogger.info("mentees data    : ${mentees}");
+            return ListView.separated(
+              itemCount: mentees.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final menteeList =state.myMenteesModel.data?[index];
-                return MenteeCard(mentee: menteeList!);
+                final mentee = mentees[index];
+                AppLogger.info("Name   : ${mentee.name}");
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  elevation: 5,
+                  child: ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: mentee.profilePic != null
+                          ? Image.network(
+                        mentee.profilePic!,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      )
+                          : Image.asset("assets/images/image.png", width: 60, height: 60),
+                    ),
+                    title: Text(mentee.name ?? ""),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(mentee.email ?? ""),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Last interaction: ${mentee.sessionDetails?.isNotEmpty == true ? mentee.sessionDetails!.last.sessionDate : "N/A"}",
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
             );
-
-          }else if (state is MyMenteeFailure){
+          } else if (state is MyMenteeFailure){
             return Text(state.error);
           }
           return Center(child: Text("No Data"),);
-
         },
       ),
     );

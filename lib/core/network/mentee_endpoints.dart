@@ -57,7 +57,7 @@ class APIEndpointUrls {
   static const String upcoming_session = "${userUrl}sessions/upcoming";
   static const String session_completed = "${userUrl}sessions/complete";
   static const String completed_sessions_submit_review  = "${userUrl}sessions/feedback";
-  static const String sessions_report_submit = "${userUrl}session-report'";
+  static const String sessions_report_submit = "${userUrl}session-report";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

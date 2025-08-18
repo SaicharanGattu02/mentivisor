@@ -27,7 +27,7 @@ class SubmitReviewCubit extends Cubit<SubmitReviewStates> {
     try {
       final response = await sessionCompletedRepository.sessionReportSubmit(data);
       if (response != null && response.status == true) {
-        emit(SessionReportReviewSuccess(response));
+        emit(SessionReportSuccess(response));
       } else {
         emit(SubmitReviewFailure(response?.message ?? ""));
       }

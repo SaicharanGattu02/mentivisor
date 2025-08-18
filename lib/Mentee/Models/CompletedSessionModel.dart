@@ -35,12 +35,12 @@ class Data {
   Mentor? mentor;
   Mentee? mentee;
   String? date;
-  Null? topics;
+  String? topics;
   String? startTime;
   String? endTime;
   int? sessionCost;
   String? status;
-  Null? zoomLink;
+  String? zoomLink;
   bool? hasRating;
   int? rating;
   String? feedback;

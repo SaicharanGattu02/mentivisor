@@ -312,6 +312,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             data.role ?? "",
                             data.user?.id ?? 0,
                             data.user?.name ?? "",
+                            data.user?.email ?? "",
+                            data.user?.contact ?? 0,
                           );
                           if (data.role == "Both") {
                             context.pushReplacement('/selected_screen');

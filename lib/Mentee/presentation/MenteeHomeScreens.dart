@@ -11,11 +11,8 @@ import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
-import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
 import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GetBanners/GetBannersState.dart';
-import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
-import '../data/cubits/GuestMentors/guest_mentors_states.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_state.dart';
 import 'Widgets/FilterButton.dart';
@@ -45,19 +42,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     });
   }
 
-  // Future<void> getDetails() async {
-  //   final isGuest = await AuthService.isGuest;
-  //   if (isGuest) {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       context.read<GuestMentorsCubit>().fetchGuestMentorList();
-  //     });
-  //   } else {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
-  //     });
-  //   }
-  // }
-
   void _navigateToScreen(String name) {
     switch (name) {
       case 'Wallet':
@@ -75,17 +59,16 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       case 'Upcoming Sessions':
         context.push("/upcoming_session");
         break;
-      case 'Invite Friend':
-        break;
+      // case 'Invite Friend':
+      //   break;
       case 'Customer Services':
         context.push('/customersscreen');
         break;
-
       case 'Executive services':
         context.push('/executiveservices');
         break;
       case 'info':
-        context.push('/infoscreen');
+        context.push('/info');
         break;
       case 'Logout':
         showLogoutDialog(context);
@@ -117,10 +100,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
             } else if (state is MenteeDashboardLoaded) {
               final menteeProfile = state.menteeProfileModel.data;
               final banners = state.getbannerModel.data ?? [];
-              final guestMentorlist = state.guestMentorsModel.data?.mentors ?? [];
-              final campusMentorlist = state.campusMentorListModel.data?.mentors_list ?? [];
+              final guestMentorlist =
+                  state.guestMentorsModel.data?.mentors ?? [];
+              final campusMentorlist =
+                  state.campusMentorListModel.data?.mentors_list ?? [];
               _mentorStatus.value = menteeProfile?.user?.mentorStatus ?? "none";
-              _mentorProfileUrl.value = menteeProfile?.user?.profilePicUrl ?? "";
+              _mentorProfileUrl.value =
+                  menteeProfile?.user?.profilePicUrl ?? "";
               _mentorProfileName.value = menteeProfile?.user?.name ?? "";
               return Scaffold(
                 key: _scaffoldKey,
@@ -437,12 +423,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   label: 'Info',
                                   onTap: () => _navigateToScreen('info'),
                                 ),
-                                _buildDrawerItem(
-                                  assetpath: "assets/icons/UserCircleCheck.png",
-                                  label: 'Invite Friend',
-                                  onTap: () =>
-                                      _navigateToScreen('Invite Friend'),
-                                ),
+                                // _buildDrawerItem(
+                                //   assetpath: "assets/icons/UserCircleCheck.png",
+                                //   label: 'Invite Friend',
+                                //   onTap: () =>
+                                //       _navigateToScreen('Invite Friend'),
+                                // ),
                                 _buildDrawerItem(
                                   assetpath: "assets/icons/UserCircleGear.png",
                                   label: 'Customer Services',
@@ -552,6 +538,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                   );
                                               setState(() {
                                                 selectedFilter = 'On Campus';
+                                                context.read<MenteeDashboardCubit>().fetchDashboard();
                                               });
                                             },
                                           ),
@@ -563,15 +550,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 selectedFilter ==
                                                 'Beyond Campus',
                                             onPressed: () {
-                                              context
-                                                  .read<CampusMentorListCubit>()
-                                                  .fetchCampusMentorList(
-                                                    "beyond",
-                                                    "",
-                                                  );
+                                              context.read<CampusMentorListCubit>().fetchCampusMentorList("beyond", "",);
                                               setState(() {
                                                 selectedFilter =
                                                     'Beyond Campus';
+                                                context.read<MenteeDashboardCubit>().fetchDashboard();
                                               });
                                             },
                                           ),
