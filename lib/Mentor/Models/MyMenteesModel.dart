@@ -1,9 +1,7 @@
-
-
 class MyMenteesModel {
   bool? status;
   String? message;
-  List<Data>? data;
+  List<MenteeData>? data;
 
   MyMenteesModel({this.status, this.message, this.data});
 
@@ -11,9 +9,9 @@ class MyMenteesModel {
     status = json['status'];
     message = json['message'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <MenteeData>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new MenteeData.fromJson(v));
       });
     }
   }
@@ -29,15 +27,15 @@ class MyMenteesModel {
   }
 }
 
-class Data {
+class MenteeData {
   String? name;
   int? menteeId;
   String? image;
   LastSession? lastSession;
 
-  Data({this.name, this.menteeId, this.image, this.lastSession});
+  MenteeData({this.name, this.menteeId, this.image, this.lastSession});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  MenteeData.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     menteeId = json['mentee_id'];
     image = json['image'];

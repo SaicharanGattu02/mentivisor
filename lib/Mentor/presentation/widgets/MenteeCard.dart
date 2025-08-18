@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../MenteeListScreen.dart';
+
+import '../../Models/MyMenteesModel.dart';
 
 class MenteeCard extends StatelessWidget {
-  final Mentee mentee;
+  final MenteeData mentee;
   const MenteeCard({required this.mentee});
 
   @override
@@ -22,8 +23,8 @@ class MenteeCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    "assets/images/image.png",
+                  child: Image.network(
+                    mentee.image ?? "assets/images/image.png", // Fallback to local image
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
@@ -35,7 +36,7 @@ class MenteeCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        mentee.name,
+                        mentee.name!,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -44,12 +45,12 @@ class MenteeCard extends StatelessWidget {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        mentee.email,
+                       " mentee.email!",
                         style: TextStyle(color: Color(0xff666666)),
                       ),
                       SizedBox(height: 5),
                       Text(
-                        'Last interaction was ${mentee.interactionDate}',
+                        'Last interaction was ${mentee.lastSession?.date ?? "N/A"}',
                         style: TextStyle(color: Color(0xff666666)),
                       ),
                     ],
