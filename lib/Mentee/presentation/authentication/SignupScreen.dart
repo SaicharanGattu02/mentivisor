@@ -72,17 +72,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color(0xfff6faff),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: SizedBox(
-          height: media.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon + Title
               Container(
                 width: 64,
                 height: 64,
@@ -106,7 +103,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               const SizedBox(height: 28),
-              // Input Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -191,7 +187,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 ],
               ),
               const SizedBox(height: 8),
-              // Get OTP Button
               BlocConsumer<RegisterCubit, RegisterState>(
                 listener: (context, state) {
                   if (state is RegisterSucess) {
@@ -200,10 +195,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       "contact": mobileController.text,
                       "password": passwordController.text,
                     };
-                    context.pushReplacement(
-                      '/otp_verify',
-                      extra: data,
-                    );
+                    context.pushReplacement('/otp_verify', extra: data);
                   } else if (state is RegisterFailure) {
                     CustomSnackBar.show(context, state.message);
                   }

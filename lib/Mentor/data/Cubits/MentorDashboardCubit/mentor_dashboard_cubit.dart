@@ -22,14 +22,15 @@ class MentorDashboardCubit extends Cubit<MentorDashBoardState> {
     SessionsModel? sessionsModel;
 
     try {
-      // --- Fetch banners ---
       try {
         await getbannerscubit.getbanners();
         final state = getbannerscubit.state;
         if (state is GetbannersStateLoaded) {
           getBannersRespModel = state.getbannerModel;
         } else if (state is GetbannersStateFailure) {}
-      } catch (e) {}
+      } catch (e) {
+
+      }
 
       try {
         await sessionCubit.getSessions("upcoming");
@@ -37,9 +38,11 @@ class MentorDashboardCubit extends Cubit<MentorDashBoardState> {
         if (state is GetbannersStateLoaded) {
           getBannersRespModel = state.getbannerModel;
         } else if (state is GetbannersStateFailure) {}
-      } catch (e) {}
+      } catch (e) {
 
-      // --- Emit result ---
+      }
+
+
       if (getBannersRespModel != null || sessionsModel != null) {
         emit(
           MentorDashBoardLoaded(

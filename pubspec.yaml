@@ -94,7 +94,6 @@ flutter:
   assets:
      - assets/
      - assets/images/
-     - assets/svg_icons/
      - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see

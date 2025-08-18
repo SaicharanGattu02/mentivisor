@@ -22,10 +22,14 @@ import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveSer
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Payment/payment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/SelectSlot/select_slot_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
@@ -58,17 +62,21 @@ import 'Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dar
 import 'Mentee/data/cubits/MenteeProfile/MenteeProfileRepository.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
+import 'Mentee/data/cubits/Payment/payment_repository.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/TaskUpdate/task_update_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/product_tools_repository.dart';
 import 'Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'Mentee/data/cubits/Register/Register_Repository.dart';
+import 'Mentee/data/cubits/SessionCompleted/session_completed_cubit.dart';
+import 'Mentee/data/cubits/SessionCompleted/session_completed_repo.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusRepository.dart';
 import 'Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
+import 'Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/remote_data_source.dart';
@@ -207,6 +215,21 @@ class StateInjector {
     ),
     RepositoryProvider<ExclusiveservicedetailsRepository>(
       create: (context) => ExclusivedetailsImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<UpComingSessionRepository>(
+      create: (context) => UpComingSessionImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<SessionCompletedRepository>(
+      create: (context) => SessionCompletedImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<PaymentRepository>(
+      create: (context) => PaymentRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
@@ -374,6 +397,36 @@ class StateInjector {
     BlocProvider<ExclusiveservicedetailsCubit>(
       create: (context) => ExclusiveservicedetailsCubit(
         context.read<ExclusiveservicedetailsRepository>(),
+      ),
+    ),
+    BlocProvider<UpComingSessionCubit>(
+      create: (context) =>
+          UpComingSessionCubit(context.read<UpComingSessionRepository>()),
+    ),
+    BlocProvider<SessionCompletedCubit>(
+      create: (context) =>
+          SessionCompletedCubit(context.read<SessionCompletedRepository>()),
+    ),
+    BlocProvider<SubmitReviewCubit>(
+      create: (context) =>
+          SubmitReviewCubit(context.read<SessionCompletedRepository>()),
+    ),
+    BlocProvider<PaymentCubit>(
+      create: (context) =>
+          PaymentCubit(context.read<PaymentRepository>()),
+    ),
+    BlocProvider<MenteeDashboardCubit>(
+      create: (context) => MenteeDashboardCubit(
+        bannersCubit: Getbannerscubit(context.read<Getbannersrepository>()),
+        profileCubit: MenteeProfileCubit(
+          context.read<MenteeProfileRepository>(),
+        ),
+        campusMentorCubit: CampusMentorListCubit(
+          context.read<CampusMentorListRepository>(),
+        ),
+        guestMentorsCubit: GuestMentorsCubit(
+          context.read<GuestMentorsRepository>(),
+        ),
       ),
     ),
 

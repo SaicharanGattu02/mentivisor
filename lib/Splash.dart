@@ -15,7 +15,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _progressController;
-
   @override
   void initState() {
     super.initState();

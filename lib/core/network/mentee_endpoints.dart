@@ -28,8 +28,7 @@ class APIEndpointUrls {
   static const String study_zone_campus = "${userUrl}/study-zones";
   static const String coins_pack = "${userUrl}/coin-packs";
   static const String community_zone_post = "${userUrl}/community-zone-post";
-  static const String study_zone_report_resource =
-      "${userUrl}/study-zone-report";
+  static const String study_zone_report_resource = "${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
@@ -55,6 +54,10 @@ class APIEndpointUrls {
   static const String book_slot = "${userUrl}session/book-slot";
   static const String create_paymenet = "${userUrl}razorpay/order";
   static const String verify_paymenet = "${userUrl}razorpay/verify";
+  static const String upcoming_session = "${userUrl}sessions/upcoming";
+  static const String session_completed = "${userUrl}sessions/complete";
+  static const String completed_sessions_submit_review  = "${userUrl}sessions/feedback";
+  static const String sessions_report_submit = "${userUrl}session-report'";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

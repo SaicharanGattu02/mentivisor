@@ -1,163 +1,267 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_states.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class UpcomingSessionsScreen extends StatelessWidget {
+import '../../utils/color_constants.dart';
+import '../../utils/constants.dart';
+import '../../utils/spinkittsLoader.dart';
+
+class UpcomingSessionsScreen extends StatefulWidget {
   const UpcomingSessionsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final sessions = [1, 2];
+  State<UpcomingSessionsScreen> createState() => _UpcomingSessionsScreenState();
+}
 
+class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UpComingSessionCubit>().upComingSessions();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: CustomAppBar1(title: "Upcoming Sessions", actions: const []),
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index == sessions.length - 1 ? 0 : 16,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade200,
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // LEFT SIDE: Text info
-                        Expanded(
-                          child: Column(
+      body: SafeArea(
+        child: BlocBuilder<UpComingSessionCubit, UpComingSessionStates>(
+          builder: (context, state) {
+            if (state is UpComingSessionsLoading) {
+              return Center(
+                child: CircularProgressIndicator(color: primarycolor),
+              );
+            } else if (state is UpComingSessionLoaded) {
+              return CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16.0), // Responsive padding
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final upComingSessions =
+                            state.upComingSessionModel.data?[index];
+                        if (upComingSessions == null) {
+                          return const SizedBox.shrink(); // Handle null gracefully
+                        }
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: EdgeInsets.all(16),
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Career Growth Strategy',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: "segeo",
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'With Dr. Sarah Chen',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                  fontFamily: "segeo",
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFEAF2FF),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: const Text(
-                                      "Today at 5:00 pm",
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      upComingSessions.topics?.isNotEmpty ??
+                                              false
+                                          ? upComingSessions.topics!
+                                          : "No topics specified",
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF007BFF),
+                                        fontSize:
+                                            18, // Slightly larger for emphasis
+                                        fontWeight: FontWeight.bold,
                                         fontFamily: "segeo",
-                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black87,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Text(
-                                    "• G Meet",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                      fontFamily: "segeo",
+                                    const SizedBox(height: 6),
+
+                                    Text(
+                                      capitalize(
+                                        upComingSessions.mentor?.name ??
+                                            "Unknown Mentor",
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: "segeo",
+                                        color: Colors.grey.shade600,
+                                      ),
                                     ),
+                                    const SizedBox(height: 12),
+                                    Wrap(
+                                      spacing: 12,
+                                      runSpacing: 8,
+                                      children: [
+                                        _buildInfoChip(
+                                          icon: Icons.calendar_today,
+                                          label: upComingSessions.date ?? "N/A",
+                                          color: Colors.blue.shade50,
+                                          textColor: Colors.blue.shade700,
+                                        ),
+                                        _buildInfoChip(
+                                          icon: Icons.access_time,
+                                          label:
+                                              "${upComingSessions.startTime ?? 'N/A'} - ${upComingSessions.endTime ?? 'N/A'}",
+                                          color: Colors.blue.shade50,
+                                          textColor: Colors.blue.shade700,
+                                        ),
+                                        _buildInfoChip(
+                                          icon: Icons.videocam,
+                                          label:
+                                              upComingSessions.zoomLink
+                                                      ?.contains("zoom.us") ??
+                                                  false
+                                              ? "Zoom"
+                                              : "Video Call",
+                                          color: Colors.blue.shade50,
+                                          textColor: Colors.blue.shade700,
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 12),
+                                    OutlinedButton.icon(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                        Icons.chat_bubble_outline,
+                                        size: 16,
+                                        color: Colors.black87,
+                                      ),
+                                      label: Text(
+                                        "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: "segeo",
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        side: BorderSide(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8,
+                                          horizontal: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Column(
+                                children: [
+                                  ClipOval(
+                                    child: CachedNetworkImage(
+                                      width: 56, // Consistent size
+                                      height: 56,
+                                      imageUrl:
+                                          upComingSessions
+                                              .mentor
+                                              ?.mentorProfile ??
+                                          "",
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(
+                                        width: 56,
+                                        height: 56,
+                                        color: Colors.grey.shade200,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.blue,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                            width: 56,
+                                            height: 56,
+                                            color: Colors.grey.shade200,
+                                            child: Image.asset(
+                                              "assets/images/profile.png",
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 12),
+                                  CustomAppButton1(
+                                    width: SizeConfig.screenWidth * 0.2,
+                                    text: "Join Session",
+                                    onPlusTap: () async {
+                                      final url = upComingSessions.zoomLink;
+                                      if (url != null &&
+                                          await canLaunchUrl(Uri.parse(url))) {
+                                        await launchUrl(Uri.parse(url));
+                                      } else {
+                                        CustomSnackBar1.show(
+                                          context,
+                                          "Unable to open Zoom link",
+                                        );
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
-                              OutlinedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.chat_bubble_outline,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                                label: const Text(
-                                  'Chat with Sarah Chen',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: 'segeo',
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: Colors.grey.shade300),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 6,
-                                    horizontal: 10,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
-                        ),
-
-                        const SizedBox(width: 12),
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: 48,
-                              width: 48,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/profileimg.png",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              height: 36,
-                              width: 140,
-                              child: CustomAppButton1(
-                                text: 'Join Session',
-                                onPlusTap: () {},
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        );
+                      }, childCount: state.upComingSessionModel.data?.length ?? 0),
                     ),
                   ),
-                ),
-                childCount: sessions.length,
-              ),
-            ),
-          ),
-        ],
+                ],
+              );
+            } else if (state is UpComingSessionFailure) {
+              return Text(state.msg);
+            }
+            return Text("No Data");
+          },
+        ),
       ),
     );
   }
+}
+
+Widget _buildInfoChip({
+  required IconData icon,
+  required String label,
+  required Color color,
+  required Color textColor,
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: textColor),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontFamily: "segeo",
+            color: textColor,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
+  );
 }

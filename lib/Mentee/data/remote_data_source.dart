@@ -9,16 +9,19 @@ import 'package:mentivisor/Mentee/Models/WalletModel.dart';
 import 'package:mentivisor/Mentee/Models/YearsModel.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import '../../Mentor/Models/FeedbackModel.dart';
 import '../Models/CampusesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
+import '../Models/CompletedSessionModel.dart';
 import '../Models/CreatePaymentModel.dart';
 import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
 import '../Models/GuestMentorsModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
+import '../Models/ReviewSubmitModel.dart';
 import '../Models/SelectSlotModel.dart';
 import '../Models/SessionBookingModel.dart';
 import '../Models/StudyZoneCampusModel.dart';
@@ -32,6 +35,7 @@ import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/TaskStatesModel.dart';
+import '../Models/UpComingSessionModel.dart';
 import '../Models/WeeklySlotsModel.dart';
 
 abstract class RemoteDataSource {
@@ -93,6 +97,10 @@ abstract class RemoteDataSource {
   Future<SessionBookingModel?> sessionBooking(int mentor_id, int slot_id);
   Future<CreatePaymentModel?> createPayment(Map<String, dynamic> data);
   Future<SuccessModel?> verifyPayment(Map<String, dynamic> data);
+  Future<UpComingSessionModel?> upComingSessions();
+  Future<CompletedSessionModel?> sessionsComplete();
+  Future<ReviewSubmitModel?> sessionSubmitReview(Map<String, dynamic> data ,int id);
+  Future<SuccessModel?> postSessionReport(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -723,6 +731,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }
   }
   @override
+  Future<SuccessModel?> postSessionReport(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.sessions_report_submit}",
+        data: formData,
+      );
+      AppLogger.log('Session Report::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Session Report ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
   Future<CreatePaymentModel?> createPayment(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
     try {
@@ -738,6 +763,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> verifyPayment(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
@@ -750,6 +776,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('verify Payment  ::${e}');
+
+      return null;
+    }
+  }
+  @override
+  Future<ReviewSubmitModel?> sessionSubmitReview(Map<String, dynamic> data ,int id) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.completed_sessions_submit_review}/${id}",
+        data: formData,
+      );
+      AppLogger.log('Submit Review ::${res.data}');
+      return ReviewSubmitModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Submit Review ::${e}');
 
       return null;
     }
@@ -768,6 +810,32 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return ExclusiveServicesModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('exclusive service::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<UpComingSessionModel?> upComingSessions() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.upcoming_session}");
+      AppLogger.log('get upComing Session::${res.data}');
+      return UpComingSessionModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('upComing Session::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<CompletedSessionModel?> sessionsComplete() async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.session_completed}",
+      );
+      AppLogger.log('get Session Completed ::${res.data}');
+      return CompletedSessionModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Session Completed ::${e}');
       return null;
     }
   }

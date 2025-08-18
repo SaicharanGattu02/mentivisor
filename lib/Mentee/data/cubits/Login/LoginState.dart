@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 
-abstract class LoginState extends Equatable {
-  @override
-  List<Object?> get props => [];
+abstract class LoginState  {
 }
 
 class LoginIntially extends LoginState {}

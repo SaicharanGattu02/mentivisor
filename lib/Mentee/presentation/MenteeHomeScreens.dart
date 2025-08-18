@@ -16,8 +16,8 @@ import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GetBanners/GetBannersState.dart';
 import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import '../data/cubits/GuestMentors/guest_mentors_states.dart';
-import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
-import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
+import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
+import '../data/cubits/MenteeDashBoard/mentee_dashboard_state.dart';
 import 'Widgets/FilterButton.dart';
 import 'Widgets/MentorGridGuest.dart';
 
@@ -40,24 +40,23 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<Getbannerscubit>().getbanners();
-    context.read<MenteeProfileCubit>().fetchMenteeProfile();
-    getDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MenteeDashboardCubit>().fetchDashboard();
+    });
   }
 
-  Future<void> getDetails() async {
-    final isGuest = await AuthService.isGuest;
-    if (isGuest) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<GuestMentorsCubit>().fetchGuestMentorList();
-      });
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
-      });
-    }
-  }
-
+  // Future<void> getDetails() async {
+  //   final isGuest = await AuthService.isGuest;
+  //   if (isGuest) {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       context.read<GuestMentorsCubit>().fetchGuestMentorList();
+  //     });
+  //   } else {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       context.read<CampusMentorListCubit>().fetchCampusMentorList("", "");
+  //     });
+  //   }
+  // }
 
   void _navigateToScreen(String name) {
     switch (name) {
@@ -107,55 +106,61 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       future: AuthService.isGuest,
       builder: (context, snapshot) {
         final isGuest = snapshot.data ?? false;
-        return Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            title: isGuest
-                ? Row(
-                    spacing: 10,
-                    children: [
-                      Image.asset(
-                        "assets/images/profile.png",
-                        width: 48,
-                        height: 48,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Hello!',
-                            style: TextStyle(
-                              color: Color(0xff666666),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+        return BlocBuilder<MenteeDashboardCubit, MenteeDashboardState>(
+          builder: (context, state) {
+            if (state is MenteeDashboardLoading) {
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(color: primarycolor),
+                ),
+              );
+            } else if (state is MenteeDashboardLoaded) {
+              final menteeProfile = state.menteeProfileModel.data;
+              final banners = state.getbannerModel.data ?? [];
+              final guestMentorlist = state.guestMentorsModel.data?.mentors ?? [];
+              final campusMentorlist = state.campusMentorListModel.data?.mentors_list ?? [];
+              _mentorStatus.value = menteeProfile?.user?.mentorStatus ?? "none";
+              _mentorProfileUrl.value = menteeProfile?.user?.profilePicUrl ?? "";
+              _mentorProfileName.value = menteeProfile?.user?.name ?? "";
+              return Scaffold(
+                key: _scaffoldKey,
+                appBar: AppBar(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  automaticallyImplyLeading: false,
+                  title: isGuest
+                      ? Row(
+                          spacing: 10,
+                          children: [
+                            Image.asset(
+                              "assets/images/profile.png",
+                              width: 48,
+                              height: 48,
                             ),
-                          ),
-                          Text(
-                            'Guest',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Hello!',
+                                  style: TextStyle(
+                                    color: Color(0xff666666),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  'Guest',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                : BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
-                    builder: (context, state) {
-                      if (state is MenteeProfileLoaded) {
-                        final menteeProfile = state.menteeProfileModel.data;
-                        _mentorStatus.value =
-                            menteeProfile?.user?.mentorStatus ?? "none";
-                        _mentorProfileUrl.value =
-                            menteeProfile?.user?.profilePicUrl ?? "";
-                        _mentorProfileName.value =
-                            menteeProfile?.user?.name ?? "";
-                        return Row(
+                          ],
+                        )
+                      : Row(
                           children: [
                             IconButton(
                               icon: Icon(
@@ -190,504 +195,464 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               ],
                             ),
                           ],
-                        );
-                      } else if (state is MenteeProfileFailure) {
-                        return Center(child: Text(state.message));
-                      }
-                      return SizedBox.shrink();
-                    },
-                  ),
-
-            actions: [
-              isGuest
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: CustomAppButton1(
-                        text: "Sign Up",
-                        width: 105,
-                        height: 35,
-                        onPlusTap: () {
-                          context.push('/auth_landing');
-                        },
-                      ),
-                    )
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.black,
-                      ),
-                      onPressed: () =>
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Notifications clicked'),
+                        ),
+                  actions: [
+                    isGuest
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: CustomAppButton1(
+                              text: "Sign Up",
+                              width: 105,
+                              height: 35,
+                              onPlusTap: () {
+                                context.push('/auth_landing');
+                              },
                             ),
-                          ),
-                    ),
-            ],
-          ),
-          drawer: Drawer(
-            child: SafeArea(
-              child: Container(
-                color: const Color(0xFFF7F9FE),
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.pop();
-                              context.push("/profile");
-                            },
-                            child: Row(
-                              children: [
-                                ValueListenableBuilder<String?>(
-                                  valueListenable: _mentorProfileUrl,
-                                  builder: (context, url, _) {
-                                    return CachedNetworkImage(
-                                      imageUrl: url ?? "", // listen for updates
-                                      imageBuilder: (context, imageProvider) =>
-                                          CircleAvatar(
-                                            radius: 20,
-                                            backgroundImage: imageProvider,
-                                          ),
-                                      placeholder: (context, url) =>
-                                          CircleAvatar(
-                                            radius: 20,
-                                            backgroundColor: Colors.grey,
-                                            child: SizedBox(
-                                              width: 16,
-                                              height: 16,
-                                              child: Center(
-                                                child: spinkits
-                                                    .getSpinningLinespinkit(),
-                                              ),
-                                            ),
-                                          ),
-                                      errorWidget: (context, url, error) =>
-                                          const CircleAvatar(
-                                            radius: 20,
-                                            backgroundImage: AssetImage(
-                                              "assets/images/profile.png",
-                                            ),
-                                          ),
-                                    );
-                                  },
-                                ),
-                                const SizedBox(width: 12),
-                                ValueListenableBuilder<String?>(
-                                  valueListenable: _mentorProfileName,
-                                  builder: (context, name, _) {
-                                    return Text(
-                                      capitalize(name ?? 'Profile'),
-
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xff4B5462),
-                                        fontFamily: "segeo",
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
+                          )
+                        : IconButton(
+                            icon: const Icon(
+                              Icons.notifications_outlined,
+                              color: Colors.black,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/Wallet.png",
-                            label: 'Wallet',
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset(
-                                  "assets/images/coinsgold.png",
-                                  height: 16,
-                                  width: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '120',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.bold,
+                            onPressed: () =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Notifications clicked'),
                                   ),
                                 ),
+                          ),
+                  ],
+                ),
+                drawer: Drawer(
+                  child: SafeArea(
+                    child: Container(
+                      color: const Color(0xFFF7F9FE),
+                      child: ListView(
+                        padding: EdgeInsets.zero,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            color: Colors.white,
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    context.pop();
+                                    context.push("/profile");
+                                  },
+                                  child: Row(
+                                    children: [
+                                      ValueListenableBuilder<String?>(
+                                        valueListenable: _mentorProfileUrl,
+                                        builder: (context, url, _) {
+                                          return CachedNetworkImage(
+                                            imageUrl:
+                                                url ?? "", // listen for updates
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    CircleAvatar(
+                                                      radius: 20,
+                                                      backgroundImage:
+                                                          imageProvider,
+                                                    ),
+                                            placeholder: (context, url) =>
+                                                CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundColor: Colors.grey,
+                                                  child: SizedBox(
+                                                    width: 16,
+                                                    height: 16,
+                                                    child: Center(
+                                                      child: spinkits
+                                                          .getSpinningLinespinkit(),
+                                                    ),
+                                                  ),
+                                                ),
+                                            errorWidget:
+                                                (
+                                                  context,
+                                                  url,
+                                                  error,
+                                                ) => const CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: AssetImage(
+                                                    "assets/images/profile.png",
+                                                  ),
+                                                ),
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 12),
+                                      ValueListenableBuilder<String?>(
+                                        valueListenable: _mentorProfileName,
+                                        builder: (context, name, _) {
+                                          return Text(
+                                            capitalize(name ?? 'Profile'),
+
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color(0xff4B5462),
+                                              fontFamily: "segeo",
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/Wallet.png",
+                                  label: 'Wallet',
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/coinsgold.png",
+                                        height: 16,
+                                        width: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      const Text(
+                                        '120',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () => _navigateToScreen('Wallet'),
+                                ),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/DownloadSimple.png",
+                                  label: 'Downloads',
+                                  onTap: () => _navigateToScreen('Downloads'),
+                                ),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/PencilRuler.png",
+                                  label: 'Productivity Tools',
+                                  onTap: () =>
+                                      _navigateToScreen('Productivity Tools'),
+                                ),
                               ],
                             ),
-                            onTap: () => _navigateToScreen('Wallet'),
                           ),
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/DownloadSimple.png",
-                            label: 'Downloads',
-                            onTap: () => _navigateToScreen('Downloads'),
+                          SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            color: Colors.white,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/VideoConference.png",
+                                  label: 'Session Completed',
+                                  onTap: () =>
+                                      _navigateToScreen('Session Completed'),
+                                ),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/CalendarDots.png",
+                                  label: 'Upcoming Sessions',
+                                  onTap: () =>
+                                      _navigateToScreen('Upcoming Sessions'),
+                                ),
+                              ],
+                            ),
                           ),
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/PencilRuler.png",
-                            label: 'Productivity Tools',
-                            onTap: () =>
-                                _navigateToScreen('Productivity Tools'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      color: Colors.white,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/VideoConference.png",
-                            label: 'Session Completed',
-                            onTap: () => _navigateToScreen('Session Completed'),
-                          ),
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/CalendarDots.png",
-                            label: 'Upcoming Sessions',
-                            onTap: () => _navigateToScreen('Upcoming Sessions'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 16,
-                      ),
-                      color: Colors.white,
-                      child: _buildDrawerItem(
-                        assetpath: "assets/icons/crown.png",
-                        label: 'Exclusive Services',
-                        onTap: () => _navigateToScreen('Executive services'),
-                      ),
-                    ),
-                    ValueListenableBuilder<String>(
-                      valueListenable: _mentorStatus,
-                      builder: (context, status, _) {
-                        if (status != "approval") {
-                          return Container(
+                          SizedBox(height: 20),
+                          Container(
                             padding: const EdgeInsets.symmetric(
                               vertical: 4,
                               horizontal: 16,
                             ),
-                            decoration: BoxDecoration(
-                              gradient: kCommonGradient,
+                            color: Colors.white,
+                            child: _buildDrawerItem(
+                              assetpath: "assets/icons/crown.png",
+                              label: 'Exclusive Services',
+                              onTap: () =>
+                                  _navigateToScreen('Executive services'),
                             ),
+                          ),
+                          ValueListenableBuilder<String>(
+                            valueListenable: _mentorStatus,
+                            builder: (context, status, _) {
+                              if (status != "approval") {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                    horizontal: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: kCommonGradient,
+                                  ),
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    visualDensity: VisualDensity.compact,
+                                    leading: Image.asset(
+                                      "assets/icons/mentor.png",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                    title: const Text(
+                                      "Become Mentor",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      if (status == "") {
+                                        context.push('/becomementorscreen');
+                                      } else if (status == "inreview") {
+                                        context.push('/in_review');
+                                      } else if (status == "rejected") {
+                                        context.push('/profile_rejected');
+                                      }
+                                    },
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+
+                          SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 16,
+                            ),
+                            color: Colors.white,
+                            child: Column(
+                              children: [
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/Info.png",
+                                  label: 'Info',
+                                  onTap: () => _navigateToScreen('info'),
+                                ),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/UserCircleCheck.png",
+                                  label: 'Invite Friend',
+                                  onTap: () =>
+                                      _navigateToScreen('Invite Friend'),
+                                ),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/UserCircleGear.png",
+                                  label: 'Customer Services',
+                                  onTap: () =>
+                                      _navigateToScreen('Customer Services'),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 18),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 16,
+                            ),
+                            color: Colors.white,
                             child: ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              visualDensity: VisualDensity.compact,
-                              leading: Image.asset(
-                                "assets/icons/mentor.png",
-                                width: 24,
-                                height: 24,
+                              leading: const Icon(
+                                Icons.exit_to_app,
+                                color: Colors.red,
                               ),
                               title: const Text(
-                                "Become Mentor",
+                                'Logout',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
+                                  color: Colors.red,
+                                  fontFamily: "Inter",
                                 ),
                               ),
-                              onTap: () {
-                                if (status == "") {
-                                  context.push('/becomementorscreen');
-                                } else if (status == "inreview") {
-                                  context.push('/in_review');
-                                } else if (status == "rejected") {
-                                  context.push('/profile_rejected');
-                                }
-                              },
+                              onTap: () => _navigateToScreen('Logout'),
                             ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-
-                    SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 16,
-                      ),
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/Info.png",
-                            label: 'Info',
-                            onTap: () => _navigateToScreen('info'),
-                          ),
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/UserCircleCheck.png",
-                            label: 'Invite Friend',
-                            onTap: () => _navigateToScreen('Invite Friend'),
-                          ),
-                          _buildDrawerItem(
-                            assetpath: "assets/icons/UserCircleGear.png",
-                            label: 'Customer Services',
-                            onTap: () => _navigateToScreen('Customer Services'),
                           ),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 18),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 16,
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.exit_to_app,
-                          color: Colors.red,
-                        ),
-                        title: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontFamily: "Inter",
-                          ),
-                        ),
-                        onTap: () => _navigateToScreen('Logout'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BlocBuilder<Getbannerscubit, Getbannersstate>(
-                    builder: (context, state) {
-                      if (state is GetbannersStateLoading) {
-                        return const SizedBox(
-                          height: 180,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      if (state is GetbannersStateFailure) {
-                        return SizedBox(
-                          height: 180,
-                          child: Center(child: Text(state.msg)),
-                        );
-                      }
-                      final banners =
-                          (state as GetbannersStateLoaded)
-                              .getbannerModel
-                              .data ??
-                          [];
-                      if (banners.isEmpty) {
-                        return const SizedBox(
-                          height: 180,
-                          child: Center(child: Text("No banners available")),
-                        );
-                      }
-                      return CarouselSlider.builder(
-                        itemCount: banners.length,
-                        itemBuilder: (ctx, i, _) {
-                          final b = banners[i];
-                          return GestureDetector(
-                            onTap: () {
-                              if (b.link != null) _launchUrl(b.link!);
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.network(
-                                b.imgUrl ?? '',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (_, __, ___) => Container(
-                                  color: Colors.grey[200],
-                                  alignment: Alignment.center,
-                                  child: const Icon(
-                                    Icons.broken_image,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        options: CarouselOptions(
-                          height: 180,
-                          autoPlay: true,
-                          autoPlayInterval: const Duration(seconds: 4),
-                          viewportFraction: 1.0,
-                        ),
-                      );
-                    },
                   ),
-                  !isGuest
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 24),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE8EBF7),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              padding: const EdgeInsets.all(4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .center, // Ensures the row is centered
-                                children: [
-                                  Expanded(
-                                    child: FilterButton(
-                                      text: 'On Campus',
-                                      isSelected: selectedFilter == 'On Campus',
-                                      onPressed: () {
-                                        context
-                                            .read<CampusMentorListCubit>()
-                                            .fetchCampusMentorList("", "");
-                                        setState(() {
-                                          selectedFilter = 'On Campus';
-                                        });
-                                      },
+                ),
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BlocBuilder<Getbannerscubit, Getbannersstate>(
+                          builder: (context, state) {
+                            return CarouselSlider.builder(
+                              itemCount: banners.length,
+                              itemBuilder: (ctx, i, _) {
+                                final b = banners[i];
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (b.link != null) _launchUrl(b.link!);
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Image.network(
+                                      b.imgUrl ?? '',
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder: (_, __, ___) => Container(
+                                        color: Colors.grey[200],
+                                        alignment: Alignment.center,
+                                        child: const Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: FilterButton(
-                                      text: 'Beyond Campus',
-                                      isSelected:
-                                          selectedFilter == 'Beyond Campus',
-                                      onPressed: () {
-                                        context
-                                            .read<CampusMentorListCubit>()
-                                            .fetchCampusMentorList(
-                                              "beyond",
-                                              "",
-                                            );
-                                        setState(() {
-                                          selectedFilter = 'Beyond Campus';
-                                        });
-                                      },
+                                );
+                              },
+                              options: CarouselOptions(
+                                height: 180,
+                                autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 4),
+                                viewportFraction: 1.0,
+                              ),
+                            );
+                          },
+                        ),
+                        !isGuest
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 24),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE8EBF7),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    padding: const EdgeInsets.all(4),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center, // Ensures the row is centered
+                                      children: [
+                                        Expanded(
+                                          child: FilterButton(
+                                            text: 'On Campus',
+                                            isSelected:
+                                                selectedFilter == 'On Campus',
+                                            onPressed: () {
+                                              context
+                                                  .read<CampusMentorListCubit>()
+                                                  .fetchCampusMentorList(
+                                                    "",
+                                                    "",
+                                                  );
+                                              setState(() {
+                                                selectedFilter = 'On Campus';
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: FilterButton(
+                                            text: 'Beyond Campus',
+                                            isSelected:
+                                                selectedFilter ==
+                                                'Beyond Campus',
+                                            onPressed: () {
+                                              context
+                                                  .read<CampusMentorListCubit>()
+                                                  .fetchCampusMentorList(
+                                                    "beyond",
+                                                    "",
+                                                  );
+                                              setState(() {
+                                                selectedFilter =
+                                                    'Beyond Campus';
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
+                              )
+                            : SizedBox.shrink(),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Mentors',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: "Inter",
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                if (_onCampus == true) {
+                                  context.push(
+                                    '/campus_mentor_list?scope=${""}',
+                                  );
+                                } else {
+                                  context.push(
+                                    '/campus_mentor_list?scope=${"beyond"}',
+                                  );
+                                }
+                              },
+                              child: const Text(
+                                'View All',
+                                style: TextStyle(color: Color(0xff4076ED)),
                               ),
                             ),
                           ],
-                        )
-                      : SizedBox.shrink(),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Mentors',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Inter",
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          if (_onCampus == true) {
-                            context.push('/campus_mentor_list?scope=${""}');
-                          } else {
-                            context.push(
-                              '/campus_mentor_list?scope=${"beyond"}',
-                            );
-                          }
-                        },
-                        child: const Text(
-                          'View All',
-                          style: TextStyle(color: Color(0xff4076ED)),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (isGuest) ...[
-                    BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
-                      builder: (context, state) {
-                        if (state is GuestMentorsLoading || state is GuestMentorsInitial) {
-                          return const SizedBox(
-                            height: 200,
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        if (state is GuestMentorsFailure) {
-                          return SizedBox(
-                            height: 200,
-                            child: Center(child: Text(state.msg ?? 'Failed to load')),
-                          );
-                        }
-                        if (state is GuestMentorsLoaded) {
-                          final list = state.guestMentorsModel.data?.mentors ?? [];
-                          if (list.isEmpty) {
-                            return const SizedBox(
-                              height: 200,
-                              child: Center(child: Text('No mentors found')),
-                            );
-                          }
-                          return MentorGridGuest(
-                            mentors: list,
-                            onTapMentor: (m) => context.push('/auth_landing'),
-                          );
-                        }
-                        return const SizedBox(height: 200);
-                      },
-                    ),
-                  ],
-                  if (!isGuest) ...[
-                    BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
-                      builder: (context, state) {
-                        if (state is CampusMentorListStateLoading ||
-                            state is CampusMentorListStateInitial) {
-                          return const SizedBox(
-                            height: 200,
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        if (state is CampusMentorListStateFailure) {
-                          return SizedBox(
-                            height: 200,
-                            child: Center(child: Text(state.msg ?? 'Failed to load')),
-                          );
-                        }
-                        if (state is CampusMentorListStateLoaded) {
-                          final list = state.campusMentorListModel.data?.mentors_list ?? [];
-                          if (list.isEmpty) {
-                            return const SizedBox(
-                              height: 200,
-                              child: Center(child: Text('No mentors found')),
-                            );
-                          }
-                          return MentorGridCampus(
-                            mentors_list: list,
-                            onTapMentor: (m) => context.push('/mentor_profile?id=${m.userId}'),
-                          );
-                        }
-                        return const SizedBox(height: 200);
-                      },
-                    ),
-                  ]
+                        if (isGuest) ...[
+                          guestMentorlist.isEmpty
+                              ? const SizedBox(
+                                  height: 200,
+                                  child: Center(
+                                    child: Text('No mentors found'),
+                                  ),
+                                )
+                              : MentorGridGuest(
+                                  mentors: guestMentorlist,
+                                  onTapMentor: (m) =>
+                                      context.push('/auth_landing'),
+                                ),
+                        ],
 
-                ],
-              ),
-            ),
-          ),
+                        if (!isGuest) ...[
+                          campusMentorlist.isEmpty
+                              ? const SizedBox(
+                                  height: 200,
+                                  child: Center(
+                                    child: Text('No mentors found'),
+                                  ),
+                                )
+                              : MentorGridCampus(
+                                  mentors_list: campusMentorlist,
+                                  onTapMentor: (m) => context.push(
+                                    '/mentor_profile?id=${m.userId}',
+                                  ),
+                                ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            } else if (state is MenteeDashboardFailure) {
+              return Center(child: Text(state.message));
+            }
+            return Center(child: Text("No Data"));
+          },
         );
       },
     );
@@ -849,5 +814,3 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     onTap: onTap,
   );
 }
-
-
