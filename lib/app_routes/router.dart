@@ -65,7 +65,7 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/splashscreen',
+      path: '/',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
       },
@@ -446,9 +446,9 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/coupon_details',
+      path: '/slot_bookings_screen',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SlotsBookingScreen(), state);
+        return buildSlideTransitionPage(Slotsbookingscreen(), state);
       },
     ),
 

@@ -1,36 +1,65 @@
-// slots_booking_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
+import '../../Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
+import '../../Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
 
-class SlotsBookingScreen extends StatefulWidget {
-  const SlotsBookingScreen({Key? key}) : super(key: key);
+const Color kPurple = Color(0xFF9333EA);
+const Color kLightLav = Color(0xFFF1E9FF);
+const Color kCardBlueBorder = Color(0xFF2F8BFF);
+const Color kPillBorder = Color(0xFFDDDDE8);
+const Color kCoinBg = Color(0xFFFFF6CF);
 
-  @override
-  State<SlotsBookingScreen> createState() => _SlotsBookingScreenState();
+const TextStyle kTitle16Bold = TextStyle(
+  fontFamily: 'segeo',
+  fontSize: 16,
+  fontWeight: FontWeight.w700,
+);
+
+// small helper pill (used in the group cards)
+Widget _slotChip(String label) {
+
+  return
+    Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      color:  Color(0xFFF5F5F5), // light lavender background
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(
+        fontFamily: 'segeo',
+        fontWeight: FontWeight.w600,
+        fontSize: 13,
+        color: Colors.black, // make sure text is visible
+      ),
+    ),
+  );
 }
 
-class _SlotsBookingScreenState extends State<SlotsBookingScreen> {
+class Slotsbookingscreen extends StatefulWidget {
+  const Slotsbookingscreen({super.key});
+
+  @override
+  _SlotsbookingscreenState createState() => _SlotsbookingscreenState();
+}
+
+class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   DateTime visibleMonth = DateTime.now();
   DateTime selectedDate = DateTime.now();
+  final TextEditingController _taskNameController = TextEditingController();
 
-  // sample recent added groups (replace with your real data)
-  final List<Map<String, dynamic>> recentAdded = [
-    {
-      'title': '15 Jun - 21 Jun 25',
-      'subtitle': '1 week',
-      'slots': ['9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00'],
-    },
-    {
-      'title': '16 Jun 25',
-      'subtitle': '6 slots',
-      'slots': ['9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00'],
-    },
-    {
-      'title': '15 Jun 25',
-      'subtitle': '6 slots',
-      'slots': ['9:00 - 10:00', '9:00 - 10:00', '9:00 - 10:00'],
-    },
-  ];
+  bool keepForWeek = true; // toggle like in the image
+
+  @override
+  void initState() {
+    super.initState();
+    final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
+    context.read<TaskByStatusCubit>().fetchTasksByStatus();
+  }
 
   void prevMonth() {
     setState(() {
@@ -47,76 +76,101 @@ class _SlotsBookingScreenState extends State<SlotsBookingScreen> {
   List<int?> makeMonthGrid(DateTime month) {
     final firstDay = DateTime(month.year, month.month, 1);
     final lastDay = DateTime(month.year, month.month + 1, 0);
-    final startOffset = (firstDay.weekday) % 7; // 0..6 with Sunday = 0
+    final startOffset = (firstDay.weekday) % 7; // Sunday = 0
     final List<int?> list = [];
     for (int i = 0; i < startOffset; i++) list.add(null);
     for (int d = 1; d <= lastDay.day; d++) list.add(d);
     return list;
   }
 
+  void _onDateSelected(int day) {
+    setState(() {
+      selectedDate = DateTime(visibleMonth.year, visibleMonth.month, day);
+    });
+    final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
+  }
+
   @override
   Widget build(BuildContext context) {
     final gridDays = makeMonthGrid(visibleMonth);
-    final monthTitle = DateFormat('MMM yyyy').format(visibleMonth);
+    final monthTitle = DateFormat('MMMM yyyy').format(visibleMonth);
+    final selectedTitle = DateFormat('d MMM yy').format(selectedDate); // e.g., 17 Jun 25
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FD),
-      appBar: AppBar(
-        title: const Text('Availability', style: TextStyle(fontFamily: 'segeo')),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        centerTitle: false,
-        foregroundColor: Colors.black87,
-      ),
+
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+
           children: [
-            // --- top calendar card ---
+
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 12,
+                  )
+                ],
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // month header
                     Row(
                       children: [
-                        Text('Jun 2025', style: TextStyle(fontWeight: FontWeight.w700)),
+                        Text(
+                          monthTitle,
+                          style: const TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                         const Spacer(),
-                        IconButton(onPressed: prevMonth, icon: const Icon(Icons.chevron_left)),
-                        IconButton(onPressed: nextMonth, icon: const Icon(Icons.chevron_right)),
+                        IconButton(
+                          onPressed: prevMonth,
+                          icon: const Icon(Icons.chevron_left),
+                        ),
+                        IconButton(
+                          onPressed: nextMonth,
+                          icon: const Icon(Icons.chevron_right),
+                        ),
                       ],
                     ),
-
                     const SizedBox(height: 8),
-
-                    // small pill with weekday names
                     Container(
                       height: 42,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1E9FF),
+                        color: kLightLav,
                         borderRadius: BorderRadius.circular(22),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: ['Su','Mo','Tu','We','Th','Fr','Sa']
+                        children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
                             .map((d) => Expanded(
-                          child: Center(child: Text(d, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600))),
-                        )).toList(),
+                          child: Center(
+                            child: Text(
+                              d,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'segeo',
+                              ),
+                            ),
+                          ),
+                        ))
+                            .toList(),
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
-                    // calendar grid
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -130,26 +184,43 @@ class _SlotsBookingScreenState extends State<SlotsBookingScreen> {
                       itemBuilder: (context, index) {
                         final day = gridDays[index];
                         if (day == null) return const SizedBox();
-                        final isSelected = selectedDate.day == day && selectedDate.month == visibleMonth.month && selectedDate.year == visibleMonth.year;
-                        final isToday = DateTime.now().day == day && DateTime.now().month == visibleMonth.month && DateTime.now().year == visibleMonth.year;
+                        final isSelected = selectedDate.day == day &&
+                            selectedDate.month == visibleMonth.month &&
+                            selectedDate.year == visibleMonth.year;
+                        final now = DateTime.now();
+                        final isToday = now.day == day &&
+                            now.month == visibleMonth.month &&
+                            now.year == visibleMonth.year;
+
                         return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedDate = DateTime(visibleMonth.year, visibleMonth.month, day);
-                              // TODO: trigger your cubit fetch for selectedDate here
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFF9333EA).withOpacity(0.08) : (isToday ? const Color(0xFFE8F0FF) : Colors.white),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected ? const Color(0xFF9333EA) : (isToday ? const Color(0xFF9333EA).withOpacity(0.25) : const Color(0xFFDDDDDD)),
-                                width: isSelected ? 2 : 1,
+                          onTap: () => _onDateSelected(day),
+                          child: Center(
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? kPurple.withOpacity(0.08)
+                                    : (isToday ? const Color(0xFFE8F0FF) : Colors.white),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? kPurple
+                                      : (isToday
+                                      ? kPurple.withOpacity(0.25)
+                                      : const Color(0xFFDDDDDD)),
+                                  width: isSelected ? 2 : 1,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                day.toString(),
+                                style: const TextStyle(
+                                  fontFamily: 'segeo',
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
-                            alignment: Alignment.center,
-                            child: Text(day.toString(), style: const TextStyle(fontSize: 12)),
                           ),
                         );
                       },
@@ -159,193 +230,666 @@ class _SlotsBookingScreenState extends State<SlotsBookingScreen> {
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
 
-            // --- selected date + add slot row ---
+            // ---------------- Selected Day Detail Card (exactly like image) ----------------
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // date row + Add Slot button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          DateFormat('d MMM yy').format(selectedDate),
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          // TODO: show Add Slot flow (bottom sheet)
-                        },
-                        icon: const Icon(Icons.add, size: 18),
-                        label: const Text('+ Add Slot'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF9333EA),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // time range + coin pill + delete icon (sample)
-                  Row(
-                    children: [
-                      // time chips
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF5F5F5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('09:00', style: TextStyle(fontWeight: FontWeight.w600)),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text('to'),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF5F5F5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('10:00', style: TextStyle(fontWeight: FontWeight.w600)),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      // coin pill
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF6CF),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE6D7A6)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.monetization_on, size: 16, color: Color(0xFFFFA800)),
-                            SizedBox(width: 6),
-                            Text('50', style: TextStyle(fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      // trash icon placeholder
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.delete_outline, color: Color(0xFFFF4D4D)),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // weekly toggle sample
-                  Row(
-                    children: [
-                      const Text('Mark timing for the full week'),
-                      const SizedBox(width: 8),
-                      Switch(value: true, onChanged: (v) {}),
-                    ],
-                  ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 12,
+                  )
                 ],
               ),
-            ),
-
-            const SizedBox(height: 18),
-
-            // --- Recent Added header ---
-            Row(
-              children: const [
-                Text('Recent Added', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                Spacer(),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // --- recent added list: blue bordered container with several cards ---
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF2F8BFF), width: 2), // blue border
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: recentAdded.map((group) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF7FBFF),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 6)],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top row: date + Add Slot button
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today_outlined, size: 16, color: const Color(0xFF333333)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(group['title'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700)),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEEF5FF),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(group['subtitle'] ?? '', style: const TextStyle(fontWeight: FontWeight.w600)),
-                            ),
-                          ],
+                        Text(
+                          selectedTitle, // e.g., 17 Jun 25
+                          style: const TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
+                        const Spacer(),
+                        TextButton.icon(
 
-                        const SizedBox(height: 8),
+                            onPressed: _showAddSlotDialog,
 
-                        // tag pills
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: (group['slots'] as List<String>).map((s) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: const Color(0xFFDDDDDD)),
-                              ),
-                              child: Text(s, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                            );
-                          }).toList(),
+
+                          icon: const Icon(Icons.add, color: Colors.white, size: 18),
+                          label: const Text(
+                            "Add Slot",
+                            style: TextStyle(
+                              fontFamily: 'segeo',
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xff9333EA),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
+                    const SizedBox(height: 10),
+
+                    // Time row + coin + delete
+
+
+                    Row(
+                      children: [
+                        _iconTextPill(Icons.schedule, "09:00",Color(0xff666666)),
+                        const SizedBox(width: 16),
+                        const Text(
+                          "to",
+                          style: TextStyle(fontFamily: 'segeo', fontSize: 13),
+                        ),
+                        const SizedBox(width: 16),
+                        _iconTextPill(Icons.access_time_filled_rounded, "10:00",Color(0xff666666)),
+                        const Spacer(),
+                        _coinPill("50"),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Want to keep this timing for the full week",
+                                style: TextStyle(
+                                  fontFamily: 'segeo',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              SizedBox(
+                                width: 22,
+                                height: 13,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Switch(
+                                    value: keepForWeek,
+                                    onChanged: (v) => setState(() => keepForWeek = v),
+                                    activeColor: const Color(0xFF4076ED),
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+                    const Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Note: ",
+                            style: TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.red,
+                            ),
+                          ),
+                          TextSpan(
+                            text:
+                            "The minimum time is half an hour and the maximum is three hours.",
+                            style: TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 12,
+                              color: Color(0xFF5F6473),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 18),
+
+            // ---------------- Recent Added header ----------------
+            Row(
+              children: [
+                const Text(
+                  "Recent Added",
+                  style: TextStyle(
+                    fontFamily: 'segeo',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+                const Spacer(),
+
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // ---------------- Recent Added Cards ----------------
+            _recentGroupCard(
+              title: "15 Jun - 21 Jun 25",
+              badge: "1 week",
+              slots: const [
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+              ],
+            ),
+            const SizedBox(height: 12),
+            _recentGroupCard(
+              title: "16 Jun 25",
+              slots: const [
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+              ],
+            ),
+            const SizedBox(height: 12),
+            _recentGroupCard(
+              title: "15 Jun 25",
+              slots: const [
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+                "9:00 - 10:00",
+              ],
+            ),
+            const SizedBox(height: 12),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _taskNameController.dispose();
+    super.dispose();
+  }
+
+  // ---------- helpers (exact visual style) ----------
+
+  Widget _iconTextPill(IconData icon, String text,color) {
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color:  Color(0xFFF5F5F5), // light lavender background
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: const Color(0xFF6C6F7B)),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'segeo',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _coinPill(String coins) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: kCoinBg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+           Image.asset("assets/images/GoldCoins.png",height: 19,width:19),
+          const SizedBox(width: 6),
+          Text(
+            coins,
+            style: const TextStyle(
+              fontFamily: 'segeo',
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _recentGroupCard({
+    required String title,
+    String? badge,
+    required List<String> slots,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12)],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title row with calendar icon and optional badge
+            Row(
+              children: [
+                const Icon(Icons.calendar_month_outlined, size: 18, color: Color(0xFF333333)),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'segeo',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (badge != null) ...[
+                  const SizedBox(width: 6),
+                  Text(
+                    badge,
+                    style: const TextStyle(
+                      fontFamily: 'segeo',
+                      fontSize: 12,
+                      color: Color(0xFF7C8596),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            SizedBox(height: 8),
+           Text(
+              "6 slots",
+              style: TextStyle(
+                fontFamily: 'segeo',
+                fontSize: 13,
+                color: Color(0xFF7C8596),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+             SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: slots.map(_slotChip).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+
+
+  }
+  Future<TimeOfDay?> _pickTime(BuildContext context, TimeOfDay initial) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: initial,
+      builder: (context, child) {
+        // Optional: match your theme
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: const TimePickerThemeData(
+              hourMinuteTextStyle: TextStyle(fontFamily: 'segeo', fontWeight: FontWeight.w700),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    return picked;
+  }
+
+  String _fmt(TimeOfDay t) {
+    final hh = t.hour.toString().padLeft(2, '0');
+    final mm = t.minute.toString().padLeft(2, '0');
+    return "$hh:$mm";
+  }
+
+  Duration _diffOnDay(TimeOfDay from, TimeOfDay to, DateTime day) {
+    final a = DateTime(day.year, day.month, day.day, from.hour, from.minute);
+    final b = DateTime(day.year, day.month, day.day, to.hour, to.minute);
+    return b.difference(a);
+  }
+
+  Future<void> _showAddSlotDialog() async {
+    TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
+    TimeOfDay to   = const TimeOfDay(hour: 10, minute: 0);
+    final coinsCtl = TextEditingController(text: "00");
+    String? errorText;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setLocal) {
+            Future<void> pickFrom() async {
+              final p = await _pickTime(ctx, from);
+              if (p != null) setLocal(() => from = p);
+            }
+
+            Future<void> pickTo() async {
+              final p = await _pickTime(ctx, to);
+              if (p != null) setLocal(() => to = p);
+            }
+
+            void onAdd() {
+              // basic validation
+              final d = _diffOnDay(from, to, selectedDate);
+              if (d.inMinutes < 0) {
+                setLocal(() => errorText = "End time must be after start time.");
+                return;
+              }
+              if (d.inMinutes < 30) {
+                setLocal(() => errorText = "Minimum slot is 30 minutes.");
+                return;
+              }
+              if (d.inMinutes > 180) {
+                setLocal(() => errorText = "Maximum slot is 3 hours.");
+                return;
+              }
+
+              Navigator.of(ctx).pop(); // close add dialog
+              _showSuccessDialog();
+            }
+
+            return Dialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    const Text(
+                      "Add Slot",
+                      style: TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      DateFormat('d MMM yy').format(selectedDate),
+                      style: const TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 12,
+                        color: Color(0xFF7C8596),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Time row (From - To - Coins)
+                    Row(
+                      children: [
+                        // From
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: pickFrom,
+                            child: _timeFieldPill(Icons.schedule, _fmt(from)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text("to", style: TextStyle(fontFamily: 'segeo', fontSize: 13)),
+                        const SizedBox(width: 12),
+                        // To
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: pickTo,
+                            child: _timeFieldPill(Icons.access_time_filled_rounded, _fmt(to)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Coins
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: kCoinBg,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/GoldCoins.png", // make sure path matches your pubspec
+                                height: 19,
+                                width: 19,
+                              ),
+                              const SizedBox(width: 6),
+                              // keep a stable width so 9/99/100 don't shift layout
+                              SizedBox(
+                                width: 36,
+                                child: Text(
+                                "0", // e.g. "00"
+                                  textAlign: TextAlign.left, // or TextAlign.center
+                                  style: const TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    height: 1.2, // nicer vertical alignment with the icon
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+
+                    if (errorText != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        errorText!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 14),
+
+                    // Add button (rounded + gradient look)
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: onAdd,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        ).merge(
+                          ButtonStyle(
+                            // gradient via Ink
+                            overlayColor: WidgetStateProperty.all(Colors.white10),
+                          ),
+                        ),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF8A4DFF), Color(0xFF2F8BFF)],
+                            ),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: const Text(
+                              "Add",
+                              style: TextStyle(
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showSuccessDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Green check
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFE8F7EF),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, color: Color(0xFF22C55E), size: 36),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  "New Slot added",
+                  style: TextStyle(
+                    fontFamily: 'segeo',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF8A4DFF), Color(0xFF2F8BFF)],
+                        ),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: const Text(
+                          "Okay",
+                          style: TextStyle(
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+// small pill used inside dialog (matches your style)
+  Widget _timeFieldPill(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 18, color: const Color(0xFF6C6F7B)),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'segeo',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
