@@ -72,6 +72,7 @@ class User {
   String? lastLoginAt;
   String? mentorStatus;
   String? profilePicUrl;
+  int? availabilityCoins;
   List<StudyZoneBooks>? studyZoneBooks;
   List<CommunityPost>? communityPost;
 
@@ -107,6 +108,7 @@ class User {
     this.lastLoginAt,
     this.mentorStatus,
     this.profilePicUrl,
+    this.availabilityCoins,
     this.studyZoneBooks,
     this.communityPost,
   });
@@ -143,11 +145,14 @@ class User {
     lastLoginAt = json['last_login_at'];
     mentorStatus = json['mentor_status'];
     profilePicUrl = json['profile_pic_url'];
+    availabilityCoins = json['availability_coins'];
+
     if (json['study_zone_books'] != null) {
       studyZoneBooks = (json['study_zone_books'] as List)
           .map((v) => StudyZoneBooks.fromJson(v))
           .toList();
     }
+
     if (json['community_post'] != null) {
       communityPost = (json['community_post'] as List)
           .map((v) => CommunityPost.fromJson(v))
@@ -188,13 +193,18 @@ class User {
     map['last_login_at'] = lastLoginAt;
     map['mentor_status'] = mentorStatus;
     map['profile_pic_url'] = profilePicUrl;
+    map['availability_coins'] = availabilityCoins;
+
     if (studyZoneBooks != null) {
       map['study_zone_books'] =
           studyZoneBooks!.map((v) => v.toJson()).toList();
     }
+
     if (communityPost != null) {
-      map['community_post'] = communityPost!.map((v) => v.toJson()).toList();
+      map['community_post'] =
+          communityPost!.map((v) => v.toJson()).toList();
     }
+
     return map;
   }
 }

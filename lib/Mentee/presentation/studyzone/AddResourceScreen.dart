@@ -309,11 +309,14 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   SizedBox(
                     height: 48,
                     width: 48,
-                    child: ElevatedButton(
+                    child:ElevatedButton(
                       onPressed: () {
                         final tag = _tagController.text.trim();
                         if (tag.isNotEmpty) {
+                          // Add tag through Cubit
                           context.read<CommunityTagsCubit>().addTag(tag);
+
+                          // Clear the text field
                           _tagController.clear();
                         }
                       },
@@ -329,7 +332,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                         size: 20,
                         color: Colors.white,
                       ),
-                    ),
+                    )
+
                   ),
                 ],
               ),
@@ -346,49 +350,52 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   children: [
                     Text("Suggested Tags"),
                     SizedBox(height: 5),
-                BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
-                  builder: (context, state) {
-                    if (state is StudyZoneTagsLoading) {
-                      return CircularProgressIndicator();
-                    } else if (state is StudyZoneTagsLoaded) {
-                      if (_selectedTags.isEmpty) {
-                        _selectedTags = [];
-                      }
-                      return Wrap(
-                        spacing: 5,
-                        runSpacing: 0,
-                        children: state.studyZoneTagsModel.tags!.map((tag) {
-                          final isSelected = _selectedTags.contains(tag);
-                          return ChoiceChip(
-                            label: Text(tag),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              setState(() {
-                                if (selected) {
-                                  _selectedTags.add(tag);
-                                } else {
-                                  _selectedTags.remove(tag);
-                                }
-                              });
-                            },
-                            selectedColor: Colors.blue.shade100,
-                            backgroundColor: Colors.white,
-                            side: BorderSide(
-                              color: isSelected ? Colors.blue.shade100 : Colors.grey,
-                            ),
+                    BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
+                      builder: (context, state) {
+                        if (state is StudyZoneTagsLoading) {
+                          return CircularProgressIndicator();
+                        } else if (state is StudyZoneTagsLoaded) {
+                          // Merge server tags with newly added tags
+                          final allTags = [
+                            ...state.studyZoneTagsModel.tags!,  // original tags
+                            ..._selectedTags.where((tag) => !state.studyZoneTagsModel.tags!.contains(tag)) // newly added
+                          ];
+
+                          return Wrap(
+                            spacing: 5,
+                            runSpacing: 0,
+                            children: allTags.map((tag) {
+                              final isSelected = _selectedTags.contains(tag);
+                              return ChoiceChip(
+                                label: Text(tag),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      _selectedTags.add(tag);
+                                    } else {
+                                      _selectedTags.remove(tag);
+                                    }
+                                  });
+                                },
+                                selectedColor: Colors.blue.shade100,
+                                backgroundColor: Colors.white,
+                                side: BorderSide(
+                                  color: isSelected ? Colors.blue.shade100 : Colors.grey,
+                                ),
+                              );
+                            }).toList(),
                           );
-                        }).toList(),
-                      );
-                    } else {
-                      return Text("No Tags Found");
-                    }
-                  },
-                )
-                ],
+                        } else {
+                          return Text("No Tags Found");
+                        }
+                      },
+                    )
+
+                  ],
                 ),
               ),
               const SizedBox(height: 24),
-              // Image upload
               const Text(
                 'Upload',
                 style: TextStyle(

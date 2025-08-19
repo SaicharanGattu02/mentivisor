@@ -29,6 +29,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
   ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
   ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
+  ValueNotifier<int?> _availableCoins = ValueNotifier<int?>(0);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
@@ -108,6 +109,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               _mentorProfileUrl.value =
                   menteeProfile?.user?.profilePicUrl ?? "";
               _mentorProfileName.value = menteeProfile?.user?.name ?? "";
+              _availableCoins.value = menteeProfile?.user?.availabilityCoins?? 0;
               return Scaffold(
                 key: _scaffoldKey,
                 appBar: AppBar(
@@ -309,13 +311,17 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         width: 16,
                                       ),
                                       const SizedBox(width: 4),
-                                      const Text(
-                                        '120',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.orange,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      ValueListenableBuilder<int?>(valueListenable:_availableCoins,builder:(context, value, child) {
+                                        return  Text(
+                                          '${value??0}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.orange,fontFamily: 'segeo',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      } ,
+
                                       ),
                                     ],
                                   ),
