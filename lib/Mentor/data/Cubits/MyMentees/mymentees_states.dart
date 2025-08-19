@@ -1,17 +1,27 @@
 import 'package:mentivisor/Mentor/Models/MyMenteesModel.dart';
 
-abstract class MyMenteeStates {}
+abstract class MyMenteesStates {}
 
-class MyMenteeInitially extends MyMenteeStates {}
+class MyMenteeInitially extends MyMenteesStates {}
 
-class MyMenteeLoading extends MyMenteeStates {}
+class MyMenteeLoading extends MyMenteesStates {}
 
-class MyMenteeLoaded extends MyMenteeStates {
-  MyMenteesModel myMenteesModel;
-  MyMenteeLoaded(this.myMenteesModel);
+class MyMenteeLoaded extends MyMenteesStates {
+  final MyMenteesModel myMenteesModel;
+  final bool hasNextPage;
+
+  MyMenteeLoaded(this.myMenteesModel, this.hasNextPage);
 }
 
-class MyMenteeFailure extends MyMenteeStates {
-  String error;
+class MyMenteeLoadingMore extends MyMenteesStates {
+  final MyMenteesModel myMenteesModel;
+  final bool hasNextPage;
+
+  MyMenteeLoadingMore(this.myMenteesModel, this.hasNextPage);
+}
+
+class MyMenteeFailure extends MyMenteesStates {
+  final String error;
+
   MyMenteeFailure(this.error);
 }

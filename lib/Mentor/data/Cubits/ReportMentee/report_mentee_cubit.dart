@@ -11,7 +11,7 @@ class ReportMenteeCubit extends Cubit<ReportMenteeStates> {
     try {
       final response = await myMenteesRepo.reportMentee(data);
       if (response != null && response.status == true) {
-        emit(ReportMenteeLoaded(response));
+        emit(ReportMenteeSuccess(response));
       } else {
         emit(ReportMenteeFailure(response?.message ?? ""));
       }

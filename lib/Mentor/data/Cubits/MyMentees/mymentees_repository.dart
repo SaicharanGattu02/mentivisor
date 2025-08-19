@@ -3,7 +3,7 @@ import 'package:mentivisor/Mentor/Models/MyMenteesModel.dart';
 import 'package:mentivisor/Mentor/data/MentorRemoteDataSource.dart';
 
 abstract class MyMenteesRepo {
-  Future<MyMenteesModel?> getMyMentees();
+  Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
 }
 
@@ -12,12 +12,12 @@ class MyMenteesRepoImpl implements MyMenteesRepo {
   MyMenteesRepoImpl({required this.mentorRemoteDataSource});
 
   @override
-  Future<MyMenteesModel?> getMyMentees() async {
-    return await mentorRemoteDataSource.getMyMentees();
+  Future<MyMenteesModel?> getMyMentees(int page) async {
+    return await mentorRemoteDataSource.getMyMentees(page);
   }
 
   @override
-  Future<SuccessModel?> reportMentee(Map<String, dynamic> data) async{
+  Future<SuccessModel?> reportMentee(Map<String, dynamic> data) async {
     return await mentorRemoteDataSource.reportMentee(data);
   }
 }

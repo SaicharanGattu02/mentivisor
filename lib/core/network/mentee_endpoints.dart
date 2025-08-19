@@ -20,6 +20,7 @@ class APIEndpointUrls {
       "${apiUrl}community-zone-tags-without-login";
   static const String wallet_money = "${apiUrl}users/my-wallet";
 
+
   /// Mentee
   static const String get_mentors = "${userUrl}mentors";
   static const String study_zone_tags = "${userUrl}study-zone/tags";

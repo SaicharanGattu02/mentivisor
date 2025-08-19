@@ -10,4 +10,9 @@ class MentorEndpointsUrls {
   static const String feedback = "${userUrl}mentors/feedback-ui";
   static const String mentees = "${userUrl}mentees-with-sessions";
   static const String report_mentee = "${userUrl}mentor-reports";
+  static const String mymenteelist = "${userUrl}my-mentees";
+
+
+
+
 }

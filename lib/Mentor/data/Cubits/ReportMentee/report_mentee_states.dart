@@ -6,9 +6,9 @@ class ReportMenteeInitially extends ReportMenteeStates {}
 
 class ReportMenteeLoading extends ReportMenteeStates {}
 
-class ReportMenteeLoaded extends ReportMenteeStates {
+class ReportMenteeSuccess extends ReportMenteeStates {
   SuccessModel successModel;
-  ReportMenteeLoaded(this.successModel);
+  ReportMenteeSuccess(this.successModel);
 }
 
 class ReportMenteeFailure extends ReportMenteeStates {

@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mentivisor/Components/CutomAppBar.dart';
-import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/MenteeCard.dart';
+
+import '../../Components/CutomAppBar.dart';
 import '../data/Cubits/MyMentees/mymentees_cubit.dart';
 import '../data/Cubits/MyMentees/mymentees_states.dart';
 
@@ -22,58 +24,65 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffEFF6FF),
       appBar: CustomAppBar1(title: "My Mentee", actions: const []),
-      body: BlocBuilder<MyMenteeCubit, MyMenteeStates>(
-        builder: (context, state) {
-          if (state is MyMenteeLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }else if (state is MyMenteeLoaded) {
-            final mentees = state.myMenteesModel.data ?? [];
-            AppLogger.info("mentees data    : ${mentees}");
-            return ListView.separated(
-              itemCount: mentees.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final mentee = mentees[index];
-                AppLogger.info("Name   : ${mentee.name}");
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  elevation: 5,
-                  child: ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: mentee.profilePic != null
-                          ? Image.network(
-                        mentee.profilePic!,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      )
-                          : Image.asset("assets/images/image.png", width: 60, height: 60),
-                    ),
-                    title: Text(mentee.name ?? ""),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(mentee.email ?? ""),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Last interaction: ${mentee.sessionDetails?.isNotEmpty == true ? mentee.sessionDetails!.last.sessionDate : "N/A"}",
+      body: Column(
+        children: [
+          // The "List" text aligned to the start (left)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+              child: Text(
+                "List",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<MyMenteeCubit, MyMenteesStates>(
+              builder: (context, state) {
+                if (state is MyMenteeLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is MyMenteeLoaded) {
+                  return CustomScrollView(
+                    slivers: [
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                            final menteeList =
+                            state.myMenteesModel.data?.menteeData?[index];
+
+                            return MenteeCard(mentee: menteeList!);
+                          },
+                          childCount:
+                          state.myMenteesModel.data?.menteeData?.length ?? 0,
                         ),
-                      ],
-                    ),
-                  ),
-                );
+                      ),
+                      if (state is MyMenteeLoadingMore)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Center(
+                              child: CircularProgressIndicator(strokeWidth: 0.8),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                } else if (state is MyMenteeFailure) {
+                  return Center(child: Text(state.error));
+                }
+                return Center(child: Text("No Data"));
               },
-            );
-          } else if (state is MyMenteeFailure){
-            return Text(state.error);
-          }
-          return Center(child: Text("No Data"),);
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
