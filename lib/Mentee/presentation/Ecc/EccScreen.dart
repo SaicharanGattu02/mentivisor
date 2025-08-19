@@ -275,12 +275,13 @@ class _EccScreenState extends State<EccScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                'Oops !',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                              SizedBox(
+                                height: 200,
+                                width: 200,
+                                child: Center(
+                                  child: Image.asset(
+                                    "assets/nodata/no_data.png",
+                                  ),
                                 ),
                               ),
                               Text(

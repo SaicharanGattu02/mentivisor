@@ -80,17 +80,46 @@ class PostCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 12,
-                      backgroundImage: AssetImage(
-                        'assets/images/profileimg.png',
-                      ), // Replace with actual path
+                    CachedNetworkImage(
+            imageUrl:
+              communityPosts.image ?? "", // listen for updates
+              imageBuilder:
+                  (context, imageProvider) =>
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundImage:
+                    imageProvider,
+                  ),
+              placeholder: (context, url) =>
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.grey,
+                    child: SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: Center(
+                        child: spinkits
+                            .getSpinningLinespinkit(),
+                      ),
                     ),
+                  ),
+              errorWidget:
+                  (
+                  context,
+                  url,
+                  error,
+                  ) => const CircleAvatar(
+                radius: 16,
+                backgroundImage: AssetImage(
+                  "assets/images/profile.png",
+                ),
+              ),
+            ),
                     const SizedBox(width: 8),
                     Text(
                       communityPosts.uploader?.name ?? "",
                       style: const TextStyle(
-                        fontFamily: 'Segoe',
+                        fontFamily: 'segeo',
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
@@ -101,7 +130,7 @@ class PostCard extends StatelessWidget {
                 Text(
                   communityPosts.heading ?? "",
                   style: const TextStyle(
-                    fontFamily: 'Segoe',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: Color(0xFF222222),
@@ -113,7 +142,7 @@ class PostCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontFamily: 'Segoe',
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w400,
                     fontSize: 14,
                     color: Color(0xFF666666),
@@ -157,7 +186,28 @@ class PostCard extends StatelessWidget {
                                         horizontal: 16,
                                         vertical: 12,
                                       ),
-                                      child: CommentBottomSheet(comments: [],
+                                      child: CommentBottomSheet(
+                                        comments:
+                                        (communityPosts.comments ??
+                                            [])
+                                            .map(
+                                              (
+                                              comments,
+                                              ) => {
+                                            "name":
+                                            comments.user?.name ??
+                                                "Unknown",
+                                            "profile":
+                                            comments.user?.profilePicUrl ??
+                                                "assets/images/profile.png",
+                                            "comment":
+                                            comments.content ??
+                                                "",
+                                            "time":
+                                            comments.createdAt ??
+                                                "",
+                                          },
+                                        ).toList(),
                                         postId: communityPosts.id ?? 0,
                                         scrollController:
                                             scrollController, // pass it down
@@ -174,7 +224,7 @@ class PostCard extends StatelessWidget {
                               const SizedBox(width: 6),
                               Text(
                                 communityPosts.commentsCount.toString(),
-                                style: const TextStyle(fontFamily: 'Segoe'),
+                                style: const TextStyle(fontFamily: 'segeo'),
                               ),
                             ],
                           ),
@@ -206,7 +256,7 @@ class PostCard extends StatelessWidget {
           //           Text(
           //             'Highlighted',
           //             style: TextStyle(
-          //               fontFamily: 'Segoe',
+          //               fontFamily: 'segeo',
           //               fontSize: 12,
           //               fontWeight: FontWeight.w600,
           //               color: Colors.white,

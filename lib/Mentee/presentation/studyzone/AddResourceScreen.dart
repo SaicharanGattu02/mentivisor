@@ -15,6 +15,7 @@ import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
+import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddResourceScreen extends StatefulWidget {
@@ -38,7 +39,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'], // allowed formats
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
     );
 
     if (result != null && result.files.single.path != null) {
@@ -312,7 +313,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                       onPressed: () {
                         final tag = _tagController.text.trim();
                         if (tag.isNotEmpty) {
-                          // context.read<CommunityTagsCubit>().addTag(tag);
+                          context.read<CommunityTagsCubit>().addTag(tag);
                           _tagController.clear();
                         }
                       },
@@ -343,39 +344,47 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Suggested :"),
+                    Text("Suggested Tags"),
                     SizedBox(height: 5),
-                    BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
-                      builder: (context, state) {
-                        if (state is StudyZoneTagsLoading) {
-                          return CircularProgressIndicator();
-                        } else if (state is StudyZoneTagsLoaded) {
-                          _selectedTags = state.studyZoneTagsModel.tags!;
-                          return Wrap(
-                            spacing: 5,
-                            runSpacing: 0,
-                            children: state.studyZoneTagsModel.tags!.map((tag) {
-                              final isSelected = _selectedTags.contains(tag);
-                              return ChoiceChip(
-                                label: Text(tag),
-                                selected: isSelected,
-                                onSelected: (_) {},
-                                selectedColor: Colors.blue.shade100,
-                                backgroundColor: Colors.white,
-                                side: BorderSide(
-                                  color: isSelected
-                                      ? Colors.blue.shade100
-                                      : Colors.grey,
-                                ),
-                              );
-                            }).toList(),
+                BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
+                  builder: (context, state) {
+                    if (state is StudyZoneTagsLoading) {
+                      return CircularProgressIndicator();
+                    } else if (state is StudyZoneTagsLoaded) {
+                      if (_selectedTags.isEmpty) {
+                        _selectedTags = [];
+                      }
+                      return Wrap(
+                        spacing: 5,
+                        runSpacing: 0,
+                        children: state.studyZoneTagsModel.tags!.map((tag) {
+                          final isSelected = _selectedTags.contains(tag);
+                          return ChoiceChip(
+                            label: Text(tag),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setState(() {
+                                if (selected) {
+                                  _selectedTags.add(tag);
+                                } else {
+                                  _selectedTags.remove(tag);
+                                }
+                              });
+                            },
+                            selectedColor: Colors.blue.shade100,
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              color: isSelected ? Colors.blue.shade100 : Colors.grey,
+                            ),
                           );
-                        } else {
-                          return Text("No Tags Found");
-                        }
-                      },
-                    ),
-                  ],
+                        }).toList(),
+                      );
+                    } else {
+                      return Text("No Tags Found");
+                    }
+                  },
+                )
+                ],
                 ),
               ),
               const SizedBox(height: 24),

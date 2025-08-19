@@ -238,7 +238,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                                           TextSpan(
                                             text: 'For ',
                                             style: TextStyle(
-                                              fontFamily: 'Segoe UI',
+                                              fontFamily: 'segeo UI',
                                               fontWeight: FontWeight.w400,
                                               fontSize: 10,
                                               color: selected
@@ -250,7 +250,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                                             text:
                                                 '₹${coinspack.offerPrice?.toString() ?? "0"} ',
                                             style: TextStyle(
-                                              fontFamily: 'Segoe UI',
+                                              fontFamily: 'segeo UI',
                                               fontWeight: FontWeight.w400,
                                               fontStyle: FontStyle.normal,
                                               fontSize: 10,
@@ -265,7 +265,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                                             text:
                                                 '₹${coinspack.originalPrice?.toString() ?? "0"}',
                                             style: TextStyle(
-                                              fontFamily: 'Segoe UI',
+                                              fontFamily: 'segeo UI',
                                               fontWeight: FontWeight.w600,
                                               fontSize: 12,
                                               height: 1.0,

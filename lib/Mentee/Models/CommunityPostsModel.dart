@@ -6,15 +6,13 @@ class CommunityPostsModel {
 
   CommunityPostsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
+    if (this.data != null) data['data'] = this.data!.toJson();
     return data;
   }
 }
@@ -53,9 +51,9 @@ class Data {
   Data.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
-      communityposts = <CommunityPosts>[];
+      communityposts = [];
       json['data'].forEach((v) {
-        communityposts!.add(new CommunityPosts.fromJson(v));
+        communityposts!.add(CommunityPosts.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -63,9 +61,9 @@ class Data {
     lastPage = json['last_page'];
     lastPageUrl = json['last_page_url'];
     if (json['links'] != null) {
-      links = <Links>[];
+      links = [];
       json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
+        links!.add(Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -77,24 +75,22 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.communityposts != null) {
-      data['data'] = this.communityposts!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = {};
+    data['current_page'] = currentPage;
+    if (communityposts != null) {
+      data['data'] = communityposts!.map((v) => v.toJson()).toList();
     }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
-    }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
+    data['first_page_url'] = firstPageUrl;
+    data['from'] = from;
+    data['last_page'] = lastPage;
+    data['last_page_url'] = lastPageUrl;
+    if (links != null) data['links'] = links!.map((v) => v.toJson()).toList();
+    data['next_page_url'] = nextPageUrl;
+    data['path'] = path;
+    data['per_page'] = perPage;
+    data['prev_page_url'] = prevPageUrl;
+    data['to'] = to;
+    data['total'] = total;
     return data;
   }
 }
@@ -117,7 +113,7 @@ class CommunityPosts {
   int? commentsCount;
   String? imgUrl;
   Uploader? uploader;
-  List<Null>? comments;
+  List<Comment>? comments;
 
   CommunityPosts({
     this.id,
@@ -144,10 +140,7 @@ class CommunityPosts {
     id = json['id'];
     heading = json['heading'];
     description = json['description'];
-
-    // Handle null values for tags
     tags = json['tags'] != null ? List<String>.from(json['tags']) : [];
-
     image = json['image'];
     anonymous = json['anonymous'];
     popular = json['popular'];
@@ -160,16 +153,20 @@ class CommunityPosts {
     likesCount = json['likes_count'];
     commentsCount = json['comments_count'];
     imgUrl = json['img_url'];
-    uploader = json['uploader'] != null
-        ? Uploader.fromJson(json['uploader'])
-        : null;
+    uploader = json['uploader'] != null ? Uploader.fromJson(json['uploader']) : null;
 
-    // Handle null for comments
-    // comments = json['comments'] != null ? List<Null>.from(json['comments']) : [];
+    if (json['comments'] != null) {
+      comments = [];
+      json['comments'].forEach((v) {
+        comments!.add(Comment.fromJson(v));
+      });
+    } else {
+      comments = [];
+    }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     data['id'] = id;
     data['heading'] = heading;
     data['description'] = description;
@@ -186,9 +183,76 @@ class CommunityPosts {
     data['likes_count'] = likesCount;
     data['comments_count'] = commentsCount;
     data['img_url'] = imgUrl;
-    if (uploader != null) {
-      data['uploader'] = uploader?.toJson();
-    }
+    if (uploader != null) data['uploader'] = uploader!.toJson();
+    if (comments != null) data['comments'] = comments!.map((v) => v.toJson()).toList();
+    return data;
+  }
+}
+
+class Comment {
+  int? id;
+  int? userId;
+  int? communityId;
+  int? parentId;
+  String? content;
+  String? createdAt;
+  String? updatedAt;
+  User? user;
+
+  Comment({
+    this.id,
+    this.userId,
+    this.communityId,
+    this.parentId,
+    this.content,
+    this.createdAt,
+    this.updatedAt,
+    this.user,
+  });
+
+  Comment.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userId = json['user_id'];
+    communityId = json['community_id'];
+    parentId = json['parent_id'];
+    content = json['content'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['community_id'] = communityId;
+    data['parent_id'] = parentId;
+    data['content'] = content;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    if (user != null) data['user'] = user!.toJson();
+    return data;
+  }
+}
+
+class User {
+  int? id;
+  String? name;
+  String? profilePicUrl;
+
+  User({this.id, this.name, this.profilePicUrl});
+
+  User.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    profilePicUrl = json['profile_pic_url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['profile_pic_url'] = profilePicUrl;
     return data;
   }
 }
@@ -196,133 +260,21 @@ class CommunityPosts {
 class Uploader {
   int? id;
   String? name;
-  String? email;
-  int? contact;
-  String? emailVerifiedAt;
-  String? refreshToken;
-  String? webFcmToken;
-  String? deviceFcmToken;
-  String? role;
-  String? designation;
-  int? exp;
-  String? bio;
-  int? collegeId;
-  String? year;
-  String? stream;
-  String? gender;
-  String? status;
-  String? profilePic;
-  String? state;
-  String? city;
-  String? country;
-  String? saasId;
-  String? emailOtp;
-  Null? expiredTime;
-  String? createdAt;
-  String? updatedAt;
-  Null? deletedAt;
-  int? activeStatus;
-  String? lastLoginAt;
   String? profilePicUrl;
 
-  Uploader({
-    this.id,
-    this.name,
-    this.email,
-    this.contact,
-    this.emailVerifiedAt,
-    this.refreshToken,
-    this.webFcmToken,
-    this.deviceFcmToken,
-    this.role,
-    this.designation,
-    this.exp,
-    this.bio,
-    this.collegeId,
-    this.year,
-    this.stream,
-    this.gender,
-    this.status,
-    this.profilePic,
-    this.state,
-    this.city,
-    this.country,
-    this.saasId,
-    this.emailOtp,
-    this.expiredTime,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-    this.activeStatus,
-    this.lastLoginAt,
-    this.profilePicUrl,
-  });
+  Uploader({this.id, this.name, this.profilePicUrl});
 
   Uploader.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    email = json['email'];
-    contact = json['contact'];
-    emailVerifiedAt = json['email_verified_at'];
-    refreshToken = json['refresh_token'];
-    webFcmToken = json['web_fcm_token'];
-    deviceFcmToken = json['device_fcm_token'];
-    role = json['role'];
-    designation = json['designation'];
-    exp = json['exp'];
-    bio = json['bio'];
-    collegeId = json['college_id'];
-    year = json['year'];
-    stream = json['stream'];
-    gender = json['gender'];
-    status = json['status'];
-    profilePic = json['profile_pic'];
-    state = json['state'];
-    city = json['city'];
-    country = json['country'];
-    saasId = json['saas_id'];
-    emailOtp = json['email_otp'];
-    expiredTime = json['expired_time'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
-    activeStatus = json['active_status'];
-    lastLoginAt = json['last_login_at'];
     profilePicUrl = json['profile_pic_url'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['contact'] = this.contact;
-    data['email_verified_at'] = this.emailVerifiedAt;
-    data['refresh_token'] = this.refreshToken;
-    data['web_fcm_token'] = this.webFcmToken;
-    data['device_fcm_token'] = this.deviceFcmToken;
-    data['role'] = this.role;
-    data['designation'] = this.designation;
-    data['exp'] = this.exp;
-    data['bio'] = this.bio;
-    data['college_id'] = this.collegeId;
-    data['year'] = this.year;
-    data['stream'] = this.stream;
-    data['gender'] = this.gender;
-    data['status'] = this.status;
-    data['profile_pic'] = this.profilePic;
-    data['state'] = this.state;
-    data['city'] = this.city;
-    data['country'] = this.country;
-    data['saas_id'] = this.saasId;
-    data['email_otp'] = this.emailOtp;
-    data['expired_time'] = this.expiredTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['last_login_at'] = this.lastLoginAt;
-    data['profile_pic_url'] = this.profilePicUrl;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['profile_pic_url'] = profilePicUrl;
     return data;
   }
 }
@@ -341,10 +293,10 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['label'] = label;
+    data['active'] = active;
     return data;
   }
 }

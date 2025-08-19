@@ -59,7 +59,7 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
                     'Recent',
                     style: TextStyle(
                       fontFamily:
-                          'segoe', // corrected "segeo" → "segoe" (check your font name)
+                          'segeo', // corrected "segeo" → "segeo" (check your font name)
                       fontSize: 18,
 
                       fontWeight: FontWeight.w700,

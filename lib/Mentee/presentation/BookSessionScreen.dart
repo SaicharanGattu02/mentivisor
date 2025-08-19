@@ -323,7 +323,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                     const SizedBox(width: 8),
                     const Text(
                       'G-Meet',
-                      style: TextStyle(fontSize: 16, fontFamily: 'Segoe'),
+                      style: TextStyle(fontSize: 16, fontFamily: 'segeo'),
                     ),
                   ],
                 ),
@@ -344,7 +344,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                         'Session Topic',
                         style: TextStyle(
                           fontSize: 20,
-                          fontFamily: 'Segoe',
+                          fontFamily: 'segeo',
                           fontWeight: FontWeight.bold,
                         ),
                       ),

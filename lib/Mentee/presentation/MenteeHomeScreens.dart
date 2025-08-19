@@ -195,28 +195,27 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                             ),
                           )
-                        : IconButton(
-                      icon: Icon(
-                        Icons.pentagon_rounded,
-                        color: primarycolor,
-                      ),
-                      onPressed: () {
-                        // your logic here
-                      },
-                    ),
-
-                    IconButton(
-                      icon: const Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.black,
-                      ),
-                      onPressed: () =>
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Notifications clicked'),
+                        :
+                          // IconButton(
+                          //   icon: Icon(
+                          //     Icons.pentagon_rounded,
+                          //     color: primarycolor,
+                          //   ),
+                          //   onPressed: () {
+                          //   },
+                          // ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.notifications_outlined,
+                              color: Colors.black,
                             ),
+                            onPressed: () =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Notifications clicked'),
+                                  ),
+                                ),
                           ),
-                    ),
                   ],
                 ),
                 drawer: Drawer(
@@ -484,6 +483,30 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       children: [
                         BlocBuilder<Getbannerscubit, Getbannersstate>(
                           builder: (context, state) {
+                            if (banners.isEmpty) {
+                              return Container(
+                                height: 160,
+                                alignment: Alignment.center,
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Image.asset(
+                                        "assets/nodata/no_data.png",
+                                      ),
+                                    ),
+                                    const Text(
+                                      "No banners available",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'segeo',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                             return CarouselSlider.builder(
                               itemCount: banners.length,
                               itemBuilder: (ctx, i, _) {
@@ -531,8 +554,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     ),
                                     padding: const EdgeInsets.all(4),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center, // Ensures the row is centered
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: FilterButton(
@@ -548,6 +571,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                   );
                                               setState(() {
                                                 selectedFilter = 'On Campus';
+                                                _onCampus = true; // ✅ FIX
                                                 context
                                                     .read<
                                                       MenteeDashboardCubit
@@ -573,6 +597,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                               setState(() {
                                                 selectedFilter =
                                                     'Beyond Campus';
+                                                _onCampus = false;
                                                 context
                                                     .read<
                                                       MenteeDashboardCubit
@@ -603,16 +628,14 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                             TextButton(
                               onPressed: () {
                                 if (_onCampus == true) {
-                                  context.push(
-                                    '/campus_mentor_list?scope=${""}',
-                                  );
+                                  context.push('/campus_mentor_list?scope=');
                                 } else {
                                   context.push(
-                                    '/campus_mentor_list?scope=${"beyond"}',
+                                    '/campus_mentor_list?scope=beyond',
                                   );
                                 }
                               },
-                              child: const Text(
+                              child: Text(
                                 'View All',
                                 style: TextStyle(color: Color(0xff4076ED)),
                               ),
@@ -621,10 +644,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         ),
                         if (isGuest) ...[
                           guestMentorlist.isEmpty
-                              ? const SizedBox(
+                              ? SizedBox(
                                   height: 200,
+                                  width: 200,
                                   child: Center(
-                                    child: Text('No mentors found'),
+                                    child: Image.asset(
+                                      "assets/nodata/nodata_mentor_list.png",
+                                    ),
                                   ),
                                 )
                               : MentorGridGuest(
@@ -636,10 +662,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
                         if (!isGuest) ...[
                           campusMentorlist.isEmpty
-                              ? const SizedBox(
+                              ? SizedBox(
                                   height: 200,
+                                  width: 200,
                                   child: Center(
-                                    child: Text('No mentors found'),
+                                    child: Image.asset(
+                                      "assets/nodata/nodata_mentor_list.png",
+                                    ),
                                   ),
                                 )
                               : MentorGridCampus(

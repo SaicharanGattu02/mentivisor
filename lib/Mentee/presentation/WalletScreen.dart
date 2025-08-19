@@ -154,7 +154,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.white,
-                                                fontFamily: 'Segoe',
+                                                fontFamily: 'segeo',
                                               ),
                                             ),
                                             Text(
@@ -163,7 +163,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                 fontSize: 30,
                                                 fontWeight: FontWeight.w700,
                                                 color: Colors.white,
-                                                fontFamily: 'Segoe',
+                                                fontFamily: 'segeo',
                                               ),
                                             ),
                                           ],
@@ -175,7 +175,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.white,
-                                                fontFamily: 'Segoe',
+                                                fontFamily: 'segeo',
                                               ),
                                             ),
                                             Text(
@@ -184,7 +184,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                 fontSize: 30,
                                                 fontWeight: FontWeight.w700,
                                                 color: Colors.white,
-                                                fontFamily: 'Segoe',
+                                                fontFamily: 'segeo',
                                               ),
                                             ),
                                           ],
@@ -378,14 +378,26 @@ class _WalletScreenState extends State<WalletScreen> {
                               [];
 
                           if (coinsHistoryList.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                "No coin history available",
-                                style: TextStyle(
-                                  fontFamily: 'segeo',
-                                  fontSize: 16,
-                                  color: Color(0xff666666),
-                                ),
+                            return Container(
+                              height: 160,
+                              alignment: Alignment.center,
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Image.asset(
+                                      "assets/nodata/nodata_achievement.png",
+                                    ),
+                                  ),
+                                  // const Text(
+                                  //   "No banners available",
+                                  //   style: TextStyle(
+                                  //     color: Colors.grey,
+                                  //     fontSize: 16,
+                                  //     fontWeight: FontWeight.w500,
+                                  //     fontFamily: 'segeo',
+                                  //   ),
+                                  // ),
+                                ],
                               ),
                             );
                           }

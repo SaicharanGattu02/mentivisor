@@ -26,6 +26,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
   @override
   void initState() {
     super.initState();
+    debugPrint("scope:${widget.scope}");
     context.read<CampusMentorListCubit>().fetchCampusMentorList(
       "${widget.scope}",
       "",
@@ -42,9 +43,9 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
           appBar: CustomAppBar1(
             title: isGuest
                 ? "Top Mentors"
-                : widget.scope == ""
-                ? "On Campuses Mentors"
-                : "Beyond Campuses Mentors",
+                : widget.scope.isEmpty
+                ? "On Campus Mentors"
+                : "Beyond Campus Mentors",
             actions: [],
           ),
           body: Container(
@@ -102,9 +103,14 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                             ?.mentors_list ??
                         [];
                     if (list.isEmpty) {
-                      return const SizedBox(
+                      return SizedBox(
                         height: 200,
-                        child: Center(child: Text('No mentors found')),
+                        width: 200,
+                        child: Center(
+                          child: Image.asset(
+                            "assets/nodata/nodata_mentor_list.png",
+                          ),
+                        ),
                       );
                     }
                     return Expanded(

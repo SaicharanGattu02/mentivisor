@@ -13,22 +13,20 @@ class ProfileRejected extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Rejected Illustration / Icon
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.red.withOpacity(0.1),
                 ),
-                child: const Icon(
-                  Icons.cancel_rounded,
-                  color: Colors.red,
-                  size: 100,
+                child: Image.asset(
+                  "assets/images/reject.png",
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 32),
-
-              // Title
+              SizedBox(height: 32),
               const Text(
                 "Profile Rejected",
                 style: TextStyle(
@@ -39,24 +37,19 @@ class ProfileRejected extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Subtitle / Reason
               const Text(
                 "Your profile was not approved.\nPlease check the details and resubmit.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                  height: 1.4,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.4),
               ),
               const SizedBox(height: 32),
-
-              // Retry / Update Profile Button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 14,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

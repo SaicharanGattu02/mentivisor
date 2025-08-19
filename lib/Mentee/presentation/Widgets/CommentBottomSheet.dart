@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
-
 import '../../../utils/constants.dart';
+
 
 class CommentBottomSheet extends StatefulWidget {
   final int? postId;
@@ -28,10 +28,23 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
   @override
   void initState() {
-    debugPrint("postId=${widget.postId}");
     super.initState();
+    debugPrint("commentsList :${widget.comments}");
     _comments = List.from(widget.comments);
   }
+
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   debugPrint("comments${widget.comments}");
+  //   if (widget.comments.isNotEmpty) {
+  //     _comments = List.from(widget.comments);
+  //   } else if (widget.postId != null) {
+  //     context.read<CommunityPostsCubit>().getCommunityPosts("", "");
+  //     _comments = [];
+  //   }
+  // }
 
   void _addComment(String text) {
     setState(() {
@@ -61,7 +74,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
             const Text(
               'Comments',
               style: TextStyle(
-                fontFamily: 'Segoe',
+                fontFamily: 'segeo',
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -81,7 +94,11 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                           children: [
                             CircleAvatar(
                               radius: 16,
-                              backgroundImage: AssetImage(comment['profile']),
+                              backgroundImage: comment['profile_pic'] != null &&
+                                  comment['profile_pic'].toString().isNotEmpty
+                                  ? NetworkImage(comment['profile_pic'])
+                                  : const AssetImage("assets/images/profileimg.png")
+                              as ImageProvider,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -98,7 +115,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                       '${comment['name']}  ${DateHelper.timeAgo(comment['time'])}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontFamily: 'Segoe',
+                                        fontFamily: 'segeo',
                                         fontSize: 13,
                                       ),
                                     ),
@@ -107,7 +124,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                       comment['comment'],
                                       style: const TextStyle(
                                         fontSize: 14,
-                                        fontFamily: 'Segoe',
+                                        fontFamily: 'segeo',
                                       ),
                                     ),
                                   ],
@@ -119,6 +136,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       );
                     }, childCount: _comments.length),
                   ),
+
                 ],
               ),
             ),
@@ -132,7 +150,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                           controller: _controller,
                           decoration: InputDecoration(
                             hintText: 'Write a comment...',
-                            hintStyle: const TextStyle(fontFamily: 'Segoe'),
+                            hintStyle: const TextStyle(fontFamily: 'segeo'),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 12,
                             ),
@@ -148,11 +166,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       BlocConsumer<PostCommentCubit, PostCommentStates>(
                         listener: (context, state) {
                           if (state is PostCommentLoaded) {
-                            CustomSnackBar1.show(
-                              context,
-                              state.successModel.message ?? "",
-                            );
-                            // Add to local list (optimistic UI update)
                             _addComment(_controller.text.trim());
                           } else if (state is PostCommentFailure) {
                             CustomSnackBar1.show(context, state.error ?? "");
@@ -178,7 +191,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                       final text = _controller.text.trim();
                                       Map<String, dynamic> data = {
                                         "community_id": widget.postId,
-                                        "comment": text,
+                                        "comments": text,
                                       };
                                       context
                                           .read<PostCommentCubit>()

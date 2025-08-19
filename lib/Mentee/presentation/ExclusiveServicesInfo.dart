@@ -110,7 +110,7 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                           Text(
                             serviceDetails?.name ?? "",
                             style: TextStyle(
-                              fontFamily: 'Segoe',
+                              fontFamily: 'segeo',
                               fontWeight: FontWeight.w600,
                               color: Color(0xff222222),
                               fontSize: 12,

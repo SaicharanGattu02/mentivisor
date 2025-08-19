@@ -416,7 +416,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       // Text(
                                                       //   menteePosts?. ?? "",
                                                       //   style: TextStyle(
-                                                      //     fontFamily: 'Segoe',
+                                                      //     fontFamily: 'segeo',
                                                       //     fontWeight:
                                                       //         FontWeight.w600,
                                                       //     fontSize: 14,
@@ -428,7 +428,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                   Text(
                                                     menteePosts?.heading ?? "",
                                                     style: TextStyle(
-                                                      fontFamily: 'Segoe',
+                                                      fontFamily: 'segeo',
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 16,
@@ -443,7 +443,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      fontFamily: 'Segoe',
+                                                      fontFamily: 'segeo',
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       fontSize: 14,
@@ -523,31 +523,31 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                                 12,
                                                                           ),
                                                                           child: CommentBottomSheet(
-                                                                            comments:
-                                                                                (menteePosts?.comments ??
-                                                                                        [])
-                                                                                    .map(
-                                                                                      (
-                                                                                        comments,
-                                                                                      ) => {
-                                                                                        "name":
-                                                                                            comments.user?.name ??
-                                                                                            "Unknown",
-                                                                                        "profile":
-                                                                                            comments.user?.profilePicUrl ??
-                                                                                            "assets/images/profile.png",
-                                                                                        "comment":
-                                                                                            comments.content ??
-                                                                                            "",
-                                                                                        "time":
-                                                                                            comments.createdAt ??
-                                                                                            "",
-                                                                                      },
-                                                                                    )
-                                                                                    .toList(),
-                                                                            scrollController:
-                                                                                scrollController,
-                                                                          ),
+                                                                          comments:
+                                                                          (menteePosts?.comments ??
+                                                                              [])
+                                                                              .map(
+                                                                                (
+                                                                                comments,
+                                                                                ) => {
+                                                                              "name":
+                                                                              comments.user?.name ??
+                                                                                  "Unknown",
+                                                                              "profile":
+                                                                              comments.user?.profilePicUrl ??
+                                                                                  "assets/images/profile.png",
+                                                                              "comment":
+                                                                              comments.content ??
+                                                                                  "",
+                                                                              "time":
+                                                                              comments.createdAt ??
+                                                                                  "",
+                                                                            },
+                                                                          )
+                                                                              .toList(),
+                                                                          scrollController:
+                                                                          scrollController,
+                                                                        ),
                                                                         ),
                                                                   );
                                                                 },

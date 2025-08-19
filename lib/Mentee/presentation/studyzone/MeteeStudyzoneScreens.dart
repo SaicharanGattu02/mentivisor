@@ -199,6 +199,20 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       child: ValueListenableBuilder<int>(
                         valueListenable: _selectedTagIndex,
                         builder: (context, selectedIndex, _) {
+                          if (tags == null || tags.isEmpty) {
+                            return Container(
+                              height: 40, // keep space same as tags list
+                              alignment: Alignment.center,
+                              child:  Text(
+                                "No tags available",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,fontFamily: 'segeo',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            );
+                          }
                           return ListView.separated(
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -280,12 +294,13 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'Oops !',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
+                            SizedBox(
+                              height: 200,
+                              width: 200,
+                              child: Center(
+                                child: Image.asset(
+                                  "assets/nodata/no_data.png",
+                                ),
                               ),
                             ),
                             Text(
