@@ -45,7 +45,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
 
   String calculateDuration(String start, String end) {
     try {
-      final format = DateFormat("hh:mm a"); // e.g. 11:35 AM
+      final format = DateFormat("hh:mm a");
       final startTime = format.parse(start);
       final endTime = format.parse(end);
 
@@ -221,14 +221,14 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                         'G-Meet with Suresh from SVG Collage',
                                     sessionImage:
                                         session?.mentee?.menteeProfile ??
-                                        "", // Image for upcoming sessions
+                                        "",
                                     sessionTopics: session?.topics ?? "",
                                     reason: '',
                                     buttonText:
                                         'Message from ${session?.mentee?.name ?? ""}',
                                     buttonIcon: 'assets/icons/chaticon.png',
                                     remainingTime:
-                                        '${duration} Minutes to go', // Time remaining for upcoming session
+                                        '${duration} Minutes to go',
                                   );
                                 }, childCount: session_data?.data?.length),
                               ),
