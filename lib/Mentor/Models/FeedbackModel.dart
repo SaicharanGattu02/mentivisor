@@ -241,7 +241,7 @@ class Items {
   int? id;
   User? user;
   Session? session;
-  Null? tag;
+  String? tag; // <-- FIXED
   int? rating;
   String? feedback;
   String? date;
@@ -262,7 +262,7 @@ class Items {
     session = json['session'] != null
         ? new Session.fromJson(json['session'])
         : null;
-    tag = json['tag'];
+    tag = json['tag']; // now it's a String
     rating = json['rating'];
     feedback = json['feedback'];
     date = json['date'];
@@ -284,6 +284,7 @@ class Items {
     return data;
   }
 }
+
 
 class User {
   int? id;

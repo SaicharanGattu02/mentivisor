@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
 import '../../Mentor/Models/FeedbackModel.dart';
@@ -20,7 +21,165 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     super.initState();
     context.read<FeedbackCubit>().getFeedback(widget.userId);
   }
+  void showReview(BuildContext context,) {
+    // keep selected filters
+    List<int> _selectedRatings = [];
+    String _selectedTime = "All Time";
 
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext builderContext) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title and Close
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Filter',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.grey),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ⭐ Rating Column
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Rating",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Column(
+                              children: List.generate(5, (index) {
+                                int star = index + 1;
+                                return CheckboxListTile(
+                                  title: Text("$star Star"),
+                                  value: _selectedRatings.contains(star),
+                                  onChanged: (bool? checked) {
+                                    setState(() {
+                                      if (checked == true) {
+                                        _selectedRatings.add(star);
+                                      } else {
+                                        _selectedRatings.remove(star);
+                                      }
+                                    });
+                                  },
+                                  activeColor: const Color(0xFF4A00E0),
+                                  contentPadding: EdgeInsets.zero,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(width: 16),
+
+                      // ⏳ Time Column
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Time",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Column(
+                              children: ["All Time", "This Week", "This Month", "This Quarter"]
+                                  .map((time) => CheckboxListTile(
+                                title: Text(time),
+                                value: _selectedTime == time,
+                                onChanged: (bool? checked) {
+                                  setState(() {
+                                    _selectedTime = time; // single selection
+                                  });
+                                },
+                                activeColor: const Color(0xFF4A00E0),
+                                contentPadding: EdgeInsets.zero,
+                                controlAffinity: ListTileControlAffinity.leading,
+                              ))
+                                  .toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Time
+
+                  // Apply Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFF4A00E0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () {
+                        // ✅ Here you can call API or refresh reviews with selected filters
+                        print("Selected Ratings: $_selectedRatings");
+                        print("Selected Time: $_selectedTime");
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Apply",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +191,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             return const _LoadingSkeleton();
           }
           if (state is FeedbackFailure) {
-            return _ErrorRetry(
-              message: state.error,
-              onRetry: () =>
-                  context.read<FeedbackCubit>().getFeedback(widget.userId),
-            );
+            return Center(child: Text(state.error),);
           }
           final data = (state as FeedbackLoaded).feedbackModel.data!;
           return _FeedbackBody(data: data);
@@ -145,29 +300,32 @@ class _FeedbackBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Filter header strip (light lavender background in screenshot)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF7F3FF),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: const [
-                      Expanded(
-                        child: Text(
-                          'Filter by',
-                          style: TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF111827),
+                GestureDetector(onTap: (){
+                  showReview(context);
+                },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF7F3FF),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: const [
+                        Expanded(
+                          child: Text(
+                            'Filter by',
+                            style: TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF111827),
+                            ),
                           ),
                         ),
-                      ),
-                      Icon(Icons.tune_rounded, color: Color(0xFF6B7280)),
-                    ],
+                        Icon(Icons.tune_rounded, color: Color(0xFF6B7280)),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -188,6 +346,145 @@ class _FeedbackBody extends StatelessWidget {
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
+    );
+  }
+
+  void showReview(BuildContext context,) {
+    // keep selected filters
+    List<int> _selectedRatings = [];
+    String _selectedTime = "All Time";
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext builderContext) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title and Close
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Filter',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.grey),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+
+                  const Text(
+                    "Rating",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Column(
+                    children: List.generate(5, (index) {
+                      int star = index + 1;
+                      return CheckboxListTile(
+                        title: Text("$star Star"),
+                        value: _selectedRatings.contains(star),
+                        onChanged: (bool? checked) {
+                          setState(() {
+                            if (checked == true) {
+                              _selectedRatings.add(star);
+                            } else {
+                              _selectedRatings.remove(star);
+                            }
+                          });
+                        },
+                        activeColor: const Color(0xFF4A00E0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        controlAffinity: ListTileControlAffinity.leading,
+                      );
+                    }),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Time
+                  const Text(
+                    "Time",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Column(
+                    children: ["All Time", "This Week", "This Month", "This Quarter"]
+                        .map((time) => CheckboxListTile(
+                      title: Text(time),
+                      value: _selectedTime == time,
+                      onChanged: (bool? checked) {
+                        setState(() {
+                          _selectedTime = time;
+                        });
+                      },
+                      activeColor: const Color(0xFF4A00E0),
+                      contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8),
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ))
+                        .toList(),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Apply Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFF4A00E0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () {
+                        // ✅ Here you can call API or refresh reviews with selected filters
+                        print("Selected Ratings: $_selectedRatings");
+                        print("Selected Time: $_selectedTime");
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Apply",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -580,6 +877,7 @@ class _ErrorRetry extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class _LoadingSkeleton extends StatelessWidget {
