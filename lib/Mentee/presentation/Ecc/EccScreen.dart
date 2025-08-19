@@ -20,7 +20,7 @@ class EccScreen extends StatefulWidget {
 class _EccScreenState extends State<EccScreen> {
   String searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
-  bool _onCampus = true;
+  final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
   int _selectedFilter = 0;
   String selectedFilter = 'On Campuses';
   final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
@@ -84,52 +84,40 @@ class _EccScreenState extends State<EccScreen> {
                           const SizedBox(height: 24),
                           Container(
                             decoration: BoxDecoration(
-                              color:  Color(0xFFE8EBF7),
+                              color: const Color(0xFFE8EBF7),
                               borderRadius: BorderRadius.circular(30),
                             ),
                             padding: const EdgeInsets.all(4),
-                            child: Row(
-                              spacing: 10,
-                              children: [
-                                Expanded(
-                                  child: FilterButton(
-                                    text: 'On Campus',
-                                    isSelected: _onCampus,
-                                    onPressed: () {
-                                      final selectedUpdate =
-                                          _filters[_selectedFilter]
-                                              .toLowerCase();
-                                      context.read<ECCCubit>().getECC(
-                                        "",
-                                        selectedUpdate,
-                                        "",
-                                      );
-                                      setState(() {
-                                        _onCampus = true;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Expanded(
-                                  child: FilterButton(
-                                    text: 'Beyond Campus',
-                                    isSelected: !_onCampus,
-                                    onPressed: () {
-                                      final selectedUpdate =
-                                          _filters[_selectedFilter]
-                                              .toLowerCase();
-                                      context.read<ECCCubit>().getECC(
-                                        "beyond",
-                                        selectedUpdate,
-                                        "",
-                                      );
-                                      setState(() {
-                                        _onCampus = false;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable: onCampusNotifier,
+                              builder: (context, isOnCampus, _) {
+                                return Row(
+                                  children: [
+                                    Expanded(
+                                      child: FilterButton(
+                                        text: 'On Campus',
+                                        isSelected: isOnCampus,
+                                        onPressed: () {
+                                          final selectedUpdate = _filters[_selectedFilter].toLowerCase();
+                                          context.read<ECCCubit>().getECC("", selectedUpdate, "");
+                                          onCampusNotifier.value = true; // update state
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: FilterButton(
+                                        text: 'Beyond Campus',
+                                        isSelected: !isOnCampus,
+                                        onPressed: () {
+                                          final selectedUpdate = _filters[_selectedFilter].toLowerCase();
+                                          context.read<ECCCubit>().getECC("beyond", selectedUpdate, "");
+                                          onCampusNotifier.value = false; // update state
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -181,7 +169,7 @@ class _EccScreenState extends State<EccScreen> {
                         selected: selected,
                         onSelected: (_) {
                           setState(() => _selectedFilter = i);
-                          if (_onCampus == true) {
+                          if (onCampusNotifier.value == true) {
                             context.read<ECCCubit>().getECC(
                               "",
                               _filters[i].toLowerCase(),
@@ -222,7 +210,7 @@ class _EccScreenState extends State<EccScreen> {
                       _debounce = Timer(const Duration(milliseconds: 300), () {
                         final selectedUpdate = _filters[_selectedFilter]
                             .toLowerCase();
-                        if (_onCampus == true) {
+                        if (onCampusNotifier.value  == true) {
                           context.read<ECCCubit>().getECC(
                             "",
                             selectedUpdate,
@@ -306,7 +294,7 @@ class _EccScreenState extends State<EccScreen> {
                               if (state is ECCLoaded && state.hasNextPage) {
                                 final selectedUpdate = _filters[_selectedFilter]
                                     .toLowerCase();
-                                if (_onCampus == true) {
+                                if (onCampusNotifier.value  == true) {
                                   context.read<ECCCubit>().fetchMoreECC(
                                     "",
                                     selectedUpdate,
@@ -358,38 +346,49 @@ class _EccScreenState extends State<EccScreen> {
           ),
         ),
       ),
-      floatingActionButton: FutureBuilder(
-        future: AuthService.isGuest,
-        builder: (context, snapshot) {
-          final isGuest = snapshot.data ?? false;
-          return FloatingActionButton(
-            onPressed: () {
-              if (isGuest) {
-                context.push('/auth_landing');
-              } else {
-                context.push("/addeventscreen");
-              }
-            },
-            backgroundColor: Colors.transparent,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF975CF7),
-                    Color(0xFF7A40F2), // Optional darker/lighter variation
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: onCampusNotifier, // ✅ listen to campus state
+        builder: (context, isOnCampus, _) {
+          if (!isOnCampus) {
+            return const SizedBox.shrink(); // hide FAB when Beyond Campus
+          }
+
+          return FutureBuilder(
+            future: AuthService.isGuest,
+            builder: (context, snapshot) {
+              final isGuest = snapshot.data ?? false;
+
+              return FloatingActionButton(
+                onPressed: () {
+                  if (isGuest) {
+                    context.push('/auth_landing');
+                  } else {
+                    context.push("/addeventscreen");
+                  }
+                },
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF975CF7),
+                        Color(0xFF7A40F2),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Icon(Icons.add, size: 32, color: Colors.white),
                 ),
-              ),
-              child: const Icon(Icons.add, size: 32, color: Colors.white),
-            ),
+              );
+            },
           );
         },
       ),
+
     );
   }
 }

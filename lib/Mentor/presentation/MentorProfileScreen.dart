@@ -50,7 +50,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
                   if (state is MentorProfileFailure) {
                     return Center(child: Text(state.error));
                   }
-                  final data = (state as MentorProfileLoaded).mentorProfileModel.data!;
+                  final data = (state as MentorProfile1Loaded).mentorProfileModel.data!;
                   return _ProfileBody(data: data);
                 },
               ),

@@ -8,9 +8,9 @@ class MentorProfileInitially extends MentorProfileStates {}
 
 class MentorProfileLoading extends MentorProfileStates {}
 
-class MentorProfileLoaded extends MentorProfileStates {
+class MentorProfile1Loaded extends MentorProfileStates {
   MentorprofileModel mentorProfileModel;
-  MentorProfileLoaded(this.mentorProfileModel);
+  MentorProfile1Loaded(this.mentorProfileModel);
 }
 
 class MentorProfileFailure extends MentorProfileStates {
