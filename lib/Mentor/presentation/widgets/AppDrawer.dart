@@ -55,7 +55,7 @@ class AppDrawer extends StatelessWidget {
                                   >(
                                     builder: (context, state) {
                                       final user_data =
-                                          state is MentorProfileLoaded
+                                          state is MentorProfile1Loaded
                                           ? state.mentorProfileModel
                                           : null;
                                       return Row(

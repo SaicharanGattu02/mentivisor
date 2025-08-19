@@ -124,8 +124,8 @@ class Expertise {
   String? name;
   int? baseValue;
   String? createdAt;
-  Null? updatedAt;
-  Null? deletedAt;
+  String? updatedAt;   // FIXED: changed from Null? to String?
+  String? deletedAt;   // FIXED: changed from Null? to String?
   int? activeStatus;
   Pivot? pivot;
   List<SubExpertises>? subExpertises;
@@ -150,35 +150,35 @@ class Expertise {
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
     activeStatus = json['active_status'];
-    pivot = json['pivot'] != null ? new Pivot.fromJson(json['pivot']) : null;
+    pivot = json['pivot'] != null ? Pivot.fromJson(json['pivot']) : null;
     if (json['sub_expertises'] != null) {
       subExpertises = <SubExpertises>[];
       json['sub_expertises'].forEach((v) {
-        subExpertises!.add(new SubExpertises.fromJson(v));
+        subExpertises!.add(SubExpertises.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['base_value'] = this.baseValue;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    if (this.pivot != null) {
-      data['pivot'] = this.pivot!.toJson();
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['base_value'] = baseValue;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
+    data['active_status'] = activeStatus;
+    if (pivot != null) {
+      data['pivot'] = pivot!.toJson();
     }
-    if (this.subExpertises != null) {
-      data['sub_expertises'] = this.subExpertises!
-          .map((v) => v.toJson())
-          .toList();
+    if (subExpertises != null) {
+      data['sub_expertises'] =
+          subExpertises!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
+
 
 class Pivot {
   int? mentorId;

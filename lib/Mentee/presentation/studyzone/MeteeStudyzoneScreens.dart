@@ -27,7 +27,7 @@ class MenteeStudyZone extends StatefulWidget {
 }
 
 class _MenteeStudyZoneState extends State<MenteeStudyZone> {
-  bool _onCampus = true;
+  final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
   final ValueNotifier<int> _selectedTagIndex = ValueNotifier<int>(-1);
 
   Timer? _debounce;
@@ -90,47 +90,46 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                     return Column(
                       children: [
                         const SizedBox(height: 24),
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8EBF7),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Row(
-                            spacing: 10,
-                            children: [
-                              Expanded(
-                                child: FilterButton(
-                                  text: 'On Campus',
-                                  isSelected: _onCampus,
-                                  onPressed: () {
-                                    setState(() {
-                                      _onCampus = true;
-                                    });
-                                    context
-                                        .read<StudyZoneCampusCubit>()
-                                        .fetchStudyZoneCampus("", "", "");
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                child: FilterButton(
-                                  text: 'Beyond Campus',
-                                  isSelected: !_onCampus,
-                                  onPressed: () {
-                                    setState(() {
-                                      _onCampus = false;
-                                    });
-                                    context
-                                        .read<StudyZoneCampusCubit>()
-                                        .fetchStudyZoneCampus("beyond", "", "");
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                  color: const Color(0xFFE8EBF7),
+                  borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: ValueListenableBuilder<bool>(
+                  valueListenable: onCampusNotifier,
+                  builder: (context, isOnCampus, _) {
+                  return Row(
+                  children: [
+                  Expanded(
+                  child: FilterButton(
+                  text: 'On Campus',
+                  isSelected: isOnCampus,
+                  onPressed: () {
+                  onCampusNotifier.value = true;
+                  context.read<StudyZoneCampusCubit>()
+                      .fetchStudyZoneCampus("", "", "");
+                  },
+                  ),
+                  ),
+                  Expanded(
+                  child: FilterButton(
+                  text: 'Beyond Campus',
+                  isSelected: !isOnCampus,
+                  onPressed: () {
+                  onCampusNotifier.value = false;
+                  context.read<StudyZoneCampusCubit>()
+                      .fetchStudyZoneCampus("beyond", "", "");
+                  },
+                  ),
+                  ),
+                  ],
+                  );
+                  },
+                  ),
+                  )
+
+                  ],
                     );
                   } else {
                     return SizedBox.shrink();
@@ -161,7 +160,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                             .tags![_selectedTagIndex.value];
                       }
 
-                      if (_onCampus) {
+                      if (onCampusNotifier.value) {
                         context
                             .read<StudyZoneCampusCubit>()
                             .fetchStudyZoneCampus("", selectedTag, query);
@@ -225,7 +224,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               return GestureDetector(
                                 onTap: () {
                                   _selectedTagIndex.value = index;
-                                  if (_onCampus == true) {
+                                  if (onCampusNotifier.value == true) {
                                     context
                                         .read<StudyZoneCampusCubit>()
                                         .fetchStudyZoneCampus("", tagItem, "");
@@ -506,38 +505,46 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
           ),
         ),
       ),
-      floatingActionButton: FutureBuilder(
-        future: AuthService.isGuest,
-        builder: (context, snapshot) {
-          final isGuest = snapshot.data ?? false;
-          return FloatingActionButton(
-            onPressed: () {
-              if (isGuest) {
-                context.push('/auth_landing');
-              } else {
-                context.push("/add_resource");
-              }
-            },
-            backgroundColor: Colors.transparent,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF975CF7),
-                    Color(0xFF7A40F2), // Optional darker/lighter variation
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: onCampusNotifier, // listens to your "On Campus" toggle
+        builder: (context, isOnCampus, _) {
+          if (!isOnCampus) return const SizedBox.shrink(); // Hide FAB when not on campus
+
+          return FutureBuilder(
+            future: AuthService.isGuest,
+            builder: (context, snapshot) {
+              final isGuest = snapshot.data ?? false;
+              return FloatingActionButton(
+                onPressed: () {
+                  if (isGuest) {
+                    context.push('/auth_landing');
+                  } else {
+                    context.push("/add_resource");
+                  }
+                },
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF975CF7),
+                        Color(0xFF7A40F2),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Icon(Icons.add, size: 32, color: Colors.white),
                 ),
-              ),
-              child: const Icon(Icons.add, size: 32, color: Colors.white),
-            ),
+              );
+            },
           );
         },
       ),
+
     );
   }
 }

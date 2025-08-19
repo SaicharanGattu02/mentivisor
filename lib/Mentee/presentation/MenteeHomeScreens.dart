@@ -109,7 +109,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               _mentorProfileUrl.value =
                   menteeProfile?.user?.profilePicUrl ?? "";
               _mentorProfileName.value = menteeProfile?.user?.name ?? "";
-              _availableCoins.value = menteeProfile?.user?.availabilityCoins?? 0;
+              _availableCoins.value =
+                  menteeProfile?.user?.availabilityCoins ?? 0;
               return Scaffold(
                 key: _scaffoldKey,
                 appBar: AppBar(
@@ -197,27 +198,27 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                             ),
                           )
-                        :
-                          // IconButton(
-                          //   icon: Icon(
-                          //     Icons.pentagon_rounded,
-                          //     color: primarycolor,
-                          //   ),
-                          //   onPressed: () {
-                          //   },
-                          // ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.notifications_outlined,
-                              color: Colors.black,
+                        : IconButton(
+                            icon: Icon(
+                              Icons.pentagon_rounded,
+                              color: primarycolor,
                             ),
-                            onPressed: () =>
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Notifications clicked'),
-                                  ),
-                                ),
+                            onPressed: () {
+                              context.push('/mentor_dashboard');
+                            },
                           ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.black,
+                      ),
+                      onPressed: () =>
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Notifications clicked'),
+                            ),
+                          ),
+                    ),
                   ],
                 ),
                 drawer: Drawer(
@@ -311,17 +312,19 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         width: 16,
                                       ),
                                       const SizedBox(width: 4),
-                                      ValueListenableBuilder<int?>(valueListenable:_availableCoins,builder:(context, value, child) {
-                                        return  Text(
-                                          '${value??0}',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.orange,fontFamily: 'segeo',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } ,
-
+                                      ValueListenableBuilder<int?>(
+                                        valueListenable: _availableCoins,
+                                        builder: (context, value, child) {
+                                          return Text(
+                                            '${value ?? 0}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.orange,
+                                              fontFamily: 'segeo',
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
@@ -438,12 +441,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   label: 'Info',
                                   onTap: () => _navigateToScreen('info'),
                                 ),
-                                // _buildDrawerItem(
-                                //   assetpath: "assets/icons/UserCircleCheck.png",
-                                //   label: 'Invite Friend',
-                                //   onTap: () =>
-                                //       _navigateToScreen('Invite Friend'),
-                                // ),
+                                _buildDrawerItem(
+                                  assetpath: "assets/icons/UserCircleCheck.png",
+                                  label: 'Invite Friend',
+                                  onTap: () =>
+                                      _navigateToScreen('Invite Friend'),
+                                ),
                                 _buildDrawerItem(
                                   assetpath: "assets/icons/UserCircleGear.png",
                                   label: 'Customer Services',

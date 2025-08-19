@@ -64,12 +64,11 @@ class SessionCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// LEFT SIDE: Text content
-                  Expanded(
-                    flex: 3,
+                  Container(width: SizeConfig.screenWidth*0.65,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -129,13 +128,7 @@ class SessionCard extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  const SizedBox(width: 12),
-
-                  /// RIGHT SIDE: Image
-                  Expanded(
-                    flex: 1,
-                    child: Container(
+                    Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
@@ -145,22 +138,19 @@ class SessionCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         child: CachedNetworkImage(
                           imageUrl: sessionImage ?? "",
-                          width: 60,
-                          height: 60,
+                          width: 80,
+                          height: 80,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.brown.withOpacity(0.5),
-                            child: Center(
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: spinkits.getSpinningLinespinkit(),
-                              ),
+                          placeholder: (context, url) => Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: spinkits.getSpinningLinespinkit(),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
                             decoration: BoxDecoration(
-                              color: Colors.brown.withOpacity(0.5),
+
                               borderRadius: BorderRadius.circular(8),
                               image: const DecorationImage(
                                 image: AssetImage("assets/images/profile.png"),
@@ -171,7 +161,6 @@ class SessionCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
 

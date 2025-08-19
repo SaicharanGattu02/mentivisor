@@ -446,7 +446,7 @@ class StateInjector {
           MyMenteeCubit(context.read<MyMenteesRepo>()),
     ),
     BlocProvider<MentorDashboardCubit>(
-      create: (context) => MentorDashboardCubit(
+      create: (context) => MentorDashboardCubit(mentorProfileCubit1: MentorProfileCubit1(context.read<MentorProfileRepo>()),
         getbannerscubit: Getbannerscubit(context.read<Getbannersrepository>()),
         sessionCubit: SessionCubit(context.read<SessionSRepo>()),
       ),

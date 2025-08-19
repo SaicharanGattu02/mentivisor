@@ -11,7 +11,7 @@ class MentorProfileCubit1 extends Cubit<MentorProfileStates> {
     try {
       final response = await mentorProfileRepo.getMentorProfile();
       if (response != null && response.status == true) {
-        emit(MentorProfileLoaded(response));
+        emit(MentorProfile1Loaded(response));
       } else {
         emit(MentorProfileFailure("Mentor Profile Details Loading Failed!"));
       }

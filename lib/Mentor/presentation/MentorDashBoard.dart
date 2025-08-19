@@ -43,12 +43,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
   void _toggleDrawerOrExit() {
     final scaffoldState = _scaffoldKey.currentState;
     if (scaffoldState != null && scaffoldState.isDrawerOpen) {
-      // Drawer is open → close it
       Navigator.of(context).pop();
       // If you truly wanted to exit instead, replace the pop() with:
       // exit(0);
     } else {
-      // Drawer is closed → open it
       scaffoldState?.openDrawer();
     }
   }
@@ -65,7 +63,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
           automaticallyImplyLeading: false,
           title: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
             builder: (context, state) {
-              final user_data = state is MentorProfileLoaded
+              final user_data = state is MentorProfile1Loaded
                   ? state.mentorProfileModel.data
                   : null;
               return Row(
@@ -110,9 +108,9 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 Icons.notifications_outlined,
                 color: Colors.black,
               ),
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications clicked')),
-              ),
+              onPressed: () {
+
+              }
             ),
           ],
         ),
