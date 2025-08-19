@@ -15,8 +15,6 @@ abstract class MentorRemoteDataSource {
   Future<FeedbackModel?> getFeedback(int user_id);
   Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
-
-
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -74,7 +72,9 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   @override
   Future<MyMenteesModel?> getMyMentees(page) async {
     try {
-      Response res = await ApiClient.get("${MentorEndpointsUrls.mymenteelist}?page=${page}");
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.mymenteelist}?page=${page}",
+      );
       AppLogger.log('getMyMentees: ${res.data}');
       return MyMenteesModel.fromJson(res.data);
     } catch (e) {
@@ -82,9 +82,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
-
-
-
 
   @override
   Future<FeedbackModel?> getFeedback(int user_id) async {
@@ -142,6 +139,4 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
-
-
 }

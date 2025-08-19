@@ -130,8 +130,17 @@ class AppDrawer extends StatelessWidget {
 
                     _Separator(),
 
-                    // Section label "Info"
-                    _SectionLabel(icon: Icons.info_outline, label: 'Info'),
+                    // // Section label "Info"
+                    // _SectionLabel(icon: Icons.info_outline, label: 'Info'),
+
+                    _DrawerItem(
+                      icon: Icons.info_outline,
+                      title: 'Info',
+                      onTap: () {
+                        context.pop();
+                        context.push('/mentees_Info');
+                      },
+                    ),
 
                     _Separator(),
 

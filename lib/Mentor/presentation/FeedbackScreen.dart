@@ -21,7 +21,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     super.initState();
     context.read<FeedbackCubit>().getFeedback(widget.userId);
   }
-  void showReview(BuildContext context,) {
+
+  void showReview(BuildContext context) {
     // keep selected filters
     List<int> _selectedRatings = [];
     String _selectedTime = "All Time";
@@ -47,7 +48,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title and Close
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -66,84 +66,58 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ⭐ Rating Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Rating",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Column(
-                              children: List.generate(5, (index) {
-                                int star = index + 1;
-                                return CheckboxListTile(
-                                  title: Text("$star Star"),
-                                  value: _selectedRatings.contains(star),
-                                  onChanged: (bool? checked) {
-                                    setState(() {
-                                      if (checked == true) {
-                                        _selectedRatings.add(star);
-                                      } else {
-                                        _selectedRatings.remove(star);
-                                      }
-                                    });
-                                  },
-                                  activeColor: const Color(0xFF4A00E0),
-                                  contentPadding: EdgeInsets.zero,
-                                  controlAffinity: ListTileControlAffinity.leading,
-                                );
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
 
-                      const SizedBox(width: 16),
-
-                      // ⏳ Time Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Time",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Column(
-                              children: ["All Time", "This Week", "This Month", "This Quarter"]
-                                  .map((time) => CheckboxListTile(
-                                title: Text(time),
-                                value: _selectedTime == time,
-                                onChanged: (bool? checked) {
-                                  setState(() {
-                                    _selectedTime = time; // single selection
-                                  });
-                                },
-                                activeColor: const Color(0xFF4A00E0),
-                                contentPadding: EdgeInsets.zero,
-                                controlAffinity: ListTileControlAffinity.leading,
-                              ))
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     // ⭐ Rating Column
+                  //     Row(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         // ⭐ Rating Column
+                  //         Expanded(
+                  //           child: Column(
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //               const Text(
+                  //                 "Rating",
+                  //                 style: TextStyle(
+                  //                   fontSize: 18,
+                  //                   fontWeight: FontWeight.w600,
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 8),
+                  //               ...List.generate(5, (index) {
+                  //                 int star = index + 1;
+                  //                 return CheckboxListTile(
+                  //                   title: Text("$star Star"),
+                  //                   value: _selectedRatings.contains(star),
+                  //                   onChanged: (bool? checked) {
+                  //                     setState(() {
+                  //                       if (checked == true) {
+                  //                         _selectedRatings.add(star);
+                  //                       } else {
+                  //                         _selectedRatings.remove(star);
+                  //                       }
+                  //                     });
+                  //                   },
+                  //                   activeColor: const Color(0xFF4A00E0),
+                  //                   contentPadding: EdgeInsets.zero,
+                  //                   controlAffinity: ListTileControlAffinity.leading,
+                  //                 );
+                  //               }),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //
+                  //         const SizedBox(width: 16),
+                  //
+                  //
+                  //       ],
+                  //     )
+                  //
+                  //   ],
+                  // ),
                   const SizedBox(height: 8),
 
                   // Time
@@ -180,6 +154,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +166,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             return const _LoadingSkeleton();
           }
           if (state is FeedbackFailure) {
-            return Center(child: Text(state.error),);
+            return Center(child: Text(state.error));
           }
           final data = (state as FeedbackLoaded).feedbackModel.data!;
           return _FeedbackBody(data: data);
@@ -300,9 +275,10 @@ class _FeedbackBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                GestureDetector(onTap: (){
-                  showReview(context);
-                },
+                GestureDetector(
+                  onTap: () {
+                    showReview(context);
+                  },
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
@@ -349,8 +325,7 @@ class _FeedbackBody extends StatelessWidget {
     );
   }
 
-  void showReview(BuildContext context,) {
-    // keep selected filters
+  void showReview(BuildContext context) {
     List<int> _selectedRatings = [];
     String _selectedTime = "All Time";
 
@@ -395,90 +370,95 @@ class _FeedbackBody extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Rating",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ...List.generate(5, (index) {
+                              int star = index + 1;
+                              return CheckboxListTile(
+                                title: Text("$star Star"),
+                                value: _selectedRatings.contains(star),
+                                onChanged: (bool? checked) {
+                                  setState(() {
+                                    if (checked == true) {
+                                      _selectedRatings.add(star);
+                                    } else {
+                                      _selectedRatings.remove(star);
+                                    }
+                                  });
+                                },
+                                activeColor: const Color(0xFF4A00E0),
+                                contentPadding: EdgeInsets.zero,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
 
-                  const Text(
-                    "Rating",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Column(
-                    children: List.generate(5, (index) {
-                      int star = index + 1;
-                      return CheckboxListTile(
-                        title: Text("$star Star"),
-                        value: _selectedRatings.contains(star),
-                        onChanged: (bool? checked) {
-                          setState(() {
-                            if (checked == true) {
-                              _selectedRatings.add(star);
-                            } else {
-                              _selectedRatings.remove(star);
-                            }
-                          });
-                        },
-                        activeColor: const Color(0xFF4A00E0),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                        controlAffinity: ListTileControlAffinity.leading,
-                      );
-                    }),
-                  ),
+                      const SizedBox(width: 16),
 
-                  const SizedBox(height: 8),
-
-                  // Time
-                  const Text(
-                    "Time",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Column(
-                    children: ["All Time", "This Week", "This Month", "This Quarter"]
-                        .map((time) => CheckboxListTile(
-                      title: Text(time),
-                      value: _selectedTime == time,
-                      onChanged: (bool? checked) {
-                        setState(() {
-                          _selectedTime = time;
-                        });
-                      },
-                      activeColor: const Color(0xFF4A00E0),
-                      contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 8),
-                      controlAffinity: ListTileControlAffinity.leading,
-                    ))
-                        .toList(),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Time",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ...[
+                                  "All Time",
+                                  "This Week",
+                                  "This Month",
+                                  "This Quarter",
+                                ]
+                                .map(
+                                  (time) => CheckboxListTile(
+                                    title: Text(time),
+                                    value: _selectedTime == time,
+                                    onChanged: (bool? checked) {
+                                      setState(() {
+                                        _selectedTime = time; // only one active
+                                      });
+                                    },
+                                    activeColor: const Color(0xFF4A00E0),
+                                    contentPadding: EdgeInsets.zero,
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                  ),
+                                )
+                                .toList(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 24),
 
-                  // Apply Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: const Color(0xFF4A00E0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      onPressed: () {
-                        // ✅ Here you can call API or refresh reviews with selected filters
-                        print("Selected Ratings: $_selectedRatings");
-                        print("Selected Time: $_selectedTime");
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Apply",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
+                  SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      child: CustomAppButton1(text: "Apply", onPlusTap: () {}),
                     ),
                   ),
-                  const SizedBox(height: 16),
                 ],
               ),
             );
@@ -877,7 +857,6 @@ class _ErrorRetry extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _LoadingSkeleton extends StatelessWidget {

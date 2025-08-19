@@ -17,6 +17,7 @@ import 'package:mentivisor/Mentee/presentation/authentication/profieSetup/Profil
 import 'package:mentivisor/Mentee/presentation/becomeMentor/ExpertiseSelection.dart';
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
 import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
+import 'package:mentivisor/Mentor/presentation/MentorInfoScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
@@ -62,7 +63,6 @@ import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dar
 import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
-
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -129,7 +129,11 @@ final GoRouter appRouter = GoRouter(
         final subTitle = state.uri.queryParameters['subTitle'] ?? "";
         final nextRoute = state.uri.queryParameters['next'] ?? "";
         return buildSlideTransitionPage(
-          PaymentSuccessScreen(title: title, subTitle: subTitle, nextRoute: nextRoute),
+          PaymentSuccessScreen(
+            title: title,
+            subTitle: subTitle,
+            nextRoute: nextRoute,
+          ),
           state,
         );
       },
@@ -159,7 +163,7 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
- GoRoute(
+    GoRoute(
       path: '/info',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(InfoScreen(), state);
@@ -478,7 +482,12 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(Slotsbookingscreen(), state);
       },
     ),
-
+    GoRoute(
+      path: '/mentees_Info',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(Mentorinfoscreen(), state);
+      },
+    ),
 
   ],
 );
