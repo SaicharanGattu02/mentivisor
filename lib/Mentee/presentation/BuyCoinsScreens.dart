@@ -29,6 +29,10 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
   final ValueNotifier<String?> userNameNotifier = ValueNotifier<String?>("");
   final ValueNotifier<String?> userEmailNotifier = ValueNotifier<String?>("");
   final ValueNotifier<String?> userMobileNotifier = ValueNotifier<String?>("");
+  final ValueNotifier<double> coins = ValueNotifier<double>(0.0);
+  final ValueNotifier<String> offerPrice = ValueNotifier<String>("0");
+  final ValueNotifier<String> originalPrice = ValueNotifier<String>("0");
+  final ValueNotifier<double> discountPrice = ValueNotifier<double>(0.0);
 
   @override
   void initState() {
@@ -157,6 +161,12 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                               onTap: () {
                                 selectedIndexNotifier.value = index;
                                 amount.value = coinspack.offerPrice ?? "";
+                                coins.value = coinspack.coins ?? 0.0;
+                                offerPrice.value = coinspack.offerPrice ?? "0";
+                                originalPrice.value =
+                                    coinspack.originalPrice ?? "0";
+                                discountPrice.value =
+                                    coinspack.discountPercent ?? 0.0;
                               },
 
                               child: Container(
@@ -329,7 +339,8 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                       }
                     },
                     builder: (context, state) {
-                      return CustomAppButton1(isLoading: state is PaymentLoading,
+                      return CustomAppButton1(
+                        isLoading: state is PaymentLoading,
                         text: 'Submit',
                         onPlusTap: () {
                           final selectedIndex = selectedIndexNotifier.value;
@@ -341,7 +352,23 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                             return;
                           } else {
                             final Map<String, dynamic> data = {
-                              "amount": amount.value,
+                              // "amount":offerPrice.value,
+                              // "coins":coins.value,
+                              // "original_price": "90",
+                              // "offer_price":offerPrice.value,
+                              // "discount_percent": discountPrice.value,
+                              "amount": "90",
+                              "notes": {
+                                "coins": "100",
+                                "original_price": "100",
+                                "offer_price": "90",
+                                "discount_percent": "10",
+                              },
+                              // "amount": "90",
+                              // "coins": "100",
+                              // "original_price": "100",
+                              // "offer_price": "90",
+                              // "discount_percent": "10",
                             };
                             context.read<PaymentCubit>().createPayment(data);
                           }

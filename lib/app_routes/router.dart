@@ -21,6 +21,7 @@ import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
+import '../Mentee/presentation/CommingSoon.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
 import '../Mentee/presentation/InfoScreen.dart';
@@ -399,6 +400,11 @@ final GoRouter appRouter = GoRouter(
       path: '/buy_coins_screens',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(BuyCoinsScreens(), state),
+    ),
+    GoRoute(
+      path: '/comming_soon',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ComingSoon(), state),
     ),
 
     GoRoute(
