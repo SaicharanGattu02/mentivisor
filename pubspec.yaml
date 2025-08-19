@@ -111,7 +111,7 @@ flutter:
   # example:
 
   fonts:
-    - family: Segoe
+    - family: segeo
       fonts:
         - asset: fonts/segoeuithis.ttf
 

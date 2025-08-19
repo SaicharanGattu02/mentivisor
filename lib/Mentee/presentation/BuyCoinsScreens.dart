@@ -248,7 +248,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                                           ),
                                           TextSpan(
                                             text:
-                                                '₹${coinspack.offerPrice?.toString() ?? "0"} ',
+                                                '₹${coinspack.originalPrice?.toString() ?? "0"} ',
                                             style: TextStyle(
                                               fontFamily: 'segeo UI',
                                               fontWeight: FontWeight.w400,
@@ -263,7 +263,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                                           ),
                                           TextSpan(
                                             text:
-                                                '₹${coinspack.originalPrice?.toString() ?? "0"}',
+                                                '₹${coinspack.offerPrice?.toString() ?? "0"}',
                                             style: TextStyle(
                                               fontFamily: 'segeo UI',
                                               fontWeight: FontWeight.w600,
