@@ -13,6 +13,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../Components/CustomSnackBar.dart';
 import '../../services/AuthService.dart';
 import '../data/cubits/Payment/payment_cubit.dart';
+import '../data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 
 class BuyCoinsScreens extends StatefulWidget {
   const BuyCoinsScreens({Key? key}) : super(key: key);
@@ -330,6 +331,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                         );
                       } else if (state is PaymentVerified) {
                         context.read<CoinsPackCubit>().fetchCoinsPack();
+                        context.read<WalletmoneyCubit>().getWallet(0);
                         context.pushReplacement(
                           '/payment_success'
                           '?title=${Uri.encodeComponent("Payment is Done Successfully")}',
@@ -352,23 +354,13 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                             return;
                           } else {
                             final Map<String, dynamic> data = {
-                              // "amount":offerPrice.value,
-                              // "coins":coins.value,
-                              // "original_price": "90",
-                              // "offer_price":offerPrice.value,
-                              // "discount_percent": discountPrice.value,
-                              "amount": "90",
+                              "amount": offerPrice.value,
                               "notes": {
-                                "coins": "100",
-                                "original_price": "100",
-                                "offer_price": "90",
-                                "discount_percent": "10",
+                                "coins": coins.value,
+                                "original_price": originalPrice.value,
+                                "offer_price": offerPrice.value,
+                                "discount_percent": discountPrice.value,
                               },
-                              // "amount": "90",
-                              // "coins": "100",
-                              // "original_price": "100",
-                              // "offer_price": "90",
-                              // "discount_percent": "10",
                             };
                             context.read<PaymentCubit>().createPayment(data);
                           }
