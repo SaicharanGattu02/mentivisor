@@ -13,6 +13,8 @@ import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
@@ -81,6 +83,8 @@ import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
+import 'Mentor/data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
+import 'Mentor/data/Cubits/MentorInfo/Mentor_info_repo.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'Mentor/data/MentorRemoteDataSource.dart';
@@ -109,6 +113,10 @@ class StateInjector {
     RepositoryProvider<Getbannersrepository>(
       create: (context) =>
           BannersImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<MenteeCustomersupportRepo>(
+      create: (context) =>
+          MenteecustomersupportImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
     RepositoryProvider<CampusMentorListRepository>(
@@ -246,14 +254,19 @@ class StateInjector {
       ),
     ),
 
-    RepositoryProvider<MentorProfileRepo>(
-      create: (context) => MentorProfileRepoImpl(
+    RepositoryProvider<MentorProfileRepo1>(
+      create: (context) => MentorProfile1Impl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
 
     RepositoryProvider<MyMenteesRepo>(
       create: (context) => MyMenteesRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<MentorInfoRepo>(
+      create: (context) => MentorProfileRepoImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
@@ -411,6 +424,13 @@ class StateInjector {
       create: (context) =>
           PaymentCubit(context.read<PaymentRepository>()),
     ),
+
+   BlocProvider<MenteeCustomersupportCubit>(
+      create: (context) =>
+          MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
+    ),
+
+
     BlocProvider<MenteeDashboardCubit>(
       create: (context) => MenteeDashboardCubit(
         bannersCubit: Getbannerscubit(context.read<Getbannersrepository>()),
@@ -427,6 +447,8 @@ class StateInjector {
     ),
 
     ///Mentor cubitsss
+
+
     BlocProvider<SessionCubit>(
       create: (context) => SessionCubit(context.read<SessionSRepo>()),
     ),
@@ -439,14 +461,18 @@ class StateInjector {
     ),
     BlocProvider<MentorProfileCubit1>(
       create: (context) =>
-          MentorProfileCubit1(context.read<MentorProfileRepo>()),
+          MentorProfileCubit1(context.read<MentorProfileRepo1>()),
     ),
     BlocProvider<MyMenteeCubit>(
       create: (context) =>
           MyMenteeCubit(context.read<MyMenteesRepo>()),
     ),
+    BlocProvider<MentorInfoCubit>(
+      create: (context) =>
+          MentorInfoCubit(context.read<MentorInfoRepo>()),
+    ),
     BlocProvider<MentorDashboardCubit>(
-      create: (context) => MentorDashboardCubit(mentorProfileCubit1: MentorProfileCubit1(context.read<MentorProfileRepo>()),
+      create: (context) => MentorDashboardCubit(mentorProfileCubit1: MentorProfileCubit1(context.read<MentorProfileRepo1>()),
         getbannerscubit: Getbannerscubit(context.read<Getbannersrepository>()),
         sessionCubit: SessionCubit(context.read<SessionSRepo>()),
       ),

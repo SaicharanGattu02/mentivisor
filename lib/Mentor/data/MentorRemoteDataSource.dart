@@ -5,6 +5,7 @@ import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/FeedbackModel.dart';
 import '../Models/MentorProfileModel.dart';
+import '../Models/MentorinfoResponseModel.dart';
 import '../Models/MyMenteesModel.dart';
 import '../Models/SessionsModel.dart';
 
@@ -15,6 +16,7 @@ abstract class MentorRemoteDataSource {
   Future<FeedbackModel?> getFeedback(int user_id);
   Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
+  Future<MentorinfoResponseModel?> mentorinfo();
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -23,7 +25,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
     for (final entry in data.entries) {
       final key = entry.key;
       final value = entry.value;
-
       if (value == null) continue;
       final isFile =
           value is String &&
@@ -82,6 +83,23 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
+
+
+
+  @override
+  Future<MentorinfoResponseModel?>mentorinfo() async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.mentorinfo}",
+      );
+      AppLogger.log('get MentorInfo: ${res.data}');
+      return MentorinfoResponseModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get MentorInfo:${e}');
+      return null;
+    }
+  }
+
 
   @override
   Future<FeedbackModel?> getFeedback(int user_id) async {

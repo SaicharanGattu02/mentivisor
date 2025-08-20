@@ -11,6 +11,8 @@ class MentorEndpointsUrls {
   static const String mentees = "${userUrl}mentees-with-sessions";
   static const String report_mentee = "${userUrl}mentor-reports";
   static const String mymenteelist = "${userUrl}my-mentees";
+  static const String mentorinfo = "${userUrl}/info";
+
 
 
 

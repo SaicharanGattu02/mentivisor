@@ -5,6 +5,7 @@ import 'package:mentivisor/Mentee/Models/ExclusiveServicesModel.dart';
 import 'package:mentivisor/Mentee/Models/ExclusiveservicedetailsModel.dart';
 import 'package:mentivisor/Mentee/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
+import 'package:mentivisor/Mentee/Models/MenteeCustmor_supportModel.dart';
 import 'package:mentivisor/Mentee/Models/WalletModel.dart';
 import 'package:mentivisor/Mentee/Models/YearsModel.dart';
 import 'package:mentivisor/services/AuthService.dart';
@@ -101,6 +102,8 @@ abstract class RemoteDataSource {
   Future<CompletedSessionModel?> sessionsComplete();
   Future<ReviewSubmitModel?> sessionSubmitReview(Map<String, dynamic> data ,int id);
   Future<SuccessModel?> postSessionReport(Map<String, dynamic> data);
+  Future<MenteeCustmor_supportModel?> getcustomersupport();
+
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -853,4 +856,17 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
+  @override
+  Future<MenteeCustmor_supportModel?> getcustomersupport() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.getmenteecustomersupport}");
+      AppLogger.log('get mentee Customer Support::${res.data}');
+      return MenteeCustmor_supportModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('mentee Customer Support::${e}');
+      return null;
+    }
+  }
+
 }

@@ -3,7 +3,7 @@ import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_repo.
 import 'package:mentivisor/Mentor/data/Cubits/UpdateMentorProfile/update_mentor_profile_states.dart';
 
 class UpdateMentorProfileCubit extends Cubit<UpdateMentorProfileStates> {
-  MentorProfileRepo mentorProfileRepo;
+  MentorProfileRepo1 mentorProfileRepo;
   UpdateMentorProfileCubit(this.mentorProfileRepo)
     : super(UpdateMentorProfileInitially());
 
