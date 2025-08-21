@@ -80,3 +80,35 @@ class Background1 extends StatelessWidget {
   }
 }
 
+class Background3 extends StatelessWidget {
+  final Widget child;
+  final String? bgImagePath;
+  final Color? bgColor;
+
+  const Background3({
+    super.key,
+    required this.child,
+    this.bgImagePath,
+    this.bgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // Full-screen gradient, no extra Stack, no Opacity
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color(0xFFFAF5FF),
+            Color(0xFFF5F6FF),
+            Color(0xFFEFF6FF),
+          ],
+          stops: [0.0, 0.5, 1.0],
+        ),
+      ),
+      child: child,
+    );
+  }
+}

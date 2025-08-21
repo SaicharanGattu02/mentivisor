@@ -198,27 +198,31 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                             ),
                           )
-                        : IconButton(
-                            icon: Icon(
-                              Icons.pentagon_rounded,
-                              color: primarycolor,
-                            ),
-                            onPressed: () {
-                              context.push('/mentor_dashboard');
-                            },
-                          ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.black,
-                      ),
-                      onPressed: () =>
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Notifications clicked'),
-                            ),
-                          ),
-                    ),
+                        :Padding(
+                          padding: const EdgeInsets.only(right: 40),
+                          child: IconButton(
+                                                icon: Image.asset(
+                          "images/crownonly.png",
+                          height: 21,
+                          width: 26,
+                                                ),
+                                                onPressed: () {
+                          context.push('/mentor_dashboard');
+                                                },
+                                              ),
+                        ),
+                    // IconButton(
+                    //   icon: const Icon(
+                    //     Icons.notifications_outlined,
+                    //     color: Colors.black,
+                    //   ),
+                    //   onPressed: () =>
+                    //       ScaffoldMessenger.of(context).showSnackBar(
+                    //         const SnackBar(
+                    //           content: Text('Notifications clicked'),
+                    //         ),
+                    //       ),
+                    // ),
                   ],
                 ),
                 drawer: Drawer(
@@ -307,9 +311,10 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Image.asset(
-                                        "assets/images/coinsgold.png",
+                                        "assets/images/GoldCoins.png",
                                         height: 16,
                                         width: 16,
+                                        color: Color(0xffFFCC00),
                                       ),
                                       const SizedBox(width: 4),
                                       ValueListenableBuilder<int?>(
@@ -318,8 +323,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           return Text(
                                             '${value ?? 0}',
                                             style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.orange,
+                                              fontSize: 14,
+                                              color: Color(0xff121212),
                                               fontFamily: 'segeo',
                                               fontWeight: FontWeight.bold,
                                             ),

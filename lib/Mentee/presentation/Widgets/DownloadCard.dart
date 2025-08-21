@@ -11,7 +11,7 @@ class DownloadCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1,
+
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -22,7 +22,7 @@ class DownloadCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
                 "assets/images/download.jpg",
-                height: 165,
+                height: 145,
                 width: 145,
                 fit: BoxFit.cover,
               ),

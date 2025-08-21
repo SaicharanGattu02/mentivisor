@@ -19,10 +19,10 @@ class _RoleSelectionScreenState extends State<Selecterscreen> {
       _selectedRole = role;
     });
     if (_selectedRole == UserRole.mentor) {
-      context.push('/mentor_dashboard');
+      context.pushReplacement('/mentor_dashboard');
       // context.push('/comming_soon');
     } else {
-      context.push('/dashboard');
+      context.pushReplacement('/dashboard');
     }
   }
 
