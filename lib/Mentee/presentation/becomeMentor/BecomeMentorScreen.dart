@@ -27,61 +27,63 @@ class _BecomeMentorScreenState extends State<BecomeMentorScreen> {
         builder: (context, snapshot) {
           final userName = snapshot.data ?? "unKnown";
           return Background(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(
-                    height: 380,
-                    width: 380,
-                    child: Image.asset('assets/images/become_mentor.png'),
-                  ),
-                  SizedBox(height: 24),
-                  Text(
-                    'Hey ${userName}',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'segeo',
-                      color: Color(0xff2563EC),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      height: 380,
+                      width: 380,
+                      child: Image.asset('assets/images/become_mentor.png'),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Nice to see you become the mentor! Let’s start with these basic details',
-                    style: TextStyle(
-                      color: Color(0xff333333),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'segeo',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Why you want to become mentor',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'segeo',
-                      fontSize: 14,
-                      color: Color(0xff444444),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Center(
-                    child: TextField(
-                      controller: _becomeMentorController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: 'Explain here',
-                        filled: true,
-                        fillColor: Colors.white, // inside background
-                        contentPadding: EdgeInsets.all(16), // space inside
-
+                    SizedBox(height: 24),
+                    Text(
+                      'Hey ${userName}',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'segeo',
+                        color: Color(0xff2563EC),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Nice to see you become the mentor! Let’s start with these basic details',
+                      style: TextStyle(
+                        color: Color(0xff333333),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'segeo',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Why you want to become mentor',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'segeo',
+                        fontSize: 14,
+                        color: Color(0xff444444),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Center(
+                      child: TextField(
+                        controller: _becomeMentorController,
+                        maxLines: 4,
+                        decoration: InputDecoration(
+                          hintText: 'Explain here',
+                          filled: true,
+                          fillColor: Colors.white, // inside background
+                          contentPadding: EdgeInsets.all(16), // space inside
+
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

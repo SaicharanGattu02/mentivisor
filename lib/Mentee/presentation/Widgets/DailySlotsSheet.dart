@@ -21,7 +21,9 @@ Future<Slots?> showDailySlotsBottomSheet(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (ctx) {
-      return DailySlotsSheet(mentorId: mentorId, date: date);
+      return SafeArea(
+        child: DailySlotsSheet(mentorId: mentorId, date: date),
+      );
     },
   );
 }
@@ -29,6 +31,7 @@ Future<Slots?> showDailySlotsBottomSheet(
 // ───────────────────────────────────────────────────────────────────────────────
 // SHEET (kept in same file as a single widget for easy paste)
 // ───────────────────────────────────────────────────────────────────────────────
+
 class DailySlotsSheet extends StatefulWidget {
   final int mentorId;
   final String date;
@@ -184,12 +187,15 @@ class DailySlotsSheetState extends State<DailySlotsSheet> {
                       },
                     ),
                   ),
-                  CustomAppButton1(text: "Pick the Time", onPlusTap: (){
-                    if (_selected != null) {
-                      Navigator.of(context).pop<Slots?>(_selected);
-                    }
-                  }),
-                  SizedBox(height: 20,),
+                  CustomAppButton1(
+                    text: "Pick the Time",
+                    onPlusTap: () {
+                      if (_selected != null) {
+                        Navigator.of(context).pop<Slots?>(_selected);
+                      }
+                    },
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),

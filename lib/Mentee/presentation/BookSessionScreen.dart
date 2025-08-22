@@ -11,6 +11,7 @@ import 'package:mentivisor/Mentee/data/cubits/BookSession/book_session_states.da
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Components/CustomAppButton.dart';
+import '../../utils/spinkittsLoader.dart';
 import '../Models/MentorProfileModel.dart';
 import '../data/cubits/SelectSlot/select_slot_cubit.dart';
 import '../data/cubits/SelectSlot/select_slot_states.dart';
@@ -29,8 +30,9 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   bool showDetails = true;
   String? selectedDate;
   String? selectedTime;
-  int? selectedSlotId;      // after picking
+  int? selectedSlotId; // after picking
   String _weekFilter = 'This Week'; // or 'Next Week'
+  ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -70,10 +72,8 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                 ),
                 child: Column(
                   children: [
-                    // ── Header: Title + Week Picker ──────────────────────────────────────────
                     Row(
                       children: [
-                        // Title dynamically from response month (fallback text shown while loading)
                         BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
                           builder: (context, state) {
                             String heading = 'Available Dates';
@@ -267,11 +267,13 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
 
                                           setState(() => selectedDate = d.date);
 
-                                          final picked = await showDailySlotsBottomSheet(
-                                            context,
-                                            mentorId: widget.data.userId ?? 0,
-                                            date: d.date!, // ISO date
-                                          );
+                                          final picked =
+                                              await showDailySlotsBottomSheet(
+                                                context,
+                                                mentorId:
+                                                    widget.data.userId ?? 0,
+                                                date: d.date!, // ISO date
+                                              );
 
                                           if (picked == null) return;
 
@@ -282,10 +284,12 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                           });
 
                                           // 🔹 Fetch preview (slot + wallet)
-                                          context.read<SelectSlotCubit>().getSelectSlot(
-                                            widget.data.userId ?? 0,
-                                            picked.id ?? 0,
-                                          );
+                                          context
+                                              .read<SelectSlotCubit>()
+                                              .getSelectSlot(
+                                                widget.data.userId ?? 0,
+                                                picked.id ?? 0,
+                                              );
                                         },
                                       ),
                                     ),
@@ -416,6 +420,23 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       onTap: _toggleDetails,
                       child: Row(
                         children: [
+                          // CachedNetworkImage(
+                          //   height: 60,
+                          //   imageUrl: widget.data.user?.profilePicUrl ?? "",
+                          //   fit: BoxFit.cover,
+                          //   width: double.infinity,
+                          //   placeholder: (context, url) =>
+                          //       Center(child: spinkits.getSpinningLinespinkit()),
+                          //   errorWidget: (context, url, error) => Container(
+                          //     height: 160,
+                          //     color: Colors.grey.shade100,
+                          //     child: const Icon(
+                          //       Icons.broken_image,
+                          //       size: 40,
+                          //       color: Colors.grey,
+                          //     ),
+                          //   ),
+                          // ),
                           CircleAvatar(
                             backgroundColor: Colors.white.withOpacity(0.4),
                             child: CachedNetworkImage(
@@ -451,9 +472,11 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                     ),
                     if (showDetails) ...[
                       const SizedBox(height: 16),
-                      Divider(color: Colors.grey.withOpacity(0.3), thickness: 0.5),
+                      Divider(
+                        color: Colors.grey.withOpacity(0.3),
+                        thickness: 0.5,
+                      ),
                       const SizedBox(height: 8),
-
                       BlocBuilder<SelectSlotCubit, SelectSlotsStates>(
                         builder: (context, state) {
                           if (state is SelectSlotLoading) {
@@ -462,32 +485,39 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                               child: Center(child: CircularProgressIndicator()),
                             );
                           }
-
                           if (state is SelectSlotFailure) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: Text(state.error, style: const TextStyle(color: Colors.red)),
+                              child: Text(
+                                state.error,
+                                style: const TextStyle(color: Colors.red),
+                              ),
                             );
                           }
-
                           if (state is SelectSlotLoaded) {
                             final slot = state.selectSlotModel.slot;
                             final wallet = state.selectSlotModel.wallet;
 
-                            final sessionCoins   = wallet?.sessionCoins ?? 0;   // cost: 480
-                            final availableCoins = wallet?.availableCoins ?? 0; // balance before: 0
-                            final balanceCoins   = wallet?.balanceCoins ?? 0;   // after: -480
-                            final enough         = wallet?.enoughBalance ?? false;
-
+                            final sessionCoins = wallet?.sessionCoins ?? 0;
+                            final availableCoins = wallet?.availableCoins ?? 0;
+                            final balanceCoins = wallet?.balanceCoins ?? 0;
+                            final enough = wallet?.enoughBalance ?? false;
+                            enoughBalance.value = enough; // or false
                             Row _row(String label, int coins) => Row(
                               children: [
                                 Text(label),
                                 const Spacer(),
-                                Image.asset('assets/images/GoldCoins.png', width: 16, height: 16),
+                                Image.asset(
+                                  'assets/images/GoldCoins.png',
+                                  width: 16,
+                                  height: 16,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   coins.toString(),
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             );
@@ -499,33 +529,55 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                 const SizedBox(height: 8),
                                 _row('Your Balance', availableCoins),
                                 const SizedBox(height: 8),
-                                Divider(color: Colors.grey.withOpacity(0.3), thickness: 0.5),
+                                Divider(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  thickness: 0.5,
+                                ),
                                 const SizedBox(height: 8),
-                                _row('Remained', balanceCoins), // can be negative
+                                _row(
+                                  'Remained',
+                                  balanceCoins,
+                                ), // can be negative
 
                                 const SizedBox(height: 16),
-                                // Slot summary line (nice UX)
                                 if (slot != null) ...[
                                   Text(
                                     'Selected: ${slot.date ?? selectedDate ?? ""} • ${slot.timeLabel ?? selectedTime ?? ""}',
-                                    style: const TextStyle(fontSize: 12, color: Color(0xFF666666)),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF666666),
+                                    ),
                                   ),
                                   const SizedBox(height: 8),
                                 ],
                                 const SizedBox(height: 4),
-                                if (!enough)
-                                  const Text(
-                                    'You do not have enough coins to book this session.',
-                                    style: TextStyle(fontSize: 12, color: Color(0xFF9A0000)),
-                                  ),
+                                // if (!enough) ...[
+                                //   const Text(
+                                //     'Your wallet is not enough coins',
+                                //     style: TextStyle(
+                                //       fontSize: 12,
+                                //       color: Color(0xFF9A0000),
+                                //       fontFamily: 'segeo',
+                                //     ),
+                                //   ),
+                                //   const SizedBox(height: 4),
+                                //   Text(
+                                //     'Required: $enough • Available: $availableCoins',
+                                //     style: const TextStyle(
+                                //       fontSize: 12,
+                                //       color: Colors.black54,
+                                //       fontFamily: 'segeo',
+                                //     ),
+                                //   ),
+                                // ],
                               ],
                             );
                           }
-
-                          // Nothing yet selected
                           return const Padding(
                             padding: EdgeInsets.symmetric(vertical: 8),
-                            child: Text('Pick a day and time to see session cost and wallet details.'),
+                            child: Text(
+                              'Pick a day and time to see session cost and wallet details.',
+                            ),
                           );
                         },
                       ),
@@ -541,27 +593,86 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: BlocConsumer<SessionBookingCubit, SessionBookingStates>(
-            listener: (context, state) {
-              if (state is SessionBookingLoaded) {
-                CustomSnackBar1.show(context, state.sessionBookingModel.message ?? "");
-              } else if (state is SessionBookingFailure) {
-                CustomSnackBar1.show(context, state.error ?? "");
-              }
-            },
-            builder: (context, state) {
-              final isLoading = state is SessionBookingLoading;
-              return CustomAppButton1(
-                text: 'Book Session',
-                isLoading: isLoading,
-                onPlusTap: () {
-                  if (selectedSlotId != null) {
-                    context.read<SessionBookingCubit>().sessionBooking(
-                      widget.data.userId ?? 0,
-                      selectedSlotId!, // slot id
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: enoughBalance,
+            builder: (context, value, child) {
+              final enough_coins = value ?? false;
+              return BlocConsumer<SessionBookingCubit, SessionBookingStates>(
+                listener: (context, state) {
+                  if (state is SessionBookingLoaded) {
+                    CustomSnackBar1.show(
+                      context,
+                      state.sessionBookingModel.message ?? "",
                     );
+                  } else if (state is SessionBookingFailure) {
+                    CustomSnackBar1.show(context, state.error ?? "");
                   }
+                },
+                builder: (context, state) {
+                  final isLoading = state is SessionBookingLoading;
+                  return CustomAppButton1(
+                    text: 'Book Session',
+                    isLoading: isLoading,
+                    onPlusTap: enough_coins
+                        ? () {
+                            if (selectedSlotId != null) {
+                              context
+                                  .read<SessionBookingCubit>()
+                                  .sessionBooking(
+                                    widget.data.userId ?? 0,
+                                    selectedSlotId!, // slot id
+                                  );
+                            }
+                          }
+                        : () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                title: const Text(
+                                  "Insufficient Coins",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                                content: const Text(
+                                  "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text(
+                                      "Cancel",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      context.push("/buy_coins_screens");
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text("Purchase Coins"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                  );
                 },
               );
             },
@@ -570,5 +681,4 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       ),
     );
   }
-
 }

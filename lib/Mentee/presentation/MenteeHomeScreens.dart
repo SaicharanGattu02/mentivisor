@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
@@ -187,7 +188,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         ),
                   actions: [
                     isGuest
-                        ? Padding(
+                        ?
+                    Padding(
                             padding: const EdgeInsets.only(right: 16.0),
                             child: CustomAppButton1(
                               text: "Sign Up",
@@ -198,19 +200,20 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                             ),
                           )
-                        :Padding(
-                          padding: const EdgeInsets.only(right: 40),
-                          child: IconButton(
-                                                icon: Image.asset(
-                          "images/crownonly.png",
-                          height: 21,
-                          width: 26,
-                                                ),
-                                                onPressed: () {
-                          context.push('/mentor_dashboard');
-                                                },
-                                              ),
-                        ),
+                        :SizedBox.shrink()
+                    // Padding(
+                    //       padding: const EdgeInsets.only(right: 40),
+                    //       child: IconButton(
+                    //                             icon: Image.asset(
+                    //       "assets/images/crownonly.png",
+                    //       height: 21,
+                    //       width: 26,
+                    //                             ),
+                    //                             onPressed: () {
+                    //       context.push('/mentor_dashboard');
+                    //                             },
+                    //                           ),
+                    //     ),
                     // IconButton(
                     //   icon: const Icon(
                     //     Icons.notifications_outlined,
@@ -391,6 +394,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           ValueListenableBuilder<String>(
                             valueListenable: _mentorStatus,
                             builder: (context, status, _) {
+                              print("status:${status}");
                               if (status != "approval") {
                                 return Container(
                                   padding: const EdgeInsets.symmetric(
@@ -417,7 +421,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       ),
                                     ),
                                     onTap: () {
-                                      if (status == "") {
+                                      AppLogger.info("Status :${status}");
+                                      if (status == ""|| status=="none") {
                                         context.push('/becomementorscreen');
                                       } else if (status == "inreview") {
                                         context.push('/in_review');

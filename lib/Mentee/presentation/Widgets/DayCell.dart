@@ -59,8 +59,8 @@ class DayCell extends StatelessWidget {
             child: Text(
               dayNum,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
                 color: selected ? const Color(0xff2D5BFF) : const Color(0xff333333),
               ),
             ),

@@ -21,7 +21,7 @@ class CustomSnackBar1 {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top + 16, // below status bar
+        top: MediaQuery.of(context).padding.top + 16,
         left: 16,
         right: 16,
         child: Material(

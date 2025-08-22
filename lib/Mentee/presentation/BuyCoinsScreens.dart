@@ -12,6 +12,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../Components/CustomSnackBar.dart';
 import '../../services/AuthService.dart';
+import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../data/cubits/Payment/payment_cubit.dart';
 import '../data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 
@@ -332,6 +333,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                       } else if (state is PaymentVerified) {
                         context.read<CoinsPackCubit>().fetchCoinsPack();
                         context.read<WalletmoneyCubit>().getWallet(0);
+                        context.read<MenteeProfileCubit>().fetchMenteeProfile();
                         context.pushReplacement(
                           '/payment_success'
                           '?title=${Uri.encodeComponent("Payment is Done Successfully")}',

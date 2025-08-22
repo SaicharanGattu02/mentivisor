@@ -58,499 +58,390 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
               return Center(
                 child: CircularProgressIndicator(color: primarycolor),
               );
-            } else if (state is SessionCompletedLoaded) {
+            }else if (state is SessionCompletedLoaded) {
+              // Get the list safely
+              final sessions = state.completedSessionModel.data ?? [];
+
+              // ✅ EMPTY STATE (count: 0, data: [])
+              if (sessions.isEmpty) {
+                return CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            // Make sure this asset path exists in pubspec.yaml
+                            // flutter:
+                            //   assets:
+                            //     - assets/nodata/no_data.png
+                            // (Keep your existing asset path if different)
+                            Image(
+                              image: AssetImage("assets/nodata/no_data.png"),
+                              height: 120,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              "No Sessions Available",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'segeo',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              // ✅ NON-EMPTY: your original UI (unchanged except tiny safe-returns)
               return CustomScrollView(
                 slivers: [
                   SliverPadding(
                     padding: const EdgeInsets.all(16.0),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final completeSessions =
-                            state.completedSessionModel.data?[index];
+                      delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                          final completeSessions = sessions[index];
 
-                        if (completeSessions == null) {
-                          return const SizedBox.shrink();
-                        }
-                        final isReviewing =
-                            _selectedSessionId == completeSessions.id;
+                          if (completeSessions == null) {
+                            // Safe no-op widget instead of `return ;`
+                            return const SizedBox.shrink();
+                          }
 
-                        return Column(
-                          spacing: 12,
-                          children: [
-                            if (isReviewing &&
-                                completeSessions.hasRating == false) ...[
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade200,
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Row(
-                                    //   children: [
-                                    //     Text(
-                                    //       completeSessions.topics?.isNotEmpty ??
-                                    //               false
-                                    //           ? completeSessions.topics!
-                                    //           : "No topics specified",
-                                    //       style: TextStyle(
-                                    //         fontSize:
-                                    //             18, // Slightly larger for emphasis
-                                    //         fontWeight: FontWeight.bold,
-                                    //         fontFamily: "segeo",
-                                    //         color: Colors.black87,
-                                    //       ),
-                                    //     ),
-                                    //     const SizedBox(height: 6),
-                                    //
-                                    //     Text(
-                                    //       "With ${capitalize(completeSessions.mentor?.name ?? "Unknown Mentor")}",
-                                    //       style: TextStyle(
-                                    //         fontSize: 14,
-                                    //         fontFamily: "segeo",
-                                    //         color: Colors.grey.shade600,
-                                    //       ),
-                                    //     ),
-                                    //     const SizedBox(height: 12),
-                                    //     Wrap(
-                                    //       spacing: 12,
-                                    //       runSpacing: 8,
-                                    //       children: [
-                                    //         _buildInfoChip(
-                                    //           icon: Icons.calendar_today,
-                                    //           label:
-                                    //               completeSessions.date ??
-                                    //               "N/A",
-                                    //           color: Colors.blue.shade50,
-                                    //           textColor: Colors.blue.shade700,
-                                    //         ),
-                                    //         _buildInfoChip(
-                                    //           icon: Icons.access_time,
-                                    //           label:
-                                    //               "${completeSessions.startTime ?? 'N/A'} - ${completeSessions.endTime ?? 'N/A'}",
-                                    //           color: Colors.blue.shade50,
-                                    //           textColor: Colors.blue.shade700,
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //     Column(
-                                    //       children: [
-                                    //         ClipOval(
-                                    //           child: CachedNetworkImage(
-                                    //             width: 56, // Consistent size
-                                    //             height: 56,
-                                    //             imageUrl:
-                                    //                 completeSessions
-                                    //                     .mentor
-                                    //                     ?.mentorProfile ??
-                                    //                 "",
-                                    //             fit: BoxFit.cover,
-                                    //             placeholder: (context, url) =>
-                                    //                 Container(
-                                    //                   width: 56,
-                                    //                   height: 56,
-                                    //                   color:
-                                    //                       Colors.grey.shade200,
-                                    //                   child: const Center(
-                                    //                     child: CircularProgressIndicator(
-                                    //                       valueColor:
-                                    //                           AlwaysStoppedAnimation<
-                                    //                             Color
-                                    //                           >(Colors.blue),
-                                    //                     ),
-                                    //                   ),
-                                    //                 ),
-                                    //             errorWidget:
-                                    //                 (
-                                    //                   context,
-                                    //                   url,
-                                    //                   error,
-                                    //                 ) => Container(
-                                    //                   width: 56,
-                                    //                   height: 56,
-                                    //                   color:
-                                    //                       Colors.grey.shade200,
-                                    //                   child: Image.asset(
-                                    //                     "assets/images/profile.png",
-                                    //                     fit: BoxFit.cover,
-                                    //                   ),
-                                    //                 ),
-                                    //           ),
-                                    //         ),
-                                    //         CircleAvatar(
-                                    //           radius: 20,
-                                    //           backgroundColor: Colors.white,
-                                    //           child: const Icon(
-                                    //             Icons.check_circle_outline,
-                                    //             color: Colors.green,
-                                    //             size: 30,
-                                    //           ),
-                                    //         ),
-                                    //         SizedBox(height: 12),
-                                    //         Text(
-                                    //           'Session completed',
-                                    //           style: TextStyle(
-                                    //             color: Color(0xff444444),
-                                    //             fontWeight: FontWeight.w600,
-                                    //             fontFamily: 'segeo',
-                                    //             fontSize: 14,
-                                    //           ),
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    SizedBox(height: 12),
-                                    Text(
-                                      "Rate your Experience",
-                                      style: TextStyle(
-                                        color: Color(0xff666666),
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    SizedBox(height: 12),
+                          final isReviewing = _selectedSessionId == completeSessions.id;
 
-                                    Row(
-                                      children: List.generate(5, (i) {
-                                        final starIndex = i + 1;
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedRating = starIndex;
-                                            });
-                                          },
-                                          child: Icon(
-                                            selectedRating >= starIndex
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            size: 42,
-                                            color: Colors.amber,
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                    const SizedBox(height: 12),
-
-                                    TextField(
-                                      controller: feedbackController,
-                                      maxLines: 3,
-                                      decoration: InputDecoration(
-                                        hintText: 'Explain here (optional)',
-                                        filled: true,
-                                        fillColor: Color(0xFFF5F5F5),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            24,
-                                          ),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                      ),
-                                    ),
-
-                                    const SizedBox(height: 12),
-
-                                    BlocConsumer<
-                                      SubmitReviewCubit,
-                                      SubmitReviewStates
-                                    >(
-                                      listener: (context, reviewSubmit) {
-                                        if (reviewSubmit
-                                            is SubmitReviewSuccess) {
-                                          feedbackController.clear();
-                                          selectedRating = 0;
-                                          context
-                                              .read<SessionCompletedCubit>()
-                                              .sessionComplete();
-                                        } else if (reviewSubmit
-                                            is SubmitReviewFailure) {
-                                          CustomSnackBar1.show(
-                                            context,
-                                            reviewSubmit.error,
-                                          );
-                                        }
-                                      },
-                                      builder: (context, reviewSubmit) {
-                                        return CustomAppButton1(
-                                          isLoading:
-                                              reviewSubmit
-                                                  is SubmitReviewLoading,
-                                          text: "Submit",
-                                          onPlusTap: () {
-                                            if (selectedRating == 0) {
-                                              CustomSnackBar1.show(
-                                                context,
-                                                "Please select a rating",
-                                              );
-                                              return;
-                                            }
-
-                                            final Map<String, dynamic> data = {
-                                              "rating": selectedRating,
-                                              "feedback": feedbackController
-                                                  .text
-                                                  .trim(),
-                                            };
-
-                                            context
-                                                .read<SubmitReviewCubit>()
-                                                .submitReview(
-                                                  data,
-                                                  completeSessions.id ?? 0,
-                                                );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: SizeConfig.screenWidth * 0.6,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              completeSessions
-                                                          .topics
-                                                          ?.isNotEmpty ??
-                                                      false
-                                                  ? completeSessions.topics!
-                                                  : "No topics specified",
-                                              style: TextStyle(
-                                                fontSize:
-                                                    18, // Slightly larger for emphasis
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "segeo",
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-
-                                            Text(
-                                              "With ${capitalize(completeSessions.mentor?.name ?? "Unknown Mentor")}",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: "segeo",
-                                                color: Colors.grey.shade600,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            Wrap(
-                                              spacing: 12,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildInfoChip(
-                                                  icon: Icons.calendar_today,
-                                                  label:
-                                                      completeSessions.date ??
-                                                      "N/A",
-                                                  color: Colors.blue.shade50,
-                                                  textColor:
-                                                      Colors.blue.shade700,
-                                                ),
-                                                _buildInfoChip(
-                                                  icon: Icons.access_time,
-                                                  label:
-                                                      "${completeSessions.startTime ?? 'N/A'} - ${completeSessions.endTime ?? 'N/A'}",
-                                                  color: Colors.blue.shade50,
-                                                  textColor:
-                                                      Colors.blue.shade700,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      Container(
-                                        width: SizeConfig.screenWidth * 0.25,
-                                        child: Column(
-                                          children: [
-                                            ClipOval(
-                                              child: CachedNetworkImage(
-                                                width: 56, // Consistent size
-                                                height: 56,
-                                                imageUrl:
-                                                    completeSessions
-                                                        .mentor
-                                                        ?.mentorProfile ??
-                                                    "",
-                                                fit: BoxFit.cover,
-                                                placeholder: (context, url) =>
-                                                    Container(
-                                                      width: 56,
-                                                      height: 56,
-                                                      color:
-                                                          Colors.grey.shade200,
-                                                      child: const Center(
-                                                        child: CircularProgressIndicator(
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                Color
-                                                              >(Colors.blue),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                errorWidget:
-                                                    (
-                                                      context,
-                                                      url,
-                                                      error,
-                                                    ) => Container(
-                                                      width: 56,
-                                                      height: 56,
-                                                      color:
-                                                          Colors.grey.shade200,
-                                                      child: Image.asset(
-                                                        "assets/images/profile.png",
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                              ),
-                                            ),
-                                            CircleAvatar(
-                                              radius: 20,
-                                              backgroundColor: Colors.white,
-                                              child: const Icon(
-                                                Icons.check_circle_outline,
-                                                color: Colors.green,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            SizedBox(height: 12),
-                                            Text(
-                                              'Session completed',
-                                              style: TextStyle(
-                                                color: Color(0xff444444),
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'segeo',
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                          return Column(
+                            spacing: 12,
+                            children: [
+                              if (isReviewing && completeSessions.hasRating == false) ...[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade200,
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 16),
-                                  Row(
-                                    spacing: 10,
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        height: 48,
-                                        child: OutlinedButton.icon(
-                                          onPressed: () {
-                                            _showReportSheet(
-                                              context,
-                                              completeSessions.id ?? 0,
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            Icons.flag,
-                                            color: Color(0xFF8B5CF6),
-                                            size: 16,
-                                          ),
-                                          label: Text(
-                                            "Report Session",
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontFamily: "segeo",
-                                              color: Colors.black87,
+                                      const SizedBox(height: 12),
+                                      const Text(
+                                        "Rate your Experience",
+                                        style: TextStyle(
+                                          color: Color(0xff666666),
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        children: List.generate(5, (i) {
+                                          final starIndex = i + 1;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedRating = starIndex;
+                                              });
+                                            },
+                                            child: Icon(
+                                              selectedRating >= starIndex
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              size: 42,
+                                              color: Colors.amber,
                                             ),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            side: BorderSide(
-                                              color: Colors.grey.shade300,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal: 12,
-                                            ),
+                                          );
+                                        }),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextField(
+                                        controller: feedbackController,
+                                        maxLines: 3,
+                                        decoration: InputDecoration(
+                                          hintText: 'Explain here (optional)',
+                                          filled: true,
+                                          fillColor: const Color(0xFFF5F5F5),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(24),
+                                            borderSide: BorderSide.none,
                                           ),
                                         ),
                                       ),
-                                      if (completeSessions.hasRating ==
-                                          false) ...[
+                                      const SizedBox(height: 12),
+                                      BlocConsumer<SubmitReviewCubit, SubmitReviewStates>(
+                                        listener: (context, reviewSubmit) {
+                                          if (reviewSubmit is SubmitReviewSuccess) {
+                                            feedbackController.clear();
+                                            selectedRating = 0;
+                                            context
+                                                .read<SessionCompletedCubit>()
+                                                .sessionComplete();
+                                          } else if (reviewSubmit is SubmitReviewFailure) {
+                                            CustomSnackBar1.show(
+                                              context,
+                                              reviewSubmit.error,
+                                            );
+                                          }
+                                        },
+                                        builder: (context, reviewSubmit) {
+                                          return CustomAppButton1(
+                                            isLoading:
+                                            reviewSubmit is SubmitReviewLoading,
+                                            text: "Submit",
+                                            onPlusTap: () {
+                                              if (selectedRating == 0) {
+                                                CustomSnackBar1.show(
+                                                  context,
+                                                  "Please select a rating",
+                                                );
+                                                return;
+                                              }
+
+                                              final Map<String, dynamic> data = {
+                                                "rating": selectedRating,
+                                                "feedback": feedbackController.text.trim(),
+                                              };
+
+                                              context
+                                                  .read<SubmitReviewCubit>()
+                                                  .submitReview(
+                                                data,
+                                                completeSessions.id ?? 0,
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+
+                              // ---- Your original session card (unchanged) ----
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: const EdgeInsets.all(8),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: SizeConfig.screenWidth * 0.6,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                completeSessions.topics?.isNotEmpty ?? false
+                                                    ? completeSessions.topics!
+                                                    : "No topics specified",
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "segeo",
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Text(
+                                                "With ${capitalize(completeSessions.mentor?.name ?? "Unknown Mentor")}",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: "segeo",
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Wrap(
+                                                spacing: 12,
+                                                runSpacing: 8,
+                                                children: [
+                                                  _buildInfoChip(
+                                                    icon: Icons.calendar_today,
+                                                    label: completeSessions.date ?? "N/A",
+                                                    color: Colors.blue.shade50,
+                                                    textColor: Colors.blue.shade700,
+                                                  ),
+                                                  _buildInfoChip(
+                                                    icon: Icons.access_time,
+                                                    label:
+                                                    "${completeSessions.startTime ?? 'N/A'} - ${completeSessions.endTime ?? 'N/A'}",
+                                                    color: Colors.blue.shade50,
+                                                    textColor: Colors.blue.shade700,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: SizeConfig.screenWidth * 0.25,
+                                          child: Column(
+                                            children: [
+                                              ClipOval(
+                                                child: CachedNetworkImage(
+                                                  width: 56,
+                                                  height: 56,
+                                                  imageUrl: completeSessions
+                                                      .mentor?.mentorProfile ??
+                                                      "",
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) => Container(
+                                                    width: 56,
+                                                    height: 56,
+                                                    color: Colors.grey.shade200,
+                                                    child: const Center(
+                                                      child: CircularProgressIndicator(
+                                                        valueColor:
+                                                        AlwaysStoppedAnimation<Color>(
+                                                          Colors.blue,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  errorWidget: (context, url, error) =>
+                                                      Container(
+                                                        width: 56,
+                                                        height: 56,
+                                                        color: Colors.grey.shade200,
+                                                        child: Image.asset(
+                                                          "assets/images/profile.png",
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                ),
+                                              ),
+                                              const CircleAvatar(
+                                                radius: 20,
+                                                backgroundColor: Colors.white,
+                                                child: Icon(
+                                                  Icons.check_circle_outline,
+                                                  color: Colors.green,
+                                                  size: 30,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              const Text(
+                                                'Session completed',
+                                                style: TextStyle(
+                                                  color: Color(0xff444444),
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: 'segeo',
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      spacing: 10,
+                                      children: [
                                         SizedBox(
                                           height: 48,
-                                          child: OutlinedButton(
+                                          child: OutlinedButton.icon(
                                             onPressed: () {
-                                              setState(() {
-                                                _selectedSessionId =
-                                                    completeSessions.id;
-                                              });
+                                              _showReportSheet(
+                                                context,
+                                                completeSessions.id ?? 0,
+                                              );
                                             },
-                                            style: OutlinedButton.styleFrom(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              side: BorderSide(
-                                                color: Colors.grey.shade300,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 8,
-                                                    horizontal: 12,
-                                                  ),
+                                            icon: const Icon(
+                                              Icons.flag,
+                                              color: Color(0xFF8B5CF6),
+                                              size: 16,
                                             ),
-                                            child: Text(
-                                              "Rate Us",
+                                            label: const Text(
+                                              "Report Session",
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 fontFamily: "segeo",
                                                 color: Colors.black87,
                                               ),
                                             ),
+                                            style: OutlinedButton.styleFrom(
+                                              visualDensity: VisualDensity.compact,
+                                              side: BorderSide(
+                                                color: Colors.grey.shade300,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 8,
+                                                horizontal: 12,
+                                              ),
+                                            ),
                                           ),
                                         ),
+                                        if (completeSessions.hasRating == false) ...[
+                                          SizedBox(
+                                            height: 48,
+                                            child: OutlinedButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  _selectedSessionId =
+                                                      completeSessions.id;
+                                                });
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                visualDensity: VisualDensity.compact,
+                                                side: BorderSide(
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                padding: const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                  horizontal: 12,
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                "Rate Us",
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: "segeo",
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ],
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      }, childCount: state.completedSessionModel.data?.length ?? 0),
+                            ],
+                          );
+                        },
+                        childCount: sessions.length,
+                      ),
                     ),
                   ),
                 ],
               );
-            } else if (state is SessionCompletedFailure) {
+            }
+            else if (state is SessionCompletedFailure) {
               return Text(state.msg);
             }
             return Text("No Data");
@@ -700,6 +591,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                         if (state is SessionReportSuccess) {
                           context.pop();
                         } else if (state is SubmitReportFailure) {
+                          debugPrint("errorrrrr:${state.error ?? ""}");
                           CustomSnackBar1.show(context, state.error ?? "");
                         }
                       },

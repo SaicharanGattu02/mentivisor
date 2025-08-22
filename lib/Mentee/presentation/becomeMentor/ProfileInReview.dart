@@ -54,13 +54,15 @@ class _InReviewState extends State<InReview> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: CustomAppButton1(
-          text: "Back To Home",
-          onPlusTap: () {
-            context.pop();
-          },
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: CustomAppButton1(
+            text: "Back To Home",
+            onPlusTap: () {
+              context.pop();
+            },
+          ),
         ),
       ),
     );

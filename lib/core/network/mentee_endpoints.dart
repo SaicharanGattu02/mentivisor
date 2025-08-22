@@ -39,7 +39,7 @@ class APIEndpointUrls {
   static const String task_by_states = "${userUrl}/tasks/stats";
   static const String task_update = "${userUrl}/tasks/";
   static const String task_delete = "${userUrl}/tasks/";
-  static const String add_task = "${userUrl}/tasks/";
+  static const String add_task = "${userUrl}/tasks";
   static const String add_book = "${userUrl}add-book";
   static const String get_campuses = "${apiUrl}campuses";
   static const String get_years = "${apiUrl}years";

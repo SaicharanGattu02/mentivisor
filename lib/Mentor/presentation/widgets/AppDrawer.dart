@@ -58,28 +58,28 @@ class AppDrawer extends StatelessWidget {
                                           state is MentorProfile1Loaded
                                           ? state.mentorProfileModel
                                           : null;
-                                      return Row(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 30,
-                                            backgroundImage:
-                                                CachedNetworkImageProvider(
-                                                  user_data?.data?.profilePic ??
-                                                      "",
-                                                ),
-                                          ),
-                                          const SizedBox(width: 14),
-                                          Text(
-                                            user_data?.data?.name ?? "",
-                                            style: const TextStyle(
-                                              fontFamily: 'segeo',
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600,
-                                              color: _labelBlue,
+                                      return
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 20,
+                                              backgroundImage: (user_data?.data?.profilePic != null &&
+                                                  user_data!.data!.profilePic!.isNotEmpty)
+                                                  ? CachedNetworkImageProvider(user_data.data!.profilePic!)
+                                                  : const AssetImage("images/profile.png") as ImageProvider,
                                             ),
-                                          ),
-                                        ],
-                                      );
+                                            const SizedBox(width: 14),
+                                            Text(
+                                              user_data?.data?.name ?? "",
+                                              style: const TextStyle(
+                                                fontFamily: 'segeo',
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+
+                                              ),
+                                            ),
+                                          ],
+                                        );
                                     },
                                   ),
                             ),

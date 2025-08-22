@@ -550,6 +550,7 @@ import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
 import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_states.dart';
+import '../../data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddResourceScreen extends StatefulWidget {
@@ -1020,48 +1021,54 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 24),
-              BlocConsumer<AddResourceCubit, AddResourceStates>(
-                listener: (context, state) {
-                  if (state is AddResourceLoaded) {
-                    context.pop();
-                  } else if (state is AddResourceFailure) {
-                    CustomSnackBar1.show(context, state.error);
-                  }
-                },
-                builder: (context, state) {
-                  final isLoading = state is AddResourceLoading;
-                  return CustomAppButton1(
-                    text: "Submit",
-                    isLoading: isLoading,
-                    onPlusTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        final imagefile = _imageFile.value;
-                        final file = _pickedFile.value;
-                        final isHighlighted = _isHighlighted.value;
-                        final anonymous = _anonymousNotifier.value;
 
-                        if (imagefile == null && file == null) {
-                          return;
-                        }
-
-                        Map<String, dynamic> data = {
-                          "name": _resourceNameController.text,
-                          "description": _aboutController.text,
-                          "tag[]": _selectedTags,
-                          "image": imagefile!.path,
-                          "file_pdf": file!.path,
-                        };
-                        context.read<AddResourceCubit>().addResource(data);
-                      }
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
             ],
           ),
         ),
+      ),
+      bottomNavigationBar:  BlocConsumer<AddResourceCubit, AddResourceStates>(
+        listener: (context, state) {
+          if (state is AddResourceLoaded) {
+            context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
+            context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
+            context.pop();
+          } else if (state is AddResourceFailure) {
+            CustomSnackBar1.show(context, state.error);
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state is AddResourceLoading;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16,0,16,20),
+              child: CustomAppButton1(
+                text: "Submit",
+                isLoading: isLoading,
+                onPlusTap: () {
+                  if (_formKey.currentState!.validate()) {
+                    final imagefile = _imageFile.value;
+                    final file = _pickedFile.value;
+                    final isHighlighted = _isHighlighted.value;
+                    final anonymous = _anonymousNotifier.value;
+
+                    if (imagefile == null && file == null) {
+                      return;
+                    }
+
+                    Map<String, dynamic> data = {
+                      "name": _resourceNameController.text,
+                      "description": _aboutController.text,
+                      "tag[]": _selectedTags,
+                      "image": imagefile!.path,
+                      "file_pdf": file!.path,
+                    };
+                    context.read<AddResourceCubit>().addResource(data);
+                  }
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }

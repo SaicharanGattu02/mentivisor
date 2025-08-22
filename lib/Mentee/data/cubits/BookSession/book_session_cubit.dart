@@ -7,20 +7,17 @@ class SessionBookingCubit extends Cubit<SessionBookingStates> {
   SessionBookingCubit(this.sessionBookingRepo)
     : super(SessionBookingInitially());
 
-  Future<void> sessionBooking(
-    int mentor_id,
-    int slot_id
-  ) async {
+  Future<void> sessionBooking(int mentor_id, int slot_id) async {
     emit(SessionBookingLoading());
     try {
       final response = await sessionBookingRepo.sessionBooking(
         mentor_id,
-        slot_id
+        slot_id,
       );
       if (response != null && response.status == true) {
         emit(SessionBookingLoaded(response));
       } else {
-        emit(SessionBookingFailure("Something went wrong!"));
+        emit(SessionBookingFailure(response?.message ?? ""));
       }
     } catch (e) {
       emit(SessionBookingFailure(e.toString()));

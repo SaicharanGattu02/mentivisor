@@ -204,7 +204,7 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
               ),
             ),
             const SizedBox(height: 10),
-            CustomAppButton1(text: "Okay", onPlusTap: _submitForm),
+            SafeArea(child: CustomAppButton1(text: "Okay", onPlusTap: _submitForm)),
           ],
         ),
       ),

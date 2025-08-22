@@ -75,89 +75,91 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       backgroundColor: const Color(0xfff6faff),
       body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF9333EA), Color(0xFF3B82F6)],
+        child: SingleChildScrollView(physics: NeverScrollableScrollPhysics(),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF9333EA), Color(0xFF3B82F6)],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  child: Icon(Icons.school, color: Colors.white, size: 32),
                 ),
-                child: Icon(Icons.school, color: Colors.white, size: 32),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "Join Mentivisor",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                const SizedBox(height: 20),
+                const Text(
+                  "Join Mentivisor",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 28),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 20,
-                      color: Colors.black12.withOpacity(0.05),
-                    ),
-                  ],
+                const SizedBox(height: 28),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 20,
+                        color: Colors.black12.withOpacity(0.05),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      CommonPasswordTextField(
+                        hint: "Enter your Email",
+                        icon: Icons.email_outlined,
+                        isPassword: false,
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        showError: showEmailError,
+                        errorKey: 'email_error',
+                        errorMsg: emailError,
+                      ),
+                      const SizedBox(height: 12),
+                      CommonPasswordTextField(
+                        hint: "Enter your mobile number",
+                        icon: Icons.phone_android_outlined,
+                        isPassword: false,
+                        controller: mobileController,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(10),
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        showError: showMobileError,
+                        errorKey: 'mobile_error',
+                        errorMsg: mobileError,
+                      ),
+                      const SizedBox(height: 12),
+                      CommonPasswordTextField(
+                        hint: "Enter your password",
+                        icon: Icons.lock_outline,
+                        isPassword: true,
+                        controller: passwordController,
+                        showError: showPasswordError,
+                        errorKey: 'password_error',
+                        errorMsg: passwordError,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    CommonPasswordTextField(
-                      hint: "Enter your Email",
-                      icon: Icons.email_outlined,
-                      isPassword: false,
-                      keyboardType: TextInputType.emailAddress,
-                      controller: emailController,
-                      showError: showEmailError,
-                      errorKey: 'email_error',
-                      errorMsg: emailError,
-                    ),
-                    const SizedBox(height: 12),
-                    CommonPasswordTextField(
-                      hint: "Enter your mobile number",
-                      icon: Icons.phone_android_outlined,
-                      isPassword: false,
-                      controller: mobileController,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(10),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      showError: showMobileError,
-                      errorKey: 'mobile_error',
-                      errorMsg: mobileError,
-                    ),
-                    const SizedBox(height: 12),
-                    CommonPasswordTextField(
-                      hint: "Enter your password",
-                      icon: Icons.lock_outline,
-                      isPassword: true,
-                      controller: passwordController,
-                      showError: showPasswordError,
-                      errorKey: 'password_error',
-                      errorMsg: passwordError,
-                    ),
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 24),
-            ],
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),

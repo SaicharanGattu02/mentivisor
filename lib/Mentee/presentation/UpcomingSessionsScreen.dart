@@ -11,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
-import '../../utils/spinkittsLoader.dart';
 
 class UpcomingSessionsScreen extends StatefulWidget {
   const UpcomingSessionsScreen({Key? key}) : super(key: key);
@@ -42,202 +41,243 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                 child: CircularProgressIndicator(color: primarycolor),
               );
             } else if (state is UpComingSessionLoaded) {
+              final items = state.upComingSessionModel.data;
+
+              if (items == null || items.isEmpty) {
+                return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Image.asset(
+                      "assets/nodata/no_data.png", // <-- your no-data image path
+                      height: 120,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "No data available",
+                      style: TextStyle(
+                        fontFamily: "segeo",
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                      ],
+                    ),
+                );
+              }
               return CustomScrollView(
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.all(16.0), // Responsive padding
+                    padding: const EdgeInsets.all(16.0),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final upComingSessions =
-                            state.upComingSessionModel.data?[index];
-                        if (upComingSessions == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: SizeConfig.screenWidth * 0.55,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      upComingSessions.topics?.isNotEmpty ??
-                                              false
-                                          ? upComingSessions.topics ?? ""
-                                          : "No topics specified",
-                                      style: TextStyle(
-                                        fontSize:
-                                            18, // Slightly larger for emphasis
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "segeo",
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-
-                                    Text(
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      capitalize(
-                                        upComingSessions.mentor?.name ??
-                                            "Unknown Mentor",
-                                      ),
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: "segeo",
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Wrap(
-                                      spacing: 12,
-                                      runSpacing: 8,
-                                      children: [
-                                        _buildInfoChip(
-                                          icon: Icons.calendar_today,
-                                          label: upComingSessions.date ?? "N/A",
-                                          color: Colors.blue.shade50,
-                                          textColor: Colors.blue.shade700,
-                                        ),
-                                        _buildInfoChip(
-                                          icon: Icons.access_time,
-                                          label:
-                                              "${upComingSessions.startTime ?? 'N/A'} - ${upComingSessions.endTime ?? 'N/A'}",
-                                          color: Colors.blue.shade50,
-                                          textColor: Colors.blue.shade700,
-                                        ),
-                                        _buildInfoChip(
-                                          icon: Icons.videocam,
-                                          label:
-                                              upComingSessions.zoomLink
-                                                      ?.contains("zoom.us") ??
-                                                  false
-                                              ? "Zoom"
-                                              : "Video Call",
-                                          color: Colors.blue.shade50,
-                                          textColor: Colors.blue.shade700,
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: 12),
-                                    OutlinedButton.icon(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.chat_bubble_outline,
-                                        size: 16,
-                                        color: Colors.black87,
-                                      ),
-                                      label: Text(
-                                        "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                      delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                          final upComingSessions = items[index];
+                          if (upComingSessions == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: SizeConfig.screenWidth * 0.525,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        upComingSessions.topics?.isNotEmpty ??
+                                            false
+                                            ? upComingSessions.topics ?? ""
+                                            : "No topics specified",
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
                                           fontFamily: "segeo",
                                           color: Colors.black87,
                                         ),
                                       ),
-                                      style: OutlinedButton.styleFrom(
-                                        side: BorderSide(
-                                          color: Colors.grey.shade300,
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        capitalize(
+                                          upComingSessions.mentor?.name ??
+                                              "Unknown Mentor",
                                         ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 8,
-                                          horizontal: 12,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: "segeo",
+                                          color: Colors.grey.shade600,
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 12),
+                                      Wrap(
+                                        spacing: 12,
+                                        runSpacing: 8,
+                                        children: [
+                                          _buildInfoChip(
+                                            icon: Icons.calendar_today,
+                                            label:
+                                            upComingSessions.date ?? "N/A",
+                                            color: Colors.blue.shade50,
+                                            textColor: Colors.blue.shade700,
+                                          ),
+                                          _buildInfoChip(
+                                            icon: Icons.access_time,
+                                            label:
+                                            "${upComingSessions.startTime ?? 'N/A'} - ${upComingSessions.endTime ?? 'N/A'}",
+                                            color: Colors.blue.shade50,
+                                            textColor: Colors.blue.shade700,
+                                          ),
+                                          _buildInfoChip(
+                                            icon: Icons.videocam,
+                                            label: upComingSessions.zoomLink
+                                                ?.contains("zoom.us") ??
+                                                false
+                                                ? "Zoom"
+                                                : "Video Call",
+                                            color: Colors.blue.shade50,
+                                            textColor: Colors.blue.shade700,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      OutlinedButton.icon(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.chat_bubble_outline,
+                                          size: 16,
+                                          color: Colors.black87,
+                                        ),
+                                        label: Text(
+                                          "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: "segeo",
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(8),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                width: SizeConfig.screenWidth * 0.32,
-                                child: Column(
-                                  children: [
-                                    ClipOval(
-                                      child: CachedNetworkImage(
-                                        width: 56,
-                                        height: 56,
-                                        imageUrl:
-                                            upComingSessions
-                                                .mentor
-                                                ?.mentorProfile ??
-                                            "",
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Container(
+                                Container(
+                                  width: SizeConfig.screenWidth * 0.34,
+                                  child: Column(
+                                    children: [
+                                      ClipOval(
+                                        child: CachedNetworkImage(
                                           width: 56,
                                           height: 56,
-                                          color: Colors.grey.shade200,
-                                          child: const Center(
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                    Colors.blue,
+                                          imageUrl: upComingSessions
+                                              .mentor?.mentorProfile ??
+                                              "",
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                                width: 56,
+                                                height: 56,
+                                                color: Colors.grey.shade200,
+                                                child: const Center(
+                                                  child:
+                                                  CircularProgressIndicator(
+                                                    valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(Colors.blue),
                                                   ),
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                              width: 56,
-                                              height: 56,
-                                              color: Colors.grey.shade200,
-                                              child: Image.asset(
-                                                "assets/images/profile.png",
-                                                fit: BoxFit.cover,
+                                                ),
                                               ),
-                                            ),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                                width: 56,
+                                                height: 56,
+                                                color: Colors.grey.shade200,
+                                                child: Image.asset(
+                                                  "assets/images/profile.png",
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 12),
-                                    CustomAppButton1(
-                                      height: 45,
-                                      width: SizeConfig.screenWidth * 0.32,
-                                      text: "Join Session",
-                                      onPlusTap: () async {
-                                        final url = upComingSessions.zoomLink;
-                                        if (url != null &&
-                                            await canLaunchUrl(
-                                              Uri.parse(url),
-                                            )) {
-                                          await launchUrl(Uri.parse(url));
-                                        } else {
-                                          CustomSnackBar1.show(
-                                            context,
-                                            "Unable to open Zoom link",
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ],
+                                      const SizedBox(height: 12),
+                                      CustomAppButton1(
+                                        height: 45,
+                                        width: SizeConfig.screenWidth * 0.33,
+                                        text: "Join Session",
+                                        onPlusTap: () async {
+                                          final url =
+                                              upComingSessions.zoomLink;
+                                          if (url != null &&
+                                              await canLaunchUrl(
+                                                  Uri.parse(url))) {
+                                            await launchUrl(Uri.parse(url));
+                                          } else {
+                                            CustomSnackBar1.show(
+                                              context,
+                                              "Unable to open Zoom link",
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }, childCount: state.upComingSessionModel.data?.length ?? 0),
+                              ],
+                            ),
+                          );
+                        },
+                        childCount: items.length,
+                      ),
                     ),
                   ),
                 ],
               );
             } else if (state is UpComingSessionFailure) {
-              return Text(state.msg);
+              return Center(
+                child: Text(
+                  state.msg,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: "segeo",
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+              );
             }
-            return Text("No Data");
+            return const Center(
+              child: Text(
+                "No data available",
+                style: TextStyle(
+                  fontFamily: "segeo",
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+            );
           },
         ),
       ),

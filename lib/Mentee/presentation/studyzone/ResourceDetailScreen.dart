@@ -418,18 +418,20 @@ class ResourceDetailScreen extends StatelessWidget {
                       }
                     },
                     builder: (context, state) {
-                      return CustomAppButton1(
-                        isLoading: state is StudyZoneReportLoading,
-                        text: "Submit Report",
-                        onPlusTap: () {
-                          final Map<String, dynamic> data = {
-                            "content_id": studyZoneCampusData.id,
-                            "reason": _selected,
-                          };
-                          context
-                              .read<StudyZoneReportCubit>()
-                              .postStudyZoneReport(data);
-                        },
+                      return SafeArea(
+                        child: CustomAppButton1(
+                          isLoading: state is StudyZoneReportLoading,
+                          text: "Submit Report",
+                          onPlusTap: () {
+                            final Map<String, dynamic> data = {
+                              "content_id": studyZoneCampusData.id,
+                              "reason": _selected,
+                            };
+                            context
+                                .read<StudyZoneReportCubit>()
+                                .postStudyZoneReport(data);
+                          },
+                        ),
                       );
                     },
                   ),

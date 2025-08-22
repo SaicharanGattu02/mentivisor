@@ -29,7 +29,7 @@ class SubmitReviewCubit extends Cubit<SubmitReviewStates> {
       if (response != null && response.status == true) {
         emit(SessionReportSuccess(response));
       } else {
-        emit(SubmitReviewFailure(response?.message ?? ""));
+        emit(SubmitReportFailure(response?.message ?? ""));
       }
     } catch (e) {
       emit(SubmitReviewFailure(e.toString()));

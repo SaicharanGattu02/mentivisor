@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_states.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/AppDrawer.dart';
@@ -102,7 +103,21 @@ class _MentorDashboardState extends State<MentorDashboard> {
               );
             },
           ),
+
           actions: [
+
+            // IconButton(
+            //   icon: Image.asset(
+            //     "assets/images/crownonly.png",
+            //     height: 21,
+            //     width: 26,
+            //   ),
+            //   onPressed: () {
+            //     context.push('/dashboard');
+            //   },
+            // ),
+
+
             IconButton(
               icon: const Icon(
                 Icons.notifications_outlined,

@@ -400,7 +400,7 @@ class _CommunityScreenState extends State<Communityscreen> {
               },
               backgroundColor: Colors.transparent,
               elevation: 0,
-              child: const Icon(Icons.chat_bubble, size: 28),
+              child:  Image.asset("images/ChatCircleDots.png",width:28,height: 28,),
             ),
           );
         },
