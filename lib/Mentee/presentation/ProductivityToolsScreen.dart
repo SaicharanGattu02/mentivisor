@@ -417,14 +417,26 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                   final tasks = taskState.productToolTaskByDateModel.tasks ?? [];
 
                                   if (tasks.isEmpty) {
-                                    return const Center(
-                                      child: Text(
-                                        'No tasks available',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'segeo',
-                                          color: Color(0xff666666),
-                                        ),
+                                    return Container(
+                                      height: 160,
+                                      alignment: Alignment.center,
+                                      child: Column(
+                                        children: [
+                                          Center(
+                                            child: Image.asset(
+                                              "assets/nodata/no_data.png",
+                                            ),
+                                          ),
+                                          Text(
+                                            "No Tasks available",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'segeo',
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   }
@@ -535,9 +547,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                   context: context,
                                                   builder: (context) => AlertDialog(
                                                     title: const Text('Delete Task'),
-                                                    content: Text('Are you sure you want to delete "${task.title}"?'),
+                                                    content: Text('Are you sure you want to delete \n"${task.title}"?'),
                                                     actions: [
                                                       Row(
+
                                                         children: [
                                                           Expanded(
                                                             child: CustomOutlinedButton(

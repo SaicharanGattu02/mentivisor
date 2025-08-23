@@ -286,7 +286,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                     final communityposts =
                         communityPostsModel.data?.communityposts;
                     if (communityposts?.length == 0) {
-                      return Center(
+                      return
+                        Center(
                         child: Column(
                           spacing: 10,
                           mainAxisAlignment: MainAxisAlignment.center,

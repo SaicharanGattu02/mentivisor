@@ -34,7 +34,7 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: widget.title ?? "", actions: []),
+      appBar: CustomAppBar1(title:"Exclusive Services", actions: []),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child:

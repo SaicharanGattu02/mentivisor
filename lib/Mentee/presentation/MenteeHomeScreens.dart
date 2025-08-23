@@ -407,7 +407,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     visualDensity: VisualDensity.compact,
-                                    leading: Image.asset(
+                                    leading:
+                                    Image.asset(
                                       "assets/icons/mentor.png",
                                       width: 24,
                                       height: 24,

@@ -378,25 +378,25 @@ class _WalletScreenState extends State<WalletScreen> {
                               [];
 
                           if (coinsHistoryList.isEmpty) {
-                            return Container(
+                              return Container(
                               height: 160,
                               alignment: Alignment.center,
                               child: Column(
                                 children: [
                                   Center(
                                     child: Image.asset(
-                                      "assets/nodata/nodata_achievement.png",
+                                      "assets/nodata/no_data.png",
                                     ),
                                   ),
-                                  // const Text(
-                                  //   "No banners available",
-                                  //   style: TextStyle(
-                                  //     color: Colors.grey,
-                                  //     fontSize: 16,
-                                  //     fontWeight: FontWeight.w500,
-                                  //     fontFamily: 'segeo',
-                                  //   ),
-                                  // ),
+                                   Text(
+                                    "No Coins History available",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'segeo',
+                                    ),
+                                  ),
                                 ],
                               ),
                             );

@@ -420,30 +420,24 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       onTap: _toggleDetails,
                       child: Row(
                         children: [
-                          // CachedNetworkImage(
-                          //   height: 60,
-                          //   imageUrl: widget.data.user?.profilePicUrl ?? "",
-                          //   fit: BoxFit.cover,
-                          //   width: double.infinity,
-                          //   placeholder: (context, url) =>
-                          //       Center(child: spinkits.getSpinningLinespinkit()),
-                          //   errorWidget: (context, url, error) => Container(
-                          //     height: 160,
-                          //     color: Colors.grey.shade100,
-                          //     child: const Icon(
-                          //       Icons.broken_image,
-                          //       size: 40,
-                          //       color: Colors.grey,
-                          //     ),
-                          //   ),
-                          // ),
                           CircleAvatar(
-                            backgroundColor: Colors.white.withOpacity(0.4),
                             child: CachedNetworkImage(
-                              imageUrl: widget.data.user?.profilePicUrl ?? "",
-                              width: 60,
                               height: 60,
-                            ), // Standardized path
+                              imageUrl: widget.data.user?.profilePicUrl ?? "",
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              placeholder: (context, url) =>
+                                  Center(child: spinkits.getSpinningLinespinkit()),
+                              errorWidget: (context, url, error) => Container(
+                                height: 160,
+                                color: Colors.grey.shade100,
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Column(

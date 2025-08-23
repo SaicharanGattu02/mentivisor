@@ -107,11 +107,34 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                           ),
                         ),
                         if (list.isEmpty)
-                          const SliverToBoxAdapter(
+                           SliverToBoxAdapter(
                             child: Padding(
                               padding: EdgeInsets.only(top: 48),
                               child: Center(
-                                child: Text('No exclusive services found'),
+                                child: Column(
+                                  spacing: 10,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 200,
+                                      width: 200,
+                                      child: Center(
+                                        child: Image.asset("assets/nodata/no_data.png"),
+                                      ),
+                                    ),
+                                    Text(
+                                      textAlign: TextAlign.center,
+                                      'No Search Data Found!',
+                                      style: TextStyle(
+                                        color: primarycolor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           )
