@@ -200,7 +200,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                             ),
                           )
-                        :SizedBox.shrink()
+                        :
+                    SizedBox.shrink()
                     // Padding(
                     //       padding: const EdgeInsets.only(right: 40),
                     //       child: IconButton(
@@ -452,12 +453,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   label: 'Info',
                                   onTap: () => _navigateToScreen('info'),
                                 ),
-                                _buildDrawerItem(
-                                  assetpath: "assets/icons/UserCircleCheck.png",
-                                  label: 'Invite Friend',
-                                  onTap: () =>
-                                      _navigateToScreen('Invite Friend'),
-                                ),
+                                // _buildDrawerItem(
+                                //   assetpath: "assets/icons/UserCircleCheck.png",
+                                //   label: 'Invite Friend',
+                                //   onTap: () =>
+                                //       _navigateToScreen('Invite Friend'),
+                                // ),
                                 _buildDrawerItem(
                                   assetpath: "assets/icons/UserCircleGear.png",
                                   label: 'Customer Services',
@@ -657,7 +658,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                               child: Text(
                                 'View All',
-                                style: TextStyle(color: Color(0xff4076ED)),
+                                style: TextStyle(color: Color(0xff4076ED),fontFamily: 'segeo',decoration: TextDecoration.underline,decorationColor: Color(0xff4076ED)),
                               ),
                             ),
                           ],

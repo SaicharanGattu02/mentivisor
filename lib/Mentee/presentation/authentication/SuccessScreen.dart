@@ -53,9 +53,9 @@ class SuccessScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: CustomAppButton1(
-                text: "Create Profile",
+                text: "Done",
                 onPlusTap: () {
-                  context.pushReplacement("/profile_setup", extra: data);
+                  context.pushReplacement("/login", extra: data);
                 },
               ),
             ),

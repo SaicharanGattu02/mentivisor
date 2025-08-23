@@ -291,7 +291,8 @@ class _EccScreenState extends State<EccScreen> {
                           onNotification: (scrollInfo) {
                             if (scrollInfo.metrics.pixels >=
                                 scrollInfo.metrics.maxScrollExtent * 0.9) {
-                              if (state is ECCLoaded && state.hasNextPage) {
+                              if (state is ECCLoaded &&
+                                  state.hasNextPage) {
                                 final selectedUpdate = _filters[_selectedFilter]
                                     .toLowerCase();
                                 if (onCampusNotifier.value  == true) {
@@ -328,6 +329,7 @@ class _EccScreenState extends State<EccScreen> {
                                     child: Center(
                                       child: CircularProgressIndicator(
                                         strokeWidth: 0.8,
+                                        color: Colors.blue,
                                       ),
                                     ),
                                   ),

@@ -401,7 +401,7 @@ class _CommunityScreenState extends State<Communityscreen> {
               },
               backgroundColor: Colors.transparent,
               elevation: 0,
-              child:  Image.asset("images/ChatCircleDots.png",width:28,height: 28,),
+              child:  Image.asset("assets/images/ChatCircleDots.png",width:28,height: 28,),
             ),
           );
         },
@@ -409,34 +409,5 @@ class _CommunityScreenState extends State<Communityscreen> {
     );
   }
 
-  Widget _buildToggle(String label, bool active, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: active
-                ? const Color(0xFF4076ED).withOpacity(0.1)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: active ? const Color(0xFF4076ED) : Colors.transparent,
-            ),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: active ? const Color(0xFF4076ED) : Colors.black54,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+
 }

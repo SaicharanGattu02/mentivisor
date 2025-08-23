@@ -186,7 +186,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       ),
                     ),
                     Text(
-                      '1 of 4',
+                      '1 of 3',
                       style: TextStyle(color: Colors.black54, fontSize: 14),
                     ),
                   ],
@@ -199,7 +199,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       Container(height: 6, color: Colors.grey.shade300),
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final progress = 0.25;
+                          final progress = 0.33;
                           return Container(
                             height: 6,
                             width: constraints.maxWidth * progress,

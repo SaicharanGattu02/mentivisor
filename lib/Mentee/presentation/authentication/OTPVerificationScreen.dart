@@ -217,7 +217,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           child: BlocConsumer<VerifyOtpCubit, VerifyOtpState>(
             listener: (context, state) {
               if (state is verifyotpSucess) {
-                context.go("/success_screen", extra: widget.data);
+                context.pushReplacement("/profile_setup", extra: widget.data);
               } else if (state is verifyotpFailure) {
                 CustomSnackBar1.show(context, state.message);
               }

@@ -39,19 +39,21 @@ class Nointernet extends StatelessWidget {
                 ),
               ),
             ),
-            Image.asset("assets/no_internet.png"),
+            Image.asset("assets/images/no_internet.png"),
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomAppButton1(text: "Retry", onPlusTap: (){
-
-            }),
-          ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomAppButton1(text: "Retry", onPlusTap: (){
+        
+              }),
+            ],
+          ),
         ),
       ),
     );

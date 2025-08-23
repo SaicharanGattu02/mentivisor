@@ -89,7 +89,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   Text(
-                    '3 of 4',
+                    '3 of 3',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -106,7 +106,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     Container(height: 6, color: Colors.grey.shade300),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        final progress = 0.75;
+                        final progress = 0.100;
                         return Container(
                           height: 6,
                           width: constraints.maxWidth * progress,
@@ -277,7 +277,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
               BlocConsumer<RegisterCubit, RegisterState>(
                 listener: (context, state) {
                   if (state is RegisterSucess) {
-                    context.go('/login');
+                    context.go('/success_screen');
                     CustomSnackBar1.show(
                       context,
                       state.registerModel.message ?? "",

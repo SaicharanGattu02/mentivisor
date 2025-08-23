@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/utils/AppLauncher.dart';
 import 'package:mentivisor/utils/media_query_helper.dart'; // Ensure you have this helper file
 import 'package:mentivisor/Mentee/Models/MenteeCustmor_supportModel.dart'; // Your model
 import '../../../Components/CutomAppBar.dart';
@@ -82,14 +83,18 @@ class CustomerServiceScreen extends StatelessWidget {
                               height: 20,
                             ),
                             SizedBox(width: 10),
-                            Text(
-                              customerSupport?.phone ??
-                                  'No phone number available',
-                              style: TextStyle(
-                                color: Color(0xff3D3D3D),
-                                fontFamily: 'segeo',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
+                            GestureDetector(onTap: () {
+                              AppLauncher.call(customerSupport?.phone??"");
+                            },
+                              child: Text(
+                                customerSupport?.phone ??
+                                    'No phone number available',
+                                style: TextStyle(
+                                  color: Color(0xff3D3D3D),
+                                  fontFamily: 'segeo',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
                           ],
@@ -103,13 +108,17 @@ class CustomerServiceScreen extends StatelessWidget {
                               height: 20,
                             ),
                             SizedBox(width: 10),
-                            Text(
-                              customerSupport?.email ?? 'No email available',
-                              style: TextStyle(
-                                color: Color(0xff3D3D3D),
-                                fontFamily: 'segeo',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
+                            GestureDetector(onTap: () {
+                              AppLauncher.email(customerSupport?.email??"");
+                            },
+                              child: Text(
+                                customerSupport?.email ?? 'No email available',
+                                style: TextStyle(
+                                  color: Color(0xff3D3D3D),
+                                  fontFamily: 'segeo',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
                           ],

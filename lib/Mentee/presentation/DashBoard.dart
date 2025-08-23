@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/MeteeStudyzoneScreens.dart';
+import '../../bloc/internet_status/internet_status_bloc.dart';
 import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
 import 'Ecc/EccScreen.dart';
@@ -36,22 +39,45 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (i) {
-          HapticFeedback.lightImpact();
-          setState(() => _selectedIndex = i);
-        },
-        children: [
-          MenteeHomeScreen(),
-          MenteeStudyZone(),
-          EccScreen(),
-          Communityscreen(),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        if (_selectedIndex != 0) {
+          setState(() {
+            _selectedIndex = 0;
+          });
+          _pageController.jumpToPage(0);
+          return false; // Prevent app from exiting
+        } else {
+          SystemNavigator.pop(); // Exit app
+          return true;
+        }
+      },
+      child: Scaffold(
+        body:  BlocListener<InternetStatusBloc, InternetStatusState>(
+          listener: (context, state) {
+            if (state is InternetStatusLostState) {
+              context.push('/no_internet');
+            } else if (state is InternetStatusBackState) {
+              context.pop();
+            }
+          },
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (i) {
+              HapticFeedback.lightImpact();
+              setState(() => _selectedIndex = i);
+            },
+            children: [
+              MenteeHomeScreen(),
+              MenteeStudyZone(),
+              EccScreen(),
+              Communityscreen(),
+            ],
+          ),
+        ),
+        bottomNavigationBar: _buildBottomNav(),
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
