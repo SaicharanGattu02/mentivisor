@@ -278,9 +278,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             "bio": _bioController.text.trim(),
                             "email": _emailController.text.trim(),
                             "phone": _phoneController.text.trim(),
-                            "profile_pic": _image?.path ?? imagePath,
                             "college_id": widget.collegeId,
                           };
+                          if (_image != null) {
+                            data["profile_pic"] = _image!.path;
+                          }
                           context
                               .read<MenteeProfileUpdateCubit>()
                               .updateMenteeProfile(data);
