@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         // 👇 Add this line
-        classpath("com.google.gms:google-services:4.4.2")
+//        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 
