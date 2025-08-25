@@ -384,61 +384,61 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 },
               ),
 
-              const SizedBox(height: 24),
-
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  bottom: 10,
-                  top: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Post this anonymous',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff333333),
-                            ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Viewer can’t see who posted it',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: Color(0xff666666),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: _anonymousNotifier,
-                      builder: (context, value, child) {
-                        return Transform.scale(
-                          scale: 0.9,
-                          child: Switch(
-                            value: value,
-                            onChanged: (v) => _anonymousNotifier.value = v,
-                            activeColor: const Color(0xff315DEA),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
+              // const SizedBox(height: 24),
+              //
+              // Container(
+              //   padding: const EdgeInsets.only(
+              //     left: 10,
+              //     right: 10,
+              //     bottom: 10,
+              //     top: 8,
+              //   ),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       const Expanded(
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             Text(
+              //               'Post this anonymous',
+              //               style: TextStyle(
+              //                 fontSize: 14,
+              //                 fontWeight: FontWeight.w600,
+              //                 color: Color(0xff333333),
+              //               ),
+              //             ),
+              //             SizedBox(height: 2),
+              //             Text(
+              //               'Viewer can’t see who posted it',
+              //               style: TextStyle(
+              //                 fontWeight: FontWeight.w400,
+              //                 fontSize: 12,
+              //                 color: Color(0xff666666),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       ValueListenableBuilder<bool>(
+              //         valueListenable: _anonymousNotifier,
+              //         builder: (context, value, child) {
+              //           return Transform.scale(
+              //             scale: 0.9,
+              //             child: Switch(
+              //               value: value,
+              //               onChanged: (v) => _anonymousNotifier.value = v,
+              //               activeColor: const Color(0xff315DEA),
+              //             ),
+              //           );
+              //         },
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               const SizedBox(height: 24),
 
@@ -488,7 +488,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 text: "Post It",
                 isLoading: isLoading,
                 onPlusTap: () {
-                  // Prevent multiple submits visually & functionally
                   if (isLoading) return;
 
                   FocusScope.of(context).unfocus();
