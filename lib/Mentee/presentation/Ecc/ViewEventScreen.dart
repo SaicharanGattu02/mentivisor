@@ -62,13 +62,27 @@ class ViewEventScreen extends StatelessWidget {
                           colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
                         ),
                       ),
-                      child: Text(
-                        eccList.name ?? "",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 12,
+                        children: [
+                          Text(
+                            eccList.name ?? "",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            eccList.description ?? "",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -145,24 +159,27 @@ class ViewEventScreen extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomOutlinedButton(
-                  text: "Share Event",
-                  onTap: () {},
-                  radius: 24,
+          child: SizedBox(
+            height: 52,
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomOutlinedButton(
+                    text: "Share Event",
+                    onTap: () {},
+                    radius: 24,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomAppButton1(
-                  text: "Register for Event",
-                  radius: 24,
-                  onPlusTap: () {},
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomAppButton1(
+                    text: "Register for Event",
+                    radius: 24,
+                    onPlusTap: () {},
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

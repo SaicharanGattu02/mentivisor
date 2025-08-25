@@ -283,6 +283,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           if (_image != null) {
                             data["profile_pic"] = _image!.path;
                           }
+
                           context
                               .read<MenteeProfileUpdateCubit>()
                               .updateMenteeProfile(data);
