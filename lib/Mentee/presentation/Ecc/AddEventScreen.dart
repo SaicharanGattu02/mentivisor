@@ -281,7 +281,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   return null;
                 },
               ),
-              buildCustomLabel('Description (Optional)'),
+              buildCustomLabel('Description'),
               buildCustomTextField(
                 controller: _descriptionController,
                 hint: "Description (Optional)",
