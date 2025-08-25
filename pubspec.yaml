@@ -63,6 +63,7 @@ dependencies:
   firebase_core: ^4.0.0
   firebase_messaging: ^16.0.0
   flutter_local_notifications: ^19.3.1
+  flutter_pdfview: ^1.4.1+1
 
 
 

@@ -90,46 +90,51 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                     return Column(
                       children: [
                         const SizedBox(height: 24),
-                  Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                  color: const Color(0xFFE8EBF7),
-                  borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: ValueListenableBuilder<bool>(
-                  valueListenable: onCampusNotifier,
-                  builder: (context, isOnCampus, _) {
-                  return Row(
-                  children: [
-                  Expanded(
-                  child: FilterButton(
-                  text: 'On Campus',
-                  isSelected: isOnCampus,
-                  onPressed: () {
-                  onCampusNotifier.value = true;
-                  context.read<StudyZoneCampusCubit>()
-                      .fetchStudyZoneCampus("", "", "");
-                  },
-                  ),
-                  ),
-                  Expanded(
-                  child: FilterButton(
-                  text: 'Beyond Campus',
-                  isSelected: !isOnCampus,
-                  onPressed: () {
-                  onCampusNotifier.value = false;
-                  context.read<StudyZoneCampusCubit>()
-                      .fetchStudyZoneCampus("beyond", "", "");
-                  },
-                  ),
-                  ),
-                  ],
-                  );
-                  },
-                  ),
-                  )
-
-                  ],
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8EBF7),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: ValueListenableBuilder<bool>(
+                            valueListenable: onCampusNotifier,
+                            builder: (context, isOnCampus, _) {
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: FilterButton(
+                                      text: 'On Campus',
+                                      isSelected: isOnCampus,
+                                      onPressed: () {
+                                        onCampusNotifier.value = true;
+                                        context
+                                            .read<StudyZoneCampusCubit>()
+                                            .fetchStudyZoneCampus("", "", "");
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: FilterButton(
+                                      text: 'Beyond Campus',
+                                      isSelected: !isOnCampus,
+                                      onPressed: () {
+                                        onCampusNotifier.value = false;
+                                        context
+                                            .read<StudyZoneCampusCubit>()
+                                            .fetchStudyZoneCampus(
+                                              "beyond",
+                                              "",
+                                              "",
+                                            );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     );
                   } else {
                     return SizedBox.shrink();
@@ -202,11 +207,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                             return Container(
                               height: 40, // keep space same as tags list
                               alignment: Alignment.center,
-                              child:  Text(
+                              child: Text(
                                 "No tags available",
                                 style: TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 14,fontFamily: 'segeo',
+                                  fontSize: 14,
+                                  fontFamily: 'segeo',
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -297,9 +303,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               height: 200,
                               width: 200,
                               child: Center(
-                                child: Image.asset(
-                                  "assets/nodata/no_data.png",
-                                ),
+                                child: Image.asset("assets/nodata/no_data.png"),
                               ),
                             ),
                             Text(
@@ -330,10 +334,11 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                   child: Row(
+                                    spacing: 10,
                                     children: [
                                       ClipRRect(
                                         borderRadius:
-                                            BorderRadiusGeometry.circular(4),
+                                            BorderRadiusGeometry.circular(8),
                                         child: CachedNetworkImage(
                                           width: SizeConfig.screenWidth * 0.3,
                                           height: 144,
@@ -352,8 +357,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               Container(
                                                 width: 120,
                                                 height: 120,
-                                                color:  Color(0xffF8FAFE),
-                                                child:  Icon(
+                                                color: Color(0xffF8FAFE),
+                                                child: Icon(
                                                   Icons.broken_image,
                                                   size: 40,
                                                   color: Colors.grey,
@@ -364,7 +369,11 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       // Right Content
                                       Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(top: 10.0,bottom: 10,left: 5),
+                                          padding: const EdgeInsets.only(
+                                            top: 10.0,
+                                            bottom: 10,
+                                            left: 5,
+                                          ),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -382,6 +391,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               const SizedBox(height: 8),
                                               Text(
                                                 campusList?.description ?? "",
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   fontFamily: 'segeo',
                                                   fontWeight: FontWeight.w400,
@@ -432,11 +443,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                   final isGuest =
                                                       snapshot.data ?? false;
                                                   return Row(
-                                                    spacing: 3,
+                                                    spacing: 10,
                                                     children: [
                                                       Expanded(
                                                         child: CustomOutlinedButton(
-                                                          radius: 24,height: 38,
+                                                          radius: 24,
+                                                          height: 38,
                                                           text: "View",
                                                           onTap: () {
                                                             if (isGuest) {
@@ -455,7 +467,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                       ),
                                                       Expanded(
                                                         child: CustomAppButton1(
-                                                          radius: 24,height: 38,
+                                                          radius: 24,
+                                                          height: 38,
                                                           text: "Download",
                                                           onPlusTap: () {
                                                             if (isGuest) {
@@ -508,7 +521,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
       floatingActionButton: ValueListenableBuilder<bool>(
         valueListenable: onCampusNotifier, // listens to your "On Campus" toggle
         builder: (context, isOnCampus, _) {
-          if (!isOnCampus) return const SizedBox.shrink(); // Hide FAB when not on campus
+          if (!isOnCampus)
+            return const SizedBox.shrink(); // Hide FAB when not on campus
 
           return FutureBuilder(
             future: AuthService.isGuest,
@@ -529,10 +543,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF975CF7),
-                        Color(0xFF7A40F2),
-                      ],
+                      colors: [Color(0xFF975CF7), Color(0xFF7A40F2)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -544,7 +555,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
           );
         },
       ),
-
     );
   }
 }
