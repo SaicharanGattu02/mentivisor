@@ -52,7 +52,7 @@ class AuthLandingScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            // Headline text
+
                             RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
@@ -82,27 +82,38 @@ class AuthLandingScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
+
                           ],
                         ),
                       ),
                     ),
-                    // Buttons
-                    CustomAppButton1(text: "Sign up", onPlusTap: () {
-                      context.push("/sign_up");
-                    }),
-                    const SizedBox(height: 16),
-                    CustomOutlinedButton(
-                      text: "Sign in",
-                      radius: 24,
-                      onTap: () {
-                        context.push("/login");
-                      },
-                    ),
-                    const SizedBox(height: 28),
                   ],
                 ),
               );
             },
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+          child: Column(mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomAppButton1(
+                text: "Sign up",
+                onPlusTap: () {
+                  context.push("/sign_up");
+                },
+              ),
+              const SizedBox(height: 16),
+              CustomOutlinedButton(
+                text: "Sign in",
+                radius: 24,
+                onTap: () {
+                  context.push("/login");
+                },
+              ),
+            ],
           ),
         ),
       ),

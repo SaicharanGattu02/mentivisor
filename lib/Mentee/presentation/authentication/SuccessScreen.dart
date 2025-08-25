@@ -12,54 +12,44 @@ class SuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(),
-            Container(
-              width: 100,
-              height: 100,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF3AE37A),
-              ),
-              child: const Icon(Icons.check, color: Colors.white, size: 60),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Your Account Verified',
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.bold,
-                color: Color(0xff222222),
-              ),
-            ),
-            const Spacer(),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'Create Your profile to use all features',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: "segeo",
-                    color: Color(0xff374151),
-                    fontWeight: FontWeight.w500,
-                  ),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF3AE37A),
                 ),
+                child: const Icon(Icons.check, color: Colors.white, size: 60),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: CustomAppButton1(
-                text: "Done",
-                onPlusTap: () {
-                  context.pushReplacement("/login", extra: data);
-                },
+              const SizedBox(height: 16),
+              const Text(
+                'Your Account is Created',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'segeo',
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff222222),
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.0, 0, 16, 24),
+          child: CustomAppButton1(
+            text: "Done",
+            onPlusTap: () {
+              context.pushReplacement("/login", extra: data);
+            },
+          ),
         ),
       ),
     );

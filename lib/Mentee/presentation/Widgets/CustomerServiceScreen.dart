@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/utils/AppLauncher.dart';
-import 'package:mentivisor/utils/media_query_helper.dart'; // Ensure you have this helper file
-import 'package:mentivisor/Mentee/Models/MenteeCustmor_supportModel.dart'; // Your model
+import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../data/cubits/CustomerSupport/Mentee_Customersupport_Cubit.dart';
-import '../../data/cubits/CustomerSupport/Mentee_Customersupport_States.dart'; // Ensure correct import
+import '../../data/cubits/CustomerSupport/Mentee_Customersupport_States.dart';
 
 class CustomerServiceScreen extends StatelessWidget {
   const CustomerServiceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Triggering the fetch operation when the screen is built
     context.read<MenteeCustomersupportCubit>().exclusiveServiceDetails(
       1,
     ); // Example ID
@@ -44,8 +42,6 @@ class CustomerServiceScreen extends StatelessWidget {
                         state.menteeCustmor_supportModel.data;
 
                     return Column(
-
-
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Image.asset(
@@ -83,9 +79,10 @@ class CustomerServiceScreen extends StatelessWidget {
                               height: 20,
                             ),
                             SizedBox(width: 10),
-                            GestureDetector(onTap: () {
-                              AppLauncher.call(customerSupport?.phone??"");
-                            },
+                            GestureDetector(
+                              onTap: () {
+                                AppLauncher.call(customerSupport?.phone ?? "");
+                              },
                               child: Text(
                                 customerSupport?.phone ??
                                     'No phone number available',
@@ -99,7 +96,7 @@ class CustomerServiceScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 24,),
+                        SizedBox(height: 24),
                         Row(
                           children: [
                             Image.asset(
@@ -108,9 +105,10 @@ class CustomerServiceScreen extends StatelessWidget {
                               height: 20,
                             ),
                             SizedBox(width: 10),
-                            GestureDetector(onTap: () {
-                              AppLauncher.email(customerSupport?.email??"");
-                            },
+                            GestureDetector(
+                              onTap: () {
+                                AppLauncher.email(customerSupport?.email ?? "");
+                              },
                               child: Text(
                                 customerSupport?.email ?? 'No email available',
                                 style: TextStyle(

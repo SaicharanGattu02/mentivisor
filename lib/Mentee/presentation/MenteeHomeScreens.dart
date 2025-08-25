@@ -188,8 +188,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         ),
                   actions: [
                     isGuest
-                        ?
-                    Padding(
+                        ? Padding(
                             padding: const EdgeInsets.only(right: 16.0),
                             child: CustomAppButton1(
                               text: "Sign Up",
@@ -200,8 +199,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               },
                             ),
                           )
-                        :
-                    SizedBox.shrink()
+                        : SizedBox.shrink(),
                     // Padding(
                     //       padding: const EdgeInsets.only(right: 40),
                     //       child: IconButton(
@@ -408,8 +406,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     visualDensity: VisualDensity.compact,
-                                    leading:
-                                    Image.asset(
+                                    leading: Image.asset(
                                       "assets/icons/mentor.png",
                                       width: 24,
                                       height: 24,
@@ -424,7 +421,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     ),
                                     onTap: () {
                                       AppLogger.info("Status :${status}");
-                                      if (status == ""|| status=="none") {
+                                      if (status == "" || status == "none") {
                                         context.push('/becomementorscreen');
                                       } else if (status == "inreview") {
                                         context.push('/in_review');
@@ -648,56 +645,63 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                             ),
                             TextButton(
                               onPressed: () {
-                                if (_onCampus == true) {
-                                  context.push('/campus_mentor_list?scope=');
+                                if (isGuest) {
+                                  context.push('/auth_landing');
                                 } else {
-                                  context.push(
-                                    '/campus_mentor_list?scope=beyond',
-                                  );
+                                  // Normal navigation
+                                  if (_onCampus == true) {
+                                    context.push('/campus_mentor_list?scope=');
+                                  } else {
+                                    context.push('/campus_mentor_list?scope=beyond');
+                                  }
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 'View All',
-                                style: TextStyle(color: Color(0xff4076ED),fontFamily: 'segeo',decoration: TextDecoration.underline,decorationColor: Color(0xff4076ED)),
+                                style: TextStyle(
+                                  color: Color(0xff4076ED),
+                                  fontFamily: 'segeo',
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Color(0xff4076ED),
+                                ),
                               ),
                             ),
                           ],
                         ),
                         if (isGuest) ...[
                           guestMentorlist.isEmpty
-                              ? SizedBox(
-                                  height: 200,
+                              ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/nodata/nodata_mentor_list.png",
                                   width: 200,
-                                  child: Center(
-                                    child: Image.asset(
-                                      "assets/nodata/nodata_mentor_list.png",
-                                    ),
-                                  ),
-                                )
-                              : MentorGridGuest(
-                                  mentors: guestMentorlist,
-                                  onTapMentor: (m) =>
-                                      context.push('/auth_landing'),
+                                  height: 200,
                                 ),
-                        ],
 
+                              ],
+                            ),
+                          )
+                              : MentorGridGuest(
+                            mentors: guestMentorlist,
+                            onTapMentor: (m) => context.push('/auth_landing'),
+                          ),
+                        ],
                         if (!isGuest) ...[
                           campusMentorlist.isEmpty
-                              ? SizedBox(
-                                  height: 200,
-                                  width: 200,
-                                  child: Center(
-                                    child: Image.asset(
-                                      "assets/nodata/nodata_mentor_list.png",
-                                    ),
-                                  ),
-                                )
+                              ? Center(
+                            child: Image.asset(
+                              "assets/nodata/nodata_mentor_list.png",
+                              width: 200,
+                              height: 200,
+                            ),
+                          )
                               : MentorGridCampus(
-                                  mentors_list: campusMentorlist,
-                                  onTapMentor: (m) => context.push(
-                                    '/mentor_profile?id=${m.userId}',
-                                  ),
-                                ),
+                            mentors_list: campusMentorlist,
+                            onTapMentor: (m) =>
+                                context.push('/mentor_profile?id=${m.userId}'),
+                          ),
                         ],
                       ],
                     ),

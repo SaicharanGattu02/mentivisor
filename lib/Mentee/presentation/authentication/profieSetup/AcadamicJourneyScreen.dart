@@ -61,7 +61,6 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
           child: Column(
             children: [
               SizedBox(height: 16),
-
               Container(
                 width: 64,
                 height: 64,
@@ -106,7 +105,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     Container(height: 6, color: Colors.grey.shade300),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        final progress = 0.100;
+                        final progress = 100;
                         return Container(
                           height: 6,
                           width: constraints.maxWidth * progress,

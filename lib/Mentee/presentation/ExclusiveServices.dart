@@ -36,7 +36,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F5FA),
-      appBar: CustomAppBar1(title: "Exclusive Services", actions: const []),
+      appBar: CustomAppBar1(title: "Exclusive Services", actions:[]),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: const BoxDecoration(
@@ -107,7 +107,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                           ),
                         ),
                         if (list.isEmpty)
-                           SliverToBoxAdapter(
+                          SliverToBoxAdapter(
                             child: Padding(
                               padding: EdgeInsets.only(top: 48),
                               child: Center(
@@ -120,7 +120,9 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                                       height: 200,
                                       width: 200,
                                       child: Center(
-                                        child: Image.asset("assets/nodata/no_data.png"),
+                                        child: Image.asset(
+                                          "assets/nodata/no_data.png",
+                                        ),
                                       ),
                                     ),
                                     Text(

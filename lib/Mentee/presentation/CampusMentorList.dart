@@ -107,8 +107,13 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                         height: 200,
                         width: 200,
                         child: Center(
-                          child: Image.asset(
-                            "assets/nodata/nodata_mentor_list.png",
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "assets/nodata/no_data.png",
+                              ),
+                              Text("No Mentors Found!",style: TextStyle(fontWeight: FontWeight.w500),)
+                            ],
                           ),
                         ),
                       );

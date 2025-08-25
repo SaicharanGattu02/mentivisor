@@ -153,54 +153,60 @@ class _CommunityScreenState extends State<Communityscreen> {
                       color: Color(0xFF121212),
                     ),
                   ),
-                  FutureBuilder(
-                    future: AuthService.isGuest,
-                    builder: (context, snapshot) {
-                      final isGuest = snapshot.data ?? false;
-                      return ElevatedButton.icon(
-                        onPressed: () {
-                          if (isGuest) {
-                            context.push('/auth_landing');
-                          } else {
-                            context.push("/addpostscreen");
-                          }
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _onCampus,
+                    builder: (context, onCampus, _) {
+                      if (!onCampus) {
+
+                        return const SizedBox.shrink();
+                      }
+                      return FutureBuilder(
+                        future: AuthService.isGuest,
+                        builder: (context, snapshot) {
+                          final isGuest = snapshot.data ?? false;
+                          return ElevatedButton.icon(
+                            onPressed: () {
+                              if (isGuest) {
+                                context.push('/auth_landing');
+                              } else {
+                                context.push("/addpostscreen");
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              backgroundColor: const Color(0xffEDD9FF),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                            ),
+                            icon: Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: const Color(0xff9B40EF),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(Icons.add, size: 16, color: Colors.white),
+                            ),
+                            label: const Text(
+                              'Add',
+                              style: TextStyle(
+                                fontFamily: 'segeo',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff9B40EF),
+                              ),
+                            ),
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          backgroundColor: Color(0xffEDD9FF),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          surfaceTintColor: Colors.transparent,
-                        ),
-                        icon: Container(
-                          padding: EdgeInsets.symmetric(),
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Color(0xff9B40EF),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon(Icons.add, size: 16, color: Colors.white),
-                        ),
-                        label: const Text(
-                          'Add',
-                          style: TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff9B40EF),
-                          ),
-                        ),
                       );
                     },
                   ),
+
                 ],
               ),
               SizedBox(height: 10),

@@ -11,6 +11,7 @@ import '../../../Components/CutomAppBar.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_states.dart';
+import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../Widgets/common_widgets.dart';
@@ -440,30 +441,30 @@ class _AddPostScreenState extends State<AddPostScreen> {
               //   ),
               // ),
 
-              const SizedBox(height: 24),
-
-              ValueListenableBuilder<bool>(
-                valueListenable: _isHighlighted,
-                builder: (context, value, _) {
-                  return Row(
-                    children: [
-                      Checkbox(
-                        value: value,
-                        onChanged: (val) {
-                          if (val != null) _isHighlighted.value = val;
-                        },
-                      ),
-                      const Text('Highlight Post'),
-                      const SizedBox(width: 8),
-                      const Text('Available coins 3000'),
-                    ],
-                  );
-                },
-              ),
-
-              const SizedBox(height: 32),
-
-              const SizedBox(height: 16),
+              // const SizedBox(height: 24),
+              //
+              // ValueListenableBuilder<bool>(
+              //   valueListenable: _isHighlighted,
+              //   builder: (context, value, _) {
+              //     return Row(
+              //       children: [
+              //         Checkbox(
+              //           value: value,
+              //           onChanged: (val) {
+              //             if (val != null) _isHighlighted.value = val;
+              //           },
+              //         ),
+              //         const Text('Highlight Post'),
+              //         const SizedBox(width: 8),
+              //         const Text('Available coins 3000'),
+              //       ],
+              //     );
+              //   },
+              // ),
+              //
+              // const SizedBox(height: 32),
+              //
+              // const SizedBox(height: 16),
             ],
           ),
         ),
@@ -474,8 +475,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
           child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
             listener: (context, state) {
               if (state is AddCommunityPostLoaded) {
+                context.read<CommunityPostsCubit>().getCommunityPosts("", "");
                 if (!mounted) return;
-                context.pop(); // success
+                context.pop();
               } else if (state is AddCommunityPostFailure) {
                 if (!mounted) return;
                 CustomSnackBar1.show(context, state.error);
