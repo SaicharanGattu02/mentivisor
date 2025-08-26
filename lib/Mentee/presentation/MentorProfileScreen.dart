@@ -106,7 +106,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "${mentorData?.user?.email ?? ''} ${mentorData?.user?.contact?? ''}",
+                                "${mentorData?.user?.stream??''} from ${mentorData?.user?.college?.name ?? ''}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,

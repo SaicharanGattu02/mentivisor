@@ -13,6 +13,8 @@ import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_states.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
+import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
+import '../../data/cubits/ECC/ecc_cubit.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddEventScreen extends StatefulWidget {
@@ -69,7 +71,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
       final formattedTime =
           "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
 
-      selectedTimeStr.value = formattedTime; // ⏰ 24-hour format like 14:30
+      selectedTimeStr.value = formattedTime;
     }
   }
 
@@ -215,12 +217,16 @@ class _AddEventScreenState extends State<AddEventScreen> {
               Image.asset("assets/images/addevent.png"),
               Text('What is the Update', style: TextStyle(fontSize: 18)),
               SizedBox(height: 10),
-              Row(
-                children: [
-                  _buildTab('Events', "event"),
-                  _buildTab('Competitions', "competition"),
-                  _buildTab('Challenges', "challenge"),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: BouncingScrollPhysics(),
+                child: Row(
+                  children: [
+                    _buildTab('Events', "event"),
+                    _buildTab('Competitions', "competition"),
+                    _buildTab('Challenges', "challenges"),
+                  ],
+                ),
               ),
               SizedBox(height: 10),
               buildCustomLabel('Event Name'),
@@ -363,25 +369,25 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   );
                 },
               ),
-              SizedBox(height: 15),
-              // Use Default Image Switch
-              ValueListenableBuilder<bool>(
-                valueListenable: _useDefaultImage,
-                builder: (context, value, _) {
-                  return Row(
-                    children: [
-                      Switch(
-                        value: value,
-                        onChanged: (val) {
-                          _useDefaultImage.value = val;
-                        },
-                      ),
-                      Text('Use Default Images'),
-                    ],
-                  );
-                },
-              ),
-              // Highlight Post Checkbox
+
+              // SizedBox(height: 15),
+              // // Use Default Image Switch
+              // ValueListenableBuilder<bool>(
+              //   valueListenable: _useDefaultImage,
+              //   builder: (context, value, _) {
+              //     return Row(
+              //       children: [
+              //         Switch(
+              //           value: value,
+              //           onChanged: (val) {
+              //             _useDefaultImage.value = val;
+              //           },
+              //         ),
+              //         Text('Use Default Images'),
+              //       ],
+              //     );
+              //   },
+              // ),
               ValueListenableBuilder<bool>(
                 valueListenable: _isHighlighted,
                 builder: (context, value, _) {
@@ -394,8 +400,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         },
                       ),
                       Text('Highlight Post'),
-                      SizedBox(width: 8),
-                      Text('Available coins 3000'),
+                      // SizedBox(width: 8),
+                      // Text('Available coins 3000'),
                     ],
                   );
                 },
@@ -415,11 +421,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     child: BlocConsumer<AddEccCubit, AddEccStates>(
                       listener: (context, state) {
                         if (state is AddEccLoaded) {
+                          context.read<CommunityPostsCubit>().getCommunityPosts("beyond", "all");
+                          context.read<CommunityPostsCubit>().getCommunityPosts("beyond", "upcoming");
+                          context.read<CommunityPostsCubit>().getCommunityPosts("beyond", "highlighted");
+                          context.read<ECCCubit>().getECC("", "", "");
                           context.pop();
-                          CustomSnackBar1.show(
-                            context,
-                            state.successModel.message ?? "",
-                          );
                         } else if (state is AddEccFailure) {
                           CustomSnackBar1.show(context, state.error);
                         }
@@ -433,7 +439,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             if (_formKey.currentState!.validate()) {
                               final file = _imageFile.value;
                               final isHighlighted = _isHighlighted.value;
-
                               if (file == null) {
                                 CustomSnackBar1.show(
                                   context,

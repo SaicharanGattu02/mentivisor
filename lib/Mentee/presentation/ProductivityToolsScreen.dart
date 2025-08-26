@@ -20,16 +20,23 @@ class ProductivityScreen extends StatefulWidget {
 }
 
 class _ProductivityScreenState extends State<ProductivityScreen> {
-  final ValueNotifier<DateTime> _selectedDateNotifier = ValueNotifier(DateTime.now());
+  final ValueNotifier<DateTime> _selectedDateNotifier = ValueNotifier(
+    DateTime.now(),
+  );
   final ValueNotifier<List<int?>> _dayListNotifier = ValueNotifier([]);
 
   @override
   void initState() {
     super.initState();
-    final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDateNotifier.value);
+    final formattedDate = DateFormat(
+      'yyyy-MM-dd',
+    ).format(_selectedDateNotifier.value);
     context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
     context.read<TaskByStatusCubit>().fetchTasksByStatus();
-    _generateDayList(_selectedDateNotifier.value.year, _selectedDateNotifier.value.month);
+    _generateDayList(
+      _selectedDateNotifier.value.year,
+      _selectedDateNotifier.value.month,
+    );
   }
 
   void _generateDayList(int year, int month) {
@@ -82,43 +89,44 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                 BlocBuilder<TaskByStatusCubit, TaskByStatusStates>(
                   builder: (context, state) {
                     if (state is TaskByStatusLoaded) {
-                      return
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              height: 110,
-                              child: _buildStatCard(
-                                'Current Streak',
-                                state.taskStatesModel.currentStreak?.toString() ?? "0",
-                                Colors.orange[100]!,
-                                "assets/images/Vector1.png",   // your image 1
-                              ),
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            height: 110,
+                            child: _buildStatCard(
+                              'Current Streak',
+                              state.taskStatesModel.currentStreak?.toString() ??
+                                  "0",
+                              Colors.orange[100]!,
+                              "assets/images/Vector1.png",
                             ),
-                            SizedBox(
-                              width: 100,
-                              height: 110,
-                              child: _buildStatCard(
-                                'Completed Task',
-                                state.taskStatesModel.completedTask?.toString() ?? "0",
-                                Colors.green[100]!,
-                                "assets/images/vector2.png",  // your image 2
-                              ),
+                          ),
+                          SizedBox(
+                            width: 100,
+                            height: 110,
+                            child: _buildStatCard(
+                              'Completed Task',
+                              state.taskStatesModel.completedTask?.toString() ??
+                                  "0",
+                              Colors.green[100]!,
+                              "assets/images/vector2.png", // your image 2
                             ),
-                            SizedBox(
-                              width: 100,
-                              height: 110,
-                              child: _buildStatCard(
-                                'Today  \n Task',
-                                state.taskStatesModel.todayTask?.toString() ?? "0",
-                                Colors.blue[100]!,
-                                "assets/images/vector3.png",   // your image 3
-                              ),
+                          ),
+                          SizedBox(
+                            width: 100,
+                            height: 110,
+                            child: _buildStatCard(
+                              'Today  \n Task',
+                              state.taskStatesModel.todayTask?.toString() ??
+                                  "0",
+                              Colors.blue[100]!,
+                              "assets/images/vector3.png", // your image 3
                             ),
-                          ],
-                        );
-
+                          ),
+                        ],
+                      );
                     } else if (state is TaskByStatusFailure) {
                       return Center(child: Text(state.msg ?? ""));
                     }
@@ -141,7 +149,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.chevron_left, color: Color(0xFF666666)),
+                                icon: const Icon(
+                                  Icons.chevron_left,
+                                  color: Color(0xFF666666),
+                                ),
                                 onPressed: () => _changeMonth(-1),
                               ),
                               Text(
@@ -153,7 +164,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.chevron_right, color: Color(0xFF666666)),
+                                icon: const Icon(
+                                  Icons.chevron_right,
+                                  color: Color(0xFF666666),
+                                ),
                                 onPressed: () => _changeMonth(1),
                               ),
                             ],
@@ -165,17 +179,17 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                         children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
                             .map(
                               (d) => Expanded(
-                            child: Center(
-                              child: Text(
-                                d,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                                child: Center(
+                                  child: Text(
+                                    d,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             .toList(),
                       ),
                       const Padding(
@@ -189,11 +203,12 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             valueListenable: _dayListNotifier,
                             builder: (_, days, __) {
                               return GridView.builder(
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 7,
-                                  mainAxisSpacing: 8,
-                                  crossAxisSpacing: 8,
-                                ),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 7,
+                                      mainAxisSpacing: 8,
+                                      crossAxisSpacing: 8,
+                                    ),
                                 itemCount: days.length,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -204,8 +219,9 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                   final isSelected = selectedDate.day == day;
                                   final isToday =
                                       day == DateTime.now().day &&
-                                          selectedDate.month == DateTime.now().month &&
-                                          selectedDate.year == DateTime.now().year;
+                                      selectedDate.month ==
+                                          DateTime.now().month &&
+                                      selectedDate.year == DateTime.now().year;
 
                                   return GestureDetector(
                                     onTap: () {
@@ -214,14 +230,19 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                         selectedDate.month,
                                         day,
                                       );
-                                      final formattedDate =
-                                      DateFormat('yyyy-MM-dd').format(_selectedDateNotifier.value);
-                                      context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
+                                      final formattedDate = DateFormat(
+                                        'yyyy-MM-dd',
+                                      ).format(_selectedDateNotifier.value);
+                                      context
+                                          .read<TaskByDateCubit>()
+                                          .fetchTasksByDate(formattedDate);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? const Color(0xFF9333EA).withOpacity(0.1)
+                                            ? const Color(
+                                                0xFF9333EA,
+                                              ).withOpacity(0.1)
                                             : isToday
                                             ? const Color(0xFFE8F0FF)
                                             : Colors.white,
@@ -230,7 +251,9 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                           color: isSelected
                                               ? const Color(0xFF9333EA)
                                               : isToday
-                                              ? const Color(0xFF9333EA).withOpacity(0.3)
+                                              ? const Color(
+                                                  0xFF9333EA,
+                                                ).withOpacity(0.3)
                                               : const Color(0xFFDDDDDD),
                                           width: isSelected ? 2 : 1,
                                         ),
@@ -252,7 +275,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: const Color(0xffCCCCCC), width: 1),
+                    border: Border.all(
+                      color: const Color(0xffCCCCCC),
+                      width: 1,
+                    ),
                   ),
                   child: ValueListenableBuilder<DateTime>(
                     valueListenable: _selectedDateNotifier,
@@ -277,7 +303,9 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                 ),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
                                     backgroundColor: const Color(0xff9333EA),
                                     shadowColor: Colors.transparent,
                                     shape: RoundedRectangleBorder(
@@ -290,13 +318,17 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                       isScrollControlled: true,
                                       backgroundColor: Colors.white,
                                       shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16),
+                                        ),
                                       ),
                                       builder: (context) {
                                         return SafeArea(
                                           child: Padding(
                                             padding: EdgeInsets.only(
-                                              bottom: MediaQuery.of(context).viewInsets.bottom,
+                                              bottom: MediaQuery.of(
+                                                context,
+                                              ).viewInsets.bottom,
                                               left: 16,
                                               right: 16,
                                               top: 16,
@@ -305,77 +337,145 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 _buildTextField(
-                                                  controller: _taskNameController,
+                                                  controller:
+                                                      _taskNameController,
                                                   hint: "Enter Task Name",
                                                 ),
                                                 const SizedBox(height: 16),
                                                 Row(
                                                   children: [
                                                     Expanded(
-                                                      child: CustomOutlinedButton(
-                                                        radius: 24,
-                                                        text: "Cancel",
-                                                        onTap: () {
-                                                          context.pop();
-                                                        },
-                                                      ),
+                                                      child:
+                                                          CustomOutlinedButton(
+                                                            radius: 24,
+                                                            text: "Cancel",
+                                                            onTap: () {
+                                                              context.pop();
+                                                            },
+                                                          ),
                                                     ),
                                                     const SizedBox(width: 10),
                                                     Expanded(
-                                                      child: BlocConsumer<TaskUpdateCubit, TaskUpdateStates>(
-                                                        listener: (context, state) async {
-                                                          if (state is TaskUpdateSuccess) {
-                                                            final formattedDate = DateFormat('yyyy-MM-dd')
-                                                                .format(_selectedDateNotifier.value);
-                                                            await context
-                                                                .read<TaskByDateCubit>()
-                                                                .fetchTasksByDate(formattedDate);
-                                                            context.pop();
-                                                          } else if (state is TaskUpdateFailure) {
-                                                            CustomSnackBar1.show(context, state.msg);
-                                                          }
-                                                        },
-                                                        builder: (context, state) {
-                                                          return ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                              padding: const EdgeInsets.symmetric(
-                                                                  horizontal: 20, vertical: 12),
-                                                              backgroundColor: const Color(0xff9333EA),
-                                                              shadowColor: Colors.transparent,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius: BorderRadius.circular(24),
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              final formattedDate = DateFormat('yyyy-MM-dd')
-                                                                  .format(_selectedDateNotifier.value);
-                                                              final Map<String, dynamic> data = {
-                                                                "task_date": formattedDate,
-                                                                "title": _taskNameController.text,
-                                                              };
-                                                              context.read<TaskUpdateCubit>().addTask(data);
+                                                      child:
+                                                          BlocConsumer<
+                                                            TaskUpdateCubit,
+                                                            TaskUpdateStates
+                                                          >(
+                                                            listener: (context, state) async {
+                                                              if (state
+                                                                  is TaskUpdateSuccess) {
+                                                                final formattedDate =
+                                                                    DateFormat(
+                                                                      'yyyy-MM-dd',
+                                                                    ).format(
+                                                                      _selectedDateNotifier
+                                                                          .value,
+                                                                    );
+                                                                await context
+                                                                    .read<
+                                                                      TaskByDateCubit
+                                                                    >()
+                                                                    .fetchTasksByDate(
+                                                                      formattedDate,
+                                                                    );
+                                                                context
+                                                                    .read<
+                                                                      TaskByStatusCubit
+                                                                    >()
+                                                                    .fetchTasksByStatus();
+                                                                context.pop();
+                                                              } else if (state
+                                                                  is TaskUpdateFailure) {
+                                                                CustomSnackBar1.show(
+                                                                  context,
+                                                                  state.msg,
+                                                                );
+                                                              }
                                                             },
-                                                            child: state is TaskUpdateLoading
-                                                                ? const SizedBox(
-                                                              width: 20,
-                                                              height: 20,
-                                                              child: CircularProgressIndicator(
-                                                                color: Color(0xffF5F5F5),
-                                                                strokeWidth: 2,
-                                                              ),
-                                                            )
-                                                                : const Text(
-                                                              "Submit",
-                                                              style: TextStyle(
-                                                                color: Color(0xffF5F5F5),
-                                                                fontWeight: FontWeight.w600,
-                                                                fontSize: 14,
-                                                                fontFamily: "segeo",
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
+                                                            builder: (context, state) {
+                                                              return ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  padding:
+                                                                      const EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            20,
+                                                                        vertical:
+                                                                            12,
+                                                                      ),
+                                                                  backgroundColor:
+                                                                      const Color(
+                                                                        0xff9333EA,
+                                                                      ),
+                                                                  shadowColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          24,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                                onPressed: () {
+                                                                  final formattedDate =
+                                                                      DateFormat(
+                                                                        'yyyy-MM-dd',
+                                                                      ).format(
+                                                                        _selectedDateNotifier
+                                                                            .value,
+                                                                      );
+                                                                  final Map<
+                                                                    String,
+                                                                    dynamic
+                                                                  >
+                                                                  data = {
+                                                                    "task_date":
+                                                                        formattedDate,
+                                                                    "title":
+                                                                        _taskNameController
+                                                                            .text,
+                                                                  };
+                                                                  context
+                                                                      .read<
+                                                                        TaskUpdateCubit
+                                                                      >()
+                                                                      .addTask(
+                                                                        data,
+                                                                      );
+                                                                },
+                                                                child:
+                                                                    state
+                                                                        is TaskUpdateLoading
+                                                                    ? const SizedBox(
+                                                                        width:
+                                                                            20,
+                                                                        height:
+                                                                            20,
+                                                                        child: CircularProgressIndicator(
+                                                                          color: Color(
+                                                                            0xffF5F5F5,
+                                                                          ),
+                                                                          strokeWidth:
+                                                                              2,
+                                                                        ),
+                                                                      )
+                                                                    : const Text(
+                                                                        "Submit",
+                                                                        style: TextStyle(
+                                                                          color: Color(
+                                                                            0xffF5F5F5,
+                                                                          ),
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontFamily:
+                                                                              "segeo",
+                                                                        ),
+                                                                      ),
+                                                              );
+                                                            },
+                                                          ),
                                                     ),
                                                   ],
                                                 ),
@@ -392,7 +492,11 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: const [
-                                      Icon(Icons.add, color: Color(0xffF5F5F5), size: 20),
+                                      Icon(
+                                        Icons.add,
+                                        color: Color(0xffF5F5F5),
+                                        size: 20,
+                                      ),
                                       SizedBox(width: 8),
                                       Text(
                                         "Add Task",
@@ -412,10 +516,15 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             BlocBuilder<TaskByDateCubit, TaskBydateStates>(
                               builder: (context, taskState) {
                                 if (taskState is TaskBydateLoading) {
-                                  return const Center(child: CircularProgressIndicator());
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
                                 } else if (taskState is TaskBydateLoaded) {
-                                  final tasks = taskState.productToolTaskByDateModel.tasks ?? [];
-
+                                  final tasks =
+                                      taskState
+                                          .productToolTaskByDateModel
+                                          .tasks ??
+                                      [];
                                   if (tasks.isEmpty) {
                                     return Container(
                                       height: 160,
@@ -440,20 +549,23 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                       ),
                                     );
                                   }
-
-                                  // Grows inside outer scroll; no clipping
                                   return ListView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: tasks.length,
                                     itemBuilder: (context, index) {
                                       final task = tasks[index];
                                       return Container(
-                                        margin: const EdgeInsets.symmetric(vertical: 6),
+                                        margin: const EdgeInsets.symmetric(
+                                          vertical: 6,
+                                        ),
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -461,7 +573,8 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                               icon: Icon(
                                                 task.isCompleted == 1
                                                     ? Icons.check_circle
-                                                    : Icons.radio_button_unchecked,
+                                                    : Icons
+                                                          .radio_button_unchecked,
                                                 color: task.isCompleted == 1
                                                     ? Colors.green
                                                     : const Color(0xff666666),
@@ -469,62 +582,108 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                               onPressed: task.isCompleted == 1
                                                   ? null
                                                   : () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) => AlertDialog(
-                                                    title: const Text('Mark Task Completed'),
-                                                    content: Text(
-                                                      'Are you sure you want to mark "\n ${task.title}" as completed?',
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                        color: Color(0xFF666666),
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: CustomOutlinedButton(
-                                                              text: "Cancel",
-                                                              onTap: () {
-                                                                context.pop();
-                                                              },
-                                                            ),
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) => AlertDialog(
+                                                          title: const Text(
+                                                            'Mark Task Completed',
                                                           ),
-                                                          const SizedBox(width: 10),
-                                                          Expanded(
-                                                            child: BlocConsumer<TaskUpdateCubit, TaskUpdateStates>(
-                                                              listener: (context, state) async {
-                                                                if (state is TaskUpdateSuccess) {
-                                                                  final formattedDate = DateFormat('yyyy-MM-dd')
-                                                                      .format(_selectedDateNotifier.value);
-                                                                  await context
-                                                                      .read<TaskByDateCubit>()
-                                                                      .fetchTasksByDate(formattedDate);
-                                                                  context.pop();
-                                                                } else if (state is TaskUpdateFailure) {
-                                                                  CustomSnackBar1.show(context, state.msg);
-                                                                }
-                                                              },
-                                                              builder: (context, state) {
-                                                                return CustomAppButton1(
-                                                                  isLoading: state is TaskUpdateLoading,
-                                                                  text: "Done",
-                                                                  onPlusTap: () {
-                                                                    context
-                                                                        .read<TaskUpdateCubit>()
-                                                                        .updateTaskStatus(task.id ?? 0);
-                                                                  },
-                                                                );
-                                                              },
-                                                            ),
+                                                          content: Text(
+                                                            'Are you sure you want to mark "\n ${task.title}" as completed?',
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontSize: 20,
+                                                                  color: Color(
+                                                                    0xFF666666,
+                                                                  ),
+                                                                ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
+                                                          actions: [
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: CustomOutlinedButton(
+                                                                    text:
+                                                                        "Cancel",
+                                                                    onTap: () {
+                                                                      context
+                                                                          .pop();
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Expanded(
+                                                                  child:
+                                                                      BlocConsumer<
+                                                                        TaskUpdateCubit,
+                                                                        TaskUpdateStates
+                                                                      >(
+                                                                        listener:
+                                                                            (
+                                                                              context,
+                                                                              state,
+                                                                            ) async {
+                                                                              if (state
+                                                                                  is TaskUpdateSuccess) {
+                                                                                final formattedDate =
+                                                                                    DateFormat(
+                                                                                      'yyyy-MM-dd',
+                                                                                    ).format(
+                                                                                      _selectedDateNotifier.value,
+                                                                                    );
+                                                                                await context
+                                                                                    .read<
+                                                                                      TaskByDateCubit
+                                                                                    >()
+                                                                                    .fetchTasksByDate(
+                                                                                      formattedDate,
+                                                                                    );
+                                                                                context
+                                                                                    .read<
+                                                                                      TaskByStatusCubit
+                                                                                    >()
+                                                                                    .fetchTasksByStatus();
+                                                                                context.pop();
+                                                                              } else if (state
+                                                                                  is TaskUpdateFailure) {
+                                                                                CustomSnackBar1.show(
+                                                                                  context,
+                                                                                  state.msg,
+                                                                                );
+                                                                              }
+                                                                            },
+                                                                        builder:
+                                                                            (
+                                                                              context,
+                                                                              state,
+                                                                            ) {
+                                                                              return CustomAppButton1(
+                                                                                isLoading:
+                                                                                    state
+                                                                                        is TaskUpdateLoading,
+                                                                                text: "Done",
+                                                                                onPlusTap: () {
+                                                                                  context
+                                                                                      .read<
+                                                                                        TaskUpdateCubit
+                                                                                      >()
+                                                                                      .updateTaskStatus(
+                                                                                        task.id ??
+                                                                                            0,
+                                                                                      );
+                                                                                },
+                                                                              );
+                                                                            },
+                                                                      ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
                                             ),
                                             const SizedBox(width: 8),
                                             Expanded(
@@ -534,62 +693,114 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                   fontSize: 16,
                                                   fontFamily: 'segeo',
                                                   fontWeight: FontWeight.w400,
-                                                  decoration: task.isCompleted == 1
-                                                      ? TextDecoration.lineThrough
+                                                  decoration:
+                                                      task.isCompleted == 1
+                                                      ? TextDecoration
+                                                            .lineThrough
                                                       : TextDecoration.none,
-                                                  color: const Color(0xff666666),
+                                                  color: const Color(
+                                                    0xff666666,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                            IconButton.outlined(
+                                            IconButton(
+                                              splashRadius:
+                                                  20, // optional: adjust tap splash
+                                              padding: EdgeInsets.zero,
                                               onPressed: () {
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) => AlertDialog(
-                                                    title: const Text('Delete Task'),
-                                                    content: Text('Are you sure you want to delete \n"${task.title}"?'),
+                                                    title: const Text(
+                                                      'Delete Task',
+                                                    ),
+                                                    content: Text(
+                                                      'Are you sure you want to delete \n"${task.title}"?',
+                                                    ),
                                                     actions: [
                                                       Row(
-
                                                         children: [
                                                           Expanded(
-                                                            child: CustomOutlinedButton(
-                                                              text: "Cancel",
-                                                              onTap: () {
-                                                                context.pop();
-                                                              },
-                                                            ),
-                                                          ),
-                                                          const SizedBox(width: 10),
-                                                          Expanded(
-                                                            child: BlocConsumer<TaskUpdateCubit, TaskUpdateStates>(
-                                                              listener: (context, taskDelete) async {
-                                                                if (taskDelete is TaskUpdateSuccess) {
-                                                                  final formattedDate = DateFormat('yyyy-MM-dd')
-                                                                      .format(_selectedDateNotifier.value);
-                                                                  await context
-                                                                      .read<TaskByDateCubit>()
-                                                                      .fetchTasksByDate(formattedDate);
-                                                                  context.pop();
-                                                                } else if (taskDelete is TaskUpdateFailure) {
-                                                                  CustomSnackBar1.show(
-                                                                    context,
-                                                                    "${taskDelete.msg}",
-                                                                  );
-                                                                }
-                                                              },
-                                                              builder: (context, taskDelete) {
-                                                                return CustomAppButton1(
-                                                                  isLoading: taskDelete is TaskUpdateLoading,
-                                                                  text: "Done",
-                                                                  onPlusTap: () {
+                                                            child:
+                                                                CustomOutlinedButton(
+                                                                  radius: 100,
+                                                                  text:
+                                                                      "Cancel",
+                                                                  onTap: () {
                                                                     context
-                                                                        .read<TaskUpdateCubit>()
-                                                                        .deleteTask(task.id ?? 0);
+                                                                        .pop();
                                                                   },
-                                                                );
-                                                              },
-                                                            ),
+                                                                ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Expanded(
+                                                            child:
+                                                                BlocConsumer<
+                                                                  TaskUpdateCubit,
+                                                                  TaskUpdateStates
+                                                                >(
+                                                                  listener:
+                                                                      (
+                                                                        context,
+                                                                        taskDelete,
+                                                                      ) async {
+                                                                        if (taskDelete
+                                                                            is TaskUpdateSuccess) {
+                                                                          final formattedDate =
+                                                                              DateFormat(
+                                                                                'yyyy-MM-dd',
+                                                                              ).format(
+                                                                                _selectedDateNotifier.value,
+                                                                              );
+                                                                          await context
+                                                                              .read<
+                                                                                TaskByDateCubit
+                                                                              >()
+                                                                              .fetchTasksByDate(
+                                                                                formattedDate,
+                                                                              );
+                                                                          context
+                                                                              .read<
+                                                                                TaskByStatusCubit
+                                                                              >()
+                                                                              .fetchTasksByStatus();
+                                                                          context
+                                                                              .pop();
+                                                                        } else if (taskDelete
+                                                                            is TaskUpdateFailure) {
+                                                                          CustomSnackBar1.show(
+                                                                            context,
+                                                                            "${taskDelete.msg}",
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                  builder:
+                                                                      (
+                                                                        context,
+                                                                        taskDelete,
+                                                                      ) {
+                                                                        return CustomAppButton1(
+                                                                          isLoading:
+                                                                              taskDelete
+                                                                                  is TaskUpdateLoading,
+                                                                          text:
+                                                                              "Done",
+                                                                          onPlusTap: () {
+                                                                            context
+                                                                                .read<
+                                                                                  TaskUpdateCubit
+                                                                                >()
+                                                                                .deleteTask(
+                                                                                  task.id ??
+                                                                                      0,
+                                                                                );
+                                                                          },
+                                                                        );
+                                                                      },
+                                                                ),
                                                           ),
                                                         ],
                                                       ),
@@ -597,9 +808,10 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                   ),
                                                 );
                                               },
-                                              icon: const Icon(
-                                                Icons.delete_outlined,
-                                                color: Color(0xffFF4D4D),
+                                              icon: Image.asset(
+                                                "assets/icons/Trash.png",
+                                                scale: 5,
+                                                fit: BoxFit.cover,
                                               ),
                                             ),
                                           ],
@@ -645,7 +857,13 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
       ),
     );
   }
-  Widget _buildStatCard(String title, String value, Color color, String imagePath) {
+
+  Widget _buildStatCard(
+    String title,
+    String value,
+    Color color,
+    String imagePath,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -655,12 +873,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            imagePath,
-            width: 24,
-            height: 24,
-            fit: BoxFit.contain,
-          ),
+          Image.asset(imagePath, width: 24, height: 24, fit: BoxFit.contain),
           const SizedBox(height: 6),
           Text(
             title,
@@ -675,7 +888,6 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
       ),
     );
   }
-
 }
 
 Widget _buildTextField({

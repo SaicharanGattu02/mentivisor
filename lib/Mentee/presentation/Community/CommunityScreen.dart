@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsStates.dart';
 import 'package:mentivisor/utils/color_constants.dart';
@@ -403,7 +404,9 @@ class _CommunityScreenState extends State<Communityscreen> {
               shape: CircleBorder(),
               onPressed: () {
                 if (isGuest) {
-                } else {}
+                } else {
+                  CustomSnackBar1.show(context, "Unable to Running Test Server");
+                }
               },
               backgroundColor: Colors.transparent,
               elevation: 0,

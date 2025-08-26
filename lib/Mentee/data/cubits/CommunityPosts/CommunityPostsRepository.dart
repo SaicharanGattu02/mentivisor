@@ -34,4 +34,5 @@ class CommunityPostsRepoImpl implements CommunityPostsRepo {
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data) async {
     return await remoteDataSource.addCommunityPost(data);
   }
+
 }

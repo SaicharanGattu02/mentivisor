@@ -95,15 +95,18 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
-  Future<SessionBookingModel?> sessionBooking(Map<String,dynamic> data);
+  Future<SessionBookingModel?> sessionBooking(Map<String, dynamic> data);
   Future<CreatePaymentModel?> createPayment(Map<String, dynamic> data);
   Future<SuccessModel?> verifyPayment(Map<String, dynamic> data);
   Future<UpComingSessionModel?> upComingSessions();
   Future<CompletedSessionModel?> sessionsComplete();
-  Future<ReviewSubmitModel?> sessionSubmitReview(Map<String, dynamic> data ,int id);
+  Future<ReviewSubmitModel?> sessionSubmitReview(
+    Map<String, dynamic> data,
+    int id,
+  );
   Future<SuccessModel?> postSessionReport(Map<String, dynamic> data);
   Future<MenteeCustmor_supportModel?> getcustomersupport();
-
+  Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -145,13 +148,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SessionBookingModel?> sessionBooking(
-      Map<String,dynamic> data
-  ) async {
+  Future<SessionBookingModel?> sessionBooking(Map<String, dynamic> data) async {
     try {
       final formdata = await buildFormData(data);
       Response res = await ApiClient.post(
-        "${APIEndpointUrls.book_slot}",data: formdata
+        "${APIEndpointUrls.book_slot}",
+        data: formdata,
       );
       AppLogger.log('sessionBooking: ${res.data}');
       return SessionBookingModel.fromJson(res.data);
@@ -734,6 +736,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> postSessionReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
@@ -746,6 +749,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Session Report ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> postToggleLike(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.community_toggle_like}",
+        data: formData,
+      );
+      AppLogger.log('Post Toggle Like::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Post Toggle Like ::${e}');
 
       return null;
     }
@@ -784,8 +804,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
-  Future<ReviewSubmitModel?> sessionSubmitReview(Map<String, dynamic> data ,int id) async {
+  Future<ReviewSubmitModel?> sessionSubmitReview(
+    Map<String, dynamic> data,
+    int id,
+  ) async {
     final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.post(
@@ -861,7 +885,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<MenteeCustmor_supportModel?> getcustomersupport() async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.getmenteecustomersupport}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.getmenteecustomersupport}",
+      );
       AppLogger.log('get mentee Customer Support::${res.data}');
       return MenteeCustmor_supportModel.fromJson(res.data);
     } catch (e) {
@@ -869,5 +895,4 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
 }

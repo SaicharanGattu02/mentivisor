@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
 import '../../../utils/constants.dart';
-
+import '../../../utils/spinkittsLoader.dart';
 
 class CommentBottomSheet extends StatefulWidget {
   final int? postId;
@@ -32,19 +33,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
     debugPrint("commentsList :${widget.comments}");
     _comments = List.from(widget.comments);
   }
-
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   debugPrint("comments${widget.comments}");
-  //   if (widget.comments.isNotEmpty) {
-  //     _comments = List.from(widget.comments);
-  //   } else if (widget.postId != null) {
-  //     context.read<CommunityPostsCubit>().getCommunityPosts("", "");
-  //     _comments = [];
-  //   }
-  // }
 
   void _addComment(String text) {
     setState(() {
@@ -92,18 +80,35 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundImage: comment['profile_pic'] != null &&
-                                  comment['profile_pic'].toString().isNotEmpty
-                                  ? NetworkImage(comment['profile_pic'])
-                                  : const AssetImage("assets/images/profileimg.png")
-                              as ImageProvider,
+                            CachedNetworkImage(
+                              imageUrl: comment['profile'] ?? '',
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: imageProvider,
+                                  ),
+                              placeholder: (context, url) => CircleAvatar(
+                                radius: 16,
+                                backgroundColor: Colors.grey.shade300,
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: Center(
+                                    child: spinkits.getSpinningLinespinkit(),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: AssetImage(
+                                      "assets/images/profileimg.png",
+                                    ),
+                                  ),
                             ),
-                            const SizedBox(width: 8),
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: EdgeInsets.only(left: 10),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
@@ -136,7 +141,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       );
                     }, childCount: _comments.length),
                   ),
-
                 ],
               ),
             ),

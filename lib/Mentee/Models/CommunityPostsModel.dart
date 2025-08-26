@@ -110,6 +110,7 @@ class CommunityPosts {
   int? uploadedBy;
   int? collegeId;
   int? likesCount;
+  bool? isLiked;
   int? commentsCount;
   String? imgUrl;
   Uploader? uploader;
@@ -134,6 +135,7 @@ class CommunityPosts {
     this.imgUrl,
     this.uploader,
     this.comments,
+    this.isLiked,
   });
 
   CommunityPosts.fromJson(Map<String, dynamic> json) {
@@ -151,6 +153,7 @@ class CommunityPosts {
     uploadedBy = json['uploadedBy'];
     collegeId = json['college_id'];
     likesCount = json['likes_count'];
+    isLiked = json['is_liked'];
     commentsCount = json['comments_count'];
     imgUrl = json['img_url'];
     uploader = json['uploader'] != null ? Uploader.fromJson(json['uploader']) : null;
@@ -181,6 +184,7 @@ class CommunityPosts {
     data['uploadedBy'] = uploadedBy;
     data['college_id'] = collegeId;
     data['likes_count'] = likesCount;
+    data['is_liked'] = isLiked;
     data['comments_count'] = commentsCount;
     data['img_url'] = imgUrl;
     if (uploader != null) data['uploader'] = uploader!.toJson();
