@@ -13,7 +13,7 @@ class ApiClient {
       baseUrl: "${ApiConfig.baseUrl}",
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
-      headers: {"Content-Type": "application/json"},
+      // headers: {"Content-Type": "application/json"},
       validateStatus: (status) {
         return true;
       },
@@ -137,13 +137,30 @@ class ApiClient {
       );
     } catch (e, stackTrace) {}
   }
+  //
+  // static Future<Response> get(
+  //   String path, {
+  //   Map<String, dynamic>? queryParameters,
+  // }) async {
+  //   try {
+  //     return await _dio.get(path, queryParameters: queryParameters);
+  //   } catch (e) {
+  //     return _handleError(e);
+  //   }
+  // }
 
   static Future<Response> get(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-  }) async {
+      String path, {
+        Map<String, dynamic>? queryParameters,
+        Options? options, // 👈 add this
+      }) async {
     try {
-      return await _dio.get(path, queryParameters: queryParameters);
+      AppLogger.log("called get method");
+      return await _dio.get(
+        path,
+        queryParameters: queryParameters,
+        options: options, // 👈 pass through
+      );
     } catch (e) {
       return _handleError(e);
     }

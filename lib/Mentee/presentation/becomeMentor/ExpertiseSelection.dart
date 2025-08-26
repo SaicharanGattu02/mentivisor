@@ -170,7 +170,6 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                         ),
                       );
                     }
-
                     return SingleChildScrollView(
                       controller: _scrollController,
                       physics: const BouncingScrollPhysics(),

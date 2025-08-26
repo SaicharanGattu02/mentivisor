@@ -19,4 +19,18 @@ class AddResourceCubit extends Cubit<AddResourceStates> {
       emit(AddResourceFailure(e.toString()));
     }
   }
+
+  Future<void> resourceDownload(String id) async {
+    emit(AddResourceLoading());
+    try {
+      final response = await addResourceRepository.resourceDownload(id);
+      if (response != null && response.status == true) {
+        emit(AddResourceLoaded(response));
+      } else {
+        emit(AddResourceFailure(response?.message ?? ""));
+      }
+    } catch (e) {
+      emit(AddResourceFailure(e.toString()));
+    }
+  }
 }

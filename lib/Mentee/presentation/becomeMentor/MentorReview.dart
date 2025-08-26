@@ -17,27 +17,31 @@ class MentorReview extends StatelessWidget {
         future: AuthService.getName(),
         builder: (context, snapshot) {
           final userName = snapshot.data ?? "unKnown";
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Center(
-                child: Image.asset(
-                  "assets/images/mentor-review.png",
-                  height: 220,
-                  width: 220,
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Image.asset(
+                    "assets/images/mentor-review.png",
+                    height: 220,
+                    width: 220,
+                  ),
                 ),
-              ),
-              Text(
-                'That’s all ${userName ?? "Un Known"} we got what we need will update you shortly',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w700,
-                  color: primarycolor,
+                Text(
+                  'That’s all ${userName ?? "Un Known"} we got what we need will update you shortly',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'segeo',
+                    fontWeight: FontWeight.w700,
+                    color: primarycolor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

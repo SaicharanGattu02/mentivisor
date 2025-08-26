@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
+import 'package:mentivisor/Mentee/presentation/PdfViewerPage.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CustomerServiceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
@@ -498,6 +499,14 @@ final GoRouter appRouter = GoRouter(
       path: '/mentees_Info',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(Mentorinfoscreen(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/pdf_viewer',
+      pageBuilder: (context, state) {
+        final file_url = state.uri.queryParameters['file_url'];
+        return buildSlideTransitionPage(PdfViewerPage(file_url: file_url), state);
       },
     ),
   ],

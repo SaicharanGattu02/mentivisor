@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
 
 import '../../../Components/CustomAppButton.dart';
@@ -61,7 +62,15 @@ class DownloadCard extends StatelessWidget {
                         [],
                   ),
                   SizedBox(height: 15),
-                  CustomOutlinedButton(text: "View", radius: 24, onTap: () {}),
+                  CustomOutlinedButton(
+                    text: "View",
+                    radius: 24,
+                    onTap: () {
+                      context.push(
+                        "/pdf_viewer?file_url=${downloads.filePath}",
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

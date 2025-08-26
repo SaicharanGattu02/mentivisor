@@ -107,6 +107,8 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> postSessionReport(Map<String, dynamic> data);
   Future<MenteeCustmor_supportModel?> getcustomersupport();
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
+  Future<SuccessModel?> resourceDownload(String id);
+
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -145,6 +147,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<SuccessModel?> resourceDownload(String id) async {
+    try {
+      Response res = await ApiClient.get(
+          "${APIEndpointUrls.resource_download}/$id",
+      );
+      AppLogger.log('resourceDownload: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('resourceDownload:${e}');
+      return null;
+    }
   }
 
   @override

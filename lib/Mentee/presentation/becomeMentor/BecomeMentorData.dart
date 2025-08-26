@@ -111,6 +111,11 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                   if (value == null || value.trim().isEmpty) {
                     return "Portfolio URL is required";
                   }
+                  final urlPattern = r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
+                  final result = RegExp(urlPattern).hasMatch(value);
+                  if (!result) {
+                    return "Enter a valid URL";
+                  }
                   return null;
                 },
               ),
@@ -126,12 +131,17 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                   if (value == null || value.trim().isEmpty) {
                     return "LinkedIn URL is required";
                   }
+                  final urlPattern = r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
+                  final result = RegExp(urlPattern).hasMatch(value);
+                  if (!result) {
+                    return "Enter a valid URL";
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              _buildLabel("Git Hub link"),
+              _buildLabel("GitHub link"),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _githubUrlController,
@@ -141,9 +151,15 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                   if (value == null || value.trim().isEmpty) {
                     return "GitHub URL is required";
                   }
+                  final urlPattern = r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
+                  final result = RegExp(urlPattern).hasMatch(value);
+                  if (!result) {
+                    return "Enter a valid URL";
+                  }
                   return null;
                 },
               ),
+
               const SizedBox(height: 24),
 
               _buildLabel("Upload your Resume"),
