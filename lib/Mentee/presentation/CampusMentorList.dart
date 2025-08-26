@@ -172,9 +172,9 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       color: Color(0xff333333),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4),
                                   Text(
-                                    m.user?.designation ?? '',
+                                    m.user?.bio ?? '',
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       color: Color(0xff555555),

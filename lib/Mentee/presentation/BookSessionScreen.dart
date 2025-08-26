@@ -689,7 +689,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
               return BlocConsumer<SessionBookingCubit, SessionBookingStates>(
                 listener: (context, state) {
                   if (state is SessionBookingLoaded) {
-                    context.read<MenteeDashboardCubit>().fetchDashboard();
+                    context.read<MenteeDashboardCubit>().fetchDashboard("");
                     context.pushReplacement(
                       '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/dashboard&selectedIndex=0',
                     );

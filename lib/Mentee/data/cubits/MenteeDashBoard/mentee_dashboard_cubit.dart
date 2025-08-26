@@ -27,7 +27,7 @@ class MenteeDashboardCubit extends Cubit<MenteeDashboardState> {
     required this.campusMentorCubit,
   }) : super(MenteeDashboardInitial());
 
-  Future<void> fetchDashboard() async {
+  Future<void> fetchDashboard(String scope) async {
     emit(MenteeDashboardLoading());
 
     GetBannersRespModel? bannersModel;
@@ -56,7 +56,7 @@ class MenteeDashboardCubit extends Cubit<MenteeDashboardState> {
           guestMentorsModel = guestState.guestMentorsModel;
         }
       } else {
-        await campusMentorCubit.fetchCampusMentorList("", "");
+        await campusMentorCubit.fetchCampusMentorList(scope, "");
         final campusState = campusMentorCubit.state;
         if (campusState is CampusMentorListStateLoaded) {
           campusMentorsModel = campusState.campusMentorListModel;

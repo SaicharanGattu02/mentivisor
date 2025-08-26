@@ -40,7 +40,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MenteeDashboardCubit>().fetchDashboard();
+      context.read<MenteeDashboardCubit>().fetchDashboard("");
     });
   }
 
@@ -579,7 +579,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                     .read<
                                                       MenteeDashboardCubit
                                                     >()
-                                                    .fetchDashboard();
+                                                    .fetchDashboard("");
                                               });
                                             },
                                           ),
@@ -605,7 +605,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                     .read<
                                                       MenteeDashboardCubit
                                                     >()
-                                                    .fetchDashboard();
+                                                    .fetchDashboard("beyond");
                                               });
                                             },
                                           ),

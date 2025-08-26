@@ -253,7 +253,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 listener: (context, state) {
                   if (state is MenteeProfileUpdateSuccess) {
                     context.read<MenteeProfileCubit>().fetchMenteeProfile();
-                    context.read<MenteeDashboardCubit>().fetchDashboard();
+                    context.read<MenteeDashboardCubit>().fetchDashboard("");
                     CustomSnackBar1.show(
                       context,
                       state.successModel.message ?? "",

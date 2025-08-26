@@ -20,7 +20,6 @@ class APIEndpointUrls {
       "${apiUrl}community-zone-tags-without-login";
   static const String wallet_money = "${apiUrl}users/my-wallet";
 
-
   /// Mentee
   static const String get_mentors = "${userUrl}mentors";
   static const String study_zone_tags = "${userUrl}study-zone/tags";
@@ -29,7 +28,8 @@ class APIEndpointUrls {
   static const String study_zone_campus = "${userUrl}/study-zones";
   static const String coins_pack = "${userUrl}/coin-packs";
   static const String community_zone_post = "${userUrl}/community-zone-post";
-  static const String study_zone_report_resource = "${userUrl}/study-zone-report";
+  static const String study_zone_report_resource =
+      "${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
@@ -57,7 +57,8 @@ class APIEndpointUrls {
   static const String verify_paymenet = "${userUrl}razorpay/verify";
   static const String upcoming_session = "${userUrl}sessions/upcoming";
   static const String session_completed = "${userUrl}sessions/complete";
-  static const String completed_sessions_submit_review  = "${userUrl}sessions/feedback";
+  static const String completed_sessions_submit_review =
+      "${userUrl}sessions/feedback";
   static const String sessions_report_submit = "${userUrl}session-report";
   static const String community_toggle_like = "${userUrl}community/toggle-like";
   static const String resource_download = "${userUrl}study-zone/download";
@@ -71,5 +72,4 @@ class APIEndpointUrls {
       "${apiUrl}community-zone-post-without-login";
   static const String get_banners = "${apiUrl}banners";
   static const String getmenteecustomersupport = "${apiUrl}users/support";
-
 }

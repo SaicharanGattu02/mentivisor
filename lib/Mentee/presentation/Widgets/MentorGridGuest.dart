@@ -30,11 +30,11 @@ class MentorGridGuest extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.name ?? '',
-            designation: m?.designation ?? '',
+            designation: m?.bio ?? '',
             image: url ?? "",
-            rating: (m?.ratingsReceivedCount ?? 0)
-                .toDouble(),
-            ratingCount: m?.ratingsReceivedCount ?? 0,coinsPerMinute: "",
+            rating: (m?.ratingsReceivedCount ?? 0).toDouble(),
+            ratingCount: m?.ratingsReceivedCount ?? 0,
+            coinsPerMinute: "",
           ),
         );
       },
@@ -67,7 +67,7 @@ class MentorGridCampus extends StatelessWidget {
         final url = m?.user?.profilePicUrl?.trim();
         return GestureDetector(
           onTap: () => onTapMentor(m!),
-          child:_MentorCard(
+          child: _MentorCard(
             name: m?.user?.name ?? '',
             designation: m?.user?.bio ?? '',
             image: url ?? "",
@@ -75,7 +75,6 @@ class MentorGridCampus extends StatelessWidget {
             ratingCount: m?.totalReviews ?? 0,
             coinsPerMinute: m?.coinsPerMinute.toString() ?? "",
           ),
-
         );
       },
     );
@@ -133,13 +132,13 @@ class _MentorCard extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style:  TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: Color(0xff333333),
             ),
           ),
-           SizedBox(height: 8),
+          SizedBox(height: 8),
           SizedBox(
             width: SizeConfig.screenWidth * 0.18,
             child: Text(

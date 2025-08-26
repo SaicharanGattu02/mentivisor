@@ -339,7 +339,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                         context.read<CoinsPackCubit>().fetchCoinsPack();
                         context.read<WalletmoneyCubit>().getWallet(0);
                         context.read<MenteeProfileCubit>().fetchMenteeProfile();
-                        context.read<MenteeDashboardCubit>().fetchDashboard();
+                        context.read<MenteeDashboardCubit>().fetchDashboard("");
                         if ((widget.mentor_id != null &&
                                 widget.mentor_id != 0) &&
                             (widget.slot_id != null && widget.slot_id != 0)) {
