@@ -89,7 +89,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                   if (!isGuest) {
                     return Column(
                       children: [
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24),
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -443,7 +443,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                   final isGuest =
                                                       snapshot.data ?? false;
                                                   return Row(
-                                                    spacing: 10,
+                                                    spacing: 6,
                                                     children: [
                                                       Expanded(
                                                         child: CustomOutlinedButton(

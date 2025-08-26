@@ -52,9 +52,9 @@ class Booking {
   String? sessionDate;
   String? startTime;
   String? endTime;
-  Null? sessionType;
-  Null? topic;
-  Null? attachment;
+  String? sessionType;
+  String? topic;
+  String? attachment;
   int? sessionCost;
   String? zoomJoinUrl;
   String? zoomStartUrl;

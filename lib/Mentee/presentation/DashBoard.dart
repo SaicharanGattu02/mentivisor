@@ -11,7 +11,8 @@ import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
+  final int?selectedIndex;
+  const Dashboard({Key? key,this.selectedIndex}) : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -24,9 +25,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedIndex ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
   }
-
   void _onItemTapped(int index) {
     _pageController.jumpToPage(index);
     setState(() => _selectedIndex = index);

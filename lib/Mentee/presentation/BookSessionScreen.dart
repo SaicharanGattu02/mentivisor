@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Components/CustomAppButton.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../Models/MentorProfileModel.dart';
+import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/SelectSlot/select_slot_cubit.dart';
 import '../data/cubits/SelectSlot/select_slot_states.dart';
 import '../data/cubits/WeeklySlots/weekly_slots_states.dart';
@@ -30,9 +32,12 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   bool showDetails = true;
   String? selectedDate;
   String? selectedTime;
-  int? selectedSlotId; // after picking
-  String _weekFilter = 'This Week'; // or 'Next Week'
+  int? selectedSlotId;
+  String _weekFilter = 'This Week';
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(false);
+  TextEditingController sessionController = TextEditingController();
+  String? selectedFileName;
+  String? selectedFilePath;
 
   @override
   void initState() {
@@ -44,6 +49,23 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   void _toggleDetails() {
     setState(() {
       showDetails = !showDetails;
+    });
+  }
+
+  Future<void> pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        selectedFilePath = result.files.single.path; // full path for API
+        selectedFileName = result.files.single.name; // file name for UI
+      });
+    }
+  }
+
+  void removeFile() {
+    setState(() {
+      selectedFileName = null; // clear UI name
+      selectedFilePath = null; // clear actual file path
     });
   }
 
@@ -189,10 +211,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
-
-                    // ── Week Range (Mon 11 – Sun 17) ─────────────────────────────────────────
                     BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
                       builder: (context, state) {
                         if (state is WeeklySlotsLoaded) {
@@ -210,10 +229,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                         return const SizedBox.shrink();
                       },
                     ),
-
                     const SizedBox(height: 12),
-
-                    // ── Days row (7 cells) ───────────────────────────────────────────────────
                     BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
                       builder: (context, state) {
                         if (state is WeeklySlotsLoading) {
@@ -228,7 +244,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Text(
                               state.error,
-                              style: const TextStyle(color: Colors.red),
+                              style: TextStyle(color: Colors.red),
                             ),
                           );
                         }
@@ -283,7 +299,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                             selectedSlotId = picked.id;
                                           });
 
-                                          // 🔹 Fetch preview (slot + wallet)
                                           context
                                               .read<SelectSlotCubit>()
                                               .getSelectSlot(
@@ -306,33 +321,45 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Session Type',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/zoommeetimg.png', // Standardized path
-                      height: 36,
-                      width: 36,
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'G-Meet',
-                      style: TextStyle(fontSize: 16, fontFamily: 'segeo'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
+
+              // const SizedBox(height: 8),
+              // Container(
+              //   padding: const EdgeInsets.all(12),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              //   child: Column(
+              //     spacing: 16,
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         'Session Type',
+              //         style: TextStyle(
+              //           fontSize: 16,
+              //           fontWeight: FontWeight.w600,
+              //           fontFamily: 'segeo',
+              //           color: Color(0xff020817),
+              //         ),
+              //       ),
+              //       Row(
+              //         children: [
+              //           Image.asset(
+              //             'assets/images/zoommeetimg.png',
+              //             height: 36,
+              //             width: 36,
+              //           ),
+              //            SizedBox(width: 8),
+              //            Text(
+              //             'Zoom',
+              //             style: TextStyle(fontSize: 16, fontFamily: 'segeo',color: Color(0xff6B7280),fontWeight: FontWeight.w400),
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 24),
               Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -349,7 +376,8 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'segeo',
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff020817),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -361,28 +389,106 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Describe what you\'d like to discuss in this session...',
-                              style: TextStyle(color: Colors.grey),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xffDDDDDD),
+                              width: 1,
                             ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.attach_file,
-                                  color: Colors.grey,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: sessionController,
+                                  maxLines: null,
+                                  expands: true,
+                                  decoration: const InputDecoration(
+                                    isCollapsed: true,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    hintText:
+                                        "Describe what you'd like to discuss in this session...",
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Add Attachment',
-                                  style: TextStyle(color: Colors.grey[600]),
+                              ),
+                              const SizedBox(height: 10),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
-                              ],
-                            ),
-                          ],
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: const Color(0xffF5F5F5),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (selectedFileName == null) ...[
+                                      GestureDetector(
+                                        onTap: pickFile,
+                                        child: Row(
+                                          children: const [
+                                            Text(
+                                              'Add Attachment',
+                                              style: TextStyle(
+                                                color: Color(0xff555555),
+                                                fontFamily: 'segeo',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(width: 6),
+                                            Icon(
+                                              Icons.attach_file,
+                                              color: Colors.grey,
+                                              size: 18,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      // ✅ Show selected file with remove button
+                                      Expanded(
+                                        child: Text(
+                                          selectedFileName!,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Color(0xff333333),
+                                            fontFamily: 'segeo',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      GestureDetector(
+                                        onTap: removeFile,
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.red,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -420,23 +526,32 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       onTap: _toggleDetails,
                       child: Row(
                         children: [
-                          CircleAvatar(
+                          Center(
                             child: CachedNetworkImage(
-                              height: 60,
                               imageUrl: widget.data.user?.profilePicUrl ?? "",
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              placeholder: (context, url) =>
-                                  Center(child: spinkits.getSpinningLinespinkit()),
-                              errorWidget: (context, url, error) => Container(
-                                height: 160,
-                                color: Colors.grey.shade100,
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  size: 40,
-                                  color: Colors.grey,
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: imageProvider,
+                                  ),
+                              placeholder: (context, url) => CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey,
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: Center(
+                                    child: spinkits.getSpinningLinespinkit(),
+                                  ),
                                 ),
                               ),
+                              errorWidget: (context, url, error) =>
+                                  const CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: AssetImage(
+                                      "assets/images/profile.png",
+                                    ),
+                                  ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -452,7 +567,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                 ),
                               ),
                               Text(
-                                widget.data.user?.designation ?? "",
+                                widget.data.user?.role ?? "",
                                 style: TextStyle(
                                   color: Color(0xff666666),
                                   fontSize: 12,
@@ -515,7 +630,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                 ),
                               ],
                             );
-
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -544,26 +658,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                 ],
-                                const SizedBox(height: 4),
-                                // if (!enough) ...[
-                                //   const Text(
-                                //     'Your wallet is not enough coins',
-                                //     style: TextStyle(
-                                //       fontSize: 12,
-                                //       color: Color(0xFF9A0000),
-                                //       fontFamily: 'segeo',
-                                //     ),
-                                //   ),
-                                //   const SizedBox(height: 4),
-                                //   Text(
-                                //     'Required: $enough • Available: $availableCoins',
-                                //     style: const TextStyle(
-                                //       fontSize: 12,
-                                //       color: Colors.black54,
-                                //       fontFamily: 'segeo',
-                                //     ),
-                                //   ),
-                                // ],
                               ],
                             );
                           }
@@ -595,9 +689,9 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
               return BlocConsumer<SessionBookingCubit, SessionBookingStates>(
                 listener: (context, state) {
                   if (state is SessionBookingLoaded) {
-                    CustomSnackBar1.show(
-                      context,
-                      state.sessionBookingModel.message ?? "",
+                    context.read<MenteeDashboardCubit>().fetchDashboard();
+                    context.pushReplacement(
+                      '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/dashboard&selectedIndex=0',
                     );
                   } else if (state is SessionBookingFailure) {
                     CustomSnackBar1.show(context, state.error ?? "");
@@ -611,12 +705,19 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                     onPlusTap: enough_coins
                         ? () {
                             if (selectedSlotId != null) {
+                              final Map<String, dynamic> data = {
+                                "mentor_id": widget.data.userId ?? 0,
+                                "slot_id": selectedSlotId,
+                                "topic": sessionController.text.trim(),
+                              };
+                              if (selectedFilePath != null &&
+                                  selectedFilePath!.isNotEmpty) {
+                                data["attachment"] = selectedFilePath;
+                              }
+
                               context
                                   .read<SessionBookingCubit>()
-                                  .sessionBooking(
-                                    widget.data.userId ?? 0,
-                                    selectedSlotId!, // slot id
-                                  );
+                                  .sessionBooking(data);
                             }
                           }
                         : () {
@@ -651,7 +752,9 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      context.push("/buy_coins_screens");
+                                      context.push(
+                                        "/buy_coins_screens?mentor_id=${widget.data.userId ?? 0}&slot_id=${selectedSlotId}",
+                                      );
                                       Navigator.pop(context);
                                     },
                                     style: ElevatedButton.styleFrom(

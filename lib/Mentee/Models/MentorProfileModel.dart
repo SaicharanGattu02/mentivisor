@@ -10,12 +10,12 @@ class MentorProfileModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['status'] = status;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
+    final Map<String, dynamic> map = {};
+    map['status'] = status;
+    if (data != null) {
+      map['data'] = data!.toJson();
     }
-    return data;
+    return map;
   }
 }
 
@@ -28,22 +28,25 @@ class MentorData {
   String? linkedIn;
   String? gitHub;
   String? resume;
-  List<String>? languages;
-  String? coinsPerMinute;
+  List<String>? langages;
+  int? coinsPerMinute;
+  dynamic upgradeLink;
+  dynamic upgrateDoc;
   String? createdAt;
   String? updatedAt;
-  String? deletedAt;
+  dynamic deletedAt;
   int? activeStatus;
   String? resumeUrl;
-  List<Slot>? todaySlots;
-  List<Slot>? tomorrowSlots;
-  int? averageRating;
+  List<TodaySlots>? todaySlots;
+  List<TomorrowSlots>? tomorrowSlots;
+  int? remainingSlots;
+  String? slotsMessage;
+  double? averageRating;
   int? totalReviews;
-  List<dynamic>? reviews;
+  List<Reviews>? reviews;
   User? user;
-  List<dynamic>? expertises;
-  List<dynamic>? ratings;
-
+  List<Expertises>? expertises;
+  List<Ratings>? ratings;
   MentorData({
     this.id,
     this.userId,
@@ -53,8 +56,10 @@ class MentorData {
     this.linkedIn,
     this.gitHub,
     this.resume,
-    this.languages,
+    this.langages,
     this.coinsPerMinute,
+    this.upgradeLink,
+    this.upgrateDoc,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -62,6 +67,8 @@ class MentorData {
     this.resumeUrl,
     this.todaySlots,
     this.tomorrowSlots,
+    this.remainingSlots,
+    this.slotsMessage,
     this.averageRating,
     this.totalReviews,
     this.reviews,
@@ -79,68 +86,107 @@ class MentorData {
     linkedIn = json['linked_in'];
     gitHub = json['git_hub'];
     resume = json['resume'];
-    languages = List<String>.from(json['langages'] ?? []);
-    coinsPerMinute = json['coins_per_minute'];
+    langages = json['langages'] != null
+        ? List<String>.from(json['langages'])
+        : [];
+    coinsPerMinute = json['coins_per_minute'] is String
+        ? int.tryParse(json['coins_per_minute'])
+        : json['coins_per_minute'];
+    upgradeLink = json['upgrade_link'];
+    upgrateDoc = json['upgrate_doc'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    remainingSlots = json['remaining_slots_this_week'];
+    slotsMessage = json['slots_message'];
     activeStatus = json['active_status'];
     resumeUrl = json['resume_url'];
-    todaySlots = (json['today_slots'] as List<dynamic>?)
-        ?.map((e) => Slot.fromJson(e))
-        .toList();
-    tomorrowSlots = (json['tomorrow_slots'] as List<dynamic>?)
-        ?.map((e) => Slot.fromJson(e))
-        .toList();
-    averageRating = json['average_rating'];
+
+    if (json['today_slots'] != null) {
+      todaySlots = (json['today_slots'] as List)
+          .map((v) => TodaySlots.fromJson(v))
+          .toList();
+    }
+    if (json['tomorrow_slots'] != null) {
+      tomorrowSlots = (json['tomorrow_slots'] as List)
+          .map((v) => TomorrowSlots.fromJson(v))
+          .toList();
+    }
+
+    averageRating = json['average_rating'] != null
+        ? double.tryParse(json['average_rating'].toString())
+        : null;
     totalReviews = json['total_reviews'];
-    reviews = json['reviews'] ?? [];
+
+    if (json['reviews'] != null) {
+      reviews = (json['reviews'] as List)
+          .map((v) => Reviews.fromJson(v))
+          .toList();
+    }
+
     user = json['user'] != null ? User.fromJson(json['user']) : null;
-    expertises = json['expertises'] ?? [];
-    ratings = json['ratings'] ?? [];
+
+    if (json['expertises'] != null) {
+      expertises = (json['expertises'] as List)
+          .map((v) => Expertises.fromJson(v))
+          .toList();
+    }
+
+    if (json['ratings'] != null) {
+      ratings = (json['ratings'] as List)
+          .map((v) => Ratings.fromJson(v))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['user_id'] = userId;
-    data['reason_for_become_mentor'] = reasonForBecomeMentor;
-    data['achivements'] = achivements;
-    data['portfolio'] = portfolio;
-    data['linked_in'] = linkedIn;
-    data['git_hub'] = gitHub;
-    data['resume'] = resume;
-    data['langages'] = languages;
-    data['coins_per_minute'] = coinsPerMinute;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['deleted_at'] = deletedAt;
-    data['active_status'] = activeStatus;
-    data['resume_url'] = resumeUrl;
-    data['today_slots'] = todaySlots?.map((e) => e.toJson()).toList();
-    data['tomorrow_slots'] = tomorrowSlots?.map((e) => e.toJson()).toList();
-    data['average_rating'] = averageRating;
-    data['total_reviews'] = totalReviews;
-    data['reviews'] = reviews;
-    if (user != null) {
-      data['user'] = user!.toJson();
-    }
-    data['expertises'] = expertises;
-    data['ratings'] = ratings;
-    return data;
+    final Map<String, dynamic> map = {};
+    map['id'] = id;
+    map['user_id'] = userId;
+    map['reason_for_become_mentor'] = reasonForBecomeMentor;
+    map['achivements'] = achivements;
+    map['portfolio'] = portfolio;
+    map['linked_in'] = linkedIn;
+    map['git_hub'] = gitHub;
+    map['resume'] = resume;
+    map['langages'] = langages;
+    map['coins_per_minute'] = coinsPerMinute;
+    map['upgrade_link'] = upgradeLink;
+    map['upgrate_doc'] = upgrateDoc;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    map['deleted_at'] = deletedAt;
+    map['active_status'] = activeStatus;
+    map['resume_url'] = resumeUrl;
+    if (todaySlots != null)
+      map['today_slots'] = todaySlots!.map((v) => v.toJson()).toList();
+    if (tomorrowSlots != null)
+      map['tomorrow_slots'] = tomorrowSlots!.map((v) => v.toJson()).toList();
+    map['average_rating'] = averageRating;
+    map['total_reviews'] = totalReviews;
+    map['remaining_slots_this_week'] = this.remainingSlots;
+    map['slots_message'] = this.slotsMessage;
+    if (reviews != null)
+      map['reviews'] = reviews!.map((v) => v.toJson()).toList();
+    if (user != null) map['user'] = user!.toJson();
+    if (expertises != null)
+      map['expertises'] = expertises!.map((v) => v.toJson()).toList();
+    if (ratings != null)
+      map['ratings'] = ratings!.map((v) => v.toJson()).toList();
+    return map;
   }
 }
 
-class Slot {
+class TodaySlots {
   int? id;
   String? date;
   String? startTime;
   String? endTime;
   String? status;
 
-  Slot({this.id, this.date, this.startTime, this.endTime, this.status});
+  TodaySlots({this.id, this.date, this.startTime, this.endTime, this.status});
 
-  Slot.fromJson(Map<String, dynamic> json) {
+  TodaySlots.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     date = json['date'];
     startTime = json['start_time'];
@@ -149,13 +195,75 @@ class Slot {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['date'] = date;
-    data['start_time'] = startTime;
-    data['end_time'] = endTime;
-    data['status'] = status;
-    return data;
+    return {
+      'id': id,
+      'date': date,
+      'start_time': startTime,
+      'end_time': endTime,
+      'status': status,
+    };
+  }
+}
+
+class TomorrowSlots {
+  int? id;
+  String? date;
+  String? startTime;
+  String? endTime;
+  String? status;
+
+  TomorrowSlots({
+    this.id,
+    this.date,
+    this.startTime,
+    this.endTime,
+    this.status,
+  });
+
+  TomorrowSlots.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    date = json['date'];
+    startTime = json['start_time'];
+    endTime = json['end_time'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date,
+      'start_time': startTime,
+      'end_time': endTime,
+      'status': status,
+    };
+  }
+}
+
+class Reviews {
+  int? id;
+  int? userId;
+  int? rating;
+  String? createdAt;
+  User? user;
+
+  Reviews({this.id, this.userId, this.rating, this.createdAt, this.user});
+
+  Reviews.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userId = json['user_id'];
+    rating = json['rating'];
+    createdAt = json['created_at'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'rating': rating,
+      'created_at': createdAt,
+      if (user != null) 'user': user!.toJson(),
+    };
   }
 }
 
@@ -164,66 +272,46 @@ class User {
   String? name;
   String? email;
   int? contact;
-  String? emailVerifiedAt;
   String? refreshToken;
   String? webFcmToken;
   String? deviceFcmToken;
   String? role;
-  String? designation;
-  int? exp;
   String? bio;
   int? collegeId;
   String? year;
   String? stream;
-  String? gender;
   String? status;
   String? profilePic;
-  String? state;
-  String? city;
-  String? country;
   String? saasId;
-  int? emailOtp;
-  String? expiredTime;
   String? createdAt;
   String? updatedAt;
-  String? deletedAt;
   int? activeStatus;
   String? lastLoginAt;
+  String? mentorStatus;
   String? profilePicUrl;
-  String? mentorStatus; // <-- new field
 
   User({
     this.id,
     this.name,
     this.email,
     this.contact,
-    this.emailVerifiedAt,
     this.refreshToken,
     this.webFcmToken,
     this.deviceFcmToken,
     this.role,
-    this.designation,
-    this.exp,
     this.bio,
     this.collegeId,
     this.year,
     this.stream,
-    this.gender,
     this.status,
     this.profilePic,
-    this.state,
-    this.city,
-    this.country,
     this.saasId,
-    this.emailOtp,
-    this.expiredTime,
     this.createdAt,
     this.updatedAt,
-    this.deletedAt,
     this.activeStatus,
     this.lastLoginAt,
-    this.profilePicUrl,
     this.mentorStatus,
+    this.profilePicUrl,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -231,68 +319,150 @@ class User {
     name = json['name'];
     email = json['email'];
     contact = json['contact'];
-    emailVerifiedAt = json['email_verified_at'];
     refreshToken = json['refresh_token'];
     webFcmToken = json['web_fcm_token'];
     deviceFcmToken = json['device_fcm_token'];
     role = json['role'];
-    designation = json['designation'];
-    exp = json['exp'];
     bio = json['bio'];
     collegeId = json['college_id'];
     year = json['year'];
     stream = json['stream'];
-    gender = json['gender'];
     status = json['status'];
     profilePic = json['profile_pic'];
-    state = json['state'];
-    city = json['city'];
-    country = json['country'];
     saasId = json['saas_id'];
-    emailOtp = json['email_otp'];
-    expiredTime = json['expired_time'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
     activeStatus = json['active_status'];
     lastLoginAt = json['last_login_at'];
-    profilePicUrl = json['profile_pic_url'];
     mentorStatus = json['mentor_status'];
+    profilePicUrl = json['profile_pic_url'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['name'] = name;
-    data['email'] = email;
-    data['contact'] = contact;
-    data['email_verified_at'] = emailVerifiedAt;
-    data['refresh_token'] = refreshToken;
-    data['web_fcm_token'] = webFcmToken;
-    data['device_fcm_token'] = deviceFcmToken;
-    data['role'] = role;
-    data['designation'] = designation;
-    data['exp'] = exp;
-    data['bio'] = bio;
-    data['college_id'] = collegeId;
-    data['year'] = year;
-    data['stream'] = stream;
-    data['gender'] = gender;
-    data['status'] = status;
-    data['profile_pic'] = profilePic;
-    data['state'] = state;
-    data['city'] = city;
-    data['country'] = country;
-    data['saas_id'] = saasId;
-    data['email_otp'] = emailOtp;
-    data['expired_time'] = expiredTime;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['deleted_at'] = deletedAt;
-    data['active_status'] = activeStatus;
-    data['last_login_at'] = lastLoginAt;
-    data['profile_pic_url'] = profilePicUrl;
-    data['mentor_status'] = mentorStatus;
-    return data;
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'contact': contact,
+      'refresh_token': refreshToken,
+      'web_fcm_token': webFcmToken,
+      'device_fcm_token': deviceFcmToken,
+      'role': role,
+      'bio': bio,
+      'college_id': collegeId,
+      'year': year,
+      'stream': stream,
+      'status': status,
+      'profile_pic': profilePic,
+      'saas_id': saasId,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'active_status': activeStatus,
+      'last_login_at': lastLoginAt,
+      'mentor_status': mentorStatus,
+      'profile_pic_url': profilePicUrl,
+    };
+  }
+}
+
+class Expertises {
+  int? id;
+  String? name;
+  int? baseValue;
+  List<SubExpertises>? subExpertises;
+
+  Expertises({this.id, this.name, this.baseValue, this.subExpertises});
+
+  Expertises.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    baseValue = json['base_value'];
+    if (json['sub_expertises'] != null) {
+      subExpertises = (json['sub_expertises'] as List)
+          .map((v) => SubExpertises.fromJson(v))
+          .toList();
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'base_value': baseValue,
+      if (subExpertises != null)
+        'sub_expertises': subExpertises!.map((v) => v.toJson()).toList(),
+    };
+  }
+}
+
+class SubExpertises {
+  int? id;
+  String? name;
+  int? baseValue;
+
+  SubExpertises({this.id, this.name, this.baseValue});
+
+  SubExpertises.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    baseValue = json['base_value'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'name': name, 'base_value': baseValue};
+  }
+}
+
+class Ratings {
+  int? id;
+  int? mentorId;
+  int? userId;
+  int? sessionId;
+  int? rating;
+  String? feedback;
+  String? createdAt;
+  dynamic updatedAt;
+  dynamic deletedAt;
+  User? user;
+
+  Ratings({
+    this.id,
+    this.mentorId,
+    this.userId,
+    this.sessionId,
+    this.rating,
+    this.feedback,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.user,
+  });
+
+  Ratings.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    mentorId = json['mentor_id'];
+    userId = json['user_id'];
+    sessionId = json['session_id'];
+    rating = json['rating'];
+    feedback = json['feedback'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'mentor_id': mentorId,
+      'user_id': userId,
+      'session_id': sessionId,
+      'rating': rating,
+      'feedback': feedback,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'deleted_at': deletedAt,
+      if (user != null) 'user': user!.toJson(),
+    };
   }
 }

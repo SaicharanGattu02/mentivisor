@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
+import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CompusMentorListModel.dart';
 import '../../Models/GuestMentorsModel.dart';
 
@@ -24,16 +26,15 @@ class MentorGridGuest extends StatelessWidget {
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
         final url = m?.profilePicUrl?.trim();
-        final hasPic = url != null && url.isNotEmpty;
         return GestureDetector(
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.name ?? '',
             designation: m?.designation ?? '',
-            imageProvider: hasPic ? CachedNetworkImageProvider(url!) : null,
+            image: url ?? "",
             rating: (m?.ratingsReceivedCount ?? 0)
-                .toDouble(), // adjust if you have separate average
-            ratingCount: m?.ratingsReceivedCount ?? 0,
+                .toDouble(),
+            ratingCount: m?.ratingsReceivedCount ?? 0,coinsPerMinute: "",
           ),
         );
       },
@@ -59,22 +60,22 @@ class MentorGridCampus extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.7,
+        childAspectRatio: 0.65,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
         final url = m?.user?.profilePicUrl?.trim();
-        final hasPic = url != null && url.isNotEmpty;
         return GestureDetector(
           onTap: () => onTapMentor(m!),
-          child: _MentorCard(
+          child:_MentorCard(
             name: m?.user?.name ?? '',
-            designation: m?.user?.designation ?? '',
-            imageProvider: hasPic ? CachedNetworkImageProvider(url!) : null,
-            rating: double.parse(m?.averageRating.toString() ?? ""), // average
-            ratingCount:
-                0, // <-- add correct count field in your model if available
+            designation: m?.user?.bio ?? '',
+            image: url ?? "",
+            rating: double.tryParse(m?.averageRating?.toString() ?? "0") ?? 0.0,
+            ratingCount: m?.totalReviews ?? 0,
+            coinsPerMinute: m?.coinsPerMinute.toString() ?? "",
           ),
+
         );
       },
     );
@@ -84,16 +85,18 @@ class MentorGridCampus extends StatelessWidget {
 class _MentorCard extends StatelessWidget {
   final String name;
   final String designation;
-  final ImageProvider? imageProvider;
+  final String image;
   final double rating;
   final int ratingCount;
+  final String coinsPerMinute;
 
   const _MentorCard({
     required this.name,
     required this.designation,
-    required this.imageProvider,
+    required this.image,
     required this.rating,
     required this.ratingCount,
+    required this.coinsPerMinute,
   });
 
   @override
@@ -106,13 +109,23 @@ class _MentorCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          CircleAvatar(
-            radius: 60,
-            backgroundColor: Colors.grey.shade200,
-            backgroundImage: imageProvider,
-            child: imageProvider == null
-                ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                : null,
+          CachedNetworkImage(
+            imageUrl: image,
+            imageBuilder: (context, imageProvider) =>
+                CircleAvatar(radius: 60, backgroundImage: imageProvider),
+            placeholder: (context, url) => CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.grey,
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: Center(child: spinkits.getSpinningLinespinkit()),
+              ),
+            ),
+            errorWidget: (context, url, error) => const CircleAvatar(
+              radius: 20,
+              backgroundImage: AssetImage("assets/images/profile.png"),
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -120,25 +133,28 @@ class _MentorCard extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: Color(0xff333333),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            designation,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xff555555),
-              fontFamily: 'segeo',
-              fontWeight: FontWeight.w400,
+           SizedBox(height: 8),
+          SizedBox(
+            width: SizeConfig.screenWidth * 0.18,
+            child: Text(
+              designation,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xff555555),
+                fontFamily: 'segeo',
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -148,9 +164,9 @@ class _MentorCard extends StatelessWidget {
                 height: 14,
                 width: 14,
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Text(
-                rating.toStringAsFixed(1),
+                "${rating.toStringAsFixed(1)} ($ratingCount)",
                 style: const TextStyle(
                   fontSize: 12,
                   fontFamily: 'segeo',
@@ -162,7 +178,7 @@ class _MentorCard extends StatelessWidget {
               Image.asset("assets/images/coinsgold.png", height: 16, width: 16),
               SizedBox(width: 4),
               Text(
-                '$ratingCount',
+                '$coinsPerMinute',
                 style: TextStyle(
                   fontSize: 12,
                   color: Color(0xff666666),

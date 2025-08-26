@@ -34,7 +34,6 @@ class _ProfileScreen1State extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: CustomAppBar1(
         title: "Profile",

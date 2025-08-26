@@ -13,7 +13,7 @@ class MentorProfileCubit extends Cubit<MentorProfileState> {
     emit(MentorProfileLoading());
     try {
       final mentorProfile = await mentorProfileRepository.getMentorProfile(id);
-      if (mentorProfile != null) {
+      if (mentorProfile != null && mentorProfile.status==true) {
         emit(MentorProfileLoaded(mentorProfileModel: mentorProfile));
       } else {
         emit(MentorProfileFailure(message: 'Failed to load mentor profile.'));

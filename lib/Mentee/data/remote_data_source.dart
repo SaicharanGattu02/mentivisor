@@ -95,7 +95,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
-  Future<SessionBookingModel?> sessionBooking(int mentor_id, int slot_id);
+  Future<SessionBookingModel?> sessionBooking(Map<String,dynamic> data);
   Future<CreatePaymentModel?> createPayment(Map<String, dynamic> data);
   Future<SuccessModel?> verifyPayment(Map<String, dynamic> data);
   Future<UpComingSessionModel?> upComingSessions();
@@ -123,6 +123,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
               key.contains('picture') ||
               key.contains('profile_pic') ||
               key.contains('resume') ||
+              key.contains('attachment') ||
               key.contains('payment_screenshot'));
 
       if (isFile) {
@@ -145,12 +146,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<SessionBookingModel?> sessionBooking(
-    int mentor_id,
-    int slot_id,
+      Map<String,dynamic> data
   ) async {
     try {
+      final formdata = await buildFormData(data);
       Response res = await ApiClient.post(
-        "${APIEndpointUrls.book_slot}?mentor_id=${mentor_id}&slot_id=${slot_id}",
+        "${APIEndpointUrls.book_slot}",data: formdata
       );
       AppLogger.log('sessionBooking: ${res.data}');
       return SessionBookingModel.fromJson(res.data);

@@ -116,8 +116,8 @@ class MentorsList {
   String? resumeUrl;
   List<Null>? todaySlots;
   List<Null>? tomorrowSlots;
-  int? averageRating;
-  int? totalReviews;
+  dynamic averageRating;
+  dynamic totalReviews;
   User? user;
   List<Null>? expertises;
 

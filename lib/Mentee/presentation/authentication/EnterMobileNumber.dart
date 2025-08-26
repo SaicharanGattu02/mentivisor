@@ -1,14 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'OTPVerificationScreen.dart';
-//
-// class EmailInputScreen extends StatefulWidget {
-//   const EmailInputScreen({Key? key}) : super(key: key);
-
-  // @override
-  // State<EmailInputScreen> createState() => _EmailInputScreenState();
-// }
 
 // class _EmailInputScreenState extends State<EmailInputScreen> {
   final _emailController = TextEditingController();

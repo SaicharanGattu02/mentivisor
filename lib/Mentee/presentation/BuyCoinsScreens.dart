@@ -15,10 +15,14 @@ import '../../services/AuthService.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../data/cubits/Payment/payment_cubit.dart';
+import '../data/cubits/SelectSlot/select_slot_cubit.dart';
 import '../data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 
 class BuyCoinsScreens extends StatefulWidget {
-  const BuyCoinsScreens({Key? key}) : super(key: key);
+  final int? mentor_id;
+  final int? slot_id;
+  const BuyCoinsScreens({Key? key, this.mentor_id, this.slot_id})
+    : super(key: key);
 
   @override
   _BuyCoinsScreenState createState() => _BuyCoinsScreenState();
@@ -336,7 +340,14 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                         context.read<WalletmoneyCubit>().getWallet(0);
                         context.read<MenteeProfileCubit>().fetchMenteeProfile();
                         context.read<MenteeDashboardCubit>().fetchDashboard();
-
+                        if ((widget.mentor_id != null &&
+                                widget.mentor_id != 0) &&
+                            (widget.slot_id != null && widget.slot_id != 0)) {
+                          context.read<SelectSlotCubit>().getSelectSlot(
+                            widget.mentor_id!,
+                            widget.slot_id!,
+                          );
+                        }
                         context.pushReplacement(
                           '/payment_success'
                           '?title=${Uri.encodeComponent("Payment is Done Successfully")}',

@@ -115,8 +115,6 @@ class ResourceDetailScreen extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 24),
-
-                    // About Author
                     const Text(
                       'About Author',
                       style: TextStyle(
@@ -210,7 +208,7 @@ class ResourceDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '${studyZoneCampusData.downloadsCount ?? 0}+ downloads',
+                                '${studyZoneCampusData.downloadsCount ?? 0} + downloads',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontFamily: 'segeo',

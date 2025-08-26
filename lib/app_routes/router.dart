@@ -127,7 +127,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final title = state.uri.queryParameters['title'] ?? "";
         final subTitle = state.uri.queryParameters['subTitle'] ?? "";
-        final nextRoute = state.uri.queryParameters['next'] ?? "";
+        final nextRoute = state.uri.queryParameters['nextRoute'] ?? "";
         return buildSlideTransitionPage(
           PaymentSuccessScreen(
             title: title,
@@ -373,8 +373,14 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/dashboard',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(Dashboard(), state),
+      pageBuilder: (context, state) {
+        final selectedIndexString = state.uri.queryParameters['selectedIndex'];
+        final selectedIndex = int.tryParse(selectedIndexString ?? '') ?? 0;
+        return buildSlideTransitionPage(
+          Dashboard(selectedIndex: selectedIndex),
+          state,
+        );
+      },
     ),
 
     GoRoute(
@@ -402,8 +408,16 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/buy_coins_screens',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(BuyCoinsScreens(), state),
+      pageBuilder: (context, state) {
+        final MentorIdString = state.uri.queryParameters['mentor_id'];
+        final mentorId = int.tryParse(MentorIdString ?? '') ?? 0;
+        final slotIdString = state.uri.queryParameters['slot_id'];
+        final slotId = int.tryParse(slotIdString ?? '') ?? 0;
+        return buildSlideTransitionPage(
+          BuyCoinsScreens(mentor_id: mentorId, slot_id: slotId),
+          state,
+        );
+      },
     ),
     GoRoute(
       path: '/comming_soon',
@@ -418,8 +432,6 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(BookSessionScreen(data: data), state);
       },
     ),
-
-    //// Mentor routes
     GoRoute(
       path: '/mentor_dashboard',
       pageBuilder: (context, state) {
@@ -488,7 +500,6 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(Mentorinfoscreen(), state);
       },
     ),
-
   ],
 );
 

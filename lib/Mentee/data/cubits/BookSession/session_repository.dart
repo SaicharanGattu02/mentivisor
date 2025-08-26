@@ -9,9 +9,7 @@ abstract class SessionBookingRepo {
   Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''});
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
-  Future<SessionBookingModel?> sessionBooking(
-    int mentor_id,
-    int slot_id
+  Future<SessionBookingModel?> sessionBooking(Map<String,dynamic> data
   );
 }
 
@@ -35,9 +33,8 @@ class SessionBookingRepoImpl implements SessionBookingRepo {
 
   @override
   Future<SessionBookingModel?> sessionBooking(
-    int mentor_id,
-    int slot_id
+      Map<String,dynamic> data
   ) async {
-    return await remoteDataSource.sessionBooking(mentor_id, slot_id);
+    return await remoteDataSource.sessionBooking(data);
   }
 }

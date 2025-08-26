@@ -268,7 +268,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       if (value!.isEmpty) return 'Event Time is required';
                       return null;
                     },
-                    onTap: () => _selectTime(context), // Time Picker
+                    onTap: () => _selectTime(context),
                   );
                 },
               ),
@@ -284,7 +284,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
               buildCustomLabel('Description'),
               buildCustomTextField(
                 controller: _descriptionController,
-                hint: "Description (Optional)",
+                hint: "Description",
               ),
               buildCustomLabel('Event Link (optional)'),
               buildCustomTextField(
@@ -435,8 +435,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
                               final isHighlighted = _isHighlighted.value;
 
                               if (file == null) {
-                                // Optionally show an error/toast/snackbar
-                                print('Please upload an image');
+                                CustomSnackBar1.show(
+                                  context,
+                                  'Please upload an image',
+                                );
                                 return;
                               }
                               Map<String, dynamic> data = {
@@ -449,8 +451,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                 "dateofevent": selectedDateStr.value,
                                 "popular": isHighlighted ? 1 : 0,
                                 "link": _dateController.text,
-                                "image":
-                                    file.path, // ✅ Get path from ValueNotifier
+                                "image": file.path,
                               };
                               context.read<AddEccCubit>().addEcc(data);
                             }

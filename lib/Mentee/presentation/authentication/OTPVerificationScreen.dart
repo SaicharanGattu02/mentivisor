@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Verify_Otp/Verify_Otp_State.dart';
+import 'package:mentivisor/utils/color_constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -128,14 +129,23 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  'OTP sent to +91 ${widget.data["contact"]}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    fontFamily: 'segeo',
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(spacing: 10,
+                  children: [
+                    Text(
+                      'OTP sent to +91 ${widget.data["contact"]}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    IconButton(visualDensity: VisualDensity.compact,
+                        onPressed: (){
+                      context.pop();
+
+                    }, icon: Icon(Icons.edit,size: 24,color: primarycolor,))
+                  ],
                 ),
                 const SizedBox(height: 16),
                 PinCodeTextField(

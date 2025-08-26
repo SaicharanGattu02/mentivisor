@@ -7,12 +7,10 @@ class SessionBookingCubit extends Cubit<SessionBookingStates> {
   SessionBookingCubit(this.sessionBookingRepo)
     : super(SessionBookingInitially());
 
-  Future<void> sessionBooking(int mentor_id, int slot_id) async {
+  Future<void> sessionBooking(Map<String,dynamic> data) async {
     emit(SessionBookingLoading());
     try {
-      final response = await sessionBookingRepo.sessionBooking(
-        mentor_id,
-        slot_id,
+      final response = await sessionBookingRepo.sessionBooking(data
       );
       if (response != null && response.status == true) {
         emit(SessionBookingLoaded(response));
