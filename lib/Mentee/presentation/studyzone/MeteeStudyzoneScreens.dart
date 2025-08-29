@@ -14,6 +14,7 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusSta
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
+import '../../../Components/CommonLoader.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
@@ -302,7 +303,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                   BlocBuilder<StudyZoneCampusCubit, StudyZoneCampusState>(
                     builder: (context, state) {
                       if (state is StudyZoneCampusLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(
+                          child: SizedBox(
+                            height: SizeConfig.screenWidth*1,
+                              child: DottedProgressWithLogo()
+                          ),
+                        );
                       } else if (state is StudyZoneCampusFailure) {
                         return Center(child: Text(state.message));
                       } else if (state is StudyZoneCampusLoaded ||

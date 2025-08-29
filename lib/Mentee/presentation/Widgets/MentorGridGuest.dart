@@ -138,7 +138,7 @@ class _MentorCard extends StatelessWidget {
               color: Color(0xff333333),
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 5),
           SizedBox(
             width: SizeConfig.screenWidth * 0.18,
             child: Text(
@@ -153,7 +153,7 @@ class _MentorCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

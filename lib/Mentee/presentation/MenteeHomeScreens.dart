@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../Components/CommonLoader.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
@@ -94,11 +95,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         return BlocBuilder<MenteeDashboardCubit, MenteeDashboardState>(
           builder: (context, state) {
             if (state is MenteeDashboardLoading) {
-              return Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(color: primarycolor),
-                ),
-              );
+              return Scaffold(body: Center(child: DottedProgressWithLogo()));
             } else if (state is MenteeDashboardLoaded) {
               final menteeProfile = state.menteeProfileModel.data;
               final banners = state.getbannerModel.data ?? [];

@@ -6,7 +6,9 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsStates.dart';
 import 'package:mentivisor/utils/color_constants.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
+import '../../../Components/CommonLoader.dart';
 import '../../../services/AuthService.dart';
 import '../../Models/CommunityPostsModel.dart';
 import '../Widgets/FilterButton.dart';
@@ -141,7 +143,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                   }
                 },
               ),
-
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -287,7 +288,12 @@ class _CommunityScreenState extends State<Communityscreen> {
               BlocBuilder<CommunityPostsCubit, CommunityPostsStates>(
                 builder: (context, state) {
                   if (state is CommunityPostsLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: SizedBox(
+                        height: SizeConfig.screenWidth * 1,
+                        child: DottedProgressWithLogo(),
+                      ),
+                    );
                   } else if (state is CommunityPostsLoaded ||
                       state is CommunityPostsLoadingMore) {
                     final communityPostsModel = (state is CommunityPostsLoaded)

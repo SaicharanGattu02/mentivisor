@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_states.dart';
 import 'package:mentivisor/utils/color_constants.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
+import '../../../Components/CommonLoader.dart';
 import '../../../services/AuthService.dart';
 import '../Widgets/EventCard.dart';
 import '../Widgets/FilterButton.dart';
@@ -249,7 +251,9 @@ class _EccScreenState extends State<EccScreen> {
                   builder: (context, state) {
                     if (state is ECCLoading) {
                       return Center(
-                        child: CircularProgressIndicator(color: primarycolor1),
+                        child: SizedBox(
+                          height: SizeConfig.screenWidth*1,
+                            child: DottedProgressWithLogo()),
                       );
                     } else if (state is ECCLoaded || state is ECCLoadingMore) {
                       final ecc_model = (state is ECCLoaded)
