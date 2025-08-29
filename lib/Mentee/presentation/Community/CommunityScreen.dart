@@ -158,7 +158,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                     valueListenable: _onCampus,
                     builder: (context, onCampus, _) {
                       if (!onCampus) {
-
                         return const SizedBox.shrink();
                       }
                       return FutureBuilder(
@@ -174,7 +173,10 @@ class _CommunityScreenState extends State<Communityscreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               backgroundColor: const Color(0xffEDD9FF),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -191,7 +193,11 @@ class _CommunityScreenState extends State<Communityscreen> {
                                 color: const Color(0xff9B40EF),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Icon(Icons.add, size: 16, color: Colors.white),
+                              child: const Icon(
+                                Icons.add,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                             ),
                             label: const Text(
                               'Add',
@@ -207,7 +213,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                       );
                     },
                   ),
-
                 ],
               ),
               SizedBox(height: 10),
@@ -271,7 +276,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                                 ? const BorderSide(color: Color(0xFF4076ED))
                                 : const BorderSide(color: Colors.transparent),
                           ),
-
                         );
                       },
                     );
@@ -293,8 +297,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                     final communityposts =
                         communityPostsModel.data?.communityposts;
                     if (communityposts?.length == 0) {
-                      return
-                        Center(
+                      return Center(
                         child: Column(
                           spacing: 10,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -359,7 +362,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                               itemBuilder: (context, index) {
                                 final communitypost = communityposts?[index];
                                 return PostCard(
-                                  communityPosts: communitypost ?? CommunityPosts(),
+                                  communityPosts:
+                                      communitypost ?? CommunityPosts(),
                                 );
                               },
                             ),
@@ -405,18 +409,23 @@ class _CommunityScreenState extends State<Communityscreen> {
               onPressed: () {
                 if (isGuest) {
                 } else {
-                  CustomSnackBar1.show(context, "Unable to Running Test Server");
+                  CustomSnackBar1.show(
+                    context,
+                    "Unable to Running Test Server",
+                  );
                 }
               },
               backgroundColor: Colors.transparent,
               elevation: 0,
-              child:  Image.asset("assets/images/ChatCircleDots.png",width:28,height: 28,),
+              child: Image.asset(
+                "assets/images/ChatCircleDots.png",
+                width: 28,
+                height: 28,
+              ),
             ),
           );
         },
       ),
     );
   }
-
-
 }

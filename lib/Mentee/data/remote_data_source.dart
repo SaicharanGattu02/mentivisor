@@ -11,6 +11,7 @@ import 'package:mentivisor/Mentee/Models/YearsModel.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Mentor/Models/FeedbackModel.dart';
+import '../Models/BecomeMentorSuccessModel.dart';
 import '../Models/CampusesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
 import '../Models/CommunityPostsModel.dart';
@@ -87,7 +88,7 @@ abstract class RemoteDataSource {
   Future<CoinsPackRespModel?> getcoinspack();
   Future<GetExpertiseModel?> getExpertiseSubCategory(int id);
   Future<GetExpertiseModel?> getExpertiseCategory(String search, int page);
-  Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data);
+  Future<BecomeMentorSuccessModel?> becomeMentor(final Map<String, dynamic> data);
   Future<MenteeProfileModel?> getMenteeProfile();
   Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
   Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''});
@@ -721,7 +722,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SuccessModel?> becomeMentor(final Map<String, dynamic> data) async {
+  Future<BecomeMentorSuccessModel?> becomeMentor(final Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.post(
@@ -729,7 +730,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         data: formData,
       );
       AppLogger.log('Become Mentor ::${res.data}');
-      return SuccessModel.fromJson(res.data);
+      return BecomeMentorSuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Become Mentor ::${e}');
       return null;

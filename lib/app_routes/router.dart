@@ -332,8 +332,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/cost_per_minute_screen',
       pageBuilder: (context, state) {
-        final data = state.extra as Map<String, dynamic>? ?? {};
-        return buildSlideTransitionPage(CostPerMinuteScreen(data: data), state);
+        final coins = state.uri.queryParameters['coins'] ?? "";
+        return buildSlideTransitionPage(
+          CostPerMinuteScreen(coins: coins),
+          state,
+        );
       },
     ),
 
@@ -506,7 +509,10 @@ final GoRouter appRouter = GoRouter(
       path: '/pdf_viewer',
       pageBuilder: (context, state) {
         final file_url = state.uri.queryParameters['file_url'];
-        return buildSlideTransitionPage(PdfViewerPage(file_url: file_url), state);
+        return buildSlideTransitionPage(
+          PdfViewerPage(file_url: file_url),
+          state,
+        );
       },
     ),
   ],

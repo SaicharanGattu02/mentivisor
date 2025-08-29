@@ -1,4 +1,5 @@
-import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
+
+import '../../../Models/BecomeMentorSuccessModel.dart';
 
 abstract class BecomeMentorStates {}
 
@@ -7,8 +8,8 @@ class BecomeMentorInitially extends BecomeMentorStates {}
 class BecomeMentorLoading extends BecomeMentorStates {}
 
 class BecomeMentorSuccess extends BecomeMentorStates {
-  SuccessModel successModel;
-  BecomeMentorSuccess(this.successModel);
+  BecomeMentorSuccessModel becomeMentorSuccessModel;
+  BecomeMentorSuccess(this.becomeMentorSuccessModel);
 }
 
 class BecomeMentorFailure extends BecomeMentorStates {

@@ -1,8 +1,9 @@
 import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
+import '../../../Models/BecomeMentorSuccessModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class BecomeMentorRepository {
-  Future<SuccessModel?> postBecomeMentor(Map<String, dynamic> data);
+  Future<BecomeMentorSuccessModel?> postBecomeMentor(Map<String, dynamic> data);
 }
 
 class BecomeMentorImpl implements BecomeMentorRepository {
@@ -10,7 +11,7 @@ class BecomeMentorImpl implements BecomeMentorRepository {
   BecomeMentorImpl({required this.remoteDataSource});
 
   @override
-  Future<SuccessModel?> postBecomeMentor(Map<String, dynamic> data) async {
+  Future<BecomeMentorSuccessModel?> postBecomeMentor(Map<String, dynamic> data) async {
     return await remoteDataSource.becomeMentor(data);
   }
 }

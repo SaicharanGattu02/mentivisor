@@ -10,6 +10,8 @@ import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../utils/color_constants.dart';
 import '../../Models/GetExpertiseModel.dart';
+import '../../data/cubits/BecomeMentor/become_mentor_cubit.dart';
+import '../../data/cubits/BecomeMentor/become_mentor_state.dart';
 import '../../data/cubits/Expertise/ExpertiseCategory/expertise_category_state.dart';
 import '../../data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category_cubit.dart';
 import '../../data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category_state.dart';
@@ -160,7 +162,7 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                               textAlign: TextAlign.center,
                               'No Data Found!',
                               style: TextStyle(
-                                color: primarycolor,
+                                color: Color(0xFF7F00FF),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Poppins',
@@ -170,6 +172,7 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                         ),
                       );
                     }
+
                     return SingleChildScrollView(
                       controller: _scrollController,
                       physics: const BouncingScrollPhysics(),
@@ -177,72 +180,32 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          DottedBorder(
-                            color: const Color(0xFFD9BFC4),
-                            strokeWidth: 1.2,
-                            dashPattern: const [6, 4],
-                            borderType: BorderType.RRect,
-                            radius: const Radius.circular(16),
-                            padding: const EdgeInsets.all(12),
-                            child: Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: categoryList.map((cat) {
-                                return _PillChip(
-                                  text: cat.name ?? "",
-                                  selected: selectedCategoryIds.contains(
-                                    cat.id,
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      if (selectedCategoryIds.contains(
-                                        cat.id,
-                                      )) {
-                                        selectedCategoryIds.remove(cat.id);
-                                        pickedSubTopicsPerCategory.remove(
-                                          cat.id,
-                                        );
-                                      } else {
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: categoryList
+                                .where(
+                                  (cat) =>
+                                      !selectedCategoryIds.contains(cat.id),
+                                )
+                                .map((cat) {
+                                  return _PillChip(
+                                    text: cat.name ?? "",
+                                    selected: false,
+                                    onTap: () {
+                                      setState(() {
                                         selectedCategoryIds.add(cat.id ?? -1);
                                         context
                                             .read<ExpertiseSubCategoryCubit>()
                                             .getExpertiseSubCategories(
                                               cat.id ?? -1,
                                             );
-                                      }
-                                      AppLogger.log(
-                                        "Selected Category IDs: $selectedCategoryIds",
-                                      );
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                            ),
+                                      });
+                                    },
+                                  );
+                                })
+                                .toList(),
                           ),
-
-                          if (selectedCategoryIds.isNotEmpty)
-                            Wrap(
-                              spacing: 8,
-                              children: selectedCategoryIds.map((catId) {
-                                final catName =
-                                    expertiseCategories
-                                        .firstWhere(
-                                          (c) => c.id == catId,
-                                          orElse: () => ExpertiseData(name: ""),
-                                        )
-                                        .name ??
-                                    "";
-                                return _SelectedCategoryChip(
-                                  categoryName: catName,
-                                  onClear: () {
-                                    setState(() {
-                                      selectedCategoryIds.remove(catId);
-                                      pickedSubTopicsPerCategory.remove(catId);
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                            ),
 
                           ...selectedCategoryIds.map((catId) {
                             final category = expertiseCategories.firstWhere(
@@ -253,36 +216,8 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                             final pickedSubs =
                                 pickedSubTopicsPerCategory[catId] ?? {};
 
-                            if (subs.isEmpty)
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: const [
-                                    Text(
-                                      'Oops !',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      textAlign: TextAlign.center,
-                                      'No Data Found!',
-                                      style: TextStyle(
-                                        color: primarycolor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-
                             return Padding(
-                              padding: const EdgeInsets.only(top: 16),
+                              padding: EdgeInsets.only(top: 16),
                               child: DottedBorder(
                                 color: const Color(0xFFD9BFC4),
                                 strokeWidth: 1.2,
@@ -290,45 +225,84 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
                                 borderType: BorderType.RRect,
                                 radius: const Radius.circular(16),
                                 padding: const EdgeInsets.all(12),
-                                child: Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  children: subs.map((sub) {
-                                    final isPicked = pickedSubs.contains(
-                                      sub.name ?? "",
-                                    );
-                                    return _PillChip(
-                                      text: sub.name ?? "",
-                                      selected: isPicked,
-                                      onTap: () {
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Selected category chip with remove button
+                                    _SelectedCategoryChip(
+                                      categoryName: category.name ?? "",
+                                      onClear: () {
                                         setState(() {
-                                          final setForCat =
-                                              pickedSubTopicsPerCategory
-                                                  .putIfAbsent(catId, () => {});
-                                          if (isPicked) {
-                                            setForCat.remove(sub.name ?? "");
-                                            selectedSubCategoryIds.remove(
-                                              sub.id ?? 0,
-                                            );
-                                          } else {
-                                            setForCat.add(sub.name ?? "");
-                                            selectedSubCategoryIds.add(
-                                              sub.id ?? 0,
-                                            );
-                                          }
-                                          AppLogger.log(
-                                            "Selected SubCategory IDs: $selectedSubCategoryIds",
+                                          selectedCategoryIds.remove(catId);
+                                          pickedSubTopicsPerCategory.remove(
+                                            catId,
                                           );
                                         });
                                       },
-                                      selectedBorder: const Color(0xFFC9CED6),
-                                      selectedText: const Color(0xFF2F3B52),
-                                    );
-                                  }).toList(),
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    if (subs.isNotEmpty)
+                                      Wrap(
+                                        spacing: 10,
+                                        runSpacing: 10,
+                                        children: subs.map((sub) {
+                                          final isPicked = pickedSubs.contains(
+                                            sub.name ?? "",
+                                          );
+                                          return _PillChip(
+                                            text: sub.name ?? "",
+                                            selected: isPicked,
+                                            onTap: () {
+                                              setState(() {
+                                                final setForCat =
+                                                    pickedSubTopicsPerCategory
+                                                        .putIfAbsent(
+                                                          catId,
+                                                          () => {},
+                                                        );
+                                                if (isPicked) {
+                                                  setForCat.remove(
+                                                    sub.name ?? "",
+                                                  );
+                                                  selectedSubCategoryIds.remove(
+                                                    sub.id ?? 0,
+                                                  );
+                                                } else {
+                                                  setForCat.add(sub.name ?? "");
+                                                  selectedSubCategoryIds.add(
+                                                    sub.id ?? 0,
+                                                  );
+                                                }
+                                              });
+                                            },
+                                            selectedBorder: const Color(
+                                              0xFFC9CED6,
+                                            ),
+                                            selectedText: const Color(
+                                              0xFF2F3B52,
+                                            ),
+                                          );
+                                        }).toList(),
+                                      )
+                                    else
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "No Subcategories Found",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xFF7F00FF),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             );
-                          }),
+                          }).toList(),
 
                           if (state is ExpertiseCategoryLoadingMore)
                             const Padding(
@@ -352,23 +326,35 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: CustomAppButton1(
-          text: "Next",
-          onPlusTap: () {
-            if (selectedSubCategoryIds.isEmpty && selectedCategoryIds.isEmpty) {
-              CustomSnackBar1.show(
-                context,
-                "Please tell us about your achievements to continue.",
-              );
-            } else {
-              final Map<String, dynamic> data = {
-                ...widget.data,
-                "expertise_ids[]": selectedCategoryIds.toList(),
-                "sub_expertise_ids[]": selectedSubCategoryIds.toList(),
-              };
-
-              context.push("/cost_per_minute_screen", extra: data);
+        child: BlocConsumer<BecomeMentorCubit, BecomeMentorStates>(
+          listener: (context, state) {
+            if (state is BecomeMentorSuccess) {
+              context.go('/cost_per_minute_screen?coins=${state.becomeMentorSuccessModel.coinsPerMinute??""}');
+            } else if (state is BecomeMentorFailure) {
+              CustomSnackBar1.show(context, state.error);
             }
+          },
+          builder: (context, state) {
+            return CustomAppButton1(
+              isLoading: state is BecomeMentorLoading,
+              text: "Done",
+              onPlusTap: () {
+                if (selectedSubCategoryIds.isEmpty &&
+                    selectedCategoryIds.isEmpty) {
+                  CustomSnackBar1.show(
+                    context,
+                    "Please tell us about your achievements to continue.",
+                  );
+                } else {
+                  final Map<String, dynamic> data = {
+                    ...widget.data,
+                    "expertise_ids[]": selectedCategoryIds.toList(),
+                    "sub_expertise_ids[]": selectedSubCategoryIds.toList(),
+                  };
+                  context.read<BecomeMentorCubit>().becomeMentor(data);
+                }
+              },
+            );
           },
         ),
       ),
@@ -387,12 +373,14 @@ class _SelectedCategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFF7F00FF), Color(0xFF00BFFF)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(18),
         ),
@@ -439,20 +427,20 @@ class _PillChip extends StatelessWidget {
     required this.text,
     required this.selected,
     required this.onTap,
-    this.selectedBorder = const Color(0xFF1A73E8),
-    this.selectedText = const Color(0xFF1A73E8),
+    this.selectedBorder = const Color(0xFF7F00FF),
+    this.selectedText = const Color(0xFF7F00FF),
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selected ? selectedBorder : Colors.transparent,
             width: 1,
@@ -462,9 +450,9 @@ class _PillChip extends StatelessWidget {
           text,
           style: TextStyle(
             fontFamily: 'segeo',
-            fontSize: 13.5,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: selected ? selectedText : Color(0xFF2F3B52),
+            color: selected ? selectedText : const Color(0xFF2F3B52),
           ),
         ),
       ),
