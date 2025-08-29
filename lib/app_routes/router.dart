@@ -270,8 +270,10 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/addeventscreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(AddEventScreen(), state),
+      pageBuilder: (context, state) {
+        final type = state.uri.queryParameters['type'] ?? "";
+        return buildSlideTransitionPage(AddEventScreen(type: type), state);
+      },
     ),
 
     GoRoute(
@@ -294,8 +296,10 @@ final GoRouter appRouter = GoRouter(
 
     GoRoute(
       path: '/addpostscreen',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(AddPostScreen(), state),
+      pageBuilder: (context, state) {
+        final type = state.uri.queryParameters['type'] ?? "";
+        return buildSlideTransitionPage(AddPostScreen(type: type), state);
+      },
     ),
 
     GoRoute(

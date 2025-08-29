@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../services/AuthService.dart';
 import 'color_constants.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -71,11 +72,11 @@ void showAnimatedTopSnackBar(BuildContext context, String message) {
 
 class InputDecorationUtils {
   static InputDecoration inputDecoration(
-      String label,
-      [ String? hint,
-        IconData? prefixIcon,
-        Widget? suffixIconWidget,
-      ]) {
+    String label, [
+    String? hint,
+    IconData? prefixIcon,
+    Widget? suffixIconWidget,
+  ]) {
     return InputDecoration(
       prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
       suffixIcon: suffixIconWidget,
@@ -107,10 +108,7 @@ class InputDecorationUtils {
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Colors.red, width: 0.5),
       ),
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 12,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 }
@@ -119,8 +117,8 @@ String capitalize(String value) {
   if (value.isEmpty) return "";
   return value[0].toUpperCase() + value.substring(1).toLowerCase();
 }
-class DateHelper {
 
+class DateHelper {
   static String formatDateTime(String? rawTime) {
     if (rawTime == null || rawTime.isEmpty) return "";
     try {
@@ -130,7 +128,6 @@ class DateHelper {
       return rawTime;
     }
   }
-
 
   static String timeAgo(String? rawTime) {
     if (rawTime == null || rawTime.isEmpty) return "";
@@ -157,25 +154,17 @@ class DateHelper {
   }
 }
 
-// class AppState {
-//   static ValueNotifier<int?> availableCoins = ValueNotifier<int?>(0);
-// }
-
 class AppState {
-  static final _coinsController = StreamController<int>.broadcast();
+  static final ValueNotifier<int> coinsNotifier = ValueNotifier<int>(0);
 
-  static int _coins = 0;
-
-  static Stream<int> get coinsStream => _coinsController.stream;
-  static int get coins => _coins;
-
-  static void updateCoins(int newValue) {
-    _coins = newValue;
-    _coinsController.add(newValue);
+  static void updateCoins(int newCoins) {
+    coinsNotifier.value = newCoins;
+    AuthService.saveCoins(newCoins);
   }
 
-  static void dispose() {
-    _coinsController.close();
+  static Future<void> loadCoins() async {
+    final storedCoins = await AuthService.getCoins();
+    coinsNotifier.value = int.tryParse(storedCoins ?? "0") ?? 0;
   }
 }
 

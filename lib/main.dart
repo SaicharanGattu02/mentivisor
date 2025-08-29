@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mentivisor/services/ApiClient.dart';
+import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'StateInjector.dart';
 import 'app_routes/router.dart';

@@ -170,7 +170,12 @@ class _CommunityScreenState extends State<Communityscreen> {
                               if (isGuest) {
                                 context.push('/auth_landing');
                               } else {
-                                context.push("/addpostscreen");
+                                final selectedUpdate =
+                                    _filters[_selectedFilter.value]
+                                        .toLowerCase();
+                                context.push(
+                                  "/addpostscreen?type=${selectedUpdate}",
+                                );
                               }
                             },
                             style: ElevatedButton.styleFrom(

@@ -9,6 +9,7 @@ import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
+import '../../../services/AuthService.dart';
 import '../../../utils/AppLogger.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/constants.dart';
@@ -22,7 +23,8 @@ import '../../data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddPostScreen extends StatefulWidget {
-  const AddPostScreen({Key? key}) : super(key: key);
+  final String type;
+  const AddPostScreen({Key? key, required this.type}) : super(key: key);
 
   @override
   State<AddPostScreen> createState() => _AddPostScreenState();
@@ -499,7 +501,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                   highlitedCoinValue.value = coins ?? "";
                                   final requiredCoins =
                                       int.tryParse(coins.toString()) ?? 0;
-                                  final availableCoins = AppState.coins;
+                                  final availableCoins = AppState.coinsNotifier.value;
                                   AppLogger.info(
                                     "availableCoins:${availableCoins}",
                                   );
@@ -551,16 +553,24 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         height: 16,
                       ),
                       const SizedBox(width: 4),
-                      StreamBuilder<int>(
-                        stream: AppState.coinsStream,
-                        initialData: AppState.coins,
+                      FutureBuilder<String?>(
+                        future: AuthService.getCoins(),
                         builder: (context, snapshot) {
-                          final coins = snapshot.data ?? 0;
-
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text(
+                              "Loading...",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }
+                          final coins = int.tryParse(snapshot.data ?? "0") ?? 0;
                           return RichText(
                             text: TextSpan(
                               children: [
-                                TextSpan(
+                                const TextSpan(
                                   text: "Available coins ",
                                   style: TextStyle(
                                     fontFamily: 'segeo',
@@ -570,7 +580,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: "$coins",
+                                  text: coins.toString(),
                                   style: const TextStyle(
                                     fontFamily: 'segeo',
                                     fontWeight: FontWeight.w600,
@@ -603,20 +613,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   listener: (context, state) {
                     if (state is AddCommunityPostLoaded) {
                       context.read<CommunityPostsCubit>().getCommunityPosts(
-                        "all",
                         "",
-                      );
-                      context.read<CommunityPostsCubit>().getCommunityPosts(
-                        "upcoming",
-                        "",
-                      );
-                      context.read<CommunityPostsCubit>().getCommunityPosts(
-                        "highlighted",
-                        "",
-                      );
-                      context.read<CommunityPostsCubit>().getCommunityPosts(
-                        "",
-                        "",
+                        "${widget.type}",
                       );
                       if (!mounted) return;
                       context.pop();

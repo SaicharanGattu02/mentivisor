@@ -369,7 +369,8 @@ class _EccScreenState extends State<EccScreen> {
                   if (isGuest) {
                     context.push('/auth_landing');
                   } else {
-                    context.push("/addeventscreen");
+                    final selectedUpdate = _filters[_selectedFilter].toLowerCase();
+                    context.push("/addeventscreen?type=${selectedUpdate}");
                   }
                 },
                 backgroundColor: Colors.transparent,

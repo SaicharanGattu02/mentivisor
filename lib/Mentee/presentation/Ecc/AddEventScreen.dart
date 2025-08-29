@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -16,14 +15,18 @@ import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../../Components/CommonLoader.dart';
+import '../../../services/AuthService.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import '../../data/cubits/ECC/ecc_cubit.dart';
+import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddEventScreen extends StatefulWidget {
+  final String type;
+  AddEventScreen({super.key, required this.type});
   @override
   _AddEventScreenState createState() => _AddEventScreenState();
 }
@@ -45,7 +48,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   final ValueNotifier<String> selectedTabIndex = ValueNotifier<String>('event');
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
-
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
@@ -242,13 +244,24 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 ),
               ),
               SizedBox(height: 10),
-              buildCustomLabel('Event Name'),
-              buildCustomTextField(
-                controller: _eventNameController,
-                hint: "Event Name",
-                validator: (value) {
-                  if (value!.isEmpty) return 'Event Name is required';
-                  return null;
+              ValueListenableBuilder<String>(
+                valueListenable: selectedTabIndex,
+                builder: (context, selectedValue, _) {
+                  final label = capitalize(selectedValue);
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildCustomLabel('$label Name'),
+                      buildCustomTextField(
+                        controller: _eventNameController,
+                        hint: "$label Name",
+                        validator: (value) {
+                          if (value!.isEmpty) return '$label Name is required';
+                          return null;
+                        },
+                      ),
+                    ],
+                  );
                 },
               ),
               buildCustomLabel('Location'),
@@ -436,8 +449,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                           },
                         ),
                       ),
-
-
                     ],
                   );
                 },
@@ -478,7 +489,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                     child: DottedProgressWithLogo(),
                                   );
                                 } else if (state is GetHighlightedCoinsLoaded) {
-
                                   final coins =
                                       (state.highlightedCoinsModel.data !=
                                               null &&
@@ -492,16 +502,21 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                             .first
                                             .coins
                                       : "0";
-                                  highlitedCoinValue.value=coins??"";
-                                  final requiredCoins = int.tryParse(coins.toString()) ?? 0;
-                                  final availableCoins = AppState.coins;
-                                  AppLogger.info("availableCoins:${availableCoins}");
+                                  highlitedCoinValue.value = coins ?? "";
+                                  final requiredCoins =
+                                      int.tryParse(coins.toString()) ?? 0;
+                                  final availableCoins = AppState.coinsNotifier.value;
+                                  AppLogger.info(
+                                    "availableCoins:${availableCoins}",
+                                  );
                                   AppLogger.info("requiredCoins:${coins}");
                                   if (_isHighlighted.value) {
                                     final bool coinsValue =
                                         availableCoins >= requiredCoins;
                                     if (coinsValue == true) {
-                                      AppLogger.info("coinsValue:${coinsValue}");
+                                      AppLogger.info(
+                                        "coinsValue:${coinsValue}",
+                                      );
                                       enoughBalance.value = true;
                                     } else {
                                       enoughBalance.value = false;
@@ -515,8 +530,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                       "enoughBalance:${enoughBalance.value}",
                                     );
                                   }
-
-                                   Text(
+                                  return Text(
                                     'Make your post Highlight with $coins coins for 1 day',
                                     style: TextStyle(
                                       fontFamily: 'segeo',
@@ -535,19 +549,27 @@ class _AddEventScreenState extends State<AddEventScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      // const SizedBox(width: 8),
                       Image.asset(
                         'assets/images/GoldCoins.png',
-                        width: 16,
-                        height: 16,
+                        width: 20,
+                        height: 20,
                       ),
                       const SizedBox(width: 4),
-                      StreamBuilder<int>(
-                        stream: AppState.coinsStream,
-                        initialData: AppState.coins,
+                      FutureBuilder<String?>(
+                        future: AuthService.getCoins(),
                         builder: (context, snapshot) {
-                          final coins = snapshot.data ?? 0;
-
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text(
+                              "Loading...",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }
+                          final coins = int.tryParse(snapshot.data ?? "0") ?? 0;
                           return RichText(
                             text: TextSpan(
                               children: [
@@ -573,8 +595,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             ),
                           );
                         },
-                      )
-
+                      ),
                     ],
                   );
                 },
@@ -611,16 +632,15 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         child: BlocConsumer<AddEccCubit, AddEccStates>(
                           listener: (context, state) {
                             if (state is AddEccLoaded) {
-                              context
-                                  .read<CommunityPostsCubit>()
-                                  .getCommunityPosts("beyond", "all");
-                              context
-                                  .read<CommunityPostsCubit>()
-                                  .getCommunityPosts("beyond", "upcoming");
-                              context
-                                  .read<CommunityPostsCubit>()
-                                  .getCommunityPosts("beyond", "highlighted");
-                              context.read<ECCCubit>().getECC("", "", "");
+                              void spendCoins(int spentAmount) {
+                                final newCoins = AppState.coinsNotifier.value - spentAmount;
+                                AppState.updateCoins(newCoins);
+                              }
+                              context.read<ECCCubit>().getECC(
+                                "",
+                                "${widget.type}",
+                                "",
+                              );
                               context.pop();
                             } else if (state is AddEccFailure) {
                               CustomSnackBar1.show(context, state.error);
@@ -632,7 +652,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                               text: "Add Event",
                               isLoading: isLoading,
                               onPlusTap: () {
-                                if (enough_coins==false) {
+                                if (enough_coins == false) {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
@@ -656,10 +676,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                       ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: const Text(
                                             "Cancel",
-                                            style: TextStyle(color: Colors.grey),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
                                           ),
                                         ),
                                         ElevatedButton(
@@ -670,7 +693,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.orange,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                           ),
                                           child: const Text("Purchase Coins"),
@@ -679,7 +703,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                     ),
                                   );
                                   return;
-                                }else{
+                                } else {
                                   if (_formKey.currentState!.validate()) {
                                     final file = _imageFile.value;
                                     final isHighlighted = _isHighlighted.value;
@@ -690,7 +714,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                       "type": selectedTabIndex.value,
                                       "time": selectedTimeStr.value,
                                       "college": _collegeNameController.text,
-                                      "description": _descriptionController.text,
+                                      "description":
+                                          _descriptionController.text,
                                       "dateofevent": selectedDateStr.value,
                                       "popular": isHighlighted ? 1 : 0,
                                       "link": _eventLinkController.text,
@@ -700,104 +725,17 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                       data["image"] = file.path;
                                     }
                                     if (isHighlighted) {
-                                      data["coins"] = double.tryParse(highlitedCoinValue.value)?.toInt() ?? 0;
+                                      data["coins"] =
+                                          double.tryParse(
+                                            highlitedCoinValue.value,
+                                          )?.toInt() ??
+                                          0;
                                     }
 
                                     context.read<AddEccCubit>().addEcc(data);
                                   }
                                 }
-
-
                               },
-
-                              // onPlusTap: enough_coins
-                              //     ? () {
-                              //         if (_formKey.currentState!.validate()) {
-                              //           final file = _imageFile.value;
-                              //           final isHighlighted =
-                              //               _isHighlighted.value;
-                              //           Map<String, dynamic> data = {
-                              //             "name": _eventNameController.text,
-                              //             "location": _locationController.text,
-                              //             "type": selectedTabIndex.value,
-                              //             "time": selectedTimeStr.value,
-                              //             "college":
-                              //                 _collegeNameController.text,
-                              //             "description":
-                              //                 _descriptionController.text,
-                              //             "dateofevent": selectedDateStr.value,
-                              //             "popular": isHighlighted ? 1 : 0,
-                              //             "link": _eventLinkController.text,
-                              //           };
-                              //           if (file != null) {
-                              //             data["image"] = file.path;
-                              //           }
-                              //           if (isHighlighted) {
-                              //             data["coins"] = highlitedCoinValue.value;
-                              //           }
-                              //
-                              //           context.read<AddEccCubit>().addEcc(
-                              //             data,
-                              //           );
-                              //         }
-                              //       }
-                              //     : () {
-                              //         showDialog(
-                              //           context: context,
-                              //           builder: (context) => AlertDialog(
-                              //             shape: RoundedRectangleBorder(
-                              //               borderRadius: BorderRadius.circular(
-                              //                 16,
-                              //               ),
-                              //             ),
-                              //             title: const Text(
-                              //               "Insufficient Coins",
-                              //               style: TextStyle(
-                              //                 fontWeight: FontWeight.bold,
-                              //                 fontSize: 18,
-                              //                 color: Colors.redAccent,
-                              //               ),
-                              //             ),
-                              //             content: const Text(
-                              //               "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
-                              //               style: TextStyle(
-                              //                 fontSize: 14,
-                              //                 color: Colors.black87,
-                              //               ),
-                              //             ),
-                              //             actions: [
-                              //               TextButton(
-                              //                 onPressed: () =>
-                              //                     Navigator.pop(context),
-                              //                 child: const Text(
-                              //                   "Cancel",
-                              //                   style: TextStyle(
-                              //                     color: Colors.grey,
-                              //                   ),
-                              //                 ),
-                              //               ),
-                              //               ElevatedButton(
-                              //                 onPressed: () {
-                              //                   context.push(
-                              //                     "/buy_coins_screens",
-                              //                   );
-                              //                   Navigator.pop(context);
-                              //                 },
-                              //                 style: ElevatedButton.styleFrom(
-                              //                   backgroundColor: Colors.orange,
-                              //                   shape: RoundedRectangleBorder(
-                              //                     borderRadius:
-                              //                         BorderRadius.circular(8),
-                              //                   ),
-                              //                 ),
-                              //                 child: const Text(
-                              //                   "Purchase Coins",
-                              //                 ),
-                              //               ),
-                              //             ],
-                              //           ),
-                              //         );
-                              //       },
                             );
                           },
                         ),

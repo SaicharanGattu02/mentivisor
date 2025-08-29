@@ -12,6 +12,7 @@ class AuthService {
   static const String _userName = "user_name";
   static const String _email = "email";
   static const String _mobile = "mobile";
+  static const String _coins = "_coins";
 
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
@@ -40,6 +41,15 @@ class AuthService {
   static Future<String?> getMobile() async {
     return await _storage.read(key: _mobile);
   }
+
+  static Future<void> saveCoins(int coins) async {
+    await _storage.write(key: _coins, value: coins.toString());
+  }
+
+  static Future<String?> getCoins() async {
+    return await _storage.read(key: _coins);
+  }
+
 
   /// Get stored refresh token
   static Future<String?> getRefreshToken() async {

@@ -31,7 +31,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
   ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
   ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
-  // ValueNotifier<int?> _availableCoins = ValueNotifier<int?>(0);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
@@ -107,6 +106,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               _mentorProfileUrl.value =
                   menteeProfile?.user?.profilePicUrl ?? "";
               _mentorProfileName.value = menteeProfile?.user?.name ?? "";
+              final coins = menteeProfile?.user?.availabilityCoins ?? 0;
+              AuthService.saveCoins(coins);
               AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
               return Scaffold(
                 key: _scaffoldKey,
@@ -300,14 +301,20 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         color: Color(0xffFFCC00),
                                       ),
                                       const SizedBox(width: 4),
-                                      StreamBuilder<int>(
-                                        stream: AppState.coinsStream,
-                                        initialData: AppState.coins,
+
+                                      FutureBuilder<String?>(
+                                        future: AuthService.getCoins(),
                                         builder: (context, snapshot) {
-                                          final coins = snapshot.data ?? 0;
+                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                            return const Text(
+                                              "Loading...",
+                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            );
+                                          }
+                                          final coins = int.tryParse(snapshot.data ?? "0") ?? 0;
                                           return Text(
                                             '$coins',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               color: Color(0xff121212),
                                               fontFamily: 'segeo',
@@ -315,22 +322,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                             ),
                                           );
                                         },
-                                      ),
+                                      )
 
-                                      // ValueListenableBuilder<int?>(
-                                      //   valueListenable: AppState.availableCoins,
-                                      //   builder: (context, value, child) {
-                                      //     return Text(
-                                      //       '${value ?? 0}',
-                                      //       style: TextStyle(
-                                      //         fontSize: 14,
-                                      //         color: Color(0xff121212),
-                                      //         fontFamily: 'segeo',
-                                      //         fontWeight: FontWeight.bold,
-                                      //       ),
-                                      //     );
-                                      //   },
-                                      // ),
                                     ],
                                   ),
                                   onTap: () => _navigateToScreen('Wallet'),
