@@ -407,23 +407,45 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 },
               ),
               SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(16, 20, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Row(
+                mainAxisSize: MainAxisSize.min,
                 spacing: 10,
                 children: [
                   Expanded(
                     child: CustomOutlinedButton(
                       text: "Cancel",
                       radius: 24,
-                      onTap: () {},
+                      onTap: () {
+                        context.pop();
+                      },
                     ),
                   ),
                   Expanded(
                     child: BlocConsumer<AddEccCubit, AddEccStates>(
                       listener: (context, state) {
                         if (state is AddEccLoaded) {
-                          context.read<CommunityPostsCubit>().getCommunityPosts("beyond", "all");
-                          context.read<CommunityPostsCubit>().getCommunityPosts("beyond", "upcoming");
-                          context.read<CommunityPostsCubit>().getCommunityPosts("beyond", "highlighted");
+                          context.read<CommunityPostsCubit>().getCommunityPosts(
+                            "beyond",
+                            "all",
+                          );
+                          context.read<CommunityPostsCubit>().getCommunityPosts(
+                            "beyond",
+                            "upcoming",
+                          );
+                          context.read<CommunityPostsCubit>().getCommunityPosts(
+                            "beyond",
+                            "highlighted",
+                          );
                           context.read<ECCCubit>().getECC("", "", "");
                           context.pop();
                         } else if (state is AddEccFailure) {

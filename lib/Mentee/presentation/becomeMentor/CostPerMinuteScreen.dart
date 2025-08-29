@@ -60,15 +60,6 @@ class _CostPerMinuteScreenState extends State<CostPerMinuteScreen> {
           spacing: 10,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Text(
-            //   '**Note: 5 coins 1 rupee',
-            //   style: TextStyle(
-            //     fontSize: 14,
-            //     fontWeight: FontWeight.w300,
-            //     color: Color(0xff555555),
-            //     fontFamily: 'segeo',
-            //   ),
-            // ),
             CustomAppButton1(
               text: "Okay",
               onPlusTap: () {
