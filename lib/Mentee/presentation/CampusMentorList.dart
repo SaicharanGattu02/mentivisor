@@ -3,8 +3,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../utils/color_constants.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
@@ -26,7 +28,6 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
   @override
   void initState() {
     super.initState();
-    debugPrint("scope:${widget.scope}");
     context.read<CampusMentorListCubit>().fetchCampusMentorList(
       "${widget.scope}",
       "",
@@ -40,6 +41,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
       builder: (context, asyncSnapshot) {
         final isGuest = asyncSnapshot.data ?? false;
         return Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: CustomAppBar1(
             title: isGuest
                 ? "Top Mentors"
@@ -83,9 +85,9 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                 BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
                   builder: (context, state) {
                     if (state is CampusMentorListStateLoading) {
-                      return const SizedBox(
-                        height: 200,
-                        child: Center(child: CircularProgressIndicator()),
+                      return SizedBox(
+                        height: SizeConfig.screenWidth * 1.5,
+                        child: Center(child: DottedProgressWithLogo()),
                       );
                     }
                     if (state is CampusMentorListStateFailure) {
@@ -104,15 +106,19 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                         [];
                     if (list.isEmpty) {
                       return SizedBox(
-                        height: 200,
-                        width: 200,
+                        height: SizeConfig.screenHeight * 0.6,
                         child: Center(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
                                 "assets/nodata/no_data.png",
+                                width: 250,
                               ),
-                              Text("No Mentors Found!",style: TextStyle(fontWeight: FontWeight.w500),)
+                              Text(
+                                "No Mentors Found!",
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
                             ],
                           ),
                         ),
@@ -150,18 +156,20 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               ),
                               child: Column(
                                 children: [
-                                CircleAvatar(
-                                radius: 60,
-                                backgroundColor: Colors.grey.shade200,
-                                backgroundImage: hasPic ? CachedNetworkImageProvider(url) : null,
-                                child: hasPic
-                                    ? null
-                                    : const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                                  CircleAvatar(
+                                    radius: 60,
+                                    backgroundColor: Colors.grey.shade200,
+                                    backgroundImage: hasPic
+                                        ? CachedNetworkImageProvider(url)
+                                        : null,
+                                    child: hasPic
+                                        ? null
+                                        : const Icon(
+                                            Icons.person,
+                                            size: 60,
+                                            color: Colors.grey,
+                                          ),
+                                  ),
                                   const SizedBox(height: 8),
                                   Text(
                                     m.user?.name ?? '',
@@ -193,8 +201,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        m.averageRating
-                                                ?.toStringAsFixed(1) ??
+                                        m.averageRating?.toStringAsFixed(1) ??
                                             '0.0',
                                         style: const TextStyle(
                                           fontSize: 12,

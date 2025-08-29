@@ -16,7 +16,7 @@ class DottedProgressWithLogo extends StatefulWidget {
   const DottedProgressWithLogo({
     Key? key,
     this.size = 60.0,
-    this.logoSize = 45.0,
+    this.logoSize = 40.0,
     this.logoPath = "assets/icons/logo.png",
     this.dotColor = primarycolor,
     this.dotCount = 12,

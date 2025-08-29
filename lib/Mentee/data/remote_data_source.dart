@@ -89,7 +89,9 @@ abstract class RemoteDataSource {
   Future<CoinsPackRespModel?> getcoinspack();
   Future<GetExpertiseModel?> getExpertiseSubCategory(int id);
   Future<GetExpertiseModel?> getExpertiseCategory(String search, int page);
-  Future<BecomeMentorSuccessModel?> becomeMentor(final Map<String, dynamic> data);
+  Future<BecomeMentorSuccessModel?> becomeMentor(
+    final Map<String, dynamic> data,
+  );
   Future<MenteeProfileModel?> getMenteeProfile();
   Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
   Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''});
@@ -111,7 +113,6 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
   Future<SuccessModel?> resourceDownload(String id);
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
-
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -156,7 +157,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<SuccessModel?> resourceDownload(String id) async {
     try {
       Response res = await ApiClient.get(
-          "${APIEndpointUrls.resource_download}/$id",
+        "${APIEndpointUrls.resource_download}/$id",
       );
       AppLogger.log('resourceDownload: ${res.data}');
       return SuccessModel.fromJson(res.data);
@@ -165,11 +166,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory) async {
     try {
       Response res = await ApiClient.get(
-          "${APIEndpointUrls.highlated_coins}?category=${catgory}",
+        "${APIEndpointUrls.highlated_coins}?category=${catgory}",
       );
       AppLogger.log('highlated Coins: ${res.data}');
       return HighlightedCoinsModel.fromJson(res.data);
@@ -415,7 +417,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         );
       } else {
         res = await ApiClient.get(
-          "${APIEndpointUrls.guest_community_post}?page=${page}",
+          "${APIEndpointUrls.guest_community_post}?page=${page}&${post}=true",
         );
       }
       debugPrint('getCommunityPosts::$res');
@@ -442,7 +444,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         );
       } else {
         res = await ApiClient.get(
-          "${APIEndpointUrls.guest_list_ecc}?page=${page}",
+          "${APIEndpointUrls.guest_list_ecc}?page=${page}&filter=${updates}&search=${search}",
         );
       }
       debugPrint('getEcc::$res');
@@ -608,7 +610,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         );
       } else {
         res = await ApiClient.get(
-          "${APIEndpointUrls.guest_study_zone}?page=${page}",
+          "${APIEndpointUrls.guest_study_zone}?page=${page}&tag=${tag}&search=${search}",
         );
       }
       AppLogger.log('get StudyZoneCampus::${res.data}');
@@ -737,7 +739,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<BecomeMentorSuccessModel?> becomeMentor(final Map<String, dynamic> data) async {
+  Future<BecomeMentorSuccessModel?> becomeMentor(
+    final Map<String, dynamic> data,
+  ) async {
     final formData = await buildFormData(data);
     try {
       Response res = await ApiClient.post(

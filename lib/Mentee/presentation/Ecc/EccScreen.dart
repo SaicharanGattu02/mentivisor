@@ -100,9 +100,16 @@ class _EccScreenState extends State<EccScreen> {
                                         text: 'On Campus',
                                         isSelected: isOnCampus,
                                         onPressed: () {
-                                          final selectedUpdate = _filters[_selectedFilter].toLowerCase();
-                                          context.read<ECCCubit>().getECC("", selectedUpdate, "");
-                                          onCampusNotifier.value = true; // update state
+                                          final selectedUpdate =
+                                              _filters[_selectedFilter]
+                                                  .toLowerCase();
+                                          context.read<ECCCubit>().getECC(
+                                            "",
+                                            selectedUpdate,
+                                            "",
+                                          );
+                                          onCampusNotifier.value =
+                                              true; // update state
                                         },
                                       ),
                                     ),
@@ -111,9 +118,16 @@ class _EccScreenState extends State<EccScreen> {
                                         text: 'Beyond Campus',
                                         isSelected: !isOnCampus,
                                         onPressed: () {
-                                          final selectedUpdate = _filters[_selectedFilter].toLowerCase();
-                                          context.read<ECCCubit>().getECC("beyond", selectedUpdate, "");
-                                          onCampusNotifier.value = false; // update state
+                                          final selectedUpdate =
+                                              _filters[_selectedFilter]
+                                                  .toLowerCase();
+                                          context.read<ECCCubit>().getECC(
+                                            "beyond",
+                                            selectedUpdate,
+                                            "",
+                                          );
+                                          onCampusNotifier.value =
+                                              false; // update state
                                         },
                                       ),
                                     ),
@@ -212,7 +226,7 @@ class _EccScreenState extends State<EccScreen> {
                       _debounce = Timer(const Duration(milliseconds: 300), () {
                         final selectedUpdate = _filters[_selectedFilter]
                             .toLowerCase();
-                        if (onCampusNotifier.value  == true) {
+                        if (onCampusNotifier.value == true) {
                           context.read<ECCCubit>().getECC(
                             "",
                             selectedUpdate,
@@ -252,8 +266,9 @@ class _EccScreenState extends State<EccScreen> {
                     if (state is ECCLoading) {
                       return Center(
                         child: SizedBox(
-                          height: SizeConfig.screenWidth*1,
-                            child: DottedProgressWithLogo()),
+                          height: SizeConfig.screenWidth * 1,
+                          child: DottedProgressWithLogo(),
+                        ),
                       );
                     } else if (state is ECCLoaded || state is ECCLoadingMore) {
                       final ecc_model = (state is ECCLoaded)
@@ -295,11 +310,10 @@ class _EccScreenState extends State<EccScreen> {
                           onNotification: (scrollInfo) {
                             if (scrollInfo.metrics.pixels >=
                                 scrollInfo.metrics.maxScrollExtent * 0.9) {
-                              if (state is ECCLoaded &&
-                                  state.hasNextPage) {
+                              if (state is ECCLoaded && state.hasNextPage) {
                                 final selectedUpdate = _filters[_selectedFilter]
                                     .toLowerCase();
-                                if (onCampusNotifier.value  == true) {
+                                if (onCampusNotifier.value == true) {
                                   context.read<ECCCubit>().fetchMoreECC(
                                     "",
                                     selectedUpdate,
@@ -380,10 +394,7 @@ class _EccScreenState extends State<EccScreen> {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF975CF7),
-                        Color(0xFF7A40F2),
-                      ],
+                      colors: [Color(0xFF975CF7), Color(0xFF7A40F2)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -395,7 +406,6 @@ class _EccScreenState extends State<EccScreen> {
           );
         },
       ),
-
     );
   }
 }

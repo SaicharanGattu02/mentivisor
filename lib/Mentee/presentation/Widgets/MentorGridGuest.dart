@@ -60,7 +60,7 @@ class MentorGridCampus extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.65,
+        childAspectRatio: 0.7,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];

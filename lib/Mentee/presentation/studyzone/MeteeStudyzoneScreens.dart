@@ -305,8 +305,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       if (state is StudyZoneCampusLoading) {
                         return Center(
                           child: SizedBox(
-                            height: SizeConfig.screenWidth*1,
-                              child: DottedProgressWithLogo()
+                            height: SizeConfig.screenWidth * 1,
+                            child: DottedProgressWithLogo(),
                           ),
                         );
                       } else if (state is StudyZoneCampusFailure) {
@@ -509,9 +509,15 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                             height: 38,
                                                             text: "View",
                                                             onTap: () {
-                                                              context.push(
-                                                                "/pdf_viewer?file_url=${campusList?.filePdf}",
-                                                              );
+                                                              if (isGuest) {
+                                                                context.push(
+                                                                  '/auth_landing',
+                                                                );
+                                                              } else {
+                                                                context.push(
+                                                                  "/pdf_viewer?file_url=${campusList?.filePdf}",
+                                                                );
+                                                              }
                                                             },
                                                           ),
                                                         ),
