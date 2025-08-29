@@ -6,15 +6,16 @@ import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
+import '../../Models/CommunityPostsModel.dart';
 
 class CommentBottomSheet extends StatefulWidget {
-  final int? postId;
+  final CommunityPosts communityPost;
   final ScrollController scrollController;
   final List<dynamic> comments;
 
   const CommentBottomSheet({
     super.key,
-    this.postId,
+     required this.communityPost,
     required this.scrollController,
     required this.comments,
   });
@@ -145,7 +146,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
               ),
             ),
 
-            widget.postId == null
+          widget.communityPost.id == null
                 ? const SizedBox.shrink() // nothing shown
                 : Row(
                     children: [
@@ -170,7 +171,9 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       BlocConsumer<PostCommentCubit, PostCommentStates>(
                         listener: (context, state) {
                           if (state is PostCommentLoaded) {
+
                             _addComment(_controller.text.trim());
+
                           } else if (state is PostCommentFailure) {
                             CustomSnackBar1.show(context, state.error ?? "");
                           }
@@ -194,12 +197,10 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                     if (_controller.text.trim().isNotEmpty) {
                                       final text = _controller.text.trim();
                                       Map<String, dynamic> data = {
-                                        "community_id": widget.postId,
+                                        "community_id": widget.communityPost.id,
                                         "comments": text,
                                       };
-                                      context
-                                          .read<PostCommentCubit>()
-                                          .postComment(data);
+                                      context.read<PostCommentCubit>().postComment(data, widget.communityPost);
                                     }
                                   },
                                 );
@@ -213,3 +214,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
     );
   }
 }
+
+
+

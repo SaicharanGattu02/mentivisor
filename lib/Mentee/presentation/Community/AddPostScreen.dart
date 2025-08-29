@@ -5,15 +5,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
+import '../../../utils/AppLogger.dart';
 import '../../../utils/ImageUtils.dart';
+import '../../../utils/constants.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_states.dart';
 import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_states.dart';
+import '../../data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
+import '../../data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -32,6 +37,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<String> highlitedCoinValue = ValueNotifier<String>('');
+  ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
 
   final ImagePicker _picker = ImagePicker();
   List<String> _selectedTags = [];
@@ -39,8 +46,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   void initState() {
     super.initState();
-    // Safe: only reads, doesn’t subscribe
-    context.read<CommunityTagsCubit>().getCommunityTags();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        context.read<HighlightedCoinsCubit>().highlitedCoins("community"),
+        context.read<CommunityTagsCubit>().getCommunityTags(),
+      ]);
+    });
   }
 
   @override
@@ -252,8 +263,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Suggested :"),
-                    const SizedBox(height: 5),
+                    Text(
+                      "Suggested",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'segeo',
+                        fontSize: 14,
+                        color: Color(0xff374151E5).withOpacity(0.9),
+                      ),
+                    ),
+                    SizedBox(height: 12),
                     BlocBuilder<CommunityTagsCubit, CommunityTagsStates>(
                       builder: (context, state) {
                         if (state is CommunityTagsLoading) {
@@ -385,137 +404,317 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 },
               ),
 
-              // const SizedBox(height: 24),
-              //
-              // Container(
-              //   padding: const EdgeInsets.only(
-              //     left: 10,
-              //     right: 10,
-              //     bottom: 10,
-              //     top: 8,
-              //   ),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       const Expanded(
-              //         child: Column(
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             Text(
-              //               'Post this anonymous',
-              //               style: TextStyle(
-              //                 fontSize: 14,
-              //                 fontWeight: FontWeight.w600,
-              //                 color: Color(0xff333333),
-              //               ),
-              //             ),
-              //             SizedBox(height: 2),
-              //             Text(
-              //               'Viewer can’t see who posted it',
-              //               style: TextStyle(
-              //                 fontWeight: FontWeight.w400,
-              //                 fontSize: 12,
-              //                 color: Color(0xff666666),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //       ValueListenableBuilder<bool>(
-              //         valueListenable: _anonymousNotifier,
-              //         builder: (context, value, child) {
-              //           return Transform.scale(
-              //             scale: 0.9,
-              //             child: Switch(
-              //               value: value,
-              //               onChanged: (v) => _anonymousNotifier.value = v,
-              //               activeColor: const Color(0xff315DEA),
-              //             ),
-              //           );
-              //         },
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              SizedBox(height: 15),
+              ValueListenableBuilder<bool>(
+                valueListenable: _anonymousNotifier,
+                builder: (context, value, _) {
+                  return Row(
+                    spacing: 8,
+                    children: [
+                      Text(
+                        'Post this anonymous',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'segeo',
+                          color: Color(0xff333333),
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: 0.8, // ✅ makes the switch smaller
+                        child: Switch(
+                          value: value,
+                          activeColor: Theme.of(
+                            context,
+                          ).primaryColor, // ✅ primary color
+                          onChanged: (val) {
+                            _anonymousNotifier.value = val;
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              SizedBox(height: 5),
+              Text(
+                'Viewer can’t see who is posted it',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'segeo',
+                  color: Color(0xff666666),
+                ),
+              ),
+              SizedBox(height: 24),
+              ValueListenableBuilder<bool>(
+                valueListenable: _isHighlighted,
+                builder: (context, value, _) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: value,
+                        onChanged: (val) {
+                          if (val != null) _isHighlighted.value = val;
+                        },
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Highlight Post',
+                              style: TextStyle(
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff333333),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            BlocBuilder<
+                              HighlightedCoinsCubit,
+                              HighlightedCoinsState
+                            >(
+                              builder: (context, state) {
+                                if (state is GetHighlightedCoinsLoading) {
+                                  return Center(
+                                    child: DottedProgressWithLogo(),
+                                  );
+                                } else if (state is GetHighlightedCoinsLoaded) {
+                                  final coins =
+                                      (state.highlightedCoinsModel.data !=
+                                              null &&
+                                          state
+                                              .highlightedCoinsModel
+                                              .data!
+                                              .isNotEmpty)
+                                      ? state
+                                            .highlightedCoinsModel
+                                            .data!
+                                            .first
+                                            .coins
+                                      : "0";
+                                  highlitedCoinValue.value = coins ?? "";
+                                  final requiredCoins =
+                                      int.tryParse(coins.toString()) ?? 0;
+                                  final availableCoins = AppState.coins;
+                                  AppLogger.info(
+                                    "availableCoins:${availableCoins}",
+                                  );
+                                  AppLogger.info("requiredCoins:${coins}");
+                                  if (_isHighlighted.value) {
+                                    final bool coinsValue =
+                                        availableCoins >= requiredCoins;
+                                    if (coinsValue == true) {
+                                      AppLogger.info(
+                                        "coinsValue:${coinsValue}",
+                                      );
+                                      enoughBalance.value = true;
+                                    } else {
+                                      enoughBalance.value = false;
+                                    }
+                                    AppLogger.info(
+                                      "enoughBalance:${enoughBalance.value}",
+                                    );
+                                  } else {
+                                    enoughBalance.value = true;
+                                    AppLogger.info(
+                                      "enoughBalance:${enoughBalance.value}",
+                                    );
+                                  }
 
-              // const SizedBox(height: 24),
-              //
-              // ValueListenableBuilder<bool>(
-              //   valueListenable: _isHighlighted,
-              //   builder: (context, value, _) {
-              //     return Row(
-              //       children: [
-              //         Checkbox(
-              //           value: value,
-              //           onChanged: (val) {
-              //             if (val != null) _isHighlighted.value = val;
-              //           },
-              //         ),
-              //         const Text('Highlight Post'),
-              //         const SizedBox(width: 8),
-              //         const Text('Available coins 3000'),
-              //       ],
-              //     );
-              //   },
-              // ),
-              //
-              // const SizedBox(height: 32),
-              //
-              // const SizedBox(height: 16),
+                                  return Text(
+                                    'Make your post Highlight with $coins coins for 1 day',
+                                    style: TextStyle(
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff666666),
+                                      fontSize: 14,
+                                    ),
+                                  );
+                                } else if (state
+                                    is GetHighlightedCoinsFailure) {
+                                  return Text(state.msg);
+                                }
+                                return const Text("No Data");
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Image.asset(
+                        'assets/images/GoldCoins.png',
+                        width: 16,
+                        height: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      StreamBuilder<int>(
+                        stream: AppState.coinsStream,
+                        initialData: AppState.coins,
+                        builder: (context, snapshot) {
+                          final coins = snapshot.data ?? 0;
+
+                          return RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Available coins ",
+                                  style: TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: Color(0xff333333),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "$coins",
+                                  style: const TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Color(0xff333333),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 36),
-          child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
-            listener: (context, state) {
-              if (state is AddCommunityPostLoaded) {
-                context.read<CommunityPostsCubit>().getCommunityPosts("", "");
-                if (!mounted) return;
-                context.pop();
-              } else if (state is AddCommunityPostFailure) {
-                if (!mounted) return;
-                CustomSnackBar1.show(context, state.error);
-              }
-            },
-            builder: (context, state) {
-              final isLoading = state is AddCommunityPostLoading;
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 36),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: enoughBalance,
+            builder: (context, enough_coins, _) {
+              AppLogger.info("enough_coins:$enough_coins");
+              return Expanded(
+                child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
+                  listener: (context, state) {
+                    if (state is AddCommunityPostLoaded) {
+                      context.read<CommunityPostsCubit>().getCommunityPosts(
+                        "all",
+                        "",
+                      );
+                      context.read<CommunityPostsCubit>().getCommunityPosts(
+                        "upcoming",
+                        "",
+                      );
+                      context.read<CommunityPostsCubit>().getCommunityPosts(
+                        "highlighted",
+                        "",
+                      );
+                      context.read<CommunityPostsCubit>().getCommunityPosts(
+                        "",
+                        "",
+                      );
+                      if (!mounted) return;
+                      context.pop();
+                    } else if (state is AddCommunityPostFailure) {
+                      if (!mounted) return;
+                      CustomSnackBar1.show(context, state.error);
+                    }
+                  },
+                  builder: (context, state) {
+                    final isLoading = state is AddCommunityPostLoading;
 
-              return CustomAppButton1(
-                text: "Post It",
-                isLoading: isLoading,
-                onPlusTap: () {
-                  if (isLoading) return;
+                    return CustomAppButton1(
+                      text: "Post It",
+                      isLoading: isLoading,
+                      onPlusTap: () {
+                        if (!enough_coins) {
+                          // show insufficient coins dialog
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              title: const Text(
+                                "Insufficient Coins",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                              content: const Text(
+                                "You don’t have enough coins to post this.\n\nPlease purchase more coins to continue.",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context.push("/buy_coins_screens");
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text("Purchase Coins"),
+                                ),
+                              ],
+                            ),
+                          );
+                          return;
+                        }
+                        FocusScope.of(context).unfocus();
+                        if (!(_formKey.currentState?.validate() ?? false))
+                          return;
 
-                  FocusScope.of(context).unfocus();
+                        final isHighlighted = _isHighlighted.value;
+                        final anonymous = _anonymousNotifier.value;
+                        final file = _imageFile.value;
 
-                  if (!(_formKey.currentState?.validate() ?? false)) return;
+                        final Map<String, dynamic> data = {
+                          "heading": _headingController.text.trim(),
+                          "description": _describeController.text.trim(),
+                          "anonymous": anonymous ? 1 : 0,
+                          "popular": isHighlighted ? 1 : 0,
+                          "tags[]": _selectedTags,
+                        };
 
-                  final file = _imageFile.value;
-                  if (file == null) {
-                    CustomSnackBar1.show(context, 'Please upload an image');
-                    return;
-                  }
+                        if (file != null) {
+                          data["image"] = file.path;
+                        }
+                        if (isHighlighted) {
+                          data["coins"] =
+                              double.tryParse(
+                                highlitedCoinValue.value,
+                              )?.toInt() ??
+                              0;
+                        }
 
-                  final isHighlighted = _isHighlighted.value;
-                  final anonymous = _anonymousNotifier.value;
-
-                  final data = <String, dynamic>{
-                    "heading": _headingController.text.trim(),
-                    "description": _describeController.text.trim(),
-                    "anonymous": anonymous ? 1 : 0,
-                    "popular": isHighlighted ? 1 : 0,
-                    "tags[]": _selectedTags,
-                    "image": file.path,
-                  };
-
-                  context.read<AddCommunityPostCubit>().addCommunityPost(data);
-                },
+                        context.read<AddCommunityPostCubit>().addCommunityPost(
+                          data,
+                        );
+                      },
+                    );
+                  },
+                ),
               );
             },
           ),

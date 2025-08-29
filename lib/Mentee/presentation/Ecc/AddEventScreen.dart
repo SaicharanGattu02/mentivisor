@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -11,8 +12,13 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_states.dart';
+import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_state.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
+import '../../../Components/CommonLoader.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
+import '../../../utils/constants.dart';
 import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import '../../data/cubits/ECC/ecc_cubit.dart';
 import '../Widgets/common_widgets.dart';
@@ -27,8 +33,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
   final TextEditingController _collegeNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _eventLinkController = TextEditingController();
@@ -36,15 +40,18 @@ class _AddEventScreenState extends State<AddEventScreen> {
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _useDefaultImage = ValueNotifier<bool>(false);
   final ValueNotifier<String> selectedDateStr = ValueNotifier<String>('');
+  final ValueNotifier<String> highlitedCoinValue = ValueNotifier<String>('');
   final ValueNotifier<String> selectedTimeStr = ValueNotifier<String>('');
   final ValueNotifier<String> selectedTabIndex = ValueNotifier<String>('event');
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
+  ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
+
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
 
@@ -189,6 +196,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   @override
+  void initState() {
+    context.read<HighlightedCoinsCubit>().highlitedCoins("ecc");
+    super.initState();
+  }
+
+  @override
   void dispose() {
     selectedTabIndex.dispose();
     _imageFile.dispose();
@@ -291,107 +304,149 @@ class _AddEventScreenState extends State<AddEventScreen> {
               buildCustomTextField(
                 controller: _descriptionController,
                 hint: "Description",
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Description is required';
+                  }
+                  return null;
+                },
               ),
+
               buildCustomLabel('Event Link (optional)'),
               buildCustomTextField(
                 controller: _eventLinkController,
                 hint: "Event Link (optional)",
               ),
               SizedBox(height: 15),
-              ValueListenableBuilder<File?>(
-                valueListenable: _imageFile,
-                builder: (context, file, _) {
-                  return GestureDetector(
-                    onTap: file == null ? _pickImage : null,
-                    child: DottedBorder(
-                      borderType: BorderType.RRect,
-                      radius: Radius.circular(36),
-                      color: primarycolor,
-                      strokeWidth: 1.5,
-                      dashPattern: [6, 3],
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(36)),
-                        child: Container(
-                          width: double.infinity,
-                          color: Color(0xffF5F5F5),
-                          child: file == null
-                              ? Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 14),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Upload",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: labeltextColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: "Poppins",
+              ValueListenableBuilder<bool>(
+                valueListenable: _useDefaultImage,
+                builder: (context, value, child) {
+                  return ValueListenableBuilder<File?>(
+                    valueListenable: _imageFile,
+                    builder: (context, file, _) {
+                      final isDisabled = _useDefaultImage.value;
+                      AppLogger.info("isDisabled:${isDisabled}");
+
+                      return GestureDetector(
+                        onTap: (!isDisabled && file == null)
+                            ? _pickImage
+                            : null,
+                        child: Opacity(
+                          opacity: isDisabled ? 0.5 : 1.0,
+                          child: DottedBorder(
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(36),
+                            color: isDisabled ? Colors.grey : primarycolor,
+                            strokeWidth: 1.5,
+                            dashPattern: [6, 3],
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(36),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                color: Color(0xffF5F5F5),
+                                child: file == null
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 14,
                                         ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Icon(
-                                        Icons.upload_rounded,
-                                        color: labeltextColor,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Stack(
-                                  children: [
-                                    Image.file(
-                                      file,
-                                      width: double.infinity,
-                                      height: 180,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: GestureDetector(
-                                        onTap: _cancelImage,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.black54,
-                                          radius: 16,
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 18,
-                                            color: Colors.white,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Upload",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: labeltextColor,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "Poppins",
+                                              ),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Icon(
+                                              Icons.upload_rounded,
+                                              color: labeltextColor,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Stack(
+                                        children: [
+                                          Image.file(
+                                            file,
+                                            width: double.infinity,
+                                            height: 180,
+                                            fit: BoxFit.cover,
                                           ),
-                                        ),
+                                          Positioned(
+                                            top: 8,
+                                            right: 8,
+                                            child: GestureDetector(
+                                              onTap: _cancelImage,
+                                              child: CircleAvatar(
+                                                backgroundColor: Colors.black54,
+                                                radius: 16,
+                                                child: Icon(
+                                                  Icons.close,
+                                                  size: 18,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
 
-              // SizedBox(height: 15),
-              // // Use Default Image Switch
-              // ValueListenableBuilder<bool>(
-              //   valueListenable: _useDefaultImage,
-              //   builder: (context, value, _) {
-              //     return Row(
-              //       children: [
-              //         Switch(
-              //           value: value,
-              //           onChanged: (val) {
-              //             _useDefaultImage.value = val;
-              //           },
-              //         ),
-              //         Text('Use Default Images'),
-              //       ],
-              //     );
-              //   },
-              // ),
+              SizedBox(height: 15),
+              ValueListenableBuilder<bool>(
+                valueListenable: _useDefaultImage,
+                builder: (context, value, _) {
+                  return Row(
+                    spacing: 8,
+                    children: [
+                      Text(
+                        'Use Default Images',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'segeo',
+                          color: Color(0xff666666),
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: 0.8, // ✅ makes the switch smaller
+                        child: Switch(
+                          value: value,
+                          activeColor: Theme.of(
+                            context,
+                          ).primaryColor, // ✅ primary color
+                          onChanged: (val) {
+                            _useDefaultImage.value = val;
+                          },
+                        ),
+                      ),
+
+
+                    ],
+                  );
+                },
+              ),
               ValueListenableBuilder<bool>(
                 valueListenable: _isHighlighted,
                 builder: (context, value, _) {
                   return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Checkbox(
                         value: value,
@@ -399,14 +454,131 @@ class _AddEventScreenState extends State<AddEventScreen> {
                           if (val != null) _isHighlighted.value = val;
                         },
                       ),
-                      Text('Highlight Post'),
-                      // SizedBox(width: 8),
-                      // Text('Available coins 3000'),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Highlight Post',
+                              style: TextStyle(
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff333333),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            BlocBuilder<
+                              HighlightedCoinsCubit,
+                              HighlightedCoinsState
+                            >(
+                              builder: (context, state) {
+                                if (state is GetHighlightedCoinsLoading) {
+                                  return Center(
+                                    child: DottedProgressWithLogo(),
+                                  );
+                                } else if (state is GetHighlightedCoinsLoaded) {
+
+                                  final coins =
+                                      (state.highlightedCoinsModel.data !=
+                                              null &&
+                                          state
+                                              .highlightedCoinsModel
+                                              .data!
+                                              .isNotEmpty)
+                                      ? state
+                                            .highlightedCoinsModel
+                                            .data!
+                                            .first
+                                            .coins
+                                      : "0";
+                                  highlitedCoinValue.value=coins??"";
+                                  final requiredCoins = int.tryParse(coins.toString()) ?? 0;
+                                  final availableCoins = AppState.coins;
+                                  AppLogger.info("availableCoins:${availableCoins}");
+                                  AppLogger.info("requiredCoins:${coins}");
+                                  if (_isHighlighted.value) {
+                                    final bool coinsValue =
+                                        availableCoins >= requiredCoins;
+                                    if (coinsValue == true) {
+                                      AppLogger.info("coinsValue:${coinsValue}");
+                                      enoughBalance.value = true;
+                                    } else {
+                                      enoughBalance.value = false;
+                                    }
+                                    AppLogger.info(
+                                      "enoughBalance:${enoughBalance.value}",
+                                    );
+                                  } else {
+                                    enoughBalance.value = true;
+                                    AppLogger.info(
+                                      "enoughBalance:${enoughBalance.value}",
+                                    );
+                                  }
+
+                                   Text(
+                                    'Make your post Highlight with $coins coins for 1 day',
+                                    style: TextStyle(
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff666666),
+                                      fontSize: 14,
+                                    ),
+                                  );
+                                } else if (state
+                                    is GetHighlightedCoinsFailure) {
+                                  return Text(state.msg);
+                                }
+                                return const Text("No Data");
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Image.asset(
+                        'assets/images/GoldCoins.png',
+                        width: 16,
+                        height: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      StreamBuilder<int>(
+                        stream: AppState.coinsStream,
+                        initialData: AppState.coins,
+                        builder: (context, snapshot) {
+                          final coins = snapshot.data ?? 0;
+
+                          return RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: "Available coins ",
+                                  style: TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: Color(0xff333333),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: coins.toString(),
+                                  style: const TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Color(0xff333333),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+
                     ],
                   );
                 },
               ),
-              SizedBox(height: 20),
             ],
           ),
         ),
@@ -430,62 +602,207 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       },
                     ),
                   ),
-                  Expanded(
-                    child: BlocConsumer<AddEccCubit, AddEccStates>(
-                      listener: (context, state) {
-                        if (state is AddEccLoaded) {
-                          context.read<CommunityPostsCubit>().getCommunityPosts(
-                            "beyond",
-                            "all",
-                          );
-                          context.read<CommunityPostsCubit>().getCommunityPosts(
-                            "beyond",
-                            "upcoming",
-                          );
-                          context.read<CommunityPostsCubit>().getCommunityPosts(
-                            "beyond",
-                            "highlighted",
-                          );
-                          context.read<ECCCubit>().getECC("", "", "");
-                          context.pop();
-                        } else if (state is AddEccFailure) {
-                          CustomSnackBar1.show(context, state.error);
-                        }
-                      },
-                      builder: (context, state) {
-                        final isLoading = state is AddEccLoading;
-                        return CustomAppButton1(
-                          text: "Add Event",
-                          isLoading: isLoading,
-                          onPlusTap: () {
-                            if (_formKey.currentState!.validate()) {
-                              final file = _imageFile.value;
-                              final isHighlighted = _isHighlighted.value;
-                              if (file == null) {
-                                CustomSnackBar1.show(
-                                  context,
-                                  'Please upload an image',
-                                );
-                                return;
-                              }
-                              Map<String, dynamic> data = {
-                                "name": _eventNameController.text,
-                                "location": _locationController.text,
-                                "type": selectedTabIndex.value,
-                                "time": selectedTimeStr.value,
-                                "college": _collegeNameController.text,
-                                "description": _descriptionController.text,
-                                "dateofevent": selectedDateStr.value,
-                                "popular": isHighlighted ? 1 : 0,
-                                "link": _dateController.text,
-                                "image": file.path,
-                              };
-                              context.read<AddEccCubit>().addEcc(data);
+                  ValueListenableBuilder<bool>(
+                    valueListenable: enoughBalance,
+                    builder: (context, value, child) {
+                      final enough_coins = value;
+                      AppLogger.info("enough_coins:${enough_coins}");
+                      return Expanded(
+                        child: BlocConsumer<AddEccCubit, AddEccStates>(
+                          listener: (context, state) {
+                            if (state is AddEccLoaded) {
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .getCommunityPosts("beyond", "all");
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .getCommunityPosts("beyond", "upcoming");
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .getCommunityPosts("beyond", "highlighted");
+                              context.read<ECCCubit>().getECC("", "", "");
+                              context.pop();
+                            } else if (state is AddEccFailure) {
+                              CustomSnackBar1.show(context, state.error);
                             }
                           },
-                        );
-                      },
-                    ),
+                          builder: (context, state) {
+                            final isLoading = state is AddEccLoading;
+                            return CustomAppButton1(
+                              text: "Add Event",
+                              isLoading: isLoading,
+                              onPlusTap: () {
+                                if (enough_coins==false) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      title: const Text(
+                                        "Insufficient Coins",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.redAccent,
+                                        ),
+                                      ),
+                                      content: const Text(
+                                        "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text(
+                                            "Cancel",
+                                            style: TextStyle(color: Colors.grey),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            context.push("/buy_coins_screens");
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.orange,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text("Purchase Coins"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  return;
+                                }else{
+                                  if (_formKey.currentState!.validate()) {
+                                    final file = _imageFile.value;
+                                    final isHighlighted = _isHighlighted.value;
+
+                                    final Map<String, dynamic> data = {
+                                      "name": _eventNameController.text,
+                                      "location": _locationController.text,
+                                      "type": selectedTabIndex.value,
+                                      "time": selectedTimeStr.value,
+                                      "college": _collegeNameController.text,
+                                      "description": _descriptionController.text,
+                                      "dateofevent": selectedDateStr.value,
+                                      "popular": isHighlighted ? 1 : 0,
+                                      "link": _eventLinkController.text,
+                                    };
+
+                                    if (file != null) {
+                                      data["image"] = file.path;
+                                    }
+                                    if (isHighlighted) {
+                                      data["coins"] = double.tryParse(highlitedCoinValue.value)?.toInt() ?? 0;
+                                    }
+
+                                    context.read<AddEccCubit>().addEcc(data);
+                                  }
+                                }
+
+
+                              },
+
+                              // onPlusTap: enough_coins
+                              //     ? () {
+                              //         if (_formKey.currentState!.validate()) {
+                              //           final file = _imageFile.value;
+                              //           final isHighlighted =
+                              //               _isHighlighted.value;
+                              //           Map<String, dynamic> data = {
+                              //             "name": _eventNameController.text,
+                              //             "location": _locationController.text,
+                              //             "type": selectedTabIndex.value,
+                              //             "time": selectedTimeStr.value,
+                              //             "college":
+                              //                 _collegeNameController.text,
+                              //             "description":
+                              //                 _descriptionController.text,
+                              //             "dateofevent": selectedDateStr.value,
+                              //             "popular": isHighlighted ? 1 : 0,
+                              //             "link": _eventLinkController.text,
+                              //           };
+                              //           if (file != null) {
+                              //             data["image"] = file.path;
+                              //           }
+                              //           if (isHighlighted) {
+                              //             data["coins"] = highlitedCoinValue.value;
+                              //           }
+                              //
+                              //           context.read<AddEccCubit>().addEcc(
+                              //             data,
+                              //           );
+                              //         }
+                              //       }
+                              //     : () {
+                              //         showDialog(
+                              //           context: context,
+                              //           builder: (context) => AlertDialog(
+                              //             shape: RoundedRectangleBorder(
+                              //               borderRadius: BorderRadius.circular(
+                              //                 16,
+                              //               ),
+                              //             ),
+                              //             title: const Text(
+                              //               "Insufficient Coins",
+                              //               style: TextStyle(
+                              //                 fontWeight: FontWeight.bold,
+                              //                 fontSize: 18,
+                              //                 color: Colors.redAccent,
+                              //               ),
+                              //             ),
+                              //             content: const Text(
+                              //               "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
+                              //               style: TextStyle(
+                              //                 fontSize: 14,
+                              //                 color: Colors.black87,
+                              //               ),
+                              //             ),
+                              //             actions: [
+                              //               TextButton(
+                              //                 onPressed: () =>
+                              //                     Navigator.pop(context),
+                              //                 child: const Text(
+                              //                   "Cancel",
+                              //                   style: TextStyle(
+                              //                     color: Colors.grey,
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //               ElevatedButton(
+                              //                 onPressed: () {
+                              //                   context.push(
+                              //                     "/buy_coins_screens",
+                              //                   );
+                              //                   Navigator.pop(context);
+                              //                 },
+                              //                 style: ElevatedButton.styleFrom(
+                              //                   backgroundColor: Colors.orange,
+                              //                   shape: RoundedRectangleBorder(
+                              //                     borderRadius:
+                              //                         BorderRadius.circular(8),
+                              //                   ),
+                              //                 ),
+                              //                 child: const Text(
+                              //                   "Purchase Coins",
+                              //                 ),
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         );
+                              //       },
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

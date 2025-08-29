@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
@@ -25,7 +26,9 @@ class _PostCardState extends State<PostCard> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
-        color: widget.communityPosts.popular == 1 ? Color(0xffFFF7CE) : Colors.white,
+        color: widget.communityPosts.popular == 1
+            ? Color(0xffFFF7CE)
+            : Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -91,7 +94,8 @@ class _PostCardState extends State<PostCard> {
                   children: [
                     CachedNetworkImage(
                       imageUrl:
-                          widget.communityPosts.image ?? "", // listen for updates
+                          widget.communityPosts.image ??
+                          "", // listen for updates
                       imageBuilder: (context, imageProvider) => CircleAvatar(
                         radius: 16,
                         backgroundImage: imageProvider,
@@ -152,144 +156,155 @@ class _PostCardState extends State<PostCard> {
                   future: AuthService.isGuest,
                   builder: (context, snapshot) {
                     final isGuest = snapshot.data ?? false;
-                    return StatefulBuilder(builder: (context, setState) {
-                      return Row(
-                        children: [
-                          BlocConsumer<PostCommentCubit, PostCommentStates>(
-                            listener: (context, state) {
-                              if (state is PostCommentLoaded) {
-                              } else if (state is PostCommentFailure) {
-                                CustomSnackBar1.show(context, state.error);
-                              }
-                            },
-                            builder: (context, state) {
-                              return GestureDetector(
-                                onTap: () {
-                                  final Map<String, dynamic> data = {
-                                    "community_id": widget.communityPosts.id,
-                                  };
-                                  context.read<PostCommentCubit>().postLike(data,widget.communityPosts);
-                                },
-                                child: Icon(
-                                  Icons.thumb_up_alt_outlined,
-                                  size: 18,
-                                  color: (widget.communityPosts.isLiked ?? false)
-                                      ? Colors.red
-                                      : Colors.black26,
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(width: 6),
-                          Text(widget.communityPosts.likesCount.toString() ?? ""),
-                          const SizedBox(width: 24),
-                          GestureDetector(
-                            onTap: () {
-                              if (isGuest) {
-                                context.push('/auth_landing');
-                              } else {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  useRootNavigator: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) {
-                                    return DraggableScrollableSheet(
-                                      initialChildSize: 0.8,
-                                      minChildSize: 0.4,
-                                      maxChildSize: 0.95,
-                                      expand: false,
-                                      builder: (_, scrollController) => Container(
-                                        decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(16),
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return Row(
+                          children: [
+                            BlocBuilder<PostCommentCubit, PostCommentStates>(
+                              builder: (context, state) {
+                                final post = widget.communityPosts;
+                                return Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        final Map<String, dynamic> data = {
+                                          "community_id": post.id,
+                                        };
+                                        context
+                                            .read<PostCommentCubit>()
+                                            .postLike(data, post);
+                                      },
+                                      child: Icon(
+                                        Icons.thumb_up_alt_outlined,
+                                        size: 18,
+                                        color: (post.isLiked ?? false)
+                                            ? Colors.red
+                                            : Colors.black26,
+                                      ),
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "${post.likesCount ?? 0}",
+                                      style: TextStyle(
+                                        color: Color(0xff666666),
+                                        fontSize: 14,
+                                        fontFamily: 'segeo',
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: () {
+                                if (isGuest) {
+                                  context.push('/auth_landing');
+                                } else {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    useRootNavigator: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) {
+                                      return DraggableScrollableSheet(
+                                        initialChildSize: 0.8,
+                                        minChildSize: 0.4,
+                                        maxChildSize: 0.95,
+                                        expand: false,
+                                        builder: (_, scrollController) => Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(16),
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12,
+                                          ),
+                                          child: CommentBottomSheet(
+                                            communityPost:
+                                                widget.communityPosts,
+                                            comments:
+                                                (widget
+                                                            .communityPosts
+                                                            .comments ??
+                                                        [])
+                                                    .map(
+                                                      (comments) => {
+                                                        "name":
+                                                            comments
+                                                                .user
+                                                                ?.name ??
+                                                            "Unknown",
+                                                        "profile":
+                                                            comments
+                                                                .user
+                                                                ?.profilePicUrl ??
+                                                            "assets/images/profile.png",
+                                                        "comment":
+                                                            comments.content ??
+                                                            "",
+                                                        "time":
+                                                            comments
+                                                                .createdAt ??
+                                                            "",
+                                                      },
+                                                    )
+                                                    .toList(),
+
+                                            scrollController:
+                                                scrollController, // pass it down
                                           ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 12,
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/Chat.png",
+                                    scale: SizeConfig.fontSize(1.5),
+                                  ),
+                                  SizedBox(width: 6),
+                                  BlocBuilder<
+                                    PostCommentCubit,
+                                    PostCommentStates
+                                  >(
+                                    builder: (context, state) {
+                                      return Text(
+                                        widget.communityPosts.commentsCount
+                                            .toString(),
+                                        style: const TextStyle(
+                                          fontFamily: 'segeo',
                                         ),
-                                        child: CommentBottomSheet(
-                                          comments: (widget.communityPosts.comments ?? [])
-                                              .map(
-                                                (comments) => {
-                                              "name":
-                                              comments.user?.name ??
-                                                  "Unknown",
-                                              "profile":
-                                              comments
-                                                  .user
-                                                  ?.profilePicUrl ??
-                                                  "assets/images/profile.png",
-                                              "comment":
-                                              comments.content ?? "",
-                                              "time":
-                                              comments.createdAt ?? "",
-                                            },
-                                          )
-                                              .toList(),
-                                          postId: widget.communityPosts.id ?? 0,
-                                          scrollController:
-                                          scrollController, // pass it down
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                            child: Row(
-                              children: [
-                                const Icon(Icons.comment_outlined, size: 18),
-                                const SizedBox(width: 6),
-                                Text(
-                                  widget.communityPosts.commentsCount.toString(),
-                                  style: const TextStyle(fontFamily: 'segeo'),
-                                ),
-                              ],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Image.asset(
+                                'assets/icons/share.png',
+                                scale: SizeConfig.fontSize(1.5),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),
               ],
             ),
           ),
-          // if ( communityPosts.likesCount.toString()??"", == 'true')
-          //   Positioned(
-          //     top: 8,
-          //     right: 8,
-          //     child: Container(
-          //       padding: const EdgeInsets.symmetric(
-          //         horizontal: 8,
-          //         vertical: 4,
-          //       ),
-          //       decoration: BoxDecoration(
-          //         color: Colors.amber[400],
-          //         borderRadius: BorderRadius.circular(6),
-          //       ),
-          //       child: const Row(
-          //         children: [
-          //           Icon(Icons.star, size: 14, color: Colors.white),
-          //           SizedBox(width: 4),
-          //           Text(
-          //             'Highlighted',
-          //             style: TextStyle(
-          //               fontFamily: 'segeo',
-          //               fontSize: 12,
-          //               fontWeight: FontWeight.w600,
-          //               color: Colors.white,
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
         ],
       ),
     );

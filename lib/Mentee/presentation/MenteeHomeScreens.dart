@@ -31,7 +31,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
   ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
   ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
-  ValueNotifier<int?> _availableCoins = ValueNotifier<int?>(0);
+  // ValueNotifier<int?> _availableCoins = ValueNotifier<int?>(0);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
@@ -107,8 +107,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               _mentorProfileUrl.value =
                   menteeProfile?.user?.profilePicUrl ?? "";
               _mentorProfileName.value = menteeProfile?.user?.name ?? "";
-              _availableCoins.value =
-                  menteeProfile?.user?.availabilityCoins ?? 0;
+              AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
               return Scaffold(
                 key: _scaffoldKey,
                 appBar: AppBar(
@@ -301,11 +300,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         color: Color(0xffFFCC00),
                                       ),
                                       const SizedBox(width: 4),
-                                      ValueListenableBuilder<int?>(
-                                        valueListenable: _availableCoins,
-                                        builder: (context, value, child) {
+                                      StreamBuilder<int>(
+                                        stream: AppState.coinsStream,
+                                        initialData: AppState.coins,
+                                        builder: (context, snapshot) {
+                                          final coins = snapshot.data ?? 0;
                                           return Text(
-                                            '${value ?? 0}',
+                                            '$coins',
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: Color(0xff121212),
@@ -315,6 +316,21 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           );
                                         },
                                       ),
+
+                                      // ValueListenableBuilder<int?>(
+                                      //   valueListenable: AppState.availableCoins,
+                                      //   builder: (context, value, child) {
+                                      //     return Text(
+                                      //       '${value ?? 0}',
+                                      //       style: TextStyle(
+                                      //         fontSize: 14,
+                                      //         color: Color(0xff121212),
+                                      //         fontFamily: 'segeo',
+                                      //         fontWeight: FontWeight.bold,
+                                      //       ),
+                                      //     );
+                                      //   },
+                                      // ),
                                     ],
                                   ),
                                   onTap: () => _navigateToScreen('Wallet'),

@@ -21,6 +21,7 @@ import '../Models/CreatePaymentModel.dart';
 import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
 import '../Models/GuestMentorsModel.dart';
+import '../Models/HighlatedCoinsModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
 import '../Models/ReviewSubmitModel.dart';
@@ -109,6 +110,7 @@ abstract class RemoteDataSource {
   Future<MenteeCustmor_supportModel?> getcustomersupport();
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
   Future<SuccessModel?> resourceDownload(String id);
+  Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
 
 }
 
@@ -160,6 +162,19 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('resourceDownload:${e}');
+      return null;
+    }
+  }
+  @override
+  Future<HighlightedCoinsModel?> highlihtedCoins(String catgory) async {
+    try {
+      Response res = await ApiClient.get(
+          "${APIEndpointUrls.highlated_coins}?category=${catgory}",
+      );
+      AppLogger.log('highlated Coins: ${res.data}');
+      return HighlightedCoinsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('highlated Coins :${e}');
       return null;
     }
   }

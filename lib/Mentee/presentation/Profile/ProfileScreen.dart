@@ -8,6 +8,7 @@ import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/Men
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../utils/spinkittsLoader.dart';
+import '../../Models/CommunityPostsModel.dart';
 import '../Widgets/CommentBottomSheet.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -521,9 +522,13 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                             vertical:
                                                                                 12,
                                                                           ),
-                                                                          child: CommentBottomSheet(
-                                                                          comments:
-                                                                          (menteePosts?.comments ??
+                                                                          child: CommentBottomSheet(communityPost:CommunityPosts(   // 👈 construct UI object from model
+                                                                            id: menteePosts?.id,
+                                                                            heading: menteePosts?.heading,
+                                                                            description: menteePosts?.description,
+                                                                            // map the rest...
+                                                                          ),
+                                                                          comments: (menteePosts?.comments ??
                                                                               [])
                                                                               .map(
                                                                                 (

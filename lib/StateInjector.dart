@@ -24,6 +24,8 @@ import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveSer
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Payment/payment_cubit.dart';
@@ -241,6 +243,11 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<HighlightedCoinsRepository>(
+      create: (context) => HighlightedCoinsImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
 
     ///Mentor Repositories
     RepositoryProvider<SessionSRepo>(
@@ -428,6 +435,10 @@ class StateInjector {
    BlocProvider<MenteeCustomersupportCubit>(
       create: (context) =>
           MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
+    ),
+    BlocProvider<HighlightedCoinsCubit>(
+      create: (context) =>
+          HighlightedCoinsCubit(context.read<HighlightedCoinsRepository>()),
     ),
 
 

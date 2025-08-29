@@ -12,6 +12,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../Components/CustomSnackBar.dart';
 import '../../services/AuthService.dart';
+import '../../utils/constants.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../data/cubits/Payment/payment_cubit.dart';
@@ -348,6 +349,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                             widget.slot_id!,
                           );
                         }
+                        // AppState.availableCoins.value=;
                         context.pushReplacement(
                           '/payment_success'
                           '?title=${Uri.encodeComponent("Payment is Done Successfully")}',

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -117,8 +119,6 @@ String capitalize(String value) {
   if (value.isEmpty) return "";
   return value[0].toUpperCase() + value.substring(1).toLowerCase();
 }
-
-
 class DateHelper {
 
   static String formatDateTime(String? rawTime) {
@@ -156,3 +156,26 @@ class DateHelper {
     }
   }
 }
+
+// class AppState {
+//   static ValueNotifier<int?> availableCoins = ValueNotifier<int?>(0);
+// }
+
+class AppState {
+  static final _coinsController = StreamController<int>.broadcast();
+
+  static int _coins = 0;
+
+  static Stream<int> get coinsStream => _coinsController.stream;
+  static int get coins => _coins;
+
+  static void updateCoins(int newValue) {
+    _coins = newValue;
+    _coinsController.add(newValue);
+  }
+
+  static void dispose() {
+    _coinsController.close();
+  }
+}
+

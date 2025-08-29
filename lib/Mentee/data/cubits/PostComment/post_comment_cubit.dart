@@ -9,11 +9,13 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
 
   PostCommentCubit(this.postCommentRepository) : super(PostCommentInitially());
 
-  Future<void> postComment(Map<String, dynamic> data) async {
+  Future<void> postComment(
+      Map<String, dynamic> data, CommunityPosts communityPosts) async {
     emit(PostCommentLoading());
     try {
       final response = await postCommentRepository.postComment(data);
       if (response != null && response.status == true) {
+        communityPosts.commentsCount =(communityPosts.commentsCount ?? 0) + 1;
         emit(PostCommentLoaded(response));
       } else {
         emit(PostCommentFailure(response?.message ?? ""));
@@ -22,6 +24,8 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
       emit(PostCommentFailure(e.toString()));
     }
   }
+
+
 
   Future<void> postLike(Map<String, dynamic> data, CommunityPosts communityPosts) async {
 
