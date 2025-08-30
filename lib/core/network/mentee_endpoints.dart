@@ -63,6 +63,7 @@ class APIEndpointUrls {
   static const String community_toggle_like = "${userUrl}community/toggle-like";
   static const String resource_download = "${userUrl}study-zone/download";
   static const String highlated_coins = "${userUrl}list-highlated";
+  static const String notification = "${userUrl}get_user_notification";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

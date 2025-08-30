@@ -23,6 +23,7 @@ import '../Models/GetExpertiseModel.dart';
 import '../Models/GuestMentorsModel.dart';
 import '../Models/HighlatedCoinsModel.dart';
 import '../Models/MenteeProfileModel.dart';
+import '../Models/NotificationModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
 import '../Models/ReviewSubmitModel.dart';
 import '../Models/SelectSlotModel.dart';
@@ -113,6 +114,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
   Future<SuccessModel?> resourceDownload(String id);
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
+  Future<NotificationModel?> notifications();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -177,6 +179,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return HighlightedCoinsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('highlated Coins :${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<NotificationModel?> notifications() async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.notification}",
+      );
+      AppLogger.log('notifications : ${res.data}');
+      return NotificationModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('notifications :${e}');
       return null;
     }
   }

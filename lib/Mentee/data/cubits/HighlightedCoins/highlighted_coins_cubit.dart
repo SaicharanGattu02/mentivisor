@@ -15,7 +15,7 @@ class HighlightedCoinsCubit extends Cubit<HighlightedCoinsState> {
       if (res != null && res.status == true) {
         emit(GetHighlightedCoinsLoaded(highlightedCoinsModel: res));
       } else {
-        emit(GetHighlightedCoinsFailure(msg: "No states found."));
+        emit(GetHighlightedCoinsFailure(msg: res?.message ?? ""));
       }
     } catch (e) {
       emit(GetHighlightedCoinsFailure(msg: "An error occurred: $e"));

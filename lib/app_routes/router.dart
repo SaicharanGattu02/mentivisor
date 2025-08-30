@@ -28,6 +28,7 @@ import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
 import '../Mentee/presentation/InfoScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
+import '../Mentee/presentation/Notifications.dart';
 import '../Mentee/presentation/PaymentSuccessfully.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
@@ -291,6 +292,12 @@ final GoRouter appRouter = GoRouter(
       path: '/productivity_screen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(ProductivityScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/notifications',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(Notifications(), state);
       },
     ),
 

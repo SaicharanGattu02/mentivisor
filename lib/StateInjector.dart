@@ -66,6 +66,8 @@ import 'Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dar
 import 'Mentee/data/cubits/MenteeProfile/MenteeProfileRepository.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileCubit.dart';
 import 'Mentee/data/cubits/MentorProfile/MentorProfileRepository.dart';
+import 'Mentee/data/cubits/Notifications/notifications_cubit.dart';
+import 'Mentee/data/cubits/Notifications/notifications_repo.dart';
 import 'Mentee/data/cubits/Payment/payment_repository.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
@@ -248,6 +250,11 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<NotificationsRepo>(
+      create: (context) => NotificationIml(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
 
     ///Mentor Repositories
     RepositoryProvider<SessionSRepo>(
@@ -272,6 +279,7 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
     RepositoryProvider<MentorInfoRepo>(
       create: (context) => MentorProfileRepoImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
@@ -439,6 +447,10 @@ class StateInjector {
     BlocProvider<HighlightedCoinsCubit>(
       create: (context) =>
           HighlightedCoinsCubit(context.read<HighlightedCoinsRepository>()),
+    ),
+    BlocProvider<NotificationsCubit>(
+      create: (context) =>
+          NotificationsCubit(context.read<NotificationsRepo>()),
     ),
 
 

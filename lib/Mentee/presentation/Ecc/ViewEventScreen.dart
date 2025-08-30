@@ -10,7 +10,6 @@ class ViewEventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // allow the gradient to extend behind the AppBar
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: AppBar(

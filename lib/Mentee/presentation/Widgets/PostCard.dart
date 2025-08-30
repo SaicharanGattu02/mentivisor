@@ -20,7 +20,48 @@ class PostCard extends StatefulWidget {
   State<PostCard> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin {
+  bool _showHeart = false;
+  late AnimationController _animationController;
+  late Animation<double> _heartAnimation;
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _heartAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _showHeart = false;
+        });
+        _animationController.reset();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+  void _handleDoubleTap() {
+    final post = widget.communityPosts;
+    if (!(post.isLiked ?? false)) {
+      setState(() {
+        _showHeart = true;
+      });
+      _animationController.forward();
+      final Map<String, dynamic> data = {"community_id": post.id};
+      context.read<PostCommentCubit>().postLike(data, post);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,7 +89,6 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 child: Row(
-                  spacing: 10,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
@@ -56,6 +96,7 @@ class _PostCardState extends State<PostCard> {
                       width: 18,
                       height: 18,
                     ),
+                    SizedBox(width: 10),
                     Text("Highlighted"),
                   ],
                 ),
@@ -64,25 +105,50 @@ class _PostCardState extends State<PostCard> {
           ],
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                height: 160,
-                imageUrl: widget.communityPosts.imgUrl ?? "",
-                fit: BoxFit.cover,
-                width: double.infinity,
-                placeholder: (context, url) =>
-                    Center(child: spinkits.getSpinningLinespinkit()),
-                errorWidget: (context, url, error) => Container(
-                  height: 160,
-                  color: Colors.grey.shade100,
-                  child: const Icon(
-                    Icons.broken_image,
-                    size: 40,
-                    color: Colors.grey,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                GestureDetector(
+                  onDoubleTap: _handleDoubleTap,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      height: 160,
+                      imageUrl: widget.communityPosts.imgUrl ?? "",
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      placeholder: (context, url) =>
+                          Center(child: spinkits.getSpinningLinespinkit()),
+                      errorWidget: (context, url, error) => Container(
+                        height: 160,
+                        color: Colors.grey.shade100,
+                        child: const Icon(
+                          Icons.broken_image,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                if (_showHeart)
+                  AnimatedBuilder(
+                    animation: _heartAnimation,
+                    builder: (context, child) {
+                      return Opacity(
+                        opacity: _heartAnimation.value,
+                        child: Transform.scale(
+                          scale: _heartAnimation.value * 0.5 + 0.5,
+                          child: Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                            size: 80,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+              ],
             ),
           ),
           Padding(
@@ -93,9 +159,7 @@ class _PostCardState extends State<PostCard> {
                 Row(
                   children: [
                     CachedNetworkImage(
-                      imageUrl:
-                          widget.communityPosts.image ??
-                          "", // listen for updates
+                      imageUrl: widget.communityPosts.image ?? "",
                       imageBuilder: (context, imageProvider) => CircleAvatar(
                         radius: 16,
                         backgroundImage: imageProvider,
@@ -167,12 +231,16 @@ class _PostCardState extends State<PostCard> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        final Map<String, dynamic> data = {
-                                          "community_id": post.id,
-                                        };
-                                        context
-                                            .read<PostCommentCubit>()
-                                            .postLike(data, post);
+                                        if (isGuest) {
+                                          context.push('/auth_landing');
+                                        } else {
+                                          final Map<String, dynamic> data = {
+                                            "community_id": post.id,
+                                          };
+                                          context
+                                              .read<PostCommentCubit>()
+                                              .postLike(data, post);
+                                        }
                                       },
                                       child: Icon(
                                         (post.isLiked ?? false)
@@ -227,38 +295,19 @@ class _PostCardState extends State<PostCard> {
                                             vertical: 12,
                                           ),
                                           child: CommentBottomSheet(
-                                            communityPost:
-                                                widget.communityPosts,
-                                            comments:
-                                                (widget
-                                                            .communityPosts
-                                                            .comments ??
-                                                        [])
-                                                    .map(
-                                                      (comments) => {
-                                                        "name":
-                                                            comments
-                                                                .user
-                                                                ?.name ??
-                                                            "Unknown",
-                                                        "profile":
-                                                            comments
-                                                                .user
-                                                                ?.profilePicUrl ??
-                                                            "assets/images/profile.png",
-                                                        "comment":
-                                                            comments.content ??
-                                                            "",
-                                                        "time":
-                                                            comments
-                                                                .createdAt ??
-                                                            "",
-                                                      },
-                                                    )
-                                                    .toList(),
-
-                                            scrollController:
-                                                scrollController, // pass it down
+                                            communityPost: widget.communityPosts,
+                                            comments: (widget.communityPosts.comments ?? [])
+                                                .map(
+                                                  (comments) => {
+                                                "name": comments.user?.name ?? "Unknown",
+                                                "profile": comments.user?.profilePicUrl ??
+                                                    "assets/images/profile.png",
+                                                "comment": comments.content ?? "",
+                                                "time": comments.createdAt ?? "",
+                                              },
+                                            )
+                                                .toList(),
+                                            scrollController: scrollController,
                                           ),
                                         ),
                                       );
@@ -274,14 +323,10 @@ class _PostCardState extends State<PostCard> {
                                     height: 16,
                                   ),
                                   SizedBox(width: 6),
-                                  BlocBuilder<
-                                    PostCommentCubit,
-                                    PostCommentStates
-                                  >(
+                                  BlocBuilder<PostCommentCubit, PostCommentStates>(
                                     builder: (context, state) {
                                       return Text(
-                                        widget.communityPosts.commentsCount
-                                            .toString(),
+                                        widget.communityPosts.commentsCount.toString(),
                                         style: const TextStyle(
                                           fontFamily: 'segeo',
                                         ),

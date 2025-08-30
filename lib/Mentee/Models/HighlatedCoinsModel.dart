@@ -1,28 +1,33 @@
 class HighlightedCoinsModel {
   bool? status;
+  String? message;   // added for error/message handling
   List<Data>? data;
 
-  HighlightedCoinsModel({this.status, this.data});
+  HighlightedCoinsModel({this.status, this.message, this.data});
 
   HighlightedCoinsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
+    // API might return either "message" or "error"
+    message = json['message'] ?? json['error'];
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> map = {};
+    map['status'] = status;
+    map['message'] = message;
+    if (data != null) {
+      map['data'] = data!.map((v) => v.toJson()).toList();
     }
-    return data;
+    return map;
   }
 }
+
 
 class Data {
   int? id;

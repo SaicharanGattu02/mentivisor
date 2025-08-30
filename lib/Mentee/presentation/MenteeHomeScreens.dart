@@ -206,6 +206,16 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         onPressed: () {
                           context.push('/executiveservices');
                         },
+                      ), 
+                    IconButton(
+                        icon:  Image.asset(
+                          "assets/icons/notifications.png",
+                          height: 21,
+                          width: 26,
+                        ),
+                        onPressed: () {
+                          context.push('/notifications');
+                        },
                       ),
                   ],
                 ),
