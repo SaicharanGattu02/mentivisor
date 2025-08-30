@@ -11,6 +11,7 @@ class CustomAppButton1 extends StatelessWidget {
   final Color? textcolor;
   final double? width;
   final double? height;
+  final double? textSize;
   final VoidCallback? onPlusTap;
   final IconData? icon;
   final bool isLoading;
@@ -23,6 +24,7 @@ class CustomAppButton1 extends StatelessWidget {
     this.textcolor,
     this.height,
     this.width,
+    this.textSize,
     this.isLoading = false,
     this.icon,
     this.radius,
@@ -75,7 +77,7 @@ class CustomAppButton1 extends StatelessWidget {
                     style: TextStyle(
                       color: textColor,
                       fontFamily: 'segeo',
-                      fontSize: 16,
+                      fontSize: textSize??16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

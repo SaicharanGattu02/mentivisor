@@ -305,13 +305,21 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       FutureBuilder<String?>(
                                         future: AuthService.getCoins(),
                                         builder: (context, snapshot) {
-                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
                                             return const Text(
                                               "Loading...",
-                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             );
                                           }
-                                          final coins = int.tryParse(snapshot.data ?? "0") ?? 0;
+                                          final coins =
+                                              int.tryParse(
+                                                snapshot.data ?? "0",
+                                              ) ??
+                                              0;
                                           return Text(
                                             '$coins',
                                             style: const TextStyle(
@@ -322,8 +330,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                             ),
                                           );
                                         },
-                                      )
-
+                                      ),
                                     ],
                                   ),
                                   onTap: () => _navigateToScreen('Wallet'),
@@ -355,14 +362,18 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 _buildDrawerItem(
                                   assetpath: "assets/icons/VideoConference.png",
                                   label: 'Session Completed',
-                                  onTap: () =>
-                                      _navigateToScreen('Session Completed'),
+                                  onTap: () {
+                                    context.pop();
+                                    _navigateToScreen('Session Completed');
+                                  },
                                 ),
                                 _buildDrawerItem(
                                   assetpath: "assets/icons/CalendarDots.png",
                                   label: 'Upcoming Sessions',
-                                  onTap: () =>
-                                      _navigateToScreen('Upcoming Sessions'),
+                                  onTap: () {
+                                    context.pop();
+                                    _navigateToScreen('Upcoming Sessions');
+                                  },
                                 ),
                               ],
                             ),
@@ -392,7 +403,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     horizontal: 16,
                                   ),
                                   decoration: BoxDecoration(
-                                    gradient: kCommonGradient,
+                                    gradient: kCommonGradient.withOpacity(0.5),
                                   ),
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
@@ -411,6 +422,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       ),
                                     ),
                                     onTap: () {
+                                      context.pop();
                                       AppLogger.info("Status :${status}");
                                       if (status == "" || status == "none") {
                                         context.push('/becomementorscreen');

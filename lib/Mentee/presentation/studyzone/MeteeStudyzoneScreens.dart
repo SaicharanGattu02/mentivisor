@@ -501,7 +501,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                       ),
                                                     SizedBox(height: 16),
                                                     Row(
-                                                      spacing: 6,
+                                                      spacing: 4,
                                                       children: [
                                                         Expanded(
                                                           child: CustomOutlinedButton(
@@ -536,7 +536,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                 isLoading:
                                                                     isLoading,
                                                                 text:
-                                                                    "Download",
+                                                                    "Download",textSize: 14,
                                                                 onPlusTap: () {
                                                                   if (isGuest) {
                                                                     context.push(

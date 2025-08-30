@@ -11,7 +11,7 @@ class AddCommunityPostCubit extends Cubit<AddCommunityPostStates> {
     try {
       final response = await communityPostsRepo.addCommunityPost(data);
       if (response != null && response.status == true) {
-        emit(AddCommunityPostLoaded(response));
+        emit(AddCommunityPostSuccess(response));
       } else {
         emit(AddCommunityPostFailure(response?.message ?? ""));
       }

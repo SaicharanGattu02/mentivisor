@@ -11,7 +11,7 @@ class AddEccCubit extends Cubit<AddEccStates> {
     try {
       final response = await eccRepository.addEcc(data);
       if (response != null && response.status == true) {
-        emit(AddEccLoaded(response));
+        emit(AddEccSuccess(response));
       } else {
         emit(AddEccFailure(response?.message ?? ""));
       }

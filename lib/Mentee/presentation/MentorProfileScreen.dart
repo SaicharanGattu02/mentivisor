@@ -37,6 +37,11 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               return Center(child: Text(state.message));
             } else if (state is MentorProfileLoaded) {
               final mentorData = state.mentorProfileModel.data;
+              final hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
+              final hasTomorrowSlots =
+                  (mentorData?.tomorrowSlots ?? []).isNotEmpty;
+              final hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
+
               return Container(
                 padding: EdgeInsets.all(16),
                 decoration: const BoxDecoration(
@@ -106,7 +111,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "${mentorData?.user?.stream??''} from ${mentorData?.user?.college?.name ?? ''}",
+                                "${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -130,25 +135,24 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                   ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.yellow[700],
-                                    size: 16,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    '${mentorData?.averageRating ?? 0} (${mentorData?.totalReviews ?? 0} reviews)', // Rating and reviews
-                                    style: TextStyle(fontFamily: "Inter"),
-                                  ),
-                                ],
-                              ),
+                              if ((mentorData?.totalReviews ?? 0) > 0)
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.yellow[700],
+                                      size: 16,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '${mentorData?.averageRating ?? 0} (${mentorData?.totalReviews ?? 0} reviews)',
+                                      style: TextStyle(fontFamily: "Inter"),
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         ),
-
-                        // About Section
                         _buildSection(
                           title: 'About',
                           child: Text(
@@ -179,76 +183,90 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 .toList(),
                           ),
                         ),
-                        _buildSection(
-                          title: 'Available Slots',
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Today',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 8),
-                              Wrap(
-                                runSpacing: 10,
-                                spacing: 8,
-                                children: (mentorData?.tomorrowSlots ?? [])
-                                    .map(
-                                      (slot) => _buildTimeSlot(
-                                        "${slot.startTime} - ${slot.endTime}",
-                                        Color(0xFFdcfce7),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                              SizedBox(height: 16),
-                              Text(
-                                'Tomorrow',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 8),
-                              Wrap(
-                                runSpacing: 10,
-                                spacing: 8,
-                                children: (mentorData?.tomorrowSlots ?? [])
-                                    .map(
-                                      (slot) => _buildTimeSlot(
-                                        "${slot.startTime} - ${slot.endTime}",
-                                        Color(0xFFdbeafe),
-                                      ),
-                                    )
-                                    .toList(), // Tomorrow's slots from data
-                              ),
-                              SizedBox(height: 20),
-                              Text(
-                                'More ${mentorData?.remainingSlots} Slots available with week',
-                                style: TextStyle(
-                                  color: Color(0xff666666),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'segeo',
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
 
-                        _buildSection(
-                          title: 'Recent Reviews',
-                          child: Column(
-                            children: (mentorData?.ratings ?? []).map<Widget>((
-                              review,
-                            ) {
-                              return ReviewCard(
-                                name: review.user?.name ?? "",
-                                rating: review.rating ?? 0,
-                                createdAt: review.createdAt ?? "",
-                                review: review.feedback ?? "",
-                                imgeUrl: review.user?.profilePicUrl ?? "",
-                              );
-                            }).toList(),
+                        if (hasTodaySlots ||
+                            hasTomorrowSlots ||
+                            hasRemainingSlots)
+                          _buildSection(
+                            title: 'Available Slots',
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (hasTodaySlots) ...[
+                                  Text(
+                                    'Today',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Wrap(
+                                    runSpacing: 10,
+                                    spacing: 8,
+                                    children: (mentorData?.todaySlots ?? [])
+                                        .map(
+                                          (slot) => _buildTimeSlot(
+                                            "${slot.startTime} - ${slot.endTime}",
+                                            Color(0xFFdcfce7),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                  SizedBox(height: 16),
+                                ],
+                                if (hasTomorrowSlots) ...[
+                                  Text(
+                                    'Tomorrow',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Wrap(
+                                    runSpacing: 10,
+                                    spacing: 8,
+                                    children: (mentorData?.tomorrowSlots ?? [])
+                                        .map(
+                                          (slot) => _buildTimeSlot(
+                                            "${slot.startTime} - ${slot.endTime}",
+                                            Color(0xFFdbeafe),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                  SizedBox(height: 20),
+                                ],
+                                if (hasRemainingSlots)
+                                  Text(
+                                    'More ${mentorData?.remainingSlots} Slots available within the week',
+                                    style: TextStyle(
+                                      color: Color(0xff666666),
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'segeo',
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
+
+                        if ((mentorData?.ratings ?? []).isNotEmpty)
+                          _buildSection(
+                            title: 'Recent Reviews',
+                            child: Column(
+                              children: (mentorData!.ratings!).map<Widget>((
+                                review,
+                              ) {
+                                return ReviewCard(
+                                  name: review.user?.name ?? "",
+                                  rating: review.rating ?? 0,
+                                  createdAt: review.createdAt ?? "",
+                                  review: review.feedback ?? "",
+                                  imgeUrl: review.user?.profilePicUrl ?? "",
+                                );
+                              }).toList(),
+                            ),
+                          ),
                       ],
                     ),
                   ),

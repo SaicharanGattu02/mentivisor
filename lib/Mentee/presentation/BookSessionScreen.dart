@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/BookSession/book_session_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/BookSession/book_session_states.dart';
+import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Components/CustomAppButton.dart';
@@ -689,7 +691,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
               return BlocConsumer<SessionBookingCubit, SessionBookingStates>(
                 listener: (context, state) {
                   if (state is SessionBookingLoaded) {
-                    context.read<MenteeDashboardCubit>().fetchDashboard("");
+                    context.read<MenteeProfileCubit>().fetchMenteeProfile();
                     context.pushReplacement(
                       '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/dashboard&selectedIndex=0',
                     );

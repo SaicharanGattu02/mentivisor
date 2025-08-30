@@ -175,8 +175,10 @@ class _PostCardState extends State<PostCard> {
                                             .postLike(data, post);
                                       },
                                       child: Icon(
-                                        Icons.thumb_up_alt_outlined,
-                                        size: 18,
+                                        (post.isLiked ?? false)
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        size: 16,
                                         color: (post.isLiked ?? false)
                                             ? Colors.red
                                             : Colors.black26,
@@ -268,7 +270,8 @@ class _PostCardState extends State<PostCard> {
                                 children: [
                                   Image.asset(
                                     "assets/icons/Chat.png",
-                                    scale: SizeConfig.fontSize(1.5),
+                                    width: 16,
+                                    height: 16,
                                   ),
                                   SizedBox(width: 6),
                                   BlocBuilder<
@@ -293,7 +296,8 @@ class _PostCardState extends State<PostCard> {
                               onTap: () {},
                               child: Image.asset(
                                 'assets/icons/share.png',
-                                scale: SizeConfig.fontSize(1.5),
+                                width: 16,
+                                height: 16,
                               ),
                             ),
                           ],

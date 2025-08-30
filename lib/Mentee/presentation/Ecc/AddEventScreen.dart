@@ -212,6 +212,20 @@ class _AddEventScreenState extends State<AddEventScreen> {
     super.dispose();
   }
 
+  // void spendCoins(int spentAmount) {
+  //   final newCoins = AppState.coinsNotifier.value - spentAmount;
+  //   AppState.updateCoins(newCoins);
+  //   _fetchUpdatedCoins();
+  // }
+  //
+  // Future<void> _fetchUpdatedCoins() async {
+  //   final coinsString = await AuthService.getCoins();
+  //   final newCoins = int.tryParse(coinsString ?? "0") ?? 0;
+  //   if (newCoins != AppState.coinsNotifier.value) {
+  //     AppState.updateCoins(newCoins);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -505,7 +519,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                   highlitedCoinValue.value = coins ?? "";
                                   final requiredCoins =
                                       int.tryParse(coins.toString()) ?? 0;
-                                  final availableCoins = AppState.coinsNotifier.value;
+                                  final availableCoins =
+                                      AppState.coinsNotifier.value;
                                   AppLogger.info(
                                     "availableCoins:${availableCoins}",
                                   );
@@ -552,24 +567,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       // const SizedBox(width: 8),
                       Image.asset(
                         'assets/images/GoldCoins.png',
-                        width: 20,
-                        height: 20,
+                        width: 16,
+                        height: 16,
                       ),
                       const SizedBox(width: 4),
-                      FutureBuilder<String?>(
-                        future: AuthService.getCoins(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text(
-                              "Loading...",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          }
-                          final coins = int.tryParse(snapshot.data ?? "0") ?? 0;
+                      ValueListenableBuilder<int>(
+                        valueListenable: AppState.coinsNotifier,
+                        builder: (context, coins, child) {
                           return RichText(
                             text: TextSpan(
                               children: [
@@ -630,22 +634,20 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       AppLogger.info("enough_coins:${enough_coins}");
                       return Expanded(
                         child: BlocConsumer<AddEccCubit, AddEccStates>(
-                          listener: (context, state) {
-                            if (state is AddEccLoaded) {
-                              void spendCoins(int spentAmount) {
-                                final newCoins = AppState.coinsNotifier.value - spentAmount;
-                                AppState.updateCoins(newCoins);
+                          listener: (context, state) async {
+                            if (state is AddEccSuccess) {
+                              if (_isHighlighted.value) {
+                                final requiredCoins = int.tryParse(highlitedCoinValue.value) ?? 0;
+                                await context.read<MenteeProfileCubit>().fetchMenteeProfile();
+                                enoughBalance.value = AppState.coinsNotifier.value >= requiredCoins;
                               }
-                              context.read<ECCCubit>().getECC(
-                                "",
-                                "${widget.type}",
-                                "",
-                              );
-                              context.pop();
+                              context.read<ECCCubit>().getECC("", "${widget.type}", "");
+                              Future.microtask(() => context.pop());
                             } else if (state is AddEccFailure) {
                               CustomSnackBar1.show(context, state.error);
                             }
                           },
+
                           builder: (context, state) {
                             final isLoading = state is AddEccLoading;
                             return CustomAppButton1(
@@ -724,7 +726,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                     if (file != null) {
                                       data["image"] = file.path;
                                     }
-                                    if (isHighlighted) {
+                                    if (isHighlighted == true) {
                                       data["coins"] =
                                           double.tryParse(
                                             highlitedCoinValue.value,

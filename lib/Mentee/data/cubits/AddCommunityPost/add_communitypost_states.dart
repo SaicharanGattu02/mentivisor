@@ -6,9 +6,9 @@ class AddCommunityPostInitially extends AddCommunityPostStates {}
 
 class AddCommunityPostLoading extends AddCommunityPostStates {}
 
-class AddCommunityPostLoaded extends AddCommunityPostStates {
+class AddCommunityPostSuccess extends AddCommunityPostStates {
   SuccessModel successModel;
-  AddCommunityPostLoaded(this.successModel);
+  AddCommunityPostSuccess(this.successModel);
 }
 
 class AddCommunityPostFailure extends AddCommunityPostStates {

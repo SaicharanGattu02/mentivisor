@@ -6,9 +6,9 @@ class AddEccInitially extends AddEccStates {}
 
 class AddEccLoading extends AddEccStates {}
 
-class AddEccLoaded extends AddEccStates {
+class AddEccSuccess extends AddEccStates {
   SuccessModel successModel;
-  AddEccLoaded(this.successModel);
+  AddEccSuccess(this.successModel);
 }
 
 class AddEccFailure extends AddEccStates {

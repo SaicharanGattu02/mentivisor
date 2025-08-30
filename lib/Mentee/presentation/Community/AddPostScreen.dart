@@ -20,6 +20,7 @@ import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_state.dart';
+import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -501,7 +502,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                   highlitedCoinValue.value = coins ?? "";
                                   final requiredCoins =
                                       int.tryParse(coins.toString()) ?? 0;
-                                  final availableCoins = AppState.coinsNotifier.value;
+                                  final availableCoins =
+                                      AppState.coinsNotifier.value;
                                   AppLogger.info(
                                     "availableCoins:${availableCoins}",
                                   );
@@ -610,16 +612,23 @@ class _AddPostScreenState extends State<AddPostScreen> {
               AppLogger.info("enough_coins:$enough_coins");
               return Expanded(
                 child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
-                  listener: (context, state) {
-                    if (state is AddCommunityPostLoaded) {
+                  listener: (context, state) async {
+                    if (state is AddCommunityPostSuccess) {
+                      if (_isHighlighted.value) {
+                        final requiredCoins =
+                            int.tryParse(highlitedCoinValue.value) ?? 0;
+                        await context
+                            .read<MenteeProfileCubit>()
+                            .fetchMenteeProfile();
+                        enoughBalance.value =
+                            AppState.coinsNotifier.value >= requiredCoins;
+                      }
                       context.read<CommunityPostsCubit>().getCommunityPosts(
                         "",
                         "${widget.type}",
                       );
-                      if (!mounted) return;
-                      context.pop();
+                      Future.microtask(() => context.pop());
                     } else if (state is AddCommunityPostFailure) {
-                      if (!mounted) return;
                       CustomSnackBar1.show(context, state.error);
                     }
                   },

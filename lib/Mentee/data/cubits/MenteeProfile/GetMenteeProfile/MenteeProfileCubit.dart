@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../services/AuthService.dart';
+import '../../../../../utils/constants.dart';
 import '../../../../Models/MenteeProfileModel.dart';
 import '../MenteeProfileRepository.dart';
 import 'MenteeProfileState.dart';
@@ -16,6 +18,9 @@ class MenteeProfileCubit extends Cubit<MenteeProfileState> {
       final menteeProfile = await menteeProfileRepository.getMenteeProfile();
       if (menteeProfile != null && menteeProfile.status == true) {
         emit(MenteeProfileLoaded(menteeProfileModel: menteeProfile));
+        final coins = menteeProfile.data?.user?.availabilityCoins ?? 0;
+        AuthService.saveCoins(coins);
+        AppState.updateCoins(coins);
         return menteeProfile;
       } else {
         emit(
