@@ -1,223 +1,3 @@
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:mentivisor/Components/CustomSnackBar.dart';
-// import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
-// import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
-// import '../../../utils/constants.dart';
-// import '../../../utils/spinkittsLoader.dart';
-// import '../../Models/CommunityPostsModel.dart';
-//
-// class CommentBottomSheet extends StatefulWidget {
-//   final CommunityPosts communityPost;
-//   final ScrollController scrollController;
-//   final List<dynamic> comments;
-//
-//   const CommentBottomSheet({
-//     super.key,
-//     required this.communityPost,
-//     required this.scrollController,
-//     required this.comments,
-//   });
-//
-//   @override
-//   State<CommentBottomSheet> createState() => _CommentBottomSheetState();
-// }
-//
-// class _CommentBottomSheetState extends State<CommentBottomSheet> {
-//   final TextEditingController _controller = TextEditingController();
-//   late List<Map<String, dynamic>> _comments;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     debugPrint("commentsList :${widget.comments}");
-//     _comments = List.from(widget.comments);
-//   }
-//
-//   void _addComment(String text) {
-//     setState(() {
-//       _comments.add({
-//         "name": "You",
-//         "profile": "assets/images/profileimg.png",
-//         "comment": text,
-//         "time": "Just now",
-//       });
-//     });
-//     _controller.clear();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return SafeArea(
-//       child: Padding(
-//         padding: EdgeInsets.only(
-//           bottom: MediaQuery.of(context).viewInsets.bottom,
-//           top: 16,
-//           left: 16,
-//           right: 16,
-//         ),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             const Text(
-//               'Comments',
-//               style: TextStyle(
-//                 fontFamily: 'segeo',
-//                 fontWeight: FontWeight.bold,
-//                 fontSize: 16,
-//               ),
-//             ),
-//             const SizedBox(height: 16),
-//             Expanded(
-//               child: CustomScrollView(
-//                 controller: widget.scrollController,
-//                 slivers: [
-//                   SliverList(
-//                     delegate: SliverChildBuilderDelegate((context, index) {
-//                       final comment = _comments[index];
-//                       return Padding(
-//                         padding: const EdgeInsets.only(bottom: 12),
-//                         child: Row(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             CachedNetworkImage(
-//                               imageUrl: comment['profile'] ?? '',
-//                               imageBuilder: (context, imageProvider) =>
-//                                   CircleAvatar(
-//                                     radius: 16,
-//                                     backgroundImage: imageProvider,
-//                                   ),
-//                               placeholder: (context, url) => CircleAvatar(
-//                                 radius: 16,
-//                                 backgroundColor: Colors.grey.shade300,
-//                                 child: SizedBox(
-//                                   width: 16,
-//                                   height: 16,
-//                                   child: Center(
-//                                     child: spinkits.getSpinningLinespinkit(),
-//                                   ),
-//                                 ),
-//                               ),
-//                               errorWidget: (context, url, error) =>
-//                                   const CircleAvatar(
-//                                     radius: 16,
-//                                     backgroundImage: AssetImage(
-//                                       "assets/images/profileimg.png",
-//                                     ),
-//                                   ),
-//                             ),
-//                             Expanded(
-//                               child: Container(
-//                                 padding: EdgeInsets.only(left: 10),
-//                                 decoration: BoxDecoration(
-//                                   color: Colors.white,
-//                                   borderRadius: BorderRadius.circular(8),
-//                                 ),
-//                                 child: Column(
-//                                   crossAxisAlignment: CrossAxisAlignment.start,
-//                                   children: [
-//                                     Text(
-//                                       '${comment['name']}  ${DateHelper.timeAgo(comment['time'])}',
-//                                       style: const TextStyle(
-//                                         fontWeight: FontWeight.bold,
-//                                         fontFamily: 'segeo',
-//                                         fontSize: 13,
-//                                       ),
-//                                     ),
-//                                     const SizedBox(height: 4),
-//                                     Text(
-//                                       comment['comment'],
-//                                       style: const TextStyle(
-//                                         fontSize: 14,
-//                                         fontFamily: 'segeo',
-//                                       ),
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       );
-//                     }, childCount: _comments.length),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//
-//             widget.communityPost.id == null
-//                 ? const SizedBox.shrink()
-//                 : Row(
-//                     children: [
-//                       Expanded(
-//                         child: TextField(
-//                           controller: _controller,
-//                           decoration: InputDecoration(
-//                             hintText: 'Write a comment...',
-//                             hintStyle: const TextStyle(fontFamily: 'segeo'),
-//                             contentPadding: const EdgeInsets.symmetric(
-//                               horizontal: 12,
-//                             ),
-//                             border: OutlineInputBorder(
-//                               borderRadius: BorderRadius.circular(24),
-//                               borderSide: BorderSide.none,
-//                             ),
-//                             filled: true,
-//                             fillColor: Colors.grey.shade100,
-//                           ),
-//                         ),
-//                       ),
-//                       BlocConsumer<PostCommentCubit, PostCommentStates>(
-//                         listener: (context, state) {
-//                           if (state is PostCommentLoaded) {
-//                             _addComment(_controller.text.trim());
-//                           } else if (state is PostCommentFailure) {
-//                             CustomSnackBar1.show(context, state.error ?? "");
-//                           }
-//                         },
-//                         builder: (context, state) {
-//                           final isLoading = state is PostCommentLoading;
-//                           return isLoading
-//                               ? Padding(
-//                                   padding: EdgeInsets.only(left: 8.0),
-//                                   child: SizedBox(
-//                                     width: 18,
-//                                     height: 18,
-//                                     child: spinkits.getSpinningLinespinkit(),
-//                                   ),
-//                                 )
-//                               : IconButton(
-//                                   icon: Icon(
-//                                     Icons.send,
-//                                     color: Color(0xFF4076ED),
-//                                   ),
-//                                   onPressed: () {
-//                                     if (_controller.text.trim().isNotEmpty) {
-//                                       final text = _controller.text.trim();
-//                                       Map<String, dynamic> data = {
-//                                         "community_id": widget.communityPost.id,
-//                                         "comments": text,
-//                                       };
-//                                       context
-//                                           .read<PostCommentCubit>()
-//                                           .postComment(
-//                                             data,
-//                                             widget.communityPost,
-//                                           );
-//                                     }
-//                                   },
-//                                 );
-//                         },
-//                       ),
-//                     ],
-//                   ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -246,22 +26,67 @@ class CommentBottomSheet extends StatefulWidget {
 
 class _CommentBottomSheetState extends State<CommentBottomSheet> {
   final TextEditingController _controller = TextEditingController();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   late List<Map<String, dynamic>> _comments;
+  int? _replyingToIndex;
+  bool _isReplying = false;
 
   @override
   void initState() {
     super.initState();
-    _comments = List.from(widget.comments);
+    _comments = widget.comments.map((c) {
+      if (c is Map) {
+        return {
+          ...Map<String, dynamic>.from(c),
+          'replies': <Map<String, dynamic>>[],
+        };
+      } else {
+        return {
+          'name': 'Unknown',
+          'profile': 'assets/images/profileimg.png',
+          'comment': 'Invalid comment data',
+          'time': 'Just now',
+          'replies': <Map<String, dynamic>>[],
+        };
+      }
+    }).toList();
   }
 
-  void _addComment(String text) {
+  void _addComment(String text, {int? parentIndex}) {
+    final newComment = {
+      "name": "You",
+      "profile": "assets/images/profileimg.png",
+      "comment": text,
+      "time": "Just now",
+      "replies": <Map<String, dynamic>>[],
+    };
+
     setState(() {
-      _comments.add({
-        "name": "You",
-        "profile": "assets/images/profileimg.png",
-        "comment": text,
-        "time": "Just now",
-      });
+      if (parentIndex == null) {
+        _comments.add(newComment);
+        _listKey.currentState?.insertItem(_comments.length - 1);
+      } else {
+        _comments[parentIndex]['replies'].add(newComment);
+      }
+      _isReplying = false;
+      _replyingToIndex = null;
+    });
+    _controller.clear();
+  }
+
+  void _showReplyField(int index) {
+    setState(() {
+      _isReplying = true;
+      _replyingToIndex = index;
+    });
+    _controller.clear();
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void _cancelReply() {
+    setState(() {
+      _isReplying = false;
+      _replyingToIndex = null;
     });
     _controller.clear();
   }
@@ -284,167 +109,228 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
               style: TextStyle(
                 fontFamily: 'segeo',
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 18,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Expanded(
-              child: CustomScrollView(
+              child: AnimatedList(
+                key: _listKey,
                 controller: widget.scrollController,
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final comment = _comments[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                initialItemCount: _comments.length,
+                itemBuilder: (context, index, animation) {
+                  return _buildCommentItem(_comments[index], index, animation);
+                },
+              ),
+            ),
+            _buildInputField(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCommentItem(
+    Map<String, dynamic> comment,
+    int index,
+    Animation<double> animation,
+  ) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: comment['profile'] ?? '',
+                  imageBuilder: (context, imageProvider) =>
+                      CircleAvatar(radius: 18, backgroundImage: imageProvider),
+                  placeholder: (context, url) => CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.grey.shade300,
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: spinkits.getSpinningLinespinkit(),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const CircleAvatar(
+                    radius: 20,
+                    backgroundImage: AssetImage("assets/images/profileimg.png"),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Color(0xffFFFFFF),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            // Avatar
-                            CachedNetworkImage(
-                              imageUrl: comment['profile'] ?? '',
-                              imageBuilder: (context, imageProvider) =>
-                                  CircleAvatar(
-                                    radius: 18,
-                                    backgroundImage: imageProvider,
-                                  ),
-                              placeholder: (context, url) => CircleAvatar(
-                                radius: 18,
-                                backgroundColor: Colors.grey.shade300,
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: spinkits.getSpinningLinespinkit(),
+                            Text(
+                              comment['name'] ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'segeo',
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              DateHelper.timeAgo(comment['time']),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'segeo',
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          comment['comment'] ?? '',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'segeo',
+                            color: Color(0xff333333),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+
+                              },
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size(40, 20),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                "Like",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'segeo',
+                                  color: Color(0xFF4076ED),
                                 ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const CircleAvatar(
-                                    radius: 18,
-                                    backgroundImage: AssetImage(
-                                      "assets/images/profileimg.png",
-                                    ),
-                                  ),
                             ),
-
-                            const SizedBox(width: 10),
-
-                            // Bubble
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Name + Time
-                                    Row(
-                                      children: [
-                                        Text(
-                                          comment['name'] ?? '',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'segeo',
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          DateHelper.timeAgo(
-                                            comment['time'] ?? '',
-                                          ),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: 'segeo',
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 6),
-                                    Text(
-                                      comment['comment'] ?? '',
-                                      style:  TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'segeo',
-                                        color: Color(0xff333333),
-                                      ),
-                                    ),
-                                    SizedBox(height: 6),
-                                    Row(
-                                      children: [
-                                        TextButton(
-                                          onPressed: () {
-                                            // final Map<String, dynamic> data = {
-                                            //   "community_id": post.id,
-                                            // };
-                                            // context.read<PostCommentCubit>().postLike(data, post);
-                                          },
-                                          style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize:  Size(40, 20),
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                          ),
-                                          child: Text(
-                                            "Like",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontFamily: 'segeo',
-                                              color: Color(0xFF4076ED),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        TextButton(
-                                          onPressed: () {},
-                                          style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size(40, 20),
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                          ),
-                                          child:Text(
-                                            "Reply",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontFamily: 'segeo',
-                                              color: Color(0xFF4076ED),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                            const SizedBox(width: 12),
+                            TextButton(
+                              onPressed: () => _showReplyField(index),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size(40, 20),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                "Reply",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'segeo',
+                                  color: Color(0xFF4076ED),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      );
-                    }, childCount: _comments.length),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            if (comment['replies'].isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(left: 32, top: 8),
+                child: Column(
+                  children: comment['replies']
+                      .asMap()
+                      .entries
+                      .map<Widget>(
+                        (entry) => _buildCommentItem(
+                          entry.value, // <-- this is Replies, not Comments
+                          entry.key,
+                          const AlwaysStoppedAnimation(1.0),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            // Input box
-            if (widget.communityPost.id != null)
+  Widget _buildInputField() {
+    return BlocConsumer<PostCommentCubit, PostCommentStates>(
+      listener: (context, state) {
+        if (state is PostCommentLoaded) {
+          _addComment(_controller.text.trim(), parentIndex: _replyingToIndex);
+        } else if (state is PostCommentFailure) {
+          CustomSnackBar1.show(
+            context,
+            state.error ?? "Failed to post comment",
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is PostCommentLoading;
+        return Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_isReplying && _replyingToIndex != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Replying to ${_comments[_replyingToIndex!]['name']}',
+                          style: const TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                        onPressed: _cancelReply,
+                      ),
+                    ],
+                  ),
+                ),
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintText: 'Write a comment...',
+                        hintText: _isReplying
+                            ? 'Write a reply...'
+                            : 'Write a comment...',
                         hintStyle: const TextStyle(fontFamily: 'segeo'),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
+                          horizontal: 16,
+                          vertical: 12,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -455,51 +341,50 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       ),
                     ),
                   ),
-                  BlocConsumer<PostCommentCubit, PostCommentStates>(
-                    listener: (context, state) {
-                      if (state is PostCommentLoaded) {
-                        _addComment(_controller.text.trim());
-                      } else if (state is PostCommentFailure) {
-                        CustomSnackBar1.show(context, state.error ?? "");
-                      }
-                    },
-                    builder: (context, state) {
-                      final isLoading = state is PostCommentLoading;
-                      return isLoading
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: spinkits.getSpinningLinespinkit(),
-                              ),
-                            )
-                          : IconButton(
-                              icon: const Icon(
-                                Icons.send,
-                                color: Color(0xFF4076ED),
-                              ),
-                              onPressed: () {
-                                if (_controller.text.trim().isNotEmpty) {
-                                  final text = _controller.text.trim();
-                                  Map<String, dynamic> data = {
-                                    "community_id": widget.communityPost.id,
-                                    "comments": text,
-                                  };
-                                  context.read<PostCommentCubit>().postComment(
-                                    data,
-                                    widget.communityPost,
-                                  );
-                                }
-                              },
-                            );
-                    },
-                  ),
+                  const SizedBox(width: 8),
+                  isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : IconButton(
+                          icon: const Icon(
+                            Icons.send,
+                            color: Color(0xFF4076ED),
+                            size: 28,
+                          ),
+                          onPressed: () {
+                            if (_controller.text.trim().isNotEmpty) {
+                              final text = _controller.text.trim();
+                              final data = {
+                                "community_id": widget.communityPost.id,
+                                "comments": text,
+                                if (_isReplying && _replyingToIndex != null)
+                                  "parent_id":
+                                      _isReplying && _replyingToIndex != null
+                                      ? _comments[_replyingToIndex!]['id']
+                                      : null,
+                              };
+                              context.read<PostCommentCubit>().postComment(
+                                data,
+                                widget.communityPost,
+                              );
+                            }
+                          },
+                        ),
                 ],
               ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

@@ -72,7 +72,7 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/splashscreen',
+      path: '/',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
       },
@@ -520,7 +520,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/',
+      path: '/expirtise_add',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(Expertiseaddlink(), state);
       },

@@ -112,6 +112,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> postSessionReport(Map<String, dynamic> data);
   Future<MenteeCustmor_supportModel?> getcustomersupport();
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
+  Future<SuccessModel?> commentLike(Map<String, dynamic> data);
   Future<SuccessModel?> resourceDownload(String id);
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
   Future<NotificationModel?> notifications();
@@ -186,9 +187,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<NotificationModel?> notifications() async {
     try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.notification}",
-      );
+      Response res = await ApiClient.get("${APIEndpointUrls.notification}");
       AppLogger.log('notifications : ${res.data}');
       return NotificationModel.fromJson(res.data);
     } catch (e) {
@@ -818,6 +817,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Post Toggle Like ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> commentLike(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.comment_like}",
+        data: formData,
+      );
+      AppLogger.log('Post comment Like ::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Post comment Like ::${e}');
 
       return null;
     }

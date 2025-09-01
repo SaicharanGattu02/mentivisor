@@ -64,6 +64,7 @@ class APIEndpointUrls {
   static const String resource_download = "${userUrl}study-zone/download";
   static const String highlated_coins = "${userUrl}list-highlated";
   static const String notification = "${userUrl}get_user_notification";
+  static const String comment_like = "${userUrl}comments/";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
@@ -20,7 +21,8 @@ class PostCard extends StatefulWidget {
   State<PostCard> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin {
+class _PostCardState extends State<PostCard>
+    with SingleTickerProviderStateMixin {
   bool _showHeart = false;
   late AnimationController _animationController;
   late Animation<double> _heartAnimation;
@@ -50,6 +52,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
     _animationController.dispose();
     super.dispose();
   }
+
   void _handleDoubleTap() {
     final post = widget.communityPosts;
     if (!(post.isLiked ?? false)) {
@@ -284,29 +287,47 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                                         maxChildSize: 0.95,
                                         expand: false,
                                         builder: (_, scrollController) => Container(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.white,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffF4F8FD),
                                             borderRadius: BorderRadius.vertical(
                                               top: Radius.circular(16),
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                             horizontal: 16,
                                             vertical: 12,
                                           ),
                                           child: CommentBottomSheet(
-                                            communityPost: widget.communityPosts,
-                                            comments: (widget.communityPosts.comments ?? [])
-                                                .map(
-                                                  (comments) => {
-                                                "name": comments.user?.name ?? "Unknown",
-                                                "profile": comments.user?.profilePicUrl ??
-                                                    "assets/images/profile.png",
-                                                "comment": comments.content ?? "",
-                                                "time": comments.createdAt ?? "",
-                                              },
-                                            )
-                                                .toList(),
+                                            communityPost:
+                                                widget.communityPosts,
+                                            comments:
+                                                (widget
+                                                            .communityPosts
+                                                            .comments ??
+                                                        [])
+                                                    .map(
+                                                      (comments) => {
+                                                        "id": comments.id,
+                                                        "name":
+                                                            comments
+                                                                .user
+                                                                ?.name ??
+                                                            "Unknown",
+                                                        "profile":
+                                                            comments
+                                                                .user
+                                                                ?.profilePicUrl ??
+                                                            "assets/images/profile.png",
+                                                        "comment":
+                                                            comments.content ??
+                                                            "",
+                                                        "time":
+                                                            comments
+                                                                .createdAt ??
+                                                            "",
+                                                      },
+                                                    )
+                                                    .toList(),
                                             scrollController: scrollController,
                                           ),
                                         ),
@@ -323,10 +344,14 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                                     height: 16,
                                   ),
                                   SizedBox(width: 6),
-                                  BlocBuilder<PostCommentCubit, PostCommentStates>(
+                                  BlocBuilder<
+                                    PostCommentCubit,
+                                    PostCommentStates
+                                  >(
                                     builder: (context, state) {
                                       return Text(
-                                        widget.communityPosts.commentsCount.toString(),
+                                        widget.communityPosts.commentsCount
+                                            .toString(),
                                         style: const TextStyle(
                                           fontFamily: 'segeo',
                                         ),
@@ -338,7 +363,19 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                             ),
                             const SizedBox(width: 12),
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () async {
+                                final post = widget.communityPosts;
+                                final shareText =
+                                    """
+${post.heading ?? "Check this out!"}
+
+${post.description ?? ""}
+
+${post.imgUrl ?? ""}
+""";
+
+                                await Share.share(shareText.trim());
+                              },
                               child: Image.asset(
                                 'assets/icons/share.png',
                                 width: 16,

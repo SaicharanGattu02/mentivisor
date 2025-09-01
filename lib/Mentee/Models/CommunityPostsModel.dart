@@ -114,7 +114,7 @@ class CommunityPosts {
   int? commentsCount;
   String? imgUrl;
   Uploader? uploader;
-  List<Comment>? comments;
+  List<Comments>? comments;
 
   CommunityPosts({
     this.id,
@@ -161,7 +161,7 @@ class CommunityPosts {
     if (json['comments'] != null) {
       comments = [];
       json['comments'].forEach((v) {
-        comments!.add(Comment.fromJson(v));
+        comments!.add(Comments.fromJson(v));
       });
     } else {
       comments = [];
@@ -193,7 +193,7 @@ class CommunityPosts {
   }
 }
 
-class Comment {
+class Comments {
   int? id;
   int? userId;
   int? communityId;
@@ -201,9 +201,13 @@ class Comment {
   String? content;
   String? createdAt;
   String? updatedAt;
-  User? user;
+  String? deletedAt;
+  int? likesCount;
+  bool? isLiked;
+  Uploader? user;
+  List<Comments>? replies;
 
-  Comment({
+  Comments({
     this.id,
     this.userId,
     this.communityId,
@@ -211,33 +215,54 @@ class Comment {
     this.content,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
+    this.likesCount,
+    this.isLiked,
     this.user,
+    this.replies,
   });
 
-  Comment.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userId = json['user_id'];
-    communityId = json['community_id'];
-    parentId = json['parent_id'];
-    content = json['content'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  factory Comments.fromJson(Map<String, dynamic> json) {
+    return Comments(
+      id: json['id'],
+      userId: json['user_id'],
+      communityId: json['community_id'],
+      parentId: json['parent_id'],
+      content: json['content'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
+      deletedAt: json['deleted_at'],
+      likesCount: json['likes_count'],
+      isLiked: json['is_liked'],
+      user: json['user'] != null
+          ? Uploader.fromJson(json['user'])
+          : null,
+      replies: (json['replies'] as List?)
+          ?.map((e) => Comments.fromJson(e))
+          .toList() ??
+          [],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['user_id'] = userId;
-    data['community_id'] = communityId;
-    data['parent_id'] = parentId;
-    data['content'] = content;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    if (user != null) data['user'] = user!.toJson();
-    return data;
+    return {
+      'id': id,
+      'user_id': userId,
+      'community_id': communityId,
+      'parent_id': parentId,
+      'content': content,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'deleted_at': deletedAt,
+      'likes_count': likesCount,
+      'is_liked': isLiked,
+      'user': user?.toJson(),
+      'replies': replies?.map((e) => e.toJson()).toList(),
+    };
   }
 }
+
+
 
 class User {
   int? id;
