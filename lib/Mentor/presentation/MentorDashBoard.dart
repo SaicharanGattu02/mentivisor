@@ -117,11 +117,15 @@ class _MentorDashboardState extends State<MentorDashboard> {
             //   },
             // ),
             IconButton(
-              icon: const Icon(
-                Icons.notifications_outlined,
-                color: Colors.black,
+              icon:  Image.asset(
+                "assets/icons/notifications.png",
+                height: 21,
+                width: 26,
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.push('/notifications');
+              },
+
             ),
           ],
         ),

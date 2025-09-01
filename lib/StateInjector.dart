@@ -89,6 +89,7 @@ import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
 import 'Mentor/data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
 import 'Mentor/data/Cubits/MentorInfo/Mentor_info_repo.dart';
+import 'Mentor/data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'Mentor/data/MentorRemoteDataSource.dart';
@@ -119,8 +120,9 @@ class StateInjector {
           BannersImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
     RepositoryProvider<MenteeCustomersupportRepo>(
-      create: (context) =>
-          MenteecustomersupportImpl(remoteDataSource: context.read<RemoteDataSource>()),
+      create: (context) => MenteecustomersupportImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
     ),
 
     RepositoryProvider<CampusMentorListRepository>(
@@ -251,9 +253,8 @@ class StateInjector {
       ),
     ),
     RepositoryProvider<NotificationsRepo>(
-      create: (context) => NotificationIml(
-        remoteDataSource: context.read<RemoteDataSource>(),
-      ),
+      create: (context) =>
+          NotificationIml(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
     ///Mentor Repositories
@@ -282,6 +283,11 @@ class StateInjector {
 
     RepositoryProvider<MentorInfoRepo>(
       create: (context) => MentorProfileRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<MentorProfileRepo1>(
+      create: (context) => MentorProfile1Impl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
@@ -436,11 +442,10 @@ class StateInjector {
           SubmitReviewCubit(context.read<SessionCompletedRepository>()),
     ),
     BlocProvider<PaymentCubit>(
-      create: (context) =>
-          PaymentCubit(context.read<PaymentRepository>()),
+      create: (context) => PaymentCubit(context.read<PaymentRepository>()),
     ),
 
-   BlocProvider<MenteeCustomersupportCubit>(
+    BlocProvider<MenteeCustomersupportCubit>(
       create: (context) =>
           MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
     ),
@@ -452,7 +457,6 @@ class StateInjector {
       create: (context) =>
           NotificationsCubit(context.read<NotificationsRepo>()),
     ),
-
 
     BlocProvider<MenteeDashboardCubit>(
       create: (context) => MenteeDashboardCubit(
@@ -470,8 +474,6 @@ class StateInjector {
     ),
 
     ///Mentor cubitsss
-
-
     BlocProvider<SessionCubit>(
       create: (context) => SessionCubit(context.read<SessionSRepo>()),
     ),
@@ -487,15 +489,20 @@ class StateInjector {
           MentorProfileCubit1(context.read<MentorProfileRepo1>()),
     ),
     BlocProvider<MyMenteeCubit>(
-      create: (context) =>
-          MyMenteeCubit(context.read<MyMenteesRepo>()),
+      create: (context) => MyMenteeCubit(context.read<MyMenteesRepo>()),
     ),
     BlocProvider<MentorInfoCubit>(
+      create: (context) => MentorInfoCubit(context.read<MentorInfoRepo>()),
+    ),
+    BlocProvider<MentorProfileUpdateCubit>(
       create: (context) =>
-          MentorInfoCubit(context.read<MentorInfoRepo>()),
+          MentorProfileUpdateCubit(context.read<MentorProfileRepo1>()),
     ),
     BlocProvider<MentorDashboardCubit>(
-      create: (context) => MentorDashboardCubit(mentorProfileCubit1: MentorProfileCubit1(context.read<MentorProfileRepo1>()),
+      create: (context) => MentorDashboardCubit(
+        mentorProfileCubit1: MentorProfileCubit1(
+          context.read<MentorProfileRepo1>(),
+        ),
         getbannerscubit: Getbannerscubit(context.read<Getbannersrepository>()),
         sessionCubit: SessionCubit(context.read<SessionSRepo>()),
       ),

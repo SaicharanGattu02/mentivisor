@@ -1,4 +1,3 @@
-
 import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
 import 'package:mentivisor/Mentor/Models/MentorProfileModel.dart';
 import 'package:mentivisor/Mentor/data/MentorRemoteDataSource.dart';
@@ -19,7 +18,6 @@ class MentorProfile1Impl implements MentorProfileRepo1 {
 
   @override
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data) async{
-    // TODO: implement updateMentorProfile
-    throw UnimplementedError();
+    return await mentorRemoteDataSource.updateMentorProfile(data);
   }
 }

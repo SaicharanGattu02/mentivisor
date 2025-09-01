@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
-import '../../Mentor/Models/MentorProfileModel.dart';
-import '../data/Cubits/MentorProfile/mentor_profile_cubit.dart';
-import '../data/Cubits/MentorProfile/mentor_profile_states.dart';
+import '../../Models/MentorProfileModel.dart';
+import '../../data/Cubits/MentorProfile/mentor_profile_cubit.dart';
+import '../../data/Cubits/MentorProfile/mentor_profile_states.dart';
 
 class MentorProfileScreen1 extends StatefulWidget {
   const MentorProfileScreen1({super.key});
@@ -31,31 +32,33 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
         ),
       ),
       child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: CustomAppBar1(title: "Profile", actions: []),
-          body: SafeArea(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFFF3F7FF), Color(0xFFF7F3FF)],
-                ),
-              ),
-              child: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
-                builder: (context, state) {
-                  if (state is MentorProfileLoading || state is MentorProfileInitially) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (state is MentorProfileFailure) {
-                    return Center(child: Text(state.error));
-                  }
-                  final data = (state as MentorProfile1Loaded).mentorProfileModel.data!;
-                  return _ProfileBody(data: data);
-                },
+        backgroundColor: Colors.transparent,
+        appBar: CustomAppBar1(title: "Profile", actions: []),
+        body: SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFFF3F7FF), Color(0xFFF7F3FF)],
               ),
             ),
+            child: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
+              builder: (context, state) {
+                if (state is MentorProfileLoading ||
+                    state is MentorProfileInitially) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is MentorProfileFailure) {
+                  return Center(child: Text(state.error));
+                }
+                final data =
+                    (state as MentorProfile1Loaded).mentorProfileModel.data!;
+                return _ProfileBody(data: data);
+              },
+            ),
           ),
+        ),
       ),
     );
   }
@@ -77,11 +80,11 @@ class _ProfileBody extends StatelessWidget {
     final langs = (data.languages ?? []).map(_titleCase).toList();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 12),
+           SizedBox(height: 12),
           Stack(
             children: [
               Align(
@@ -94,7 +97,11 @@ class _ProfileBody extends StatelessWidget {
                     backgroundColor: const Color(0xFFE5E7EB),
                     backgroundImage: photo != null ? NetworkImage(photo) : null,
                     child: photo == null
-                        ? const Icon(Icons.person, size: 48, color: Color(0xFF6B7280))
+                        ? const Icon(
+                            Icons.person,
+                            size: 48,
+                            color: Color(0xFF6B7280),
+                          )
                         : null,
                   ),
                 ),
@@ -104,7 +111,8 @@ class _ProfileBody extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: InkWell(
                     onTap: () {
-                      // TODO: navigate to Edit
+                      context.push('/edit_mentor_profile?collegeId=${data.collegeId}');
+
                     },
                     child: const Padding(
                       padding: EdgeInsets.only(top: 8.0, right: 4),
@@ -164,7 +172,6 @@ class _ProfileBody extends StatelessWidget {
             ),
 
           const SizedBox(height: 18),
-          // Per-minute cost
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -178,7 +185,12 @@ class _ProfileBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.payments_rounded, color: Color(0xFFFFC107)),
+              Image.asset(
+                "assets/images/GoldCoins.png",
+                height: 24,
+                width: 24,
+                color: Color(0xffFFCC00),
+              ),
             ],
           ),
 
@@ -250,13 +262,21 @@ class _ProfileBody extends StatelessWidget {
                           Wrap(
                             spacing: 8,
                             children: ex.subExpertises!
-                                .map((s) => Chip(
-                              shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey),borderRadius: BorderRadiusGeometry.circular(8)),
-                              label: Text(
-                                s.name ?? '',
-                                style: const TextStyle(fontFamily: 'segeo'),
-                              ),
-                            ))
+                                .map(
+                                  (s) => Chip(
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.grey),
+                                      borderRadius:
+                                          BorderRadiusGeometry.circular(8),
+                                    ),
+                                    label: Text(
+                                      s.name ?? '',
+                                      style: const TextStyle(
+                                        fontFamily: 'segeo',
+                                      ),
+                                    ),
+                                  ),
+                                )
                                 .toList(),
                           ),
                       ],
@@ -310,14 +330,8 @@ class _LangChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF111827).withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(100),
+
       ),
       child: Text(
         text,

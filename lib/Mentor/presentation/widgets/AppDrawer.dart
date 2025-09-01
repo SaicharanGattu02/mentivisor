@@ -58,28 +58,36 @@ class AppDrawer extends StatelessWidget {
                                           state is MentorProfile1Loaded
                                           ? state.mentorProfileModel
                                           : null;
-                                      return
-                                        Row(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 20,
-                                              backgroundImage: (user_data?.data?.profilePic != null &&
-                                                  user_data!.data!.profilePic!.isNotEmpty)
-                                                  ? CachedNetworkImageProvider(user_data.data!.profilePic!)
-                                                  : const AssetImage("images/profile.png") as ImageProvider,
+                                      return Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 20,
+                                            backgroundImage:
+                                                (user_data?.data?.profilePic !=
+                                                        null &&
+                                                    user_data!
+                                                        .data!
+                                                        .profilePic!
+                                                        .isNotEmpty)
+                                                ? CachedNetworkImageProvider(
+                                                    user_data.data!.profilePic!,
+                                                  )
+                                                : const AssetImage(
+                                                        "images/profile.png",
+                                                      )
+                                                      as ImageProvider,
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Text(
+                                            user_data?.data?.name ?? "",
+                                            style: const TextStyle(
+                                              fontFamily: 'segeo',
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            const SizedBox(width: 14),
-                                            Text(
-                                              user_data?.data?.name ?? "",
-                                              style: const TextStyle(
-                                                fontFamily: 'segeo',
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w600,
-
-                                              ),
-                                            ),
-                                          ],
-                                        );
+                                          ),
+                                        ],
+                                      );
                                     },
                                   ),
                             ),
@@ -132,14 +140,16 @@ class AppDrawer extends StatelessWidget {
 
                     // // Section label "Info"
                     // _SectionLabel(icon: Icons.info_outline, label: 'Info'),
-
-                    _DrawerItem(
-                      icon: Icons.info_outline,
-                      title: 'Info',
-                      onTap: () {
-                        context.pop();
-                        context.push('/mentees_Info');
-                      },
+                    Container(
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: _DrawerItem(
+                        icon: Icons.info_outline,
+                        title: 'Info',
+                        onTap: () {
+                          context.pop();
+                          context.push('/mentees_Info');
+                        },
+                      ),
                     ),
 
                     _Separator(),
@@ -149,9 +159,7 @@ class AppDrawer extends StatelessWidget {
                       child: _DrawerItem(
                         icon: Icons.trending_up_outlined,
                         title: 'Update Mentor Profile',
-                        onTap: () {
-                          // Navigate to Update Mentor Profile
-                        },
+                        onTap: () {},
                       ),
                     ),
 

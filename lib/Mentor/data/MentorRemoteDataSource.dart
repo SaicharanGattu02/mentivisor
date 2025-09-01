@@ -122,10 +122,10 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
         "${MentorEndpointsUrls.mentor_profile_update}",
         data: data,
       );
-      AppLogger.log('updateMentorProfile: ${res.data}');
+      AppLogger.log('update MentorProfile: ${res.data}');
       return SuccessModel.fromJson(res.data);
     } catch (e) {
-      AppLogger.error('updateMentorProfile:${e}');
+      AppLogger.error('update MentorProfile:${e}');
       return null;
     }
   }

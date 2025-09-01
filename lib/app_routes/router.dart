@@ -55,7 +55,8 @@ import '../Mentor/presentation/CouponsHomeScreen.dart';
 import '../Mentor/presentation/ExpertiseScreen.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
-import '../Mentor/presentation/MentorProfileScreen.dart';
+import '../Mentor/presentation/MentorProfile/EditMentorProfileScreen.dart';
+import '../Mentor/presentation/MentorProfile/MentorProfileScreen.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
@@ -523,6 +524,17 @@ final GoRouter appRouter = GoRouter(
       path: '/slot_booking_screen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(Slotsbookingscreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/edit_mentor_profile',
+      pageBuilder: (context, state) {
+        final collegeId =
+            int.tryParse(state.uri.queryParameters['collegeId'] ?? '') ?? 0;
+        return buildSlideTransitionPage(
+          EditMentorProfileScreen(collegeId: collegeId),
+          state,
+        );
       },
     ),
 

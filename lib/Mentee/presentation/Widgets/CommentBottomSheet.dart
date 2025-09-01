@@ -214,8 +214,8 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                 return TextButton(
                                   onPressed: () {
                                     final Map<String, dynamic> data = {
-                                      "community_id": widget.communityPost.id, // ✅ fix: use correct ID
-                                      "comment_id": comment['id'],            // ✅ include comment id
+                                      "community_id": widget.communityPost.id,
+                                      "comment_id": comment['id'],
                                     };
 
                                     context.read<PostCommentCubit>().postOnCommentLike(data);
@@ -238,7 +238,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                             ),
                             const SizedBox(width: 12),
                             TextButton(
-                              onPressed: () => _showReplyField(index), // ✅ fixed arrow function
+                              onPressed: () => _showReplyField(index),
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
                                 minimumSize: const Size(40, 20),
@@ -255,7 +255,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                             ),
                           ],
                         )
-
                       ],
                     ),
                   ),
