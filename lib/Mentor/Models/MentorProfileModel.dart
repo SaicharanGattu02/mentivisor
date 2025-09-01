@@ -30,7 +30,8 @@ class Data {
   String? profilePic;
   int? collegeId;
   String? collegeName;
-  String? year;
+  int? yearId;
+  String? yearName;
   String? stream;
   String? bio;
   String? reasonForBecomeMentor;
@@ -51,7 +52,8 @@ class Data {
     this.profilePic,
     this.collegeId,
     this.collegeName,
-    this.year,
+    this.yearId,
+    this.yearName,
     this.stream,
     this.bio,
     this.reasonForBecomeMentor,
@@ -73,7 +75,8 @@ class Data {
     profilePic = json['profile_pic'];
     collegeId = json['college_id'];
     collegeName = json['college_name'];
-    year = json['year'];
+    yearId = json['year_id'];
+    yearName = json['year_name'];
     stream = json['stream'];
     bio = json['bio'];
     reasonForBecomeMentor = json['reason_for_become_mentor'];
@@ -101,7 +104,8 @@ class Data {
     data['profile_pic'] = this.profilePic;
     data['college_id'] = this.collegeId;
     data['college_name'] = this.collegeName;
-    data['year'] = this.year;
+    data['year_id'] = this.yearId;
+    data['year_name'] = this.yearName;
     data['stream'] = this.stream;
     data['bio'] = this.bio;
     data['reason_for_become_mentor'] = this.reasonForBecomeMentor;

@@ -118,8 +118,8 @@ class _PostCardState extends State<PostCard>
                     child: CachedNetworkImage(
                       height: 160,
                       imageUrl: widget.communityPosts.imgUrl ?? "",
-                      fit: BoxFit.cover,
-                      width: double.infinity,
+                      fit: BoxFit.fill,
+                      width: SizeConfig.screenWidth,
                       placeholder: (context, url) =>
                           Center(child: spinkits.getSpinningLinespinkit()),
                       errorWidget: (context, url, error) => Container(

@@ -117,10 +117,11 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
 
   @override
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data) async {
+    final formdata = await buildFormData(data);
     try {
-      Response res = await ApiClient.put(
+      Response res = await ApiClient.post(
         "${MentorEndpointsUrls.mentor_profile_update}",
-        data: data,
+        data: formdata,
       );
       AppLogger.log('update MentorProfile: ${res.data}');
       return SuccessModel.fromJson(res.data);

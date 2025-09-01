@@ -7,6 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
+import '../../../Mentee/data/cubits/Campuses/campuses_cubit.dart';
+import '../../../Mentee/data/cubits/Years/years_cubit.dart';
+import '../../../Mentee/data/cubits/Years/years_states.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
 import '../../data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.dart';
@@ -15,7 +18,8 @@ import '../../data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 
 class EditMentorProfileScreen extends StatefulWidget {
   final int collegeId;
-  const EditMentorProfileScreen({Key? key,required this.collegeId}) : super(key: key);
+  const EditMentorProfileScreen({Key? key, required this.collegeId})
+    : super(key: key);
 
   @override
   State<EditMentorProfileScreen> createState() =>
@@ -30,10 +34,11 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
   final TextEditingController _streamController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  // final TextEditingController _phoneController = TextEditingController();
 
   File? _image;
   String? imagePath;
+  int? _yearId;
   final ImagePicker _picker = ImagePicker();
 
   bool isLoading = true;
@@ -41,15 +46,20 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<YearsCubit>().getYears();
     context.read<MentorProfileCubit1>().getMentorProfile().then((userData) {
       if (userData != null) {
         final data = userData.data;
         setState(() {
           _nameController.text = data?.name ?? "";
           _emailController.text = data?.email ?? "";
-          _phoneController.text = data?.phone?.toString() ?? "";
+
           _streamController.text = data?.stream ?? "";
-          _yearController.text = data?.year ?? "";
+          if (data?.yearId != null) {
+            _yearId = int.tryParse(data!.yearId.toString());
+            _yearController.text = data.yearName.toString();
+          }
+
           _bioController.text = data?.bio ?? "";
           imagePath = data?.profilePic ?? "";
           _selectedLanguages = (data?.languages ?? []).cast<String>();
@@ -80,7 +90,7 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
     _streamController.dispose();
     _bioController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
+    // _phoneController.dispose();
     super.dispose();
   }
 
@@ -169,42 +179,45 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: _image != null
-                              ? FileImage(_image!)
-                              : (imagePath?.startsWith('http') ?? false)
-                              ? CachedNetworkImageProvider(imagePath!)
-                              : const AssetImage('assets/images/profile.png')
-                                    as ImageProvider,
-                        ),
-                        Positioned(
-                          bottom: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: primarycolor,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
+                    Align(
+                      alignment: Alignment.center,
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: _image != null
+                                ? FileImage(_image!)
+                                : (imagePath?.startsWith('http') ?? false)
+                                ? CachedNetworkImageProvider(imagePath!)
+                                : const AssetImage('assets/images/profile.png')
+                                      as ImageProvider,
+                          ),
+                          Positioned(
+                            bottom: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: primarycolor,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              padding: const EdgeInsets.all(6),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 18,
+                                padding: const EdgeInsets.all(6),
+                                child: const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 24),
                     _buildField(
@@ -219,13 +232,38 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                       validator: (v) =>
                           v == null || v.isEmpty ? "Stream required" : null,
                     ),
-                    _buildField(
+                    Text(
                       "Year",
-                      _yearController,
-                      keyboard: TextInputType.number,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? "Year required" : null,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff374151),
+                      ),
                     ),
+                    const SizedBox(height: 4),
+                    TextFormField(
+                      controller: _yearController,
+                      readOnly: true,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      onTap: () {
+                        _openYearSelectionBottomSheet(context);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Select Year',
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
+                      ),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Please Select Year' : null,
+                    ),
+                    const SizedBox(height: 16),
                     _buildField(
                       "Email",
                       _emailController,
@@ -240,16 +278,16 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                             : "Enter valid email";
                       },
                     ),
-                    _buildField(
-                      "Phone",
-                      _phoneController,
-                      keyboard: TextInputType.phone,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return "Phone required";
-                        if (v.length < 10) return "Enter valid phone";
-                        return null;
-                      },
-                    ),
+                    // _buildField(
+                    //   "Phone",
+                    //   _phoneController,
+                    //   keyboard: TextInputType.phone,
+                    //   validator: (v) {
+                    //     if (v == null || v.isEmpty) return "Phone required";
+                    //     if (v.length < 10) return "Enter valid phone";
+                    //     return null;
+                    //   },
+                    // ),
                     _buildField(
                       "Bio",
                       _bioController,
@@ -259,7 +297,8 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                     ),
                     Text(
                       "Languages",
-                      style: const TextStyle(
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
                         fontFamily: 'segeo',
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -267,7 +306,6 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -407,52 +445,127 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: BlocConsumer<MentorProfileUpdateCubit, MentorProfileUpdateState>(
-            listener: (context, state) {
-              if (state is MentorProfileUpdateSuccess) {
-                context.read<MentorProfileCubit1>().getMentorProfile();
-                CustomSnackBar1.show(
-                  context,
-                  state.successModel.message ?? "",
-                );
-                context.pop();
-              } else if (state is MentorProfileUpdateFailure) {
-                CustomSnackBar1.show(context, state.message ?? "");
-              }
-            },
-            builder: (context, state) {
-              final isLoading = state is MentorProfileUpdateLoading;
-              return SizedBox(
-                width: double.infinity,
-                child: CustomAppButton1(
-                  text: isLoading ? "Updating..." : "Submit",
-                  onPlusTap: () {
-                    if (_formKey.currentState!.validate() && !isLoading) {
-                      final data = {
-                        "name": _nameController.text.trim(),
-                        "year": _yearController.text.trim(),
-                        "stream": _streamController.text.trim(),
-                        "bio": _bioController.text.trim(),
-                        "email": _emailController.text.trim(),
-                        "phone": _phoneController.text.trim(),
-                        "college_id":widget.collegeId,
-
-                      };
-                      if (_image != null) {
-                        data["profile_pic"] = _image!.path;
-                      }
-
-                      context
-                          .read<MentorProfileUpdateCubit>()
-                          .updateMentorProfile(data);
-                    }
-                  },
-                ),
-              );
-            },
-          ),
+          child:
+              BlocConsumer<MentorProfileUpdateCubit, MentorProfileUpdateState>(
+                listener: (context, state) {
+                  if (state is MentorProfileUpdateSuccess) {
+                    context.read<MentorProfileCubit1>().getMentorProfile();
+                    CustomSnackBar1.show(
+                      context,
+                      state.successModel.message ?? "",
+                    );
+                    context.pop();
+                  } else if (state is MentorProfileUpdateFailure) {
+                    CustomSnackBar1.show(context, state.message ?? "");
+                  }
+                },
+                builder: (context, state) {
+                  final isLoading = state is MentorProfileUpdateLoading;
+                  return SizedBox(
+                    width: double.infinity,
+                    child: CustomAppButton1(
+                      text: isLoading ? "Updating..." : "Submit",
+                      onPlusTap: () {
+                        if (_formKey.currentState!.validate() && !isLoading) {
+                          final data = {
+                            "name": _nameController.text.trim(),
+                            "year": _yearId,
+                            "stream": _streamController.text.trim(),
+                            "bio": _bioController.text.trim(),
+                            "email": _emailController.text.trim(),
+                            "college_id": widget.collegeId,
+                          };
+                          for (int i = 0; i < _selectedLanguages.length; i++) {
+                            data["languages[$i]"] = _selectedLanguages[i];
+                          }
+                          if (_image != null) {
+                            data["image"] = _image!.path;
+                          }
+                          context
+                              .read<MentorProfileUpdateCubit>()
+                              .updateMentorProfile(data);
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
         ),
       ),
+    );
+  }
+
+  void _openYearSelectionBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          height:
+              MediaQuery.of(context).size.height *
+              0.6, // Set height to 60% of screen
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: BlocBuilder<YearsCubit, YearsStates>(
+              builder: (context, state) {
+                if (state is YearsLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is YearsFailure) {
+                  return Center(
+                    child: Text(
+                      state.error,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else if (state is YearsLoaded) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Select Year",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: state.yearsModel.data!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                state.yearsModel.data![index].name!,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              onTap: () {
+                                _yearController.text =
+                                    state.yearsModel.data![index].name!;
+                                _yearId = state.yearsModel.data![index].id;
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

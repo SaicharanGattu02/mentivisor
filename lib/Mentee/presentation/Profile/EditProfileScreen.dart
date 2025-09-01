@@ -14,6 +14,8 @@ import '../../../utils/color_constants.dart';
 import '../../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../../data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
+import '../../data/cubits/Years/years_cubit.dart';
+import '../../data/cubits/Years/years_states.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final int collegeId;
@@ -36,6 +38,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   File? _image;
   String? imagePath;
+  int? _yearId;
   final ImagePicker _picker = ImagePicker();
 
   bool isLoading = true;
@@ -43,6 +46,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<YearsCubit>().getYears();
     context.read<MenteeProfileCubit>().fetchMenteeProfile().then((userData) {
       if (userData != null) {
         final data = userData.data;
@@ -149,45 +153,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
-                child: Column(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile Pic
-                    Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: _image != null
-                              ? FileImage(_image!)
-                              : (imagePath?.startsWith('http') ?? false)
-                              ? CachedNetworkImageProvider(imagePath!)
-                              : const AssetImage('assets/images/profile.png')
-                                    as ImageProvider,
-                        ),
-                        Positioned(
-                          bottom: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: primarycolor,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
+                    Align(alignment: Alignment.center,
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: _image != null
+                                ? FileImage(_image!)
+                                : (imagePath?.startsWith('http') ?? false)
+                                ? CachedNetworkImageProvider(imagePath!)
+                                : const AssetImage('assets/images/profile.png')
+                                      as ImageProvider,
+                          ),
+                          Positioned(
+                            bottom: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: primarycolor,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              padding: const EdgeInsets.all(6),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 18,
+                                padding: const EdgeInsets.all(6),
+                                child: const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 24),
 
@@ -203,13 +208,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       validator: (v) =>
                           v == null || v.isEmpty ? "Stream required" : null,
                     ),
-                    _buildField(
+                    Text(
                       "Year",
-                      _yearController,
-                      keyboard: TextInputType.number,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? "Year required" : null,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff374151),
+                      ),
                     ),
+                    const SizedBox(height: 4),
+                    TextFormField(
+                      controller: _yearController,
+                      readOnly: true,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      onTap: () {
+                        _openYearSelectionBottomSheet(context);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Select Year',
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
+                      ),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Please Select Year' : null,
+                    ),
+                    const SizedBox(height: 16),
                     _buildField(
                       "Email",
                       _emailController,
@@ -272,7 +302,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         if (_formKey.currentState!.validate() && !isLoading) {
                           final data = {
                             "name": _nameController.text.trim(),
-                            "year": _yearController.text.trim(),
+                            "year": _yearId,
                             "stream": _streamController.text.trim(),
                             "bio": _bioController.text.trim(),
                             "email": _emailController.text.trim(),
@@ -294,6 +324,80 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
         ),
       ),
+    );
+  }
+
+  void _openYearSelectionBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          height:
+              MediaQuery.of(context).size.height *
+              0.6, // Set height to 60% of screen
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: BlocBuilder<YearsCubit, YearsStates>(
+              builder: (context, state) {
+                if (state is YearsLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is YearsFailure) {
+                  return Center(
+                    child: Text(
+                      state.error,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else if (state is YearsLoaded) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Select Year",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: state.yearsModel.data!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                state.yearsModel.data![index].name!,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              onTap: () {
+                                _yearController.text =
+                                    state.yearsModel.data![index].name!;
+                                _yearId = state.yearsModel.data![index].id;
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

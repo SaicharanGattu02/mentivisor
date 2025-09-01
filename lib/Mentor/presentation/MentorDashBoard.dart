@@ -117,7 +117,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             //   },
             // ),
             IconButton(
-              icon:  Image.asset(
+              icon: Image.asset(
                 "assets/icons/notifications.png",
                 height: 21,
                 width: 26,
@@ -125,7 +125,6 @@ class _MentorDashboardState extends State<MentorDashboard> {
               onPressed: () {
                 context.push('/notifications');
               },
-
             ),
           ],
         ),

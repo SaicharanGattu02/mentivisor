@@ -73,24 +73,23 @@ class _ProfileBody extends StatelessWidget {
     final photo = data.profilePic;
     final name = data.name ?? '—';
     final college = data.collegeName ?? '';
-    final year = _toOrdinalYear(data.year);
+    final year = _toOrdinalYear(data.yearName);
     final stream = data.stream ?? '';
     final bio = data.reasonForBecomeMentor ?? data.bio ?? '';
     final cost = data.coinsPerMinute ?? '0';
     final langs = (data.languages ?? []).map(_titleCase).toList();
-
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-           SizedBox(height: 12),
+          SizedBox(height: 12),
           Stack(
             children: [
               Align(
                 alignment: Alignment.center,
                 child: CircleAvatar(
-                  radius: 70,
+                  radius: 50,
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                     radius: 72,
@@ -111,8 +110,9 @@ class _ProfileBody extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: InkWell(
                     onTap: () {
-                      context.push('/edit_mentor_profile?collegeId=${data.collegeId}');
-
+                      context.push(
+                        '/edit_mentor_profile?collegeId=${data.collegeId}',
+                      );
                     },
                     child: const Padding(
                       padding: EdgeInsets.only(top: 8.0, right: 4),
@@ -137,10 +137,7 @@ class _ProfileBody extends StatelessWidget {
               color: Color(0xFF111827),
             ),
           ),
-
-          const SizedBox(height: 10),
-
-          // College + year + stream
+          SizedBox(height: 10),
           Text(
             "$college $year $stream".trim(),
             textAlign: TextAlign.center,
@@ -151,10 +148,7 @@ class _ProfileBody extends StatelessWidget {
               color: Color(0xFF6B7280),
             ),
           ),
-
-          const SizedBox(height: 10),
-
-          // Bio / Reason
+          SizedBox(height: 10),
           if (bio.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -331,7 +325,6 @@ class _LangChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(100),
-
       ),
       child: Text(
         text,
@@ -346,7 +339,6 @@ class _LangChip extends StatelessWidget {
   }
 }
 
-// ----- helpers -----
 String _toOrdinalYear(String? yearRaw) {
   if (yearRaw == null || yearRaw.isEmpty) return '';
   final n = int.tryParse(yearRaw) ?? 0;
