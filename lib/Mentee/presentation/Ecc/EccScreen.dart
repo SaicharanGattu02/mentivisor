@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
@@ -23,6 +24,8 @@ class _EccScreenState extends State<EccScreen> {
   String searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
+  final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true); // NEW
+
   int _selectedFilter = 0;
   String selectedFilter = 'On Campuses';
   final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
@@ -37,6 +40,7 @@ class _EccScreenState extends State<EccScreen> {
   void dispose() {
     super.dispose();
     _searchController.dispose();
+    _fabVisible.dispose(); // NEW
   }
 
   @override
@@ -331,28 +335,48 @@ class _EccScreenState extends State<EccScreen> {
                             }
                             return false;
                           },
-                          child: CustomScrollView(
-                            slivers: [
-                              SliverList.separated(
-                                itemCount: ecclist?.length ?? 0,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 16),
-                                itemBuilder: (context, index) =>
-                                    EventCard(eccList: ecclist![index]),
-                              ),
-                              if (state is ECCLoadingMore)
-                                SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(25.0),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.8,
-                                        color: Colors.blue,
+                          child: NotificationListener<UserScrollNotification>(
+                            onNotification: (n) {
+                              // Hide FAB when scrolling down, show when scrolling up
+                              if (n.direction == ScrollDirection.reverse &&
+                                  _fabVisible.value) {
+                                _fabVisible.value = false;
+                              } else if (n.direction ==
+                                      ScrollDirection.forward &&
+                                  !_fabVisible.value) {
+                                _fabVisible.value = true;
+                              } else if (n.direction == ScrollDirection.idle) {
+                                // optional: when user stops, ensure FAB is visible near top
+                                if (n.metrics.pixels <= 8 &&
+                                    !_fabVisible.value) {
+                                  _fabVisible.value = true;
+                                }
+                              }
+                              return false;
+                            },
+                            child: CustomScrollView(
+                              slivers: [
+                                SliverList.separated(
+                                  itemCount: ecclist?.length ?? 0,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: 16),
+                                  itemBuilder: (context, index) =>
+                                      EventCard(eccList: ecclist![index]),
+                                ),
+                                if (state is ECCLoadingMore)
+                                  SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(25.0),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.8,
+                                          color: Colors.blue,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -367,40 +391,57 @@ class _EccScreenState extends State<EccScreen> {
         ),
       ),
       floatingActionButton: ValueListenableBuilder<bool>(
-        valueListenable: onCampusNotifier, // ✅ listen to campus state
+        valueListenable: onCampusNotifier,
         builder: (context, isOnCampus, _) {
-          if (!isOnCampus) {
-            return const SizedBox.shrink(); // hide FAB when Beyond Campus
-          }
-
+          if (!isOnCampus) return const SizedBox.shrink();
           return FutureBuilder(
             future: AuthService.isGuest,
             builder: (context, snapshot) {
               final isGuest = snapshot.data ?? false;
-
-              return FloatingActionButton(
-                onPressed: () {
-                  if (isGuest) {
-                    context.push('/auth_landing');
-                  } else {
-                    final selectedUpdate = _filters[_selectedFilter].toLowerCase();
-                    context.push("/addeventscreen?type=${selectedUpdate}");
-                  }
-                },
-                backgroundColor: Colors.transparent,
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF975CF7), Color(0xFF7A40F2)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+              return ValueListenableBuilder<bool>(
+                valueListenable: _fabVisible,
+                builder: (context, visible, __) {
+                  return AnimatedSlide(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOut,
+                    offset: visible ? Offset.zero : const Offset(0, 1.2),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 180),
+                      opacity: visible ? 1 : 0,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          if (isGuest) {
+                            context.push('/auth_landing');
+                          } else {
+                            final selectedUpdate = _filters[_selectedFilter]
+                                .toLowerCase();
+                            context.push(
+                              "/addeventscreen?type=$selectedUpdate",
+                            );
+                          }
+                        },
+                        backgroundColor: Colors.transparent,
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF975CF7), Color(0xFF7A40F2)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            size: 32,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: const Icon(Icons.add, size: 32, color: Colors.white),
-                ),
+                  );
+                },
               );
             },
           );

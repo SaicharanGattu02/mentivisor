@@ -11,6 +11,7 @@ import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'CouponsHomeScreen.dart';
 import 'MentorHomeScreen.dart';
 import 'MySessionsScreen.dart';
+import 'SlotsBookingScreen.dart';
 
 class MentorDashboard extends StatefulWidget {
   const MentorDashboard({Key? key}) : super(key: key);
@@ -105,7 +106,6 @@ class _MentorDashboardState extends State<MentorDashboard> {
           ),
 
           actions: [
-
             // IconButton(
             //   icon: Image.asset(
             //     "assets/images/crownonly.png",
@@ -116,16 +116,12 @@ class _MentorDashboardState extends State<MentorDashboard> {
             //     context.push('/dashboard');
             //   },
             // ),
-
-
             IconButton(
               icon: const Icon(
                 Icons.notifications_outlined,
                 color: Colors.black,
               ),
-              onPressed: () {
-
-              }
+              onPressed: () {},
             ),
           ],
         ),
@@ -136,7 +132,12 @@ class _MentorDashboardState extends State<MentorDashboard> {
             HapticFeedback.lightImpact();
             setState(() => _selectedIndex = i);
           },
-          children: [MentorHomeScreen(), MySessionsScreen(), Communityscreen(),CouponsHomeScreen()],
+          children: [
+            MentorHomeScreen(),
+            MySessionsScreen(),
+            Slotsbookingscreen(),
+            CouponsHomeScreen(),
+          ],
         ),
         bottomNavigationBar: _buildBottomNav(),
       ),
@@ -163,8 +164,8 @@ class _MentorDashboardState extends State<MentorDashboard> {
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: Colors.blue, // Selected icon color
-        unselectedItemColor: Colors.black54, // Unselected icon color
+        selectedItemColor: primarycolor,
+        unselectedItemColor: Colors.black54,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         elevation: 0,

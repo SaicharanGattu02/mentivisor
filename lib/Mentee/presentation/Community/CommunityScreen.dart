@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
@@ -24,6 +25,7 @@ class Communityscreen extends StatefulWidget {
 class _CommunityScreenState extends State<Communityscreen> {
   final ValueNotifier<bool> _onCampus = ValueNotifier<bool>(true);
   final ValueNotifier<int> _selectedFilter = ValueNotifier<int>(0);
+  final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true); // NEW
   final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
   String selectedFilter = 'On Campuses';
 
@@ -35,6 +37,7 @@ class _CommunityScreenState extends State<Communityscreen> {
 
   @override
   void dispose() {
+    _fabVisible.dispose(); // NEW
     super.dispose();
   }
 
@@ -338,6 +341,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                     return Expanded(
                       child: NotificationListener<ScrollNotification>(
                         onNotification: (scrollInfo) {
+                          // Existing pagination
                           if (scrollInfo.metrics.pixels >=
                               scrollInfo.metrics.maxScrollExtent * 0.9) {
                             if (state is CommunityPostsLoaded &&
@@ -360,7 +364,27 @@ class _CommunityScreenState extends State<Communityscreen> {
                                     );
                               }
                             }
-                            return false;
+                          }
+
+                          // NEW: Hide/show FAB based on scroll direction
+                          if (scrollInfo is UserScrollNotification) {
+                            if (scrollInfo.direction ==
+                                    ScrollDirection.reverse &&
+                                _fabVisible.value) {
+                              _fabVisible.value =
+                                  false; // scrolling down -> hide
+                            } else if (scrollInfo.direction ==
+                                    ScrollDirection.forward &&
+                                !_fabVisible.value) {
+                              _fabVisible.value = true; // scrolling up -> show
+                            } else if (scrollInfo.direction ==
+                                ScrollDirection.idle) {
+                              // optional: when near top, ensure visible
+                              if (scrollInfo.metrics.pixels <= 8 &&
+                                  !_fabVisible.value) {
+                                _fabVisible.value = true;
+                              }
+                            }
                           }
                           return false;
                         },

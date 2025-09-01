@@ -520,13 +520,11 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/expirtise_add',
+      path: '/slot_booking_screen',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(Expertiseaddlink(), state);
+        return buildSlideTransitionPage(Slotsbookingscreen(), state);
       },
     ),
-
-
 
     GoRoute(
       path: '/pdf_viewer',

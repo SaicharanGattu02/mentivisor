@@ -61,7 +61,7 @@ class MenteeCard extends StatelessWidget {
                           height: 60,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage("images/profileimg.png"),
+                              image: AssetImage("assets/images/profileimg.png"),
                               fit: BoxFit.cover,
                             ),
                             color: Color(0xFFF5E6CC),
@@ -115,7 +115,8 @@ class MenteeCard extends StatelessWidget {
                     onTap: () {
                       _showReportSheet(
                         context,
-                        mentee.lastSession?.sessionId ?? 0,mentee.menteeId??0
+                        mentee.lastSession?.sessionId ?? 0,
+                        mentee.menteeId ?? 0,
                       );
                     },
                     child: Container(
@@ -128,7 +129,7 @@ class MenteeCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Image.asset(
-                            "images/ReportmenteImg.png",
+                            "assets/images/ReportmenteImg.png",
                             height: 20,
                             width: 20,
                           ),
@@ -147,12 +148,12 @@ class MenteeCard extends StatelessWidget {
           ),
 
           Positioned(
-            bottom: -10,
-            right: -10,
+            bottom: -0,
+            right: -0,
             child: ClipRRect(
               borderRadius: BorderRadius.only(bottomRight: Radius.circular(16)),
               child: Image.asset(
-                'images/colorpatch.png', // Ensure you have this image asset
+                'assets/images/colorpatch.png', // Ensure you have this image asset
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
@@ -164,7 +165,7 @@ class MenteeCard extends StatelessWidget {
     );
   }
 
-  void _showReportSheet(BuildContext context, int sessionId,int menteeId) {
+  void _showReportSheet(BuildContext context, int sessionId, int menteeId) {
     String? _selected;
     final TextEditingController _otherController = TextEditingController();
     final List<String> _reportReasons = [

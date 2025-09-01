@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashbaord_states.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
@@ -77,7 +78,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         child: BlocBuilder<MentorDashboardCubit, MentorDashBoardState>(
           builder: (context, state) {
             if (state is MentorDashBoardLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: DottedProgressWithLogo());
             } else if (state is MentorDashBoardLoaded) {
               final banners_data = state.getBannersRespModel;
               final session_data = state.sessionsModel;
@@ -162,7 +163,6 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
                   Text(
                     'Upcoming Session',
@@ -221,15 +221,13 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     sessionName:
                                         'G-Meet with Suresh from SVG Collage',
                                     sessionImage:
-                                        session?.mentee?.menteeProfile ??
-                                        "",
+                                        session?.mentee?.menteeProfile ?? "",
                                     sessionTopics: session?.topics ?? "",
                                     reason: '',
                                     buttonText:
                                         'Message from ${session?.mentee?.name ?? ""}',
                                     buttonIcon: 'assets/icons/chaticon.png',
-                                    remainingTime:
-                                        '${duration} Minutes to go',
+                                    remainingTime: '${duration} Minutes to go',
                                   );
                                 }, childCount: session_data?.data?.length),
                               ),

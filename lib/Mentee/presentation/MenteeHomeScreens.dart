@@ -206,17 +206,17 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         onPressed: () {
                           context.push('/executiveservices');
                         },
-                      ), 
-                    IconButton(
-                        icon:  Image.asset(
-                          "assets/icons/notifications.png",
-                          height: 21,
-                          width: 26,
-                        ),
-                        onPressed: () {
-                          context.push('/notifications');
-                        },
                       ),
+                    IconButton(
+                      icon: Image.asset(
+                        "assets/icons/notifications.png",
+                        height: 21,
+                        width: 26,
+                      ),
+                      onPressed: () {
+                        context.push('/notifications');
+                      },
+                    ),
                   ],
                 ),
                 drawer: Drawer(
@@ -512,66 +512,38 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlocBuilder<Getbannerscubit, Getbannersstate>(
-                          builder: (context, state) {
-                            if (banners.isEmpty) {
-                              return Container(
-                                height: 160,
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    Center(
-                                      child: Image.asset(
-                                        "assets/nodata/no_data.png",
-                                      ),
-                                    ),
-                                    const Text(
-                                      "No banners available",
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'segeo',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                            return CarouselSlider.builder(
-                              itemCount: banners.length,
-                              itemBuilder: (ctx, i, _) {
-                                final b = banners[i];
-                                return GestureDetector(
-                                  onTap: () {
-                                    if (b.link != null) _launchUrl(b.link!);
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Image.network(
-                                      b.imgUrl ?? '',
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      errorBuilder: (_, __, ___) => Container(
-                                        color: Colors.grey[200],
-                                        alignment: Alignment.center,
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
+                        CarouselSlider.builder(
+                          itemCount: banners.length,
+                          itemBuilder: (ctx, i, _) {
+                            final b = banners[i];
+                            return GestureDetector(
+                              onTap: () {
+                                if (b.link != null) _launchUrl(b.link!);
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.network(
+                                  b.imgUrl ?? '',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    color: Colors.grey[200],
+                                    alignment: Alignment.center,
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
                                     ),
                                   ),
-                                );
-                              },
-                              options: CarouselOptions(
-                                height: 180,
-                                autoPlay: true,
-                                autoPlayInterval: const Duration(seconds: 4),
-                                viewportFraction: 1.0,
+                                ),
                               ),
                             );
                           },
+                          options: CarouselOptions(
+                            height: 180,
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 4),
+                            viewportFraction: 1.0,
+                          ),
                         ),
                         !isGuest
                             ? Column(

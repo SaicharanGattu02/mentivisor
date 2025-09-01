@@ -32,7 +32,8 @@ class FilterButton extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 16,fontFamily: 'segeo',
+            fontSize: 14,
+            fontFamily: 'segeo',
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             color: isSelected ? primarycolor1 : Color(0xff666666),
           ),

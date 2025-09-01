@@ -23,7 +23,7 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
       'React Router',
       'Context API',
       'Hooks',
-      'State Mgmt'
+      'State Mgmt',
     ],
     'Java': ['OOP', 'Streams', 'Collections', 'Spring', 'JPA'],
     'Python': ['Django', 'Flask', 'Pandas', 'NumPy', 'AsyncIO'],
@@ -374,9 +374,7 @@ class _ExpertiseDetailScreenState extends State<ExpertiseDetailScreen> {
                         ),
 
                       // Add new chip
-                      _AddChipPill(
-                        onTap: () => _openAddChipSheet(context),
-                      ),
+                      _AddChipPill(onTap: () => _openAddChipSheet(context)),
                     ],
                   ),
                 ),
@@ -421,10 +419,7 @@ class _ExpertiseDetailScreenState extends State<ExpertiseDetailScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Add item',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
               ),
               const SizedBox(height: 12),
@@ -433,8 +428,10 @@ class _ExpertiseDetailScreenState extends State<ExpertiseDetailScreen> {
                 autofocus: true,
                 decoration: InputDecoration(
                   hintText: 'Enter chip name',
-                  contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -521,7 +518,11 @@ class _ChipPill extends StatelessWidget {
             GestureDetector(
               onTap: onCancel,
               behavior: HitTestBehavior.opaque,
-              child: const Icon(Icons.close_rounded, size: 16, color: Color(0xFF9AA3AF)),
+              child: const Icon(
+                Icons.close_rounded,
+                size: 16,
+                color: Color(0xFF9AA3AF),
+              ),
             ),
           ],
         ],

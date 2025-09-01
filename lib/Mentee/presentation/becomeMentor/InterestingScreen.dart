@@ -31,7 +31,6 @@ class _InterestingScreenState extends State<InterestingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: height * 0.03),
-
             // Top image
             Center(
               child: Image.asset(
@@ -52,7 +51,6 @@ class _InterestingScreenState extends State<InterestingScreen> {
               ),
             ),
             SizedBox(height: height * 0.015),
-
             Text(
               "Now tell your achievements",
               style: TextStyle(

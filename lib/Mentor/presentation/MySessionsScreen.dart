@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
+import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/FilterButton.dart';
 import '../data/Cubits/Sessions/SessionsCubit.dart';
 import '../data/Cubits/Sessions/SessionsStates.dart';
@@ -131,19 +132,44 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
               child: BlocBuilder<SessionCubit, SessionStates>(
                 builder: (context, state) {
                   if (state is SessionLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: DottedProgressWithLogo());
                   } else if (state is SessionLoaded) {
                     final Sessions = state.sessionsModel.data;
                     if (Sessions?.length == 0) {
-                      return Center(child: Column());
+                      return Center(
+                        child: Column(
+                          spacing: 6,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset("assets/images/nodata.png"),
+                            Text(
+                              "Oops!",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff666666),
+                              ),
+                            ),
+                            Text(
+                              "No Sessions Found",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff444444),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
                     }
                     return CustomScrollView(
                       slivers: [
                         SliverList(
                           delegate: SliverChildBuilderDelegate((
-                              context,
-                              index,
-                              ) {
+                            context,
+                            index,
+                          ) {
                             final session = Sessions?[index];
                             final duration = calculateDuration(
                               session?.startTime ?? "",
@@ -154,16 +180,17 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               sessionDate: session?.date ?? "",
                               sessionTime: '${duration} Minutes to go',
                               sessionName:
-                              'G-Meet with Suresh from SVG Collage',
+                                  'G-Meet with Suresh from SVG Collage',
                               sessionImage:
-                              session?.mentee?.menteeProfile ??
+                                  session?.mentee?.menteeProfile ??
                                   "", // Image for upcoming sessions
                               sessionTopics: session?.topics ?? "",
                               reason: '',
                               buttonText:
-                              'Message from ${session?.mentee?.name ?? ""}',
+                                  'Message from ${session?.mentee?.name ?? ""}',
                               buttonIcon: 'assets/icons/chaticon.png',
-                              remainingTime: '${duration} Minutes to go', // Time remaining for upcoming session
+                              remainingTime:
+                                  '${duration} Minutes to go', // Time remaining for upcoming session
                             );
                           }, childCount: Sessions?.length),
                         ),
