@@ -41,7 +41,7 @@ class DownloadCard extends StatelessWidget {
                   SizedBox(height: 5),
                   Text(
                     downloads.description ?? "",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    style: TextStyle(fontSize: 14, color: Color(0xff666666)),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
