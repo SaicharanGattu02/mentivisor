@@ -207,33 +207,44 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            TextButton(
-                              onPressed: () {
+                            BlocBuilder<PostCommentCubit, PostCommentStates>(
+                              builder: (context, state) {
+                                final postComments = widget.comments;
 
+                                return TextButton(
+                                  onPressed: () {
+                                    final Map<String, dynamic> data = {
+                                      "community_id": widget.communityPost.id, // ✅ fix: use correct ID
+                                      "comment_id": comment['id'],            // ✅ include comment id
+                                    };
+
+                                    context.read<PostCommentCubit>().postOnCommentLike(data);
+                                  },
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: const Size(40, 20),
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: const Text(
+                                    "Like",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontFamily: 'segeo',
+                                      color: Color(0xFF4076ED),
+                                    ),
+                                  ),
+                                );
                               },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size(40, 20),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: Text(
-                                "Like",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontFamily: 'segeo',
-                                  color: Color(0xFF4076ED),
-                                ),
-                              ),
                             ),
                             const SizedBox(width: 12),
                             TextButton(
-                              onPressed: () => _showReplyField(index),
+                              onPressed: () => _showReplyField(index), // ✅ fixed arrow function
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
-                                minimumSize: Size(40, 20),
+                                minimumSize: const Size(40, 20),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              child: Text(
+                              child: const Text(
                                 "Reply",
                                 style: TextStyle(
                                   fontSize: 13,
@@ -243,7 +254,8 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                               ),
                             ),
                           ],
-                        ),
+                        )
+
                       ],
                     ),
                   ),

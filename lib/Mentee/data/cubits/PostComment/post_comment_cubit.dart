@@ -65,15 +65,15 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
 
   Future<void> postOnCommentLike(
     Map<String, dynamic> data,
-    CommunityPosts communityPosts,
+      // Comments comments,
   ) async {
-    final wasLiked = communityPosts.isLiked ?? false;
-    communityPosts.isLiked = !wasLiked;
-
-    if (communityPosts.likesCount == null) communityPosts.likesCount = 0;
-    communityPosts.likesCount = wasLiked
-        ? (communityPosts.likesCount! - 1)
-        : (communityPosts.likesCount! + 1);
+    // final wasLiked = comments.isLiked ?? false;
+    // comments.isLiked = !wasLiked;
+    //
+    // if (comments.likesCount == null) comments.likesCount = 0;
+    // comments.likesCount = wasLiked
+    //     ? (comments.likesCount! - 1)
+    //     : (comments.likesCount! + 1);
 
     emit(PostCommentLoading());
 
@@ -83,18 +83,18 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
         emit(PostCommentLoaded(response));
       } else {
         // Revert changes on failure
-        communityPosts.isLiked = wasLiked;
-        communityPosts.likesCount = wasLiked
-            ? (communityPosts.likesCount! + 1)
-            : (communityPosts.likesCount! - 1);
+        // comments.isLiked = wasLiked;
+        // comments.likesCount = wasLiked
+        //     ? (comments.likesCount! + 1)
+        //     : (comments.likesCount! - 1);
         emit(PostCommentFailure(response?.message ?? ""));
       }
     } catch (e) {
       // Revert changes on exception
-      communityPosts.isLiked = wasLiked;
-      communityPosts.likesCount = wasLiked
-          ? (communityPosts.likesCount! + 1)
-          : (communityPosts.likesCount! - 1);
+      // comments.isLiked = wasLiked;
+      // comments.likesCount = wasLiked
+      //     ? (comments.likesCount! + 1)
+      //     : (comments.likesCount! - 1);
       emit(PostCommentFailure(e.toString()));
     }
   }
