@@ -4,7 +4,7 @@ class MentorEndpointsUrls {
 
   /// Mentor
   static const String get_banners = "${apiUrl}banners";
-  static const String get_sessions = "${userUrl}sessions";
+  static const String get_sessions = "${userUrl}sessions/upcoming";
   static const String mentor_profile = "${userUrl}mentor/profile";
   static const String mentor_profile_update = "${userUrl}mentor/profile/update";
   static const String feedback = "${userUrl}mentors/feedback-ui";

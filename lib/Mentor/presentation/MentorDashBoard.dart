@@ -69,7 +69,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
                   ? state.mentorProfileModel.data
                   : null;
               return Row(
-                spacing: 6,
+                // FIX: Row has no `spacing`; using SizedBox keeps the same look.
                 children: [
                   IconButton(
                     padding: EdgeInsets.zero,
@@ -77,10 +77,11 @@ class _MentorDashboardState extends State<MentorDashboard> {
                     icon: const Icon(Icons.menu, color: Colors.black, size: 34),
                     onPressed: _toggleDrawerOrExit,
                   ),
+                  const SizedBox(width: 6),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Hello!',
                         style: TextStyle(
                           color: Colors.black,
@@ -91,7 +92,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
                       ),
                       Text(
                         user_data?.name ?? "User",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                           height: 1,
@@ -104,18 +105,21 @@ class _MentorDashboardState extends State<MentorDashboard> {
               );
             },
           ),
-
           actions: [
-            // IconButton(
-            //   icon: Image.asset(
-            //     "assets/images/crownonly.png",
-            //     height: 21,
-            //     width: 26,
-            //   ),
-            //   onPressed: () {
-            //     context.push('/dashboard');
-            //   },
-            // ),
+
+            IconButton(
+              icon: Image.asset(
+                "assets/images/crownonly.png",
+                height: 21,
+                width: 26,
+              ),
+              onPressed: () {
+                // context.push('/executiveservices');
+                context.push('/mentees_home');
+              },
+            ),
+
+
             IconButton(
               icon: Image.asset(
                 "assets/icons/notifications.png",
@@ -136,10 +140,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
             setState(() => _selectedIndex = i);
           },
           children: [
-            MentorHomeScreen(),
+            const MentorHomeScreen(),
             MySessionsScreen(),
-            Slotsbookingscreen(),
-            CouponsHomeScreen(),
+            const Slotsbookingscreen(),
+            const CouponsHomeScreen(),
           ],
         ),
         bottomNavigationBar: _buildBottomNav(),
@@ -178,7 +182,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             icon: Container(
               height: 32,
               width: 56,
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: _selectedIndex == 0
                     ? primarycolor1.withOpacity(0.1)
@@ -198,7 +202,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             icon: Container(
               height: 32,
               width: 56,
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: _selectedIndex == 1
                     ? primarycolor1.withOpacity(0.1)
@@ -220,7 +224,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             icon: Container(
               height: 32,
               width: 56,
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: _selectedIndex == 2
                     ? primarycolor1.withOpacity(0.1)
@@ -242,7 +246,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
             icon: Container(
               height: 32,
               width: 56,
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: _selectedIndex == 3
                     ? primarycolor1.withOpacity(0.1)

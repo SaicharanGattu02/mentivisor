@@ -36,8 +36,8 @@ class MentorDashboardCubit extends Cubit<MentorDashBoardState> {
         getBannersRespModel = bannerState.getbannerModel;
       }
 
-      // 🔹 Sessions
-      await sessionCubit.getSessions("upcoming");
+
+      await sessionCubit.getSessions("mentor");
       final sessionState = sessionCubit.state;
       if (sessionState is SessionLoaded) {
         sessionsModel = sessionState.sessionsModel;

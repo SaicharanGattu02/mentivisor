@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
+import 'package:mentivisor/Mentee/presentation/MenteeHomeScreens.dart';
 import 'package:mentivisor/Mentee/presentation/PdfViewerPage.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CustomerServiceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.dart';
@@ -79,6 +80,7 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      // path: '/',
       path: '/coinhistory',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CoinHistoryScreen(), state),
@@ -512,6 +514,12 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(Slotsbookingscreen(), state);
       },
     ),
+    GoRoute(
+      path: '/mentees_home',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(MenteeHomeScreen(), state);
+      },
+    ),
 
     GoRoute(
       path: '/mentees_Info',
@@ -519,8 +527,8 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(Mentorinfoscreen(), state);
       },
     ),
-
     GoRoute(
+      // path: '/expertiseaddlink',
       path: '/slot_booking_screen',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(Slotsbookingscreen(), state);
@@ -537,6 +545,15 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
+
+    // GoRoute(
+    //   path: '/',
+    //   pageBuilder: (context, state) {
+    //     return buildSlideTransitionPage(Sp(), state);
+    //   },
+    // ),
+
+
 
     GoRoute(
       path: '/pdf_viewer',

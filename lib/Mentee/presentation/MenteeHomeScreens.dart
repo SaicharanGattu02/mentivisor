@@ -110,6 +110,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               AuthService.saveCoins(coins);
               AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
               return Scaffold(
+               drawerEnableOpenDragGesture: !isGuest,
                 key: _scaffoldKey,
                 appBar: AppBar(
                   backgroundColor: Colors.white,
@@ -204,7 +205,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           width: 26,
                         ),
                         onPressed: () {
-                          context.push('/executiveservices');
+                          // context.push('/executiveservices');
+                          context.push('/mentor_dashboard');
                         },
                       ),
                     IconButton(
@@ -334,7 +336,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                             '$coins',
                                             style: const TextStyle(
                                               fontSize: 14,
-                                              color: Color(0xff121212),
+                                              color: Color(0xff333333),
                                               fontFamily: 'segeo',
                                               fontWeight: FontWeight.bold,
                                             ),

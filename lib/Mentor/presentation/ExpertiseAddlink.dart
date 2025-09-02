@@ -3,6 +3,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
 class Expertiseaddlink extends StatefulWidget {
@@ -41,7 +42,7 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
     final link = _linkController.text.trim();
     if (link.isEmpty && _selectedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a link or upload a document')),
+        const SnackBar(content: Text('Please enter a link or upload a document',style: TextStyle( fontFamily: "segeo",),)),
       );
       return;
     }
@@ -89,7 +90,7 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:CustomAppBar1(title: "Expertise", actions: []),
+      appBar:CustomAppBar1(title: "Expertise", actions: [],),
       body: Container(
         decoration: const BoxDecoration(gradient: bg),
         child: SingleChildScrollView(
@@ -100,14 +101,14 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Illustration
-                const SizedBox(height: 8),
+                const SizedBox(height: 24),
                 Center(
                   child: Image.asset(
 
                     'assets/images/expertiseslinkimg.png',
                     height: 329,
                     width: 329,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.fill,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -118,15 +119,16 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF222222),
+                    fontFamily: "segeo",
+                    color: Color(0xff222222),
                   ),
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Any case studies, link or any other doc that supports your\nskills',
+                  'Any case studies,link or any other doc that supports \nyour skills',
                   style: TextStyle(
                     fontSize: 14,
-                    height: 1.35,
+                    fontFamily: "segeo",
                     color: Color(0xFF666666), // grey-600
                     fontWeight: FontWeight.w600,
                   ),
@@ -135,15 +137,16 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
 
                 // Link label
                 Row(
-                  children: const [
-                    Icon(Icons.link_rounded, size: 18, color: Color(0xFF374151)),
+                  children:  [
+                    Image.asset("assets/images/linksimple.png", width: 20,height: 20,),
                     SizedBox(width: 8),
                     Text(
                       'Link',
                       style: TextStyle(
                         fontSize: 14,
+                        fontFamily: "segeo",
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF374151),
+                        color: Color(0xFF374151).withOpacity(0.9),
                       ),
                     ),
                   ],
@@ -159,29 +162,42 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
                   decoration: _inputDecoration('Http/.....'),
                 ),
 
-                const SizedBox(height: 20),
-
-                // Upload label
+                const SizedBox(height: 24),
                 Row(
-                  children: const [
-                    Icon(Icons.ios_share_rounded, size: 18, color: Color(0xFF374151)),
+                  children:  [
+                    Image.asset("assets/images/UploadSimple.png", width: 20,height: 20,),
                     SizedBox(width: 8),
                     Text(
                       "Upload any Doc’s",
+
                       style: TextStyle(
                         fontSize: 14,
+                        fontFamily: "segeo",
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF374151),
+                        color: Color(0xFF374151).withOpacity(0.9),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
 
+                // Link field
+                TextFormField(
+                  controller: _linkController,
+                  keyboardType: TextInputType.url,
+                  textInputAction: TextInputAction.done,
+                  cursorColor: const Color(0xFF121212),
+                  decoration: _inputDecoration('Click here to upload'),
+                ),
+
+                const SizedBox(height: 8),
+
+
 
 
                 const SizedBox(height: 100), // space for the sticky button
               ],
+
             ),
           ),
         ),
@@ -189,36 +205,11 @@ class _BecomeMentorDataState extends State<Expertiseaddlink> {
 
       // Sticky gradient "Submit" button
       bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-          child: SizedBox(
-            height: 52,
-            child: GestureDetector(
-              onTap: _submit,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF9C5BF7), Color(0xFF5EA2FF)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  'Submit',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: .2,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+    child: Padding(padding: EdgeInsetsGeometry.fromLTRB(16, 12, 16, 20),
+        child: CustomAppButton1( text: 'Submit', onPlusTap: (){ },),
+
+    ),
+
       ),
     );
   }

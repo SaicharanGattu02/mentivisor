@@ -176,7 +176,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   Future<SessionsModel?> getSessions(String type) async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.get_sessions}/${type}",
+        "${MentorEndpointsUrls.get_sessions}?role=${type}",
       );
       AppLogger.log('getSessions: ${res.data}');
       return SessionsModel.fromJson(res.data);

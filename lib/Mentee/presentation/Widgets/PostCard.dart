@@ -269,6 +269,7 @@ class _PostCardState extends State<PostCard>
                                 );
                               },
                             ),
+
                             const SizedBox(width: 12),
                             GestureDetector(
                               onTap: () {
@@ -361,6 +362,7 @@ class _PostCardState extends State<PostCard>
                                 ],
                               ),
                             ),
+
                             const SizedBox(width: 12),
                             GestureDetector(
                               onTap: () async {

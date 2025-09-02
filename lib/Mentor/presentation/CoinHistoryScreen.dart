@@ -71,7 +71,7 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
                     onPressed: _openFilterSheet,
                     tooltip: 'Filter',
                     icon: Image.asset(
-                      "images/filterimg.png",
+                      "assets/images/filterimg.png",
                       color: Color(0xFF4076ED),
                       height: 24, // optional, adjust size
                       width: 24,
@@ -170,11 +170,13 @@ class CoinHistoryCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.calendar_today_rounded,
-                        size: 14,
-                        color: Color(0xFF98A2B3),
-                      ),
+                      Image.asset("assets/images/Radiocalenderimg.png",height: 16,width: 16,),
+
+                      // const Icon(
+                      //   Icons.calendar_today_rounded,
+                      //   size: 14,
+                      //   color: Color(0xFF98A2B3),
+                      // ),
                       const SizedBox(width: 6),
                       Text(
                         dateLabel,
@@ -206,7 +208,7 @@ class CoinHistoryCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Image.asset(
-                  "images/GoldCoins.png",
+                  "assets/images/GoldCoins.png",
                   height: 24, // optional, adjust size
                   width: 24,
                 ),
