@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import '../../../Components/CutomAppBar.dart';
 import '../../../services/AuthService.dart';
 import '../../../utils/AppLogger.dart';
 import '../../../utils/ImageUtils.dart';
+import '../../../utils/color_constants.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_states.dart';
@@ -21,6 +23,8 @@ import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../../data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
+import '../../data/cubits/Tags/TagsSearch/tags_search_states.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -44,15 +48,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
 
   final ImagePicker _picker = ImagePicker();
+  final searchController = TextEditingController();
+  Timer? _debounce;
   List<String> _selectedTags = [];
-
+  List<String> _customTags = [];
   @override
   void initState() {
     super.initState();
+    searchController.clear();
+    context.read<TagsSearchCubit>().reset();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.wait([
         context.read<HighlightedCoinsCubit>().highlitedCoins("community"),
-        context.read<CommunityTagsCubit>().getCommunityTags(),
+        // context.read<CommunityTagsCubit>().getCommunityTags(),
       ]);
     });
   }
@@ -172,7 +180,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: "Add Post", actions: const []),
+      appBar: CustomAppBar1(title: "Add Community Post", actions: const []),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -219,87 +227,184 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
               buildCustomLabel('Tags'),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: buildCustomTextField(
-                      controller: _tagController,
-                      hint: "Enter Tag",
-                    ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: buildCustomTextField(
+              //         controller: _tagController,
+              //         hint: "Enter Tag",
+              //       ),
+              //     ),
+              //     const SizedBox(width: 8),
+              //     SizedBox(
+              //       height: 48,
+              //       width: 48,
+              //       child: ElevatedButton(
+              //         onPressed: () {
+              //           final tag = _tagController.text.trim();
+              //           if (tag.isNotEmpty) {
+              //             context.read<CommunityTagsCubit>().addTag(tag);
+              //             _tagController.clear();
+              //           }
+              //         },
+              //         style: ElevatedButton.styleFrom(
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(5),
+              //           ),
+              //           backgroundColor: const Color(0xff315DEA),
+              //           padding: const EdgeInsets.all(12),
+              //         ),
+              //         child: const Icon(
+              //           Icons.add,
+              //           size: 20,
+              //           color: Colors.white,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(height: 8),
+              //
+              // Container(
+              //   padding: const EdgeInsets.all(10),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         "Suggested",
+              //         style: TextStyle(
+              //           fontWeight: FontWeight.w600,
+              //           fontFamily: 'segeo',
+              //           fontSize: 14,
+              //           color: Color(0xff374151E5).withOpacity(0.9),
+              //         ),
+              //       ),
+              //       SizedBox(height: 12),
+              //       BlocBuilder<CommunityTagsCubit, CommunityTagsStates>(
+              //         builder: (context, state) {
+              //           if (state is CommunityTagsLoading) {
+              //             return const SizedBox(
+              //               height: 24,
+              //               width: 24,
+              //               child: CircularProgressIndicator(strokeWidth: 2),
+              //             );
+              //           } else if (state is CommunityTagsLoaded) {
+              //             _selectedTags = state.selectedTags;
+              //             return Wrap(
+              //               spacing: 5,
+              //               runSpacing: 0,
+              //               children: state.allTags.map((tag) {
+              //                 final isSelected = state.selectedTags.contains(
+              //                   tag,
+              //                 );
+              //                 return ChoiceChip(
+              //                   label: Text(tag),
+              //                   selected: isSelected,
+              //                   onSelected: (_) {
+              //                     context.read<CommunityTagsCubit>().toggleTag(
+              //                       tag,
+              //                     );
+              //                   },
+              //                   selectedColor: Colors.blue.shade100,
+              //                   backgroundColor: Colors.white,
+              //                   side: BorderSide(
+              //                     color: isSelected
+              //                         ? Colors.blue.shade100
+              //                         : Colors.grey,
+              //                   ),
+              //                 );
+              //               }).toList(),
+              //             );
+              //           } else {
+              //             return const Text("No Tags Found");
+              //           }
+              //         },
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 8),
+              SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: searchController,
+                  cursorColor: primarycolor,
+                  onChanged: (query) {
+                    if (_debounce?.isActive ?? false) _debounce!.cancel();
+                    _debounce = Timer(const Duration(milliseconds: 300), () {
+                      context.read<TagsSearchCubit>().getTagsSearch(query);
+                    });
+                  },
+                  style: TextStyle(fontFamily: "segeo", fontSize: 15),
+                  decoration: InputDecoration(
+                    hoverColor: Colors.white,
+                    hintText: "Enter Tag",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.only(right: 33, left: 20),
                   ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    height: 48,
-                    width: 48,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final tag = _tagController.text.trim();
-                        if (tag.isNotEmpty) {
-                          context.read<CommunityTagsCubit>().addTag(tag);
-                          _tagController.clear();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        backgroundColor: const Color(0xff315DEA),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
+
               const SizedBox(height: 8),
 
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Suggested",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'segeo',
-                        fontSize: 14,
-                        color: Color(0xff374151E5).withOpacity(0.9),
+              BlocBuilder<TagsSearchCubit, TagsSearchState>(
+                builder: (context, state) {
+                  if (state is TagsSearchLoading) {
+                    return const Center(child: DottedProgressWithLogo());
+                  } else if (state is TagsSearchLoaded) {
+                    final allTags = [...state.tagsModel.data!, ..._customTags];
+                    if (allTags.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    SizedBox(height: 12),
-                    BlocBuilder<CommunityTagsCubit, CommunityTagsStates>(
-                      builder: (context, state) {
-                        if (state is CommunityTagsLoading) {
-                          return const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          );
-                        } else if (state is CommunityTagsLoaded) {
-                          _selectedTags = state.selectedTags;
-                          return Wrap(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Select Tags",
+                            style: TextStyle(
+                              color: Color(0xff374151),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'segeo',
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Wrap(
                             spacing: 5,
                             runSpacing: 0,
-                            children: state.allTags.map((tag) {
-                              final isSelected = state.selectedTags.contains(
-                                tag,
-                              );
+                            children: allTags.map((tag) {
+                              final isSelected = _selectedTags.contains(tag);
                               return ChoiceChip(
-                                label: Text(tag),
+                                label: Text(
+                                  tag,
+                                  style: TextStyle(
+                                    color: Color(0xff333333),
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                ),
                                 selected: isSelected,
-                                onSelected: (_) {
-                                  context.read<CommunityTagsCubit>().toggleTag(
-                                    tag,
-                                  );
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      _selectedTags.add(tag);
+                                    } else {
+                                      _selectedTags.remove(tag);
+                                    }
+                                  });
                                 },
                                 selectedColor: Colors.blue.shade100,
                                 backgroundColor: Colors.white,
@@ -310,18 +415,55 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 ),
                               );
                             }).toList(),
-                          );
-                        } else {
-                          return const Text("No Tags Found");
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                          ),
+                          if (_selectedTags.isNotEmpty) ...[
+                            const SizedBox(height: 15),
+                            const Text(
+                              "Selected Tags",
+                              style: TextStyle(
+                                color: Color(0xff374151),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'segeo',
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Wrap(
+                              spacing: 5,
+                              runSpacing: 0,
+                              children: _selectedTags.map((tag) {
+                                return Chip(
+                                  label: Text(
+                                    tag,
+                                    style: const TextStyle(
+                                      color: Color(0xff333333),
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.blue.shade50,
+                                  deleteIcon: const Icon(Icons.close, size: 16),
+                                  onDeleted: () {
+                                    setState(() {
+                                      _selectedTags.remove(tag);
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
               ),
+              const SizedBox(height: 8),
 
-              const SizedBox(height: 24),
-
+              // const SizedBox(height: 24),
               const Text(
                 'Image',
                 style: TextStyle(

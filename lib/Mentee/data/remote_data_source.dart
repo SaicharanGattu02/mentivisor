@@ -38,6 +38,7 @@ import '../Models/StudyZoneTagsModel.dart';
 import '../Models/OtpVerifyModel.dart';
 import '../Models/RegisterModel.dart';
 import '../../services/ApiClient.dart';
+import '../Models/TagsModel.dart';
 import '../Models/TaskStatesModel.dart';
 import '../Models/UpComingSessionModel.dart';
 import '../Models/WeeklySlotsModel.dart';
@@ -116,6 +117,8 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> resourceDownload(String id);
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
   Future<NotificationModel?> notifications();
+  Future<TagsModel?> getTags();
+  Future<TagsModel?> getTagSearch(String query);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -962,6 +965,29 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return MenteeCustmor_supportModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('mentee Customer Support::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<TagsModel?> getTags() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.tags}");
+      AppLogger.log('get Tags ::${res.data}');
+      return TagsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Tags ::${e}');
+      return null;
+    }
+  }
+  @override
+  Future<TagsModel?> getTagSearch(String query) async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.tagSearch}?keyword=${query}");
+      AppLogger.log('get Tags Search ::${res.data}');
+      return TagsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Tags Search::${e}');
       return null;
     }
   }

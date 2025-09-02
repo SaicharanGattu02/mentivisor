@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
 
 import '../../Components/CustomAppButton.dart';
-// import 'package:your_app/widgets/custom_app_button_1.dart'; // for CustomAppButton1 if needed
 
 class CouponsScreen extends StatelessWidget {
   const CouponsScreen({super.key});
@@ -10,12 +11,11 @@ class CouponsScreen extends StatelessWidget {
     showModalBottomSheet<String>(
       context: context,
       isScrollControlled: false,
-      backgroundColor: Colors.transparent, // so inner rounded sheet is visible
+      backgroundColor: Colors.transparent,
       builder: (_) => _FilterSheet(
         initialValue: 'All Time',
         onApply: (value) {
-          // TODO: apply your filter using `value` if you want
-          Navigator.pop(context, value); // close the sheet
+          Navigator.pop(context, value);
         },
       ),
     );
@@ -24,52 +24,35 @@ class CouponsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Coupons",
-          style: TextStyle(
-            fontSize: 18,
-            fontFamily: "segeo",
-            fontWeight: FontWeight.w700,
-            color: Color(0xff121212),
-          ),
-        ),
-        leading: const Icon(Icons.arrow_back),
-        centerTitle: true,
-      ),
-
+      appBar: CustomAppBar1(title: "Coupons", actions: []),
       body: Container(
-        // 3-stop gradient background
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFEFF6FF), // #EFF6FF
-              Color(0xFFF5F6FF), // #F5F6FF
-              Color(0xFFFAF5FF), // #FAF5FF
-            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFEFF6FF), Color(0xFFF5F6FF), Color(0xFFFAF5FF)],
           ),
         ),
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Recent Header
             Row(
               children: [
-                const Text(
+                Text(
                   "Recent",
                   style: TextStyle(
                     fontSize: 18,
+                    fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
                     color: Color(0xff121212),
                   ),
                 ),
-                const Spacer(),
-                // Tap filter image to open bottom sheet
+                Spacer(),
                 GestureDetector(
-                  onTap: () => _openFilterSheet(context),
+                  onTap: () {
+                    _openFilterSheet(context);
+                  },
                   child: Image.asset(
                     "assets/images/filterimg.png",
                     height: 32,
@@ -78,49 +61,67 @@ class CouponsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-
-            // --- Your existing cards stay unchanged below ---
-            // First Coupon (New)
+            SizedBox(height: 12),
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Left Side
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            const Text("500",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            const Text(
+                              "500",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(width: 6),
-                            Image.asset("assets/images/GoldCoins.png", height: 24, width: 24),
+                            Image.asset(
+                              "assets/images/GoldCoins.png",
+                              height: 24,
+                              width: 24,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xff6595FF),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text("New",
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                          child: const Text(
+                            "New",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Row(
                           children: const [
-                            Icon(Icons.calendar_month, size: 16, color: Color(0xff999999)),
+                            Icon(
+                              Icons.calendar_month,
+                              size: 16,
+                              color: Color(0xff999999),
+                            ),
                             SizedBox(width: 5),
-                            Text("11 Jun 25",
+                            Text(
+                              "11 Jun 25",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff575757),
@@ -137,7 +138,8 @@ class CouponsScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text("Flipkart coupon",
+                        const Text(
+                          "Flipkart coupon",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Color(0xff333333),
@@ -147,14 +149,18 @@ class CouponsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xffF5F5F5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
-                            children:  [
-                              Text("MENTI 500",
+                            children: [
+                              Text(
+                                "MENTI 500",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff121212),
@@ -163,12 +169,17 @@ class CouponsScreen extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(width: 10),
-                              Image.asset("assets/images/Copyimg.png",height: 16,width: 16,),
+                              Image.asset(
+                                "assets/images/Copyimg.png",
+                                height: 16,
+                                width: 16,
+                              ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 6),
-                        const Text("Worth of ₹ 1000",
+                        const Text(
+                          "Worth of ₹ 1000",
                           style: TextStyle(
                             color: Color(0xff575757),
                             fontFamily: "segeo",
@@ -182,12 +193,11 @@ class CouponsScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Second Coupon (Redeemed)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
@@ -199,21 +209,33 @@ class CouponsScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Text("500",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            const Text(
+                              "500",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(width: 6),
-                            Image.asset("assets/images/GoldCoins.png", height: 24, width: 24),
+                            Image.asset(
+                              "assets/images/GoldCoins.png",
+                              height: 24,
+                              width: 24,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.yellow.shade100,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text("Redeemed",
+                          child: const Text(
+                            "Redeemed",
                             style: TextStyle(
                               fontSize: 12,
                               color: Color(0xff333333),
@@ -224,9 +246,14 @@ class CouponsScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         Row(
                           children: const [
-                            Icon(Icons.calendar_month, size: 16, color: Color(0xff999999)),
+                            Icon(
+                              Icons.calendar_month,
+                              size: 16,
+                              color: Color(0xff999999),
+                            ),
                             SizedBox(width: 5),
-                            Text("11 Jun 25",
+                            Text(
+                              "11 Jun 25",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff575757),
@@ -243,7 +270,8 @@ class CouponsScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text("Flipkart coupon",
+                        const Text(
+                          "Flipkart coupon",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Color(0xff333333),
@@ -252,30 +280,47 @@ class CouponsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 6),
+
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xffF5F5F5),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Row(
-                            children: [
-                              const Text("MENTI 500",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff121212),
-                                  fontFamily: "segeo",
-                                  fontSize: 12,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(4),
+                            onTap: () {
+                              Clipboard.setData(
+                                 ClipboardData(text: "MENTI 500"),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "MENTI 500",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff121212),
+                                    fontFamily: "segeo",
+                                    fontSize: 12,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-               Image.asset("assets/images/Copyimg.png",height: 16,width: 16,),
-
-                            ],
+                                const SizedBox(width: 10),
+                                Image.asset(
+                                  "assets/images/Copyimg.png",
+                                  height: 16,
+                                  width: 16,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 6),
-                        const Text("Worth of ₹ 1000",
+                        const Text(
+                          "Worth of ₹ 1000",
                           style: TextStyle(
                             color: Color(0xff575757),
                             fontFamily: "segeo",
@@ -296,15 +341,8 @@ class CouponsScreen extends StatelessWidget {
   }
 }
 
-/// =====================
-///  Bottom Sheet Widgets
-/// =====================
-
 class _FilterSheet extends StatefulWidget {
-  const _FilterSheet({
-    required this.initialValue,
-    required this.onApply,
-  });
+  const _FilterSheet({required this.initialValue, required this.onApply});
 
   final String initialValue;
   final ValueChanged<String> onApply;
@@ -314,7 +352,12 @@ class _FilterSheet extends StatefulWidget {
 }
 
 class _FilterSheetState extends State<_FilterSheet> {
-  final List<String> options = const ['All Time', 'This Week', 'This Month', 'This Quarter'];
+  final List<String> options = const [
+    'All Time',
+    'This Week',
+    'This Month',
+    'This Quarter',
+  ];
   late String selected;
 
   @override
@@ -326,12 +369,14 @@ class _FilterSheetState extends State<_FilterSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // own rounded container inside transparent bottom sheet
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(24),
+          topLeft: Radius.circular(24),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -357,73 +402,50 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
           ),
           const SizedBox(height: 8),
-
-          ...options.map((o) => _CheckRow(
-            label: o,
-            checked: selected == o,
-            onChanged: (_) => setState(() => selected = o),
-          )),
-          const SizedBox(height: 8),
-
-          // Your custom button (calls onApply)
-          // If you don't have CustomAppButton1 imported, replace with ElevatedButton
-          // CustomAppButton1(text: "Apply", onPlusTap: () => widget.onApply(selected)),
+          ...options.map(
+            (o) => InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () => setState(() => selected = o),
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: selected == o,
+                    onChanged: (v) {
+                      if (v == true) {
+                        setState(() => selected = o);
+                      }
+                    },
+                    visualDensity: VisualDensity.compact,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    side: BorderSide(color: Color(0xFF98A2B3), width: 1),
+                    activeColor: Color(0xFF7F00FF),
+                    checkColor: Colors.white,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    o,
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF444444),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
           SafeArea(
             child: CustomAppButton1(
-              text: "Apply", onPlusTap: () {
-            },
+              text: "Apply",
+              onPlusTap: () => widget.onApply(selected),
             ),
           ),
         ],
       ),
     );
-  }
-}
-
-class _CheckRow extends StatelessWidget {
-  const _CheckRow({
-    required this.label,
-    required this.checked,
-    required this.onChanged,
-  });
-
-  final String label;
-  final bool checked;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: () => onChanged(!checked),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            Checkbox(
-              value: checked,
-              onChanged: (v) => onChanged(v ?? false),
-              visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-              side: const BorderSide(color: Color(0xFF98A2B3), width: 1),
-              activeColor: const Color(0xFF7F00FF),
-              checkColor: Colors.white,
-            ),
-            const SizedBox(width: 8),
-
-            Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'segeo',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF444444),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
   }
 }

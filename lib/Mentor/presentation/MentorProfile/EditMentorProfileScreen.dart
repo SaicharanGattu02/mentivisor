@@ -34,7 +34,6 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
   final TextEditingController _streamController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  // final TextEditingController _phoneController = TextEditingController();
 
   File? _image;
   String? imagePath;

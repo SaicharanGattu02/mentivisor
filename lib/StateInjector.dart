@@ -86,6 +86,9 @@ import 'Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
 import 'Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
+import 'Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
+import 'Mentee/data/cubits/Tags/tags_cubit.dart';
+import 'Mentee/data/cubits/Tags/tags_repository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/remote_data_source.dart';
@@ -258,6 +261,10 @@ class StateInjector {
     RepositoryProvider<NotificationsRepo>(
       create: (context) =>
           NotificationIml(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<TagsRepository>(
+      create: (context) =>
+          TagsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
     ///Mentor Repositories
@@ -464,6 +471,14 @@ class StateInjector {
     BlocProvider<NotificationsCubit>(
       create: (context) =>
           NotificationsCubit(context.read<NotificationsRepo>()),
+    ),
+    BlocProvider<TagsCubit>(
+      create: (context) =>
+          TagsCubit(context.read<TagsRepository>()),
+    ),
+    BlocProvider<TagsSearchCubit>(
+      create: (context) =>
+          TagsSearchCubit(context.read<TagsRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

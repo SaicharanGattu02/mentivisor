@@ -7,20 +7,19 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
-import 'package:mentivisor/Components/CutomAppBar.dart';
+
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusState.dart';
+import 'package:mentivisor/Mentee/data/cubits/Tags/tags_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Tags/tags_states.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
-
 import '../../../Components/CommonLoader.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/spinkittsLoader.dart';
-import '../../data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
-import '../../data/cubits/StudyZoneTags/StudyZoneTagsState.dart';
-import '../Widgets/CommonBackground.dart';
+
 import '../Widgets/FilterButton.dart';
 
 class MenteeStudyZone extends StatefulWidget {
@@ -34,7 +33,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
   final ValueNotifier<int> _selectedTagIndex = ValueNotifier<int>(-1);
 
-  // NEW: controls FAB visibility
   final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true);
 
   Timer? _debounce;
@@ -42,8 +40,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   @override
   void initState() {
     super.initState();
-    context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
-    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        context.read<TagsCubit>().getTags(),
+        context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", ""),
+      ]);
+    });
   }
 
   @override
@@ -160,22 +162,16 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                         _debounce = Timer(
                           const Duration(milliseconds: 300),
                           () {
-                            final tagsState = context
-                                .read<StudyZoneTagsCubit>()
-                                .state;
+                            final tagsState = context.read<TagsCubit>().state;
                             String selectedTag = "";
 
-                            if (tagsState is StudyZoneTagsLoaded &&
+                            if (tagsState is TagsLoaded &&
                                 _selectedTagIndex.value >= 0 &&
                                 _selectedTagIndex.value <
-                                    (tagsState
-                                            .studyZoneTagsModel
-                                            .tags
-                                            ?.length ??
-                                        0)) {
+                                    (tagsState.tagsModel.data?.length ?? 0)) {
                               selectedTag = tagsState
-                                  .studyZoneTagsModel
-                                  .tags![_selectedTagIndex.value];
+                                  .tagsModel
+                                  .data![_selectedTagIndex.value];
                             }
 
                             if (onCampusNotifier.value) {
@@ -194,7 +190,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                           },
                         );
                       },
-                      style: TextStyle(fontFamily: "Poppins", fontSize: 15),
+                      style: TextStyle(fontFamily: "segeo", fontSize: 15),
                       decoration: InputDecoration(
                         hoverColor: Colors.white,
                         hintText: 'Search for any thing',
@@ -213,12 +209,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  BlocBuilder<StudyZoneTagsCubit, StudyZoneTagsState>(
+                  BlocBuilder<TagsCubit, TagsState>(
                     builder: (context, state) {
-                      if (state is StudyZoneTagsFailure) {
-                        return Center(child: Text(state.msg));
-                      } else if (state is StudyZoneTagsLoaded) {
-                        final tags = state.studyZoneTagsModel.tags;
+                      if (state is TagsFailure) {
+                        return Center(child: Text(state.error));
+                      } else if (state is TagsLoaded) {
+                        final tags = state.tagsModel.data;
                         return SizedBox(
                           height: 30,
                           child: ValueListenableBuilder<int>(
