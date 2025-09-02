@@ -20,6 +20,8 @@ abstract class MentorRemoteDataSource {
   Future<MentorinfoResponseModel?> mentorinfo();
   Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
   Future<AvailableSlotsModel?> getMentorAvailability();
+  Future<SuccessModel?> mentorSessionCanceled( Map<String, dynamic> data);
+
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -185,4 +187,20 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
+
+
+  @override
+  Future<SuccessModel?> mentorSessionCanceled( Map<String, dynamic> data) async {
+    try {
+      Response res = await ApiClient.post(
+        "${MentorEndpointsUrls.sessions_cancelled}",data: data
+      );
+      AppLogger.log('getSession: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getSession:${e}');
+      return null;
+    }
+  }
+
 }

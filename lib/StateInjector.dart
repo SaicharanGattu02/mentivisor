@@ -45,6 +45,7 @@ import 'package:mentivisor/Mentor/data/Cubits/FeedBack/feedback_repository.dart'
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityRepo.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorSessionCancel/mentor_session_cancle_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ReportMentee/report_mentee_cubit.dart';
@@ -98,6 +99,7 @@ import 'Mentor/data/Cubits/MentorInfo/Mentor_info_repo.dart';
 import 'Mentor/data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
+import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancle_repo.dart';
 import 'Mentor/data/MentorRemoteDataSource.dart';
 
 class StateInjector {
@@ -278,7 +280,11 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
-
+    RepositoryProvider<SessionCanceledRepo>(
+      create: (context) => SessionCanceledImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
     RepositoryProvider<MentorProfileRepo1>(
       create: (context) => MentorProfile1Impl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
@@ -528,6 +534,10 @@ class StateInjector {
     BlocProvider<AvailableSlotsCubit>(
       create: (context) =>
           AvailableSlotsCubit(context.read<MentorAvailabilityRepo>()),
+    ),
+    BlocProvider<MentorSessionCancleCubit>(
+      create: (context) =>
+          MentorSessionCancleCubit(context.read<SessionCanceledRepo>()),
     ),
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(
