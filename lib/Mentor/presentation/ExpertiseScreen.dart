@@ -104,13 +104,16 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                   // APPROVED
                   BlocBuilder<ApprovedExpertiseCubit, ExpertiseState>(
                     builder: (context, state) {
+                      final showAddButton = state is ExpertiseLoaded
+                          ? state.model.data?.has_request
+                          : false;
                       return ExpertiseTabFromState(
                         title: 'List',
                         variant: TileVariant.approved,
                         state: state,
                         onRetry: () =>
                             context.read<ApprovedExpertiseCubit>().fetch(),
-                        showAddButton: true,
+                        showAddButton: showAddButton ?? false,
                         onItemTap: (label) {
                           context.push(
                             "/expertise_details?id=${label.id}&categoryTitle=${label.name}",

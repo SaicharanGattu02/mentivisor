@@ -24,13 +24,20 @@ class ExpertisesModel {
 
 class Data {
   String? coinsPerMinute;
+  bool? has_request;
   List<Expertises>? expertises;
   List<SubExpertises>? subExpertises;
 
-  Data({this.coinsPerMinute, this.expertises, this.subExpertises});
+  Data({
+    this.coinsPerMinute,
+    this.expertises,
+    this.subExpertises,
+    this.has_request,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     coinsPerMinute = json['coins_per_minute'];
+    has_request = json['has_request'];
     if (json['expertises'] != null) {
       expertises = <Expertises>[];
       json['expertises'].forEach((v) {
@@ -48,12 +55,14 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['coins_per_minute'] = this.coinsPerMinute;
+    data['has_request'] = this.coinsPerMinute;
     if (this.expertises != null) {
       data['expertises'] = this.expertises!.map((v) => v.toJson()).toList();
     }
     if (this.subExpertises != null) {
-      data['sub_expertises'] =
-          this.subExpertises!.map((v) => v.toJson()).toList();
+      data['sub_expertises'] = this.subExpertises!
+          .map((v) => v.toJson())
+          .toList();
     }
     return data;
   }
@@ -85,8 +94,13 @@ class SubExpertises {
   int? baseValue;
   bool? attached;
 
-  SubExpertises(
-      {this.id, this.expertiseId, this.name, this.baseValue, this.attached});
+  SubExpertises({
+    this.id,
+    this.expertiseId,
+    this.name,
+    this.baseValue,
+    this.attached,
+  });
 
   SubExpertises.fromJson(Map<String, dynamic> json) {
     id = json['id'];

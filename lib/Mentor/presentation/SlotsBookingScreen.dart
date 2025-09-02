@@ -58,9 +58,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   @override
   void initState() {
     super.initState();
-    final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-    context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
-    context.read<TaskByStatusCubit>().fetchTasksByStatus();
   }
 
   void prevMonth() {
@@ -89,17 +86,12 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     setState(() {
       selectedDate = DateTime(visibleMonth.year, visibleMonth.month, day);
     });
-    final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-    context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
   }
 
   @override
   Widget build(BuildContext context) {
     final gridDays = makeMonthGrid(visibleMonth);
     final monthTitle = DateFormat('MMMM yyyy').format(visibleMonth);
-    final selectedTitle = DateFormat(
-      'd MMM yy',
-    ).format(selectedDate); // e.g., 17 Jun 25
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FD),
       body: SingleChildScrollView(
@@ -811,9 +803,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             MentorAvailabilityStates
                           >(
                             listener: (context, state) {
-                              if(state is MentorAvailabilityLoaded){
+                              if (state is MentorAvailabilityLoaded) {
                                 _showSuccessDialog();
-                              }else if(state is MentorAvailabilityFailure){
+                              } else if (state is MentorAvailabilityFailure) {
                                 CustomSnackBar1.show(context, state.error);
                               }
                             },

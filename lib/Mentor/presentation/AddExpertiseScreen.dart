@@ -2,6 +2,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../Models/NonAttachedExpertisesModel.dart';
 import '../Models/NonAttachedExpertiseDetailsModel.dart';
@@ -206,14 +207,14 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                         },
                         child: Chip(
                           label: Text(exp.name ?? ''),
-                          backgroundColor: isSelected
-                              ? Colors.purple
-                              : Colors.white,
-                          labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                          ),
+                          backgroundColor: Colors.white,
+                          labelStyle: TextStyle(color: Colors.black),
                           shape: StadiumBorder(
-                            side: const BorderSide(color: Colors.purple),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? Color(0xff726CF7)
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                       );
@@ -262,10 +263,12 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                             ),
                             child: Chip(
                               label: Text(exp.name ?? ''),
-                              backgroundColor: Colors.purple,
+                              backgroundColor: Color(0xff726CF7),
                               labelStyle: const TextStyle(color: Colors.white),
                               shape: StadiumBorder(
-                                side: const BorderSide(color: Colors.purple),
+                                side: const BorderSide(
+                                  color: Color(0xff726CF7),
+                                ),
                               ),
                             ),
                           ),
@@ -323,16 +326,20 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                                         child: Chip(
                                           label: Text(sub.name ?? 'Unnamed'),
                                           backgroundColor: isSubSelected
-                                              ? Colors.purple
-                                              : Colors.white,
+                                              ? Color(
+                                                  0xff726CF7,
+                                                ).withOpacity(0.3)
+                                              : Color(0xffF5F5F5),
                                           labelStyle: TextStyle(
-                                            color: isSubSelected
-                                                ? Colors.white
-                                                : Colors.black,
+                                            color: Colors.black,
                                           ),
                                           shape: StadiumBorder(
-                                            side: const BorderSide(
-                                              color: Colors.purple,
+                                            side: BorderSide(
+                                              color: isSubSelected
+                                                  ? Color(
+                                                      0xff726CF7,
+                                                    ).withOpacity(0.3)
+                                                  : Color(0xffF5F5F5),
                                             ),
                                           ),
                                         ),
@@ -352,24 +359,13 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: _continue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  minimumSize: const Size(double.infinity, 50.0),
-                ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CustomAppButton1(text: "Continue", onPlusTap: _continue),
         ),
       ),
     );
