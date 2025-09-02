@@ -68,7 +68,8 @@ class SessionCard extends StatelessWidget {
               spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(width: SizeConfig.screenWidth*0.65,
+                  Container(
+                    width: SizeConfig.screenWidth*0.6,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -138,8 +139,8 @@ class SessionCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         child: CachedNetworkImage(
                           imageUrl: sessionImage ?? "",
-                          width: 80,
-                          height: 80,
+                          width: 70,
+                          height: 70,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Center(
                             child: SizedBox(
@@ -163,10 +164,6 @@ class SessionCard extends StatelessWidget {
                     ),
                 ],
               ),
-
-
-              SizedBox(height: 12),
-          
               Row(
                 children: [
                   Expanded(

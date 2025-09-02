@@ -26,62 +26,68 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
     return Scaffold(
       backgroundColor: Color(0xffEFF6FF),
       appBar: CustomAppBar1(title: "My Mentee", actions: const []),
-      body: Column(
-        children: [
-          // The "List" text aligned to the start (left)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-              child: Text(
-                "List",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
+          ),
+        ),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                child: Text(
+                  "List",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: BlocBuilder<MyMenteeCubit, MyMenteesStates>(
-              builder: (context, state) {
-                if (state is MyMenteeLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is MyMenteeLoaded) {
-                  return CustomScrollView(
-                    slivers: [
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                            final menteeList =
-                            state.myMenteesModel.data?.menteeData?[index];
-
-                            return MenteeCard(mentee: menteeList!);
-                          },
-                          childCount:
-                          state.myMenteesModel.data?.menteeData?.length ?? 0,
-                        ),
-                      ),
-                      if (state is MyMenteeLoadingMore)
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.all(25.0),
-                            child: Center(
-                              child: CircularProgressIndicator(strokeWidth: 0.8),
-                            ),
+            Expanded(
+              child: BlocBuilder<MyMenteeCubit, MyMenteesStates>(
+                builder: (context, state) {
+                  if (state is MyMenteeLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is MyMenteeLoaded) {
+                    return CustomScrollView(
+                      slivers: [
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                              final menteeList =
+                              state.myMenteesModel.data?.menteeData?[index];
+                              return MenteeCard(mentee: menteeList!);
+                            },
+                            childCount:
+                            state.myMenteesModel.data?.menteeData?.length ?? 0,
                           ),
                         ),
-                    ],
-                  );
-                } else if (state is MyMenteeFailure) {
-                  return Center(child: Text(state.error));
-                }
-                return Center(child: Text("No Data"));
-              },
+                        if (state is MyMenteeLoadingMore)
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: Center(
+                                child: CircularProgressIndicator(strokeWidth: 0.8),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  } else if (state is MyMenteeFailure) {
+                    return Center(child: Text(state.error));
+                  }
+                  return Center(child: Text("No Data"));
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

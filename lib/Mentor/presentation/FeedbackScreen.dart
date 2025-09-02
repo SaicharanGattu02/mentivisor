@@ -216,7 +216,7 @@ class _FeedbackBody extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Center(child: _StarRow(rating: overall.average ?? 0)),
+                      Center(child: _StarRow(rating: overall.average)),
                       const SizedBox(height: 8),
                       Center(
                         child: Text(
@@ -522,7 +522,7 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _StarRow extends StatelessWidget {
-  final double rating; // 0..5
+  final dynamic rating; // 0..5
   const _StarRow({required this.rating});
 
   @override

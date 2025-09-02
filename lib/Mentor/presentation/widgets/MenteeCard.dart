@@ -17,8 +17,8 @@ class MenteeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      elevation: 6, // Subtle shadow
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+      elevation: 2, // Subtle shadow
       color: Color(0xFFF5F6F5), // Light grayish-white background
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Stack(
@@ -174,7 +174,6 @@ class MenteeCard extends StatelessWidget {
       'Sexual Arrestment',
       'Other',
     ];
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -185,107 +184,112 @@ class MenteeCard extends StatelessWidget {
       builder: (BuildContext builderContext) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 16,
-                right: 16,
-                top: 16,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title and Close Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Report Mentee',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'segeo',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.grey),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 8),
-                  Column(
-                    children: _reportReasons.map((String reason) {
-                      return RadioListTile<String>(
-                        title: Text(
-                          reason,
-                          style: const TextStyle(
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Close Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Report Mentee',
+                          style: TextStyle(
+                            fontSize: 20,
                             fontFamily: 'segeo',
-                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        value: reason,
-                        groupValue: _selected,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _selected = value!;
-                          });
-                        },
-                        activeColor: const Color(0xFF4A00E0),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.grey),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  // Custom Reason TextField
-                  if (_selected == 'Other') ...[
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _otherController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        hintText: 'Please explain your reason',
-                        hintStyle: const TextStyle(fontFamily: 'segeo'),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+                    Column(
+                      children: _reportReasons.map((String reason) {
+                        return RadioListTile<String>(
+                          title: Text(
+                            reason,
+                            style: const TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 16,
+                            ),
+                          ),
+                          value: reason,
+                          groupValue: _selected,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selected = value!;
+                            });
+                          },
+                          visualDensity: VisualDensity.compact,
+                          activeColor: const Color(0xFF4A00E0),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 0,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    // Custom Reason TextField
+                    if (_selected == 'Other') ...[
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _otherController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Please explain your reason',
+                          hintStyle: const TextStyle(fontFamily: 'segeo'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                         ),
                       ),
+                    ],
+                    const SizedBox(height: 24),
+                    BlocConsumer<ReportMenteeCubit, ReportMenteeStates>(
+                      listener: (context, state) {
+                        if (state is ReportMenteeSuccess) {
+                          context.pop();
+                        } else if (state is ReportMenteeFailure) {
+                          CustomSnackBar1.show(context, state.error ?? "");
+                        }
+                      },
+                      builder: (context, state) {
+                        return CustomAppButton1(
+                          isLoading: state is ReportMenteeLoading,
+                          text: "Submit Report",
+                          onPlusTap: () {
+                            final Map<String, dynamic> data = {
+                              "mentee_id": menteeId,
+                              "session_id": sessionId,
+                              "reason": _selected,
+                            };
+                            context.read<ReportMenteeCubit>().reportMentee(
+                              data,
+                            );
+                          },
+                        );
+                      },
                     ),
+                    const SizedBox(height: 16),
                   ],
-                  const SizedBox(height: 24),
-
-                  BlocConsumer<ReportMenteeCubit, ReportMenteeStates>(
-                    listener: (context, state) {
-                      if (state is ReportMenteeSuccess) {
-                        context.pop();
-                      } else if (state is ReportMenteeFailure) {
-                        CustomSnackBar1.show(context, state.error ?? "");
-                      }
-                    },
-                    builder: (context, state) {
-                      return CustomAppButton1(
-                        isLoading: state is ReportMenteeLoading,
-                        text: "Submit Report",
-                        onPlusTap: () {
-                          final Map<String, dynamic> data = {
-                            "mentee_id": menteeId,
-                            "session_id": sessionId,
-                            "reason": _selected,
-                          };
-                          context.read<ReportMenteeCubit>().reportMentee(data);
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                ),
               ),
             );
           },

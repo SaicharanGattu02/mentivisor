@@ -64,7 +64,7 @@ class Data {
 }
 
 class Overall {
-  double? average;
+  dynamic average;
   int? totalReviews;
   Histogram? histogram;
   HistogramPct? histogramPct;
@@ -134,11 +134,11 @@ class Histogram {
 }
 
 class HistogramPct {
-  double? d1;
-  double? d2;
+  dynamic d1;
+  dynamic d2;
   int? i3;
   int? i4;
-  double? d5;
+  dynamic d5;
 
   HistogramPct({this.d1, this.d2, this.i3, this.i4, this.d5});
 
@@ -162,12 +162,12 @@ class HistogramPct {
 }
 
 class FilteredOverall {
-  double? average;
+  dynamic average;
   int? totalReviews;
   Histogram? histogram;
   HistogramPct? histogramPct;
-  double? fiveStarShare;
-  Null? responseRate;
+  dynamic fiveStarShare;
+  dynamic responseRate;
 
   FilteredOverall({
     this.average,

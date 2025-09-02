@@ -12,6 +12,8 @@ class MentorEndpointsUrls {
   static const String report_mentee = "${userUrl}mentor-reports";
   static const String mymenteelist = "${userUrl}my-mentees";
   static const String mentorinfo = "${userUrl}/info";
-  static const String add_mentor_availability = "${userUrl}/add-mentor-availability";
-  static const String mentor_availability_slots = "${userUrl}mentor/recent-slots";
+  static const String add_mentor_availability =
+      "${userUrl}/add-mentor-availability";
+  static const String mentor_availability_slots =
+      "${userUrl}mentor/recent-slots";
 }
