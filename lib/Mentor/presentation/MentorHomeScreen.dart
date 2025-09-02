@@ -213,7 +213,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.startTime ?? "",
                                     session?.endTime ?? "",
                                   );
-                                  return SessionCard(
+                                  return SessionCard(sessionId: session?.id??0,
                                     status: 'Upcoming',
                                     sessionDate: session?.date ?? "",
                                     sessionTime: '${duration} Minutes to go',

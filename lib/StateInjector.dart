@@ -50,7 +50,7 @@ import 'package:mentivisor/Mentor/data/Cubits/FeedBack/feedback_repository.dart'
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityRepo.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
-import 'package:mentivisor/Mentor/data/Cubits/MentorSessionCancel/mentor_session_cancle_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorSessionCancel/mentor_session_cancel_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/NewExpertiseRequest/NewExpertiseRequestCubit.dart';
@@ -107,7 +107,11 @@ import 'Mentor/data/Cubits/MentorInfo/Mentor_info_repo.dart';
 import 'Mentor/data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
-import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancle_repo.dart';
+import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancel_repo.dart';
+import 'Mentor/data/Cubits/ReportMentor/report_mentor_cubit.dart';
+import 'Mentor/data/Cubits/ReportMentor/report_repository.dart';
+import 'Mentor/data/Cubits/SessionDetails/SessionsDetailsCubit.dart';
+import 'Mentor/data/Cubits/SessionDetails/SessionsDetailsRepository.dart';
 import 'Mentor/data/Cubits/NonAttachedExpertiseDetails/NonAttachedExpertiseDetailsCubit.dart';
 import 'Mentor/data/MentorRemoteDataSource.dart';
 
@@ -316,8 +320,19 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<SessionsDetailsRepo>(
+      create: (context) => SessionsDetailsRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
     RepositoryProvider<MentorAvailabilityRepo>(
       create: (context) => MentorAvailabilityImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+
+    RepositoryProvider<ReportMentorRepository>(
+      create: (context) => MentorReportImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
@@ -548,9 +563,13 @@ class StateInjector {
       create: (context) =>
           AvailableSlotsCubit(context.read<MentorAvailabilityRepo>()),
     ),
-    BlocProvider<MentorSessionCancleCubit>(
+    BlocProvider<MentorSessionCancelCubit>(
       create: (context) =>
-          MentorSessionCancleCubit(context.read<SessionCanceledRepo>()),
+          MentorSessionCancelCubit(context.read<SessionCanceledRepo>()),
+    ),
+    BlocProvider<SessionDetailsCubit>(
+      create: (context) =>
+          SessionDetailsCubit(context.read<SessionsDetailsRepo>()),
     ),
     BlocProvider<ApprovedExpertiseCubit>(
       create: (context) =>
@@ -581,6 +600,10 @@ class StateInjector {
     BlocProvider<NewExpertiseRequestCubit>(
       create: (context) =>
           NewExpertiseRequestCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<ReportMentorCubit>(
+      create: (context) =>
+          ReportMentorCubit(context.read<ReportMentorRepository>()),
     ),
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(

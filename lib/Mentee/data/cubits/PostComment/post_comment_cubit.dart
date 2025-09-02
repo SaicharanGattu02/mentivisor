@@ -64,7 +64,7 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
 
 
   Future<void> postOnCommentLike(
-    Map<String, dynamic> data,
+      int id
       // Comments comments,
   ) async {
     // final wasLiked = comments.isLiked ?? false;
@@ -78,7 +78,7 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
     emit(PostCommentLoading());
 
     try {
-      final response = await postCommentRepository.commentLike(data);
+      final response = await postCommentRepository.commentLike(id);
       if (response != null && response.status == true) {
         emit(PostCommentLoaded(response));
       } else {

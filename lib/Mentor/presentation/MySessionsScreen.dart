@@ -32,22 +32,25 @@ class Session {
 }
 
 class MySessionsScreen extends StatefulWidget {
+  final String? selectedFilter;
+  const MySessionsScreen({super.key, this.selectedFilter});
   @override
   _MySessionsScreenState createState() => _MySessionsScreenState();
 }
 
 class _MySessionsScreenState extends State<MySessionsScreen> {
-  String selectedFilter = 'upcoming';
+  late String selectedFilter;
 
   @override
   void initState() {
     super.initState();
+    selectedFilter = widget.selectedFilter ?? 'upcoming';
     context.read<SessionCubit>().getSessions(selectedFilter);
   }
 
   String calculateDuration(String start, String end) {
     try {
-      final format = DateFormat("hh:mm a"); // e.g. 11:35 AM
+      final format = DateFormat("hh:mm a");
       final startTime = format.parse(start);
       final endTime = format.parse(end);
 
@@ -81,7 +84,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
           children: [
             Container(
               height: 53,
-              padding: EdgeInsets.all(10),
+              // padding: EdgeInsets.only(10),
               decoration: BoxDecoration(
                 color: Color(0xffDBE5FB),
                 borderRadius: BorderRadius.circular(36),
@@ -171,14 +174,17 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                             index,
                           ) {
                             final session = Sessions?[index];
+                            final menteeId = state.sessionsModel.data?[index];
                             final duration = calculateDuration(
                               session?.startTime ?? "",
                               session?.endTime ?? "",
                             );
                             return SessionCard(
-                              status: 'Upcoming',
+                              menteeId: session?.mentee?.id ?? 0,
+                              sessionId: session?.id ?? 0,
+                              status: selectedFilter,
                               sessionDate: session?.date ?? "",
-                              sessionTime: '${duration} Minutes to go',
+                              sessionTime: '${duration} to go',
                               sessionName:
                                   'G-Meet with Suresh from SVG Collage',
                               sessionImage:

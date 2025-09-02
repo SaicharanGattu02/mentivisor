@@ -6,10 +6,10 @@ class SessionCubit extends Cubit<SessionStates> {
   SessionSRepo sessionSRepo;
   SessionCubit(this.sessionSRepo) : super(SessionInitially());
 
-  Future<void> getSessions(String type) async {
+  Future<void> getSessions(String sessionType) async {
     emit(SessionLoading());
     try {
-      final response = await sessionSRepo.getSessions(type);
+      final response = await sessionSRepo.getSessions(sessionType);
       if (response != null && response.status == true) {
         emit(SessionLoaded(response));
       } else {

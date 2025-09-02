@@ -209,23 +209,20 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                           children: [
                             BlocBuilder<PostCommentCubit, PostCommentStates>(
                               builder: (context, state) {
-                                final postComments = widget.comments;
-
                                 return TextButton(
                                   onPressed: () {
-                                    final Map<String, dynamic> data = {
-                                      "community_id": widget.communityPost.id,
-                                      "comment_id": comment['id'],
-                                    };
-
-                                    context.read<PostCommentCubit>().postOnCommentLike(data);
+                                    final id = comment['id'];
+                                    context
+                                        .read<PostCommentCubit>()
+                                        .postOnCommentLike(id);
                                   },
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
                                     minimumSize: const Size(40, 20),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     "Like",
                                     style: TextStyle(
                                       fontSize: 13,
@@ -254,7 +251,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),

@@ -13,12 +13,13 @@ import '../Models/MentorExpertiseModel.dart';
 import '../Models/MentorProfileModel.dart';
 import '../Models/MentorinfoResponseModel.dart';
 import '../Models/MyMenteesModel.dart';
+import '../Models/SessionDetailsModel.dart';
 import '../Models/NonAttachedExpertiseDetailsModel.dart';
 import '../Models/NonAttachedExpertisesModel.dart';
 import '../Models/SessionsModel.dart';
 
 abstract class MentorRemoteDataSource {
-  Future<SessionsModel?> getSessions(String type);
+  Future<SessionsModel?> getSessions(String sessionType);
   Future<MentorprofileModel?> getMentorProfile();
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data);
   Future<FeedbackModel?> getFeedback(int user_id);
@@ -27,6 +28,7 @@ abstract class MentorRemoteDataSource {
   Future<MentorinfoResponseModel?> mentorinfo();
   Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
   Future<AvailableSlotsModel?> getMentorAvailability();
+  Future<SessionDetailsModel?> getSessionsDetails(int sessionId);
   Future<ExpertisesModel?> fetchApproved();
   Future<ExpertisesModel?> fetchPending();
   Future<ExpertisesModel?> fetchRejected();
@@ -37,6 +39,7 @@ abstract class MentorRemoteDataSource {
     int id,
   );
   Future<SuccessModel?> mentorSessionCanceled(Map<String, dynamic> data);
+  Future<SuccessModel?> mentorReport(Map<String, dynamic> data);
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
 }
 
@@ -388,10 +391,10 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<SessionsModel?> getSessions(String type) async {
+  Future<SessionsModel?> getSessions(String sessionType) async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.get_sessions}?role=${type}",
+        "${MentorEndpointsUrls.get_sessions}?role=mentor&filter=${sessionType}",
       );
       AppLogger.log('getSessions: ${res.data}');
       return SessionsModel.fromJson(res.data);
@@ -402,16 +405,48 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
+  Future<SessionDetailsModel?> getSessionsDetails(int sessionId) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.get_sessions_details}/${sessionId}",
+      );
+      AppLogger.log('getSessions: ${res.data}');
+      return SessionDetailsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getSessions:${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> mentorSessionCanceled(Map<String, dynamic> data) async {
+    final formdata = await buildFormData(data);
     try {
       Response res = await ApiClient.post(
         "${MentorEndpointsUrls.sessions_cancelled}",
-        data: data,
+        data: formdata,
       );
       AppLogger.log('getSession: ${res.data}');
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('getSession:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> mentorReport(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${MentorEndpointsUrls.mentor_reports}",
+        data: formData,
+      );
+      AppLogger.log('mentor Report::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('mentor Report ::${e}');
+
       return null;
     }
   }

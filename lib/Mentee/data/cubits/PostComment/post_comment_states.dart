@@ -5,10 +5,15 @@ abstract class PostCommentStates {}
 class PostCommentInitially extends PostCommentStates {}
 
 class PostCommentLoading extends PostCommentStates {}
+class PostCommentOnLikeLoading extends PostCommentStates {}
 
 class PostCommentLoaded extends PostCommentStates {
   SuccessModel successModel;
   PostCommentLoaded(this.successModel);
+}
+class PostCommentOnLikeLoaded extends PostCommentStates {
+  SuccessModel successModel;
+  PostCommentOnLikeLoaded(this.successModel);
 }
 
 class PostCommentFailure extends PostCommentStates {

@@ -14,7 +14,8 @@ import 'MySessionsScreen.dart';
 import 'SlotsBookingScreen.dart';
 
 class MentorDashboard extends StatefulWidget {
-  const MentorDashboard({Key? key}) : super(key: key);
+  final int? selectedIndex;
+  const MentorDashboard({Key? key, this.selectedIndex}) : super(key: key);
 
   @override
   State<MentorDashboard> createState() => _MentorDashboardState();
@@ -22,12 +23,13 @@ class MentorDashboard extends StatefulWidget {
 
 class _MentorDashboardState extends State<MentorDashboard> {
   late PageController _pageController;
-  int _selectedIndex = 0;
+  late int _selectedIndex;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedIndex ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
     context.read<MentorProfileCubit1>().getMentorProfile();
   }
@@ -106,7 +108,6 @@ class _MentorDashboardState extends State<MentorDashboard> {
             },
           ),
           actions: [
-
             IconButton(
               icon: Image.asset(
                 "assets/images/crownonly.png",
@@ -118,7 +119,6 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 context.push('/mentees_home');
               },
             ),
-
 
             IconButton(
               icon: Image.asset(

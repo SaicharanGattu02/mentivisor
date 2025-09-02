@@ -5,6 +5,7 @@ class MentorEndpointsUrls {
   /// Mentor
   static const String get_banners = "${apiUrl}banners";
   static const String get_sessions = "${userUrl}sessions/upcoming";
+  static const String get_sessions_details = "${userUrl}sessions";
   static const String sessions_cancelled = "${userUrl}session/cancel";
   static const String mentor_profile = "${userUrl}mentor/profile";
   static const String mentor_profile_update = "${userUrl}mentor/profile/update";
@@ -21,5 +22,6 @@ class MentorEndpointsUrls {
       "${userUrl}/mentor/expertise/details";
   static const String update_expertises = "${userUrl}/mentor/expertise/update";
   static const String non_attached_expertises = "${userUrl}/mentor/not-attached-expertise";
+  static const String mentor_reports = "${userUrl}/mentor-reports";
   static const String new_expertise_request = "${userUrl}/mentor/new-expertise-request";
 }

@@ -4,7 +4,7 @@ import 'package:mentivisor/Mentee/data/remote_data_source.dart';
 abstract class PostCommentRepository {
   Future<SuccessModel?> postComment(Map<String, dynamic> data);
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
-  Future<SuccessModel?> commentLike(Map<String, dynamic> data);
+  Future<SuccessModel?> commentLike(int id);
 }
 class PostCommentRepositoryImpl implements PostCommentRepository{
   RemoteDataSource remoteDataSource;
@@ -20,7 +20,7 @@ class PostCommentRepositoryImpl implements PostCommentRepository{
     return await remoteDataSource.postToggleLike(data);
   }
   @override
-  Future<SuccessModel?> commentLike(Map<String, dynamic> data) async {
-    return await remoteDataSource.commentLike(data);
+  Future<SuccessModel?> commentLike(int id) async {
+    return await remoteDataSource.commentLike(id);
   }
 }

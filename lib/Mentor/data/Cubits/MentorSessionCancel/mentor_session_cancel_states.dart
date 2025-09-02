@@ -6,9 +6,9 @@ class MentorsessioncancleInitially extends MentorSessionCancleStates {}
 
 class MentorsessioncancleLoading extends MentorSessionCancleStates {}
 
-class MentorsessioncancleLoaded extends MentorSessionCancleStates {
+class MentorsessionCancelSuccess extends MentorSessionCancleStates {
   SuccessModel successModel;
-  MentorsessioncancleLoaded(this.successModel);
+  MentorsessionCancelSuccess(this.successModel);
 }
 
 class MentorsessioncancleFailure extends MentorSessionCancleStates {

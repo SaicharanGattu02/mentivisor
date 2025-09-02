@@ -457,22 +457,33 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/mentor_dashboard',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(MentorDashboard(), state);
+        final selectedIndex = int.tryParse(state.uri.queryParameters['selectedIndex'] ?? '0');
+        return buildSlideTransitionPage(
+          MentorDashboard(selectedIndex: selectedIndex),
+          state,
+        );
       },
     ),
+
     GoRoute(
       path: '/cancel_session',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(CancelSessionScreen(), state);
+        final sessionIdParam = state.uri.queryParameters['sessionId'];
+        final sessionId = int.tryParse(sessionIdParam ?? "0") ?? 0;
+        return buildSlideTransitionPage(CancelSessionScreen(sessionId: sessionId,), state);
       },
     ),
     GoRoute(
       path: '/session_details',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(SessionDetailScreen(), state);
+        final sessionIdParam = state.uri.queryParameters['sessionId'];
+        final sessionId = int.tryParse(sessionIdParam ?? "0") ?? 0;
+        return buildSlideTransitionPage(
+          SessionDetailScreen(sessionId: sessionId),
+          state,
+        );
       },
     ),
-
     GoRoute(
       path: '/mentees_list',
       pageBuilder: (context, state) {
