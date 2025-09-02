@@ -22,7 +22,6 @@ class CouponsHomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ===== Earnings =====
                 const Text(
                   'Earnings',
                   style: TextStyle(

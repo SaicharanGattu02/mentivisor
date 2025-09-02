@@ -410,24 +410,27 @@ class SessionCard extends StatelessWidget {
                     BlocConsumer<ReportMentorCubit, ReportMentorStates>(
                       listener: (context, state) {
                         if (state is ReportMentorSuccess) {
-                          context.pop();
+                          context.pop(); // ✅ close bottom sheet on success
                         } else if (state is ReportMentorFailure) {
-                          CustomSnackBar1.show(context, state.error ?? "");
+                          CustomSnackBar1.show(context, state.error);
                         }
                       },
                       builder: (context, state) {
                         return CustomAppButton1(
-                          isLoading: state is ReportMentorLoading,
+                          isLoading: state is ReportMentorLoading, // ✅ show loader
                           text: "Submit Report",
                           onPlusTap: () {
+                            String finalReason = _selected == "Other" && _otherController.text.isNotEmpty
+                                ? _otherController.text
+                                : _selected ?? "";
+
                             final Map<String, dynamic> data = {
                               "mentee_id": menteeId,
                               "session_id": sessionId,
-                              "reason": _selected,
+                              "reason": finalReason,
                             };
-                            context.read<ReportMenteeCubit>().reportMentee(
-                              data,
-                            );
+
+                            context.read<ReportMentorCubit>().reportMentor(data);
                           },
                         );
                       },

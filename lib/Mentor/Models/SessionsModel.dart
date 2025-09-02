@@ -38,31 +38,37 @@ class Data {
   int? sessionCost;
   String? status;
   String? zoomLink;
+  String? cancelledReason;
 
-  Data(
-      {this.id,
-        this.mentor,
-        this.mentee,
-        this.date,
-        this.topics,
-        this.startTime,
-        this.endTime,
-        this.sessionCost,
-        this.status,
-        this.zoomLink});
+  Data({
+    this.id,
+    this.mentor,
+    this.mentee,
+    this.date,
+    this.topics,
+    this.startTime,
+    this.endTime,
+    this.sessionCost,
+    this.status,
+    this.cancelledReason,
+    this.zoomLink,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    mentor =
-    json['mentor'] != null ? new Mentor.fromJson(json['mentor']) : null;
-    mentee =
-    json['mentee'] != null ? new Mentee.fromJson(json['mentee']) : null;
+    mentor = json['mentor'] != null
+        ? new Mentor.fromJson(json['mentor'])
+        : null;
+    mentee = json['mentee'] != null
+        ? new Mentee.fromJson(json['mentee'])
+        : null;
     date = json['date'];
     topics = json['topics'];
     startTime = json['start_time'];
     endTime = json['end_time'];
     sessionCost = json['session_cost'];
     status = json['status'];
+    cancelledReason = json['cancelled_reason'];
     zoomLink = json['zoom_link'];
   }
 
@@ -81,6 +87,7 @@ class Data {
     data['end_time'] = this.endTime;
     data['session_cost'] = this.sessionCost;
     data['status'] = this.status;
+    data['cancelled_reason'] = this.cancelledReason;
     data['zoom_link'] = this.zoomLink;
     return data;
   }

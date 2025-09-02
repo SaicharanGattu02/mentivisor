@@ -8,7 +8,6 @@ class CouponCongratsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Top bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.8,

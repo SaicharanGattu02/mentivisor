@@ -174,7 +174,6 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                             index,
                           ) {
                             final session = Sessions?[index];
-                            final menteeId = state.sessionsModel.data?[index];
                             final duration = calculateDuration(
                               session?.startTime ?? "",
                               session?.endTime ?? "",
@@ -191,7 +190,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                                   session?.mentee?.menteeProfile ??
                                   "", // Image for upcoming sessions
                               sessionTopics: session?.topics ?? "",
-                              reason: '',
+                              reason: session?.cancelledReason ?? "",
                               buttonText:
                                   'Message from ${session?.mentee?.name ?? ""}',
                               buttonIcon: 'assets/icons/chaticon.png',
