@@ -41,6 +41,7 @@ import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/CoinsHistory/coin_history_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ExpertiseDetails/expertise_details_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Expertises/ApprovedExpertiseCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Expertises/ExpertiseRepo.dart';
@@ -101,6 +102,7 @@ import 'Mentee/data/cubits/Tags/tags_repository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/remote_data_source.dart';
+import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
 import 'Mentor/data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
 import 'Mentor/data/Cubits/MentorInfo/Mentor_info_repo.dart';
@@ -325,6 +327,13 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
+    RepositoryProvider<CoinHistoryRepo>(
+      create: (context) => CoinsHistoryImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+
     RepositoryProvider<MentorAvailabilityRepo>(
       create: (context) => MentorAvailabilityImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
@@ -605,6 +614,11 @@ class StateInjector {
       create: (context) =>
           ReportMentorCubit(context.read<ReportMentorRepository>()),
     ),
+    BlocProvider<CoinHistoryCubit>(
+      create: (context) =>
+          CoinHistoryCubit(context.read<CoinHistoryRepo>()),
+    ),
+
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(
         mentorProfileCubit1: MentorProfileCubit1(

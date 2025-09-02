@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
 
+import '../../Components/CommonLoader.dart';
 import '../../Components/CustomAppButton.dart';
+import '../data/Cubits/CoinsHistory/coin_history_cubit.dart';
+import '../data/Cubits/CoinsHistory/coin_history_states.dart';
 
 class CoinHistoryScreen extends StatefulWidget {
   const CoinHistoryScreen({Key? key}) : super(key: key);
@@ -10,36 +15,22 @@ class CoinHistoryScreen extends StatefulWidget {
 }
 
 class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
-  String _selectedRange = 'All Time';
+  /// Store API key of current filter: all | week | month | quarter
+  String _selectedKey = 'all';
+
+  @override
+  void initState() {
+    super.initState();
+    // Initial load: pass '' (your API treats as All Time) or pass 'all'
+    context.read<CoinHistoryCubit>().getCoinHistory(
+      _selectedKey == 'all' ? '' : _selectedKey,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.8,
-        shadowColor: const Color(0x11000000),
-        leadingWidth: 56,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color(0xFF222222),
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: const Text(
-          'Coin History',
-          style: TextStyle(
-            fontFamily: 'segeo',
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF121212),
-          ),
-        ),
-      ),
-
+      appBar: CustomAppBar1(title: 'Coin History', actions: const []),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -50,46 +41,112 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
         ),
         child: SafeArea(
           top: false,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'Recent',
-                    style: TextStyle(
-                      fontFamily:
-                          'segeo', // corrected "segeo" → "segeo" (check your font name)
-                      fontSize: 18,
-
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF121212),
-                    ),
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                sliver: SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Recent',
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF121212),
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: _openFilterSheet,
+                        tooltip: 'Filter',
+                        icon: Image.asset(
+                          "assets/images/filterimg.png",
+                          color: const Color(0xFF4076ED),
+                          height: 32,
+                          width: 32,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                   ),
-                  Spacer(), // spacing between text & icon
-                  IconButton(
-                    onPressed: _openFilterSheet,
-                    tooltip: 'Filter',
-                    icon: Image.asset(
-                      "assets/images/filterimg.png",
-                      color: Color(0xFF4076ED),
-                      height: 24, // optional, adjust size
-                      width: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              /// SINGLE CARD (example)
-              const CoinHistoryCard(
-                title: 'Session with Vijay',
-                dateLabel: '11 Jun 25',
-                coins: 50, // show as +50 on the right
+                ),
               ),
 
-              // ---- When you wire API + BlocBuilder, render multiple CoinHistoryCard() here ----
+              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+              BlocBuilder<CoinHistoryCubit, CoinHistoryStates>(
+                builder: (context, state) {
+                  if (state is CoinhistoryLoading) {
+                    return const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32),
+                        child: Center(child: DottedProgressWithLogo()),
+                      ),
+                    );
+                  }
+
+                  if (state is CoinhistoryFailure) {
+                    return SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 40, 16, 24),
+                        child: _EmptyState(
+                          title: "Couldn't load history",
+                          subtitle: state.error ?? 'Please try again.',
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (state is CoinhistoryLoaded) {
+                    final items = state.coinHistoryModel.data ?? [];
+                    if (items.isEmpty) {
+                      return const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(16, 40, 16, 24),
+                          child: _EmptyState(
+                            title: 'No transactions yet',
+                            subtitle: 'Your coin activity will appear here.',
+                          ),
+                        ),
+                      );
+                    }
+
+                    return SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final item = items[index];
+
+                          // Map your dynamic fields here:
+                          final title = _titleOf(
+                            item,
+                          ); // prefers item['activity']
+                          final dateLabel = _dateLabelOf(
+                            item,
+                          ); // prefers item['date']
+                          final coins = _coinsOf(item); // prefers item['coins']
+
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: index == items.length - 1 ? 0 : 12,
+                            ),
+                            child: _CoinRowCard(
+                              title: title,
+                              dateLabel: dateLabel,
+                              coinsText: coins,
+                            ),
+                          );
+                        }, childCount: items.length),
+                      ),
+                    );
+                  }
+
+                  // Fallback
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                },
+              ),
             ],
           ),
         ),
@@ -97,45 +154,44 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
     );
   }
 
+  /// Opens bottom sheet that returns an API key: all | week | month | quarter
   void _openFilterSheet() async {
-    final selected = await showModalBottomSheet<String>(
+    final selectedKey = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.transparent,
       barrierColor: const Color(0x99000000),
       isScrollControlled: false,
       builder: (context) => _FilterSheet(
-        initialValue: _selectedRange,
-        onApply: (value) => Navigator.of(context).pop(value),
+        initialValue: _selectedKey, // pass current key (e.g., 'week')
+        onApply: (key) => Navigator.of(context).pop(key), // return key
       ),
     );
 
-    if (selected != null && selected != _selectedRange) {
-      setState(() => _selectedRange = selected);
-      // Apply your API filter with `_selectedRange` in your Bloc
+    if (selectedKey != null && selectedKey != _selectedKey) {
+      setState(() => _selectedKey = selectedKey);
+      // Pass '' for all-time if your API expects empty for "All"
+      context.read<CoinHistoryCubit>().getCoinHistory(
+        _selectedKey == 'all' ? '' : _selectedKey,
+      );
     }
   }
 }
 
-/// Reusable single card widget
-class CoinHistoryCard extends StatelessWidget {
-  const CoinHistoryCard({
-    super.key,
+class _CoinRowCard extends StatelessWidget {
+  const _CoinRowCard({
     required this.title,
     required this.dateLabel,
-    required this.coins,
-    this.onTap,
+    required this.coinsText,
   });
 
   final String title;
   final String dateLabel;
-  final int coins;
-  final VoidCallback? onTap;
+  final String coinsText;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -148,7 +204,7 @@ class CoinHistoryCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
             // Left: Title + date
@@ -162,29 +218,28 @@ class CoinHistoryCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: 'segeo',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF222222),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF333333),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
+
                   Row(
                     children: [
-                      Image.asset("assets/images/Radiocalenderimg.png",height: 16,width: 16,),
-
-                      // const Icon(
-                      //   Icons.calendar_today_rounded,
-                      //   size: 14,
-                      //   color: Color(0xFF98A2B3),
-                      // ),
+                      Image.asset(
+                        "assets/images/Radiocalenderimg.png",
+                        height: 16,
+                        width: 16,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         dateLabel,
                         style: const TextStyle(
                           fontFamily: 'segeo',
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF7B7F8C),
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF575757),
                         ),
                       ),
                     ],
@@ -198,18 +253,19 @@ class CoinHistoryCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '+$coins',
+                  coinsText,
                   style: const TextStyle(
                     fontFamily: 'segeo',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF222222),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    // fontWeight: FontWeight.w700,
+                    color: Color(0xFF121212),
                   ),
                 ),
                 const SizedBox(width: 6),
                 Image.asset(
                   "assets/images/GoldCoins.png",
-                  height: 24, // optional, adjust size
+                  height: 24,
                   width: 24,
                 ),
               ],
@@ -221,9 +277,12 @@ class CoinHistoryCard extends StatelessWidget {
   }
 }
 
+/// Bottom sheet with FIXED labels → API keys mapping,
+/// returns API key immediately when user taps an option.
 class _FilterSheet extends StatefulWidget {
   const _FilterSheet({required this.initialValue, required this.onApply});
 
+  /// Accept a key (all|week|month|quarter) or a label ("This Week") — both supported.
   final String initialValue;
   final ValueChanged<String> onApply;
 
@@ -232,18 +291,49 @@ class _FilterSheet extends StatefulWidget {
 }
 
 class _FilterSheetState extends State<_FilterSheet> {
+  // UI labels list (shown to the user)
   final List<String> options = const [
     'All Time',
     'This Week',
     'This Month',
     'This Quarter',
   ];
-  late String selected;
+
+  // Label -> API key
+  static const Map<String, String> _labelToKey = {
+    'All Time': 'all',
+    'This Week': 'week',
+    'This Month': 'month',
+    'This Quarter': 'quarter',
+  };
+
+  // API key -> Label
+  static const Map<String, String> _keyToLabel = {
+    'all': 'All Time',
+    'week': 'This Week',
+    'month': 'This Month',
+    'quarter': 'This Quarter',
+  };
+
+  late String selectedLabel;
 
   @override
   void initState() {
     super.initState();
-    selected = widget.initialValue;
+    // Resolve initialValue: accept label or key
+    if (options.contains(widget.initialValue)) {
+      selectedLabel = widget.initialValue; // label
+    } else if (_keyToLabel.containsKey(widget.initialValue)) {
+      selectedLabel = _keyToLabel[widget.initialValue]!;
+    } else {
+      selectedLabel = 'All Time';
+    }
+  }
+
+  void _onPick(String label) {
+    setState(() => selectedLabel = label);
+    final key = _labelToKey[label] ?? 'all';
+    widget.onApply(key); // parent pops the sheet
   }
 
   @override
@@ -283,12 +373,11 @@ class _FilterSheetState extends State<_FilterSheet> {
           ...options.map(
             (o) => _CheckRow(
               label: o,
-              checked: selected == o,
-              onChanged: (_) => setState(() => selected = o),
+              checked: selectedLabel == o,
+              onChanged: (_) => _onPick(o),
             ),
           ),
-          const SizedBox(height: 14),
-          CustomAppButton1(text: "Apply", onPlusTap: () {}),
+          const SizedBox(height: 6),
         ],
       ),
     );
@@ -339,6 +428,131 @@ class _CheckRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+String _titleOf(dynamic item) {
+  try {
+    final t =
+        (item?.activity ?? // preferred
+                item?.title ??
+                item?.reason ??
+                item?.description ??
+                (item is Map
+                    ? (item['activity'] ??
+                          item['title'] ??
+                          item['reason'] ??
+                          item['description'])
+                    : null))
+            ?.toString();
+    return (t == null || t.isEmpty) ? 'Coins update' : t;
+  } catch (_) {
+    return 'Coins update';
+  }
+}
+
+String _dateLabelOf(dynamic item) {
+  try {
+    final raw =
+        (item?.date ?? // preferred
+                item?.createdAt ??
+                (item is Map ? (item['date'] ?? item['created_at']) : null))
+            ?.toString();
+    if (raw == null || raw.isEmpty) return '—';
+    return _formatAsDdMmmYy(raw);
+  } catch (_) {
+    return '—';
+  }
+}
+
+String _coinsOf(dynamic item) {
+  try {
+    final v =
+        (item?.coins ?? // preferred
+        item?.amount ??
+        item?.value ??
+        (item is Map
+            ? (item['coins'] ?? item['amount'] ?? item['value'])
+            : null));
+
+    if (v == null) return '+0';
+
+    final s = v.toString().trim();
+
+    // If server already sends with sign like "+1380" or "-50", use as-is
+    if (RegExp(r'^[\+\-]\s*\d').hasMatch(s)) return s;
+
+    // Otherwise try to parse and add a sign for positives
+    final n = num.tryParse(s);
+    if (n == null) return s; // not numeric, show raw
+    return n >= 0 ? '+${n.toStringAsFixed(0)}' : n.toStringAsFixed(0);
+  } catch (_) {
+    return '+0';
+  }
+}
+
+/// If it's already "02 Sep 25", keep it.
+/// If it's ISO like "2025-09-02T13:45:00Z", render "02 Sep 25".
+String _formatAsDdMmmYy(String raw) {
+  final already = RegExp(r'^\d{1,2}\s+[A-Za-z]{3}\s+\d{2}$');
+  if (already.hasMatch(raw)) return raw;
+
+  final dt = DateTime.tryParse(raw);
+  if (dt == null) return raw;
+
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  final d = dt.day.toString().padLeft(2, '0');
+  final mon = months[dt.month - 1];
+  final yy = (dt.year % 100).toString().padLeft(2, '0');
+  return '$d $mon $yy';
+}
+
+/// Simple empty-state widget
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.title, required this.subtitle});
+  final String title;
+  final String subtitle;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Icon(Icons.history, size: 42, color: Color(0xFF98A2B3)),
+        const SizedBox(height: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'segeo',
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF222222),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'segeo',
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF7B7F8C),
+          ),
+        ),
+      ],
     );
   }
 }

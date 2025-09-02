@@ -1,11 +1,11 @@
-class CoinHistoryResponse {
+class MentorCoinHistoryModel {
   bool? status;
   int? count;
   List<Data>? data;
 
-  CoinHistoryResponse({this.status, this.count, this.data});
+  MentorCoinHistoryModel({this.status, this.count, this.data});
 
-  CoinHistoryResponse.fromJson(Map<String, dynamic> json) {
+  MentorCoinHistoryModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     count = json['count'];
     if (json['data'] != null) {

@@ -7,6 +7,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/AvailableSlotsModel.dart';
+import '../Models/MentorCoinHistoryModel.dart';
 import '../Models/ExpertisesModel.dart';
 import '../Models/FeedbackModel.dart';
 import '../Models/MentorExpertiseModel.dart';
@@ -28,6 +29,10 @@ abstract class MentorRemoteDataSource {
   Future<MentorinfoResponseModel?> mentorinfo();
   Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
   Future<AvailableSlotsModel?> getMentorAvailability();
+  Future<SuccessModel?> mentorSessionCanceled( Map<String, dynamic> data);
+  Future<MentorCoinHistoryModel?> CoinsHistory(String filter);
+
+
   Future<SessionDetailsModel?> getSessionsDetails(int sessionId);
   Future<ExpertisesModel?> fetchApproved();
   Future<ExpertisesModel?> fetchPending();
@@ -38,7 +43,6 @@ abstract class MentorRemoteDataSource {
   Future<NonAttachedExpertiseDetailsModel?> getNonAttachedExpertiseDetails(
     int id,
   );
-  Future<SuccessModel?> mentorSessionCanceled(Map<String, dynamic> data);
   Future<SuccessModel?> mentorReport(Map<String, dynamic> data);
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
 }
@@ -447,6 +451,19 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
     } catch (e) {
       AppLogger.error('mentor Report ::${e}');
 
+      return null;
+    }
+  }
+  @override
+  Future<MentorCoinHistoryModel?> CoinsHistory(String filter) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.get_coinshistory}?filter=${filter}",
+      );
+      AppLogger.log('Coins History: ${res.data}');
+      return MentorCoinHistoryModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Coins History:${e}');
       return null;
     }
   }
