@@ -119,26 +119,29 @@ class SessionCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'Session Topics',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'segeo',
-                            fontSize: 14,
-                            color: Color(0xff444444),
+
+                        if (sessionTopics.trim().isNotEmpty) ...[
+                          const Text(
+                            'Session Topics',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'segeo',
+                              fontSize: 14,
+                              color: Color(0xff444444),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          sessionTopics,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontFamily: 'segeo',
+                          const SizedBox(height: 4),
+                          Text(
+                            sessionTopics,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontFamily: 'segeo',
+                            ),
                           ),
-                        ),
+                        ],
                         const SizedBox(height: 16),
                       ],
                     ),
