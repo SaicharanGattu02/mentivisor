@@ -21,5 +21,6 @@ class MentorProfileCubit1 extends Cubit<MentorProfileStates> {
     } catch (e) {
       emit(MentorProfileFailure(e.toString()));
     }
+    return null;
   }
 }

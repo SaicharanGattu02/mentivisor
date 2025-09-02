@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
+import '../../Components/CustomSnackBar.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
+import '../data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 
 const Color kPurple = Color(0xFF9333EA);
 const Color kLightLav = Color(0xFFF1E9FF);
@@ -19,12 +23,10 @@ const TextStyle kTitle16Bold = TextStyle(
 
 // small helper pill (used in the group cards)
 Widget _slotChip(String label) {
-
-  return
-    Container(
+  return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     decoration: BoxDecoration(
-      color:  Color(0xFFF5F5F5), // light lavender background
+      color: Color(0xFFF5F5F5), // light lavender background
       borderRadius: BorderRadius.circular(16),
     ),
     child: Text(
@@ -33,7 +35,7 @@ Widget _slotChip(String label) {
         fontFamily: 'segeo',
         fontWeight: FontWeight.w600,
         fontSize: 13,
-        color: Colors.black, // make sure text is visible
+        color: Colors.black,
       ),
     ),
   );
@@ -51,7 +53,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   DateTime selectedDate = DateTime.now();
   final TextEditingController _taskNameController = TextEditingController();
 
-  bool keepForWeek = true; // toggle like in the image
+  bool keepForWeek = true;
 
   @override
   void initState() {
@@ -95,18 +97,15 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   Widget build(BuildContext context) {
     final gridDays = makeMonthGrid(visibleMonth);
     final monthTitle = DateFormat('MMMM yyyy').format(visibleMonth);
-    final selectedTitle = DateFormat('d MMM yy').format(selectedDate); // e.g., 17 Jun 25
-
+    final selectedTitle = DateFormat(
+      'd MMM yy',
+    ).format(selectedDate); // e.g., 17 Jun 25
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FD),
-
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-
           children: [
-
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -116,11 +115,14 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.03),
                     blurRadius: 12,
-                  )
+                  ),
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 14,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -155,18 +157,20 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
                         children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-                            .map((d) => Expanded(
-                          child: Center(
-                            child: Text(
-                              d,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'segeo',
+                            .map(
+                              (d) => Expanded(
+                                child: Center(
+                                  child: Text(
+                                    d,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'segeo',
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ))
+                            )
                             .toList(),
                       ),
                     ),
@@ -174,24 +178,26 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 7,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
-                        childAspectRatio: 1.0,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 7,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 1.0,
+                          ),
                       itemCount: gridDays.length,
                       itemBuilder: (context, index) {
                         final day = gridDays[index];
                         if (day == null) return const SizedBox();
-                        final isSelected = selectedDate.day == day &&
+                        final isSelected =
+                            selectedDate.day == day &&
                             selectedDate.month == visibleMonth.month &&
                             selectedDate.year == visibleMonth.year;
                         final now = DateTime.now();
-                        final isToday = now.day == day &&
+                        final isToday =
+                            now.day == day &&
                             now.month == visibleMonth.month &&
                             now.year == visibleMonth.year;
-
                         return GestureDetector(
                           onTap: () => _onDateSelected(day),
                           child: Center(
@@ -201,14 +207,16 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? kPurple.withOpacity(0.08)
-                                    : (isToday ? const Color(0xFFE8F0FF) : Colors.white),
+                                    : (isToday
+                                          ? const Color(0xFFE8F0FF)
+                                          : Colors.white),
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: isSelected
                                       ? kPurple
                                       : (isToday
-                                      ? kPurple.withOpacity(0.25)
-                                      : const Color(0xFFDDDDDD)),
+                                            ? kPurple.withOpacity(0.25)
+                                            : const Color(0xFFDDDDDD)),
                                   width: isSelected ? 2 : 1,
                                 ),
                               ),
@@ -217,7 +225,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                                 day.toString(),
                                 style: const TextStyle(
                                   fontFamily: 'segeo',
-                                  fontSize: 13,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
@@ -232,154 +240,85 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
             const SizedBox(height: 14),
 
-            // ---------------- Selected Day Detail Card (exactly like image) ----------------
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
-                    blurRadius: 12,
-                  )
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top row: date + Add Slot button
-                    Row(
-                      children: [
-                        Text(
-                          selectedTitle, // e.g., 17 Jun 25
-                          style: const TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const Spacer(),
-                        TextButton.icon(
-
-                            onPressed: _showAddSlotDialog,
-
-
-                          icon: const Icon(Icons.add, color: Colors.white, size: 18),
-                          label: const Text(
-                            "Add Slot",
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xff9333EA),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Time row + coin + delete
-
-
-                    Row(
-                      children: [
-                        _iconTextPill(Icons.schedule, "09:00",Color(0xff666666)),
-                        const SizedBox(width: 16),
-                        const Text(
-                          "to",
-                          style: TextStyle(fontFamily: 'segeo', fontSize: 13),
-                        ),
-                        const SizedBox(width: 16),
-                        _iconTextPill(Icons.access_time_filled_rounded, "10:00",Color(0xff666666)),
-                        const Spacer(),
-                        _coinPill("50"),
-                        const SizedBox(width: 10),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              const Text(
-                                "Want to keep this timing for the full week",
-                                style: TextStyle(
-                                  fontFamily: 'segeo',
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              SizedBox(
-                                width: 22,
-                                height: 13,
-                                child: FittedBox(
-                                  fit: BoxFit.fill,
-                                  child: Switch(
-                                    value: keepForWeek,
-                                    onChanged: (v) => setState(() => keepForWeek = v),
-                                    activeColor: const Color(0xFF4076ED),
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-
-                      ],
-                    ),
-
-                    const SizedBox(height: 6),
-                    const Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Note: ",
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.red,
-                            ),
-                          ),
-                          TextSpan(
-                            text:
-                            "The minimum time is half an hour and the maximum is three hours.",
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontSize: 12,
-                              color: Color(0xFF5F6473),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 18),
+            // // ---------------- Selected Day Detail Card (exactly like image) ----------------
+            // Container(
+            //   width: double.infinity,
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(16),
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: Colors.black.withOpacity(0.03),
+            //         blurRadius: 12,
+            //       ),
+            //     ],
+            //   ),
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(
+            //       vertical: 14,
+            //       horizontal: 12,
+            //     ),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         // Top row: date + Add Slot button
+            //         Row(
+            //           children: [
+            //             Text(
+            //               selectedTitle, // e.g., 17 Jun 25
+            //               style: const TextStyle(
+            //                 fontFamily: 'segeo',
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w700,
+            //               ),
+            //             ),
+            //             const Spacer(),
+            //
+            //           ],
+            //         ),
+            //         const SizedBox(height: 10),
+            //
+            //         // Time row + coin + delete
+            //         Row(
+            //           children: [
+            //             _iconTextPill(
+            //               Icons.schedule,
+            //               "09:00",
+            //               Color(0xff666666),
+            //             ),
+            //             const SizedBox(width: 16),
+            //             const Text(
+            //               "to",
+            //               style: TextStyle(fontFamily: 'segeo', fontSize: 13),
+            //             ),
+            //             const SizedBox(width: 16),
+            //             _iconTextPill(
+            //               Icons.access_time_filled_rounded,
+            //               "10:00",
+            //               Color(0xff666666),
+            //             ),
+            //             const Spacer(),
+            //             // _coinPill("50"),
+            //             const SizedBox(width: 10),
+            //             IconButton(
+            //               onPressed: () {},
+            //               icon: const Icon(
+            //                 Icons.delete_outline,
+            //                 color: Colors.redAccent,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            //
+            // const SizedBox(height: 18),
 
             // ---------------- Recent Added header ----------------
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   "Recent Added",
@@ -389,8 +328,28 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     fontSize: 16,
                   ),
                 ),
-                const Spacer(),
-
+                TextButton.icon(
+                  onPressed: _showAddSlotDialog,
+                  icon: const Icon(Icons.add, color: Colors.white, size: 18),
+                  label: const Text(
+                    "Add Slot",
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color(0xff9333EA),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -447,12 +406,11 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
   // ---------- helpers (exact visual style) ----------
 
-  Widget _iconTextPill(IconData icon, String text,color) {
-
+  Widget _iconTextPill(IconData icon, String text, color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color:  Color(0xFFF5F5F5), // light lavender background
+        color: Color(0xFFF5F5F5), // light lavender background
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -481,7 +439,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       ),
       child: Row(
         children: [
-           Image.asset("assets/images/GoldCoins.png",height: 19,width:19),
+          Image.asset("assets/images/GoldCoins.png", height: 19, width: 19),
           const SizedBox(width: 6),
           Text(
             coins,
@@ -496,7 +454,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     );
   }
 
-
   Widget _recentGroupCard({
     required String title,
     String? badge,
@@ -507,7 +464,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -517,7 +476,11 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
             // Title row with calendar icon and optional badge
             Row(
               children: [
-                const Icon(Icons.calendar_month_outlined, size: 18, color: Color(0xFF333333)),
+                const Icon(
+                  Icons.calendar_month_outlined,
+                  size: 18,
+                  color: Color(0xFF333333),
+                ),
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -542,7 +505,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
               ],
             ),
             SizedBox(height: 8),
-           Text(
+            Text(
               "6 slots",
               style: TextStyle(
                 fontFamily: 'segeo',
@@ -551,7 +514,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-             SizedBox(height: 10),
+            SizedBox(height: 10),
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -561,9 +524,8 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         ),
       ),
     );
-
-
   }
+
   Future<TimeOfDay?> _pickTime(BuildContext context, TimeOfDay initial) async {
     final picked = await showTimePicker(
       context: context,
@@ -573,7 +535,10 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: const TimePickerThemeData(
-              hourMinuteTextStyle: TextStyle(fontFamily: 'segeo', fontWeight: FontWeight.w700),
+              hourMinuteTextStyle: TextStyle(
+                fontFamily: 'segeo',
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           child: child!,
@@ -597,7 +562,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
   Future<void> _showAddSlotDialog() async {
     TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
-    TimeOfDay to   = const TimeOfDay(hour: 10, minute: 0);
+    TimeOfDay to = const TimeOfDay(hour: 10, minute: 0);
     final coinsCtl = TextEditingController(text: "00");
     String? errorText;
 
@@ -617,11 +582,13 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
               if (p != null) setLocal(() => to = p);
             }
 
-            void onAdd() {
+            void onAdd() async {
               // basic validation
               final d = _diffOnDay(from, to, selectedDate);
               if (d.inMinutes < 0) {
-                setLocal(() => errorText = "End time must be after start time.");
+                setLocal(
+                  () => errorText = "End time must be after start time.",
+                );
                 return;
               }
               if (d.inMinutes < 30) {
@@ -633,13 +600,30 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                 return;
               }
 
-              Navigator.of(ctx).pop(); // close add dialog
-              _showSuccessDialog();
+              // build API data map (24-hour format)
+              String fmtTime(TimeOfDay t) =>
+                  "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
+
+              final mapData = {
+                "date": DateFormat("yyyy-MM-dd").format(selectedDate),
+                "start_time": fmtTime(from), // e.g. 11:35
+                "end_time": fmtTime(to), // e.g. 12:35
+                "repeat_weekly": keepForWeek ? "1" : "0",
+              };
+
+              // call cubit
+              final response = await context
+                  .read<MentorAvailabilityCubit>()
+                  .addMentorAvailability(mapData);
+
+              Navigator.of(ctx).pop(); // close dialog
             }
 
             return Dialog(
               insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
               child: Container(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
                 decoration: BoxDecoration(
@@ -682,50 +666,61 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text("to", style: TextStyle(fontFamily: 'segeo', fontSize: 13)),
+                        const Text(
+                          "to",
+                          style: TextStyle(fontFamily: 'segeo', fontSize: 13),
+                        ),
                         const SizedBox(width: 12),
                         // To
                         Expanded(
                           child: GestureDetector(
                             onTap: pickTo,
-                            child: _timeFieldPill(Icons.access_time_filled_rounded, _fmt(to)),
+                            child: _timeFieldPill(
+                              Icons.access_time_filled_rounded,
+                              _fmt(to),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         // Coins
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: kCoinBg,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/GoldCoins.png", // make sure path matches your pubspec
-                                height: 19,
-                                width: 19,
-                              ),
-                              const SizedBox(width: 6),
-                              // keep a stable width so 9/99/100 don't shift layout
-                              SizedBox(
-                                width: 36,
-                                child: Text(
-                                "0", // e.g. "00"
-                                  textAlign: TextAlign.left, // or TextAlign.center
-                                  style: const TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    height: 1.2, // nicer vertical alignment with the icon
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //     horizontal: 10,
+                        //     vertical: 8,
+                        //   ),
+                        //   decoration: BoxDecoration(
+                        //     color: kCoinBg,
+                        //     borderRadius: BorderRadius.circular(12),
+                        //   ),
+                        //   child: Row(
+                        //     mainAxisSize: MainAxisSize.min,
+                        //     crossAxisAlignment: CrossAxisAlignment.center,
+                        //     children: [
+                        //       Image.asset(
+                        //         "assets/images/GoldCoins.png", // make sure path matches your pubspec
+                        //         height: 19,
+                        //         width: 19,
+                        //       ),
+                        //       const SizedBox(width: 6),
+                        //       // keep a stable width so 9/99/100 don't shift layout
+                        //       SizedBox(
+                        //         width: 36,
+                        //         child: Text(
+                        //           "0", // e.g. "00"
+                        //           textAlign:
+                        //               TextAlign.left, // or TextAlign.center
+                        //           style: const TextStyle(
+                        //             fontFamily: 'segeo',
+                        //             fontWeight: FontWeight.w700,
+                        //             fontSize: 14,
+                        //             height:
+                        //                 1.2, // nicer vertical alignment with the icon
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
 
@@ -743,44 +738,95 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     ],
 
                     const SizedBox(height: 14),
+                    const SizedBox(height: 10),
 
-                    // Add button (rounded + gradient look)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Want to keep this timing for the full week",
+                                style: TextStyle(
+                                  fontFamily: 'segeo',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              SizedBox(
+                                width: 22,
+                                height: 13,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Switch(
+                                    value: keepForWeek, // <- same variable
+                                    onChanged: (v) => setLocal(() {
+                                      // <- use setLocal, not setState
+                                      keepForWeek = v;
+                                    }),
+                                    activeColor: Color(0xFF4076ED),
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+                    const Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Note: ",
+                            style: TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.red,
+                            ),
+                          ),
+                          TextSpan(
+                            text:
+                                "The minimum time is half an hour and the maximum is three hours.",
+                            style: TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 12,
+                              color: Color(0xFF5F6473),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: onAdd,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                        ).merge(
-                          ButtonStyle(
-                            // gradient via Ink
-                            overlayColor: WidgetStateProperty.all(Colors.white10),
+                      child:
+                          BlocConsumer<
+                            MentorAvailabilityCubit,
+                            MentorAvailabilityStates
+                          >(
+                            listener: (context, state) {
+                              if(state is MentorAvailabilityLoaded){
+                                _showSuccessDialog();
+                              }else if(state is MentorAvailabilityFailure){
+                                CustomSnackBar1.show(context, state.error);
+                              }
+                            },
+                            builder: (context, state) {
+                              final isLoading =
+                                  state is MentorAvailabilityLoading;
+                              return CustomAppButton1(
+                                text: "Add",
+                                isLoading: isLoading,
+                                onPlusTap: onAdd,
+                              );
+                            },
                           ),
-                        ),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF8A4DFF), Color(0xFF2F8BFF)],
-                            ),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: const Text(
-                              "Add",
-                              style: TextStyle(
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
@@ -798,7 +844,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       barrierDismissible: true,
       builder: (ctx) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           child: Container(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
             decoration: BoxDecoration(
@@ -816,7 +864,11 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     color: Color(0xFFE8F7EF),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check, color: Color(0xFF22C55E), size: 36),
+                  child: const Icon(
+                    Icons.check,
+                    color: Color(0xFF22C55E),
+                    size: 36,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 const Text(
@@ -836,7 +888,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                     ),
                     child: Ink(
                       decoration: BoxDecoration(
@@ -868,7 +922,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     );
   }
 
-// small pill used inside dialog (matches your style)
+  // small pill used inside dialog (matches your style)
   Widget _timeFieldPill(IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

@@ -3,6 +3,7 @@ import 'package:mentivisor/core/network/mentor_endpoints.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
+import '../Models/AvailableSlotsModel.dart';
 import '../Models/FeedbackModel.dart';
 import '../Models/MentorProfileModel.dart';
 import '../Models/MentorinfoResponseModel.dart';
@@ -17,6 +18,8 @@ abstract class MentorRemoteDataSource {
   Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
   Future<MentorinfoResponseModel?> mentorinfo();
+  Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
+  Future<AvailableSlotsModel?> getMentorAvailability();
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -56,6 +59,35 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
+  Future<AvailableSlotsModel?> getMentorAvailability() async {
+    try {
+      Response res = await ApiClient.post(
+        "${MentorEndpointsUrls.mentor_availability_slots}",
+      );
+      AppLogger.log('getMentorAvailability: ${res.data}');
+      return AvailableSlotsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getMentorAvailability:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data) async {
+    try {
+      Response res = await ApiClient.post(
+        "${MentorEndpointsUrls.add_mentor_availability}",
+        data: data,
+      );
+      AppLogger.log('addMentorAvailability: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('addMentorAvailability:${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data) async {
     try {
       Response res = await ApiClient.post(
@@ -84,14 +116,10 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
     }
   }
 
-
-
   @override
-  Future<MentorinfoResponseModel?>mentorinfo() async {
+  Future<MentorinfoResponseModel?> mentorinfo() async {
     try {
-      Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.mentorinfo}",
-      );
+      Response res = await ApiClient.get("${MentorEndpointsUrls.mentorinfo}");
       AppLogger.log('get MentorInfo: ${res.data}');
       return MentorinfoResponseModel.fromJson(res.data);
     } catch (e) {
@@ -99,7 +127,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<FeedbackModel?> getFeedback(int user_id) async {

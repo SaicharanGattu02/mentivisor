@@ -40,7 +40,10 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRep
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/FeedBack/feedback_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityRepo.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
@@ -291,6 +294,11 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<MentorAvailabilityRepo>(
+      create: (context) => MentorAvailabilityImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -497,6 +505,14 @@ class StateInjector {
     BlocProvider<MentorProfileUpdateCubit>(
       create: (context) =>
           MentorProfileUpdateCubit(context.read<MentorProfileRepo1>()),
+    ),
+    BlocProvider<MentorAvailabilityCubit>(
+      create: (context) =>
+          MentorAvailabilityCubit(context.read<MentorAvailabilityRepo>()),
+    ),
+    BlocProvider<AvailableSlotsCubit>(
+      create: (context) =>
+          AvailableSlotsCubit(context.read<MentorAvailabilityRepo>()),
     ),
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(
