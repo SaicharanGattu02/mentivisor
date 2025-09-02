@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// If you still want your custom buttons, you can swap the ElevatedButtons back later.
 
 class ExpertiseDetailScreen extends StatefulWidget {
   const ExpertiseDetailScreen({

@@ -16,10 +16,8 @@ class _CostPerMinuteScreenState extends State<CostPerMinuteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(title: 'Cost Per Minute', actions: []),
-
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -56,17 +54,19 @@ class _CostPerMinuteScreenState extends State<CostPerMinuteScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: Column(
-          spacing: 10,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomAppButton1(
-              text: "Okay",
-              onPlusTap: () {
-                context.go('/mentor_review');
-              },
-            ),
-          ],
+        child: SafeArea(
+          child: Column(
+            spacing: 10,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomAppButton1(
+                text: "Okay",
+                onPlusTap: () {
+                  context.go('/mentor_review');
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

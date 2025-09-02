@@ -151,7 +151,6 @@ class SessionCard extends StatelessWidget {
                           ),
                           errorWidget: (context, url, error) => Container(
                             decoration: BoxDecoration(
-
                               borderRadius: BorderRadius.circular(8),
                               image: const DecorationImage(
                                 image: AssetImage("assets/images/profile.png"),

@@ -21,6 +21,7 @@ import 'package:mentivisor/Mentee/presentation/becomeMentor/ExpertiseSelection.d
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
 import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/Mentor/presentation/MentorInfoScreen.dart';
+import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
@@ -546,14 +547,24 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-    // GoRoute(
-    //   path: '/',
-    //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(Sp(), state);
-    //   },
-    // ),
+    GoRoute(
+      path: '/update_expertise',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(ExpertiseScreen(), state);
+      },
+    ),
 
-
+    GoRoute(
+      path: '/expertise_details',
+      pageBuilder: (context, state) {
+        final id = int.tryParse(state.uri.queryParameters['id'] ?? '') ?? 0;
+        final categoryTitle = state.uri.queryParameters['categoryTitle'] ?? '';
+        return buildSlideTransitionPage(
+          SubExpertisesScreen(categoryTitle: categoryTitle, id: id),
+          state,
+        );
+      },
+    ),
 
     GoRoute(
       path: '/pdf_viewer',

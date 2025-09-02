@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
+
+import '../Models/ExpertisesModel.dart';
+import '../data/Cubits/Expertises/ApprovedExpertiseCubit.dart';
+import '../data/Cubits/Expertises/ExpertiseState.dart';
+import '../data/Cubits/Expertises/PendingExpertiseCubit.dart';
+import '../data/Cubits/Expertises/RejectedExpertiseCubit.dart';
 
 class ExpertiseScreen extends StatefulWidget {
   const ExpertiseScreen({super.key});
@@ -11,32 +20,43 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tab;
 
-  final List<String> approved = const ['React', 'Java', 'Python'];
-  final List<String> pending = const ['React', 'Java', 'Python'];
-  final List<String> rejected = const ['React', 'Java', 'Python'];
-
-  // Seed data for the detail screen chips
-  final Map<String, List<String>> expertiseMap = {
-    'React': [
-      'Components',
-      'JSX',
-      'React Router',
-      'Context API',
-      'Hooks',
-      'State Mgmt',
-    ],
-    'Java': ['OOP', 'Streams', 'Collections', 'Spring', 'JPA'],
-    'Python': ['Django', 'Flask', 'Pandas', 'NumPy', 'AsyncIO'],
-  };
-
   @override
   void initState() {
     super.initState();
     _tab = TabController(length: 3, vsync: this);
+
+    // Fetch APPROVED only on start (post-frame so BlocProviders exist)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ApprovedExpertiseCubit>().fetch();
+    });
+
+    _tab.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (_tab.indexIsChanging) return;
+
+    if (_tab.index == 0) {
+      // final st = context.read<ApprovedExpertiseCubit>().state;
+      // if (st is ExpertiseInitially || st is ExpertiseFailure) {
+      context.read<ApprovedExpertiseCubit>().fetch();
+      // }
+    } else if (_tab.index == 1) {
+      // final st = context.read<PendingExpertiseCubit>().state;
+      // if (st is ExpertiseInitially || st is ExpertiseFailure) {
+      context.read<PendingExpertiseCubit>().fetch();
+      // }
+    } else if (_tab.index == 2) {
+      // final st = context.read<RejectedExpertiseCubit>().state;
+      // if (st is ExpertiseInitially || st is ExpertiseFailure) {
+      context.read<RejectedExpertiseCubit>().fetch();
+      // }
+    }
   }
 
   @override
   void dispose() {
+    _tab.removeListener(_onTabChanged);
     _tab.dispose();
     super.dispose();
   }
@@ -48,7 +68,6 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -83,44 +102,50 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                 controller: _tab,
                 children: [
                   // APPROVED
-                  _ExpertiseListTab(
-                    title: 'List',
-                    items: approved,
-                    variant: TileVariant.approved,
-                    showAddButton: true,
-                    onItemTap: (label) {
-                      final chips = List<String>.from(
-                        expertiseMap[label] ?? const [],
+                  BlocBuilder<ApprovedExpertiseCubit, ExpertiseState>(
+                    builder: (context, state) {
+                      return ExpertiseTabFromState(
+                        title: 'List',
+                        variant: TileVariant.approved,
+                        state: state,
+                        onRetry: () =>
+                            context.read<ApprovedExpertiseCubit>().fetch(),
+                        showAddButton: true,
+                        onItemTap: (label) {
+                          context.push(
+                            "/expertise_details?id=${label.id}&categoryTitle=${label.name}",
+                          );
+                        },
                       );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ExpertiseDetailScreen(
-                            categoryTitle: label,
-                            initialChips: chips,
-                          ),
-                        ),
-                      );
-                    },
-                    onAdd: () {
-                      // Optional: Add category from Approved header (if needed)
                     },
                   ),
+
                   // PENDING
-                  _ExpertiseListTab(
-                    title: 'List',
-                    items: pending,
-                    variant: TileVariant.pending,
-                    showAddButton: false,
-                    onItemTap: (_) {},
+                  BlocBuilder<PendingExpertiseCubit, ExpertiseState>(
+                    builder: (context, state) {
+                      return ExpertiseTabFromState(
+                        title: 'List',
+                        variant: TileVariant.pending,
+                        state: state,
+                        onRetry: () =>
+                            context.read<PendingExpertiseCubit>().fetch(),
+                        onItemTap: (_) {}, // view-only
+                      );
+                    },
                   ),
+
                   // REJECTED
-                  _ExpertiseListTab(
-                    title: 'List',
-                    items: rejected,
-                    variant: TileVariant.rejected,
-                    showAddButton: false,
-                    onItemTap: (_) {},
+                  BlocBuilder<RejectedExpertiseCubit, ExpertiseState>(
+                    builder: (context, state) {
+                      return ExpertiseTabFromState(
+                        title: 'List',
+                        variant: TileVariant.rejected,
+                        state: state,
+                        onRetry: () =>
+                            context.read<RejectedExpertiseCubit>().fetch(),
+                        onItemTap: (_) {}, // view-only
+                      );
+                    },
                   ),
                 ],
               ),
@@ -180,24 +205,108 @@ class _SegmentedTabs extends StatelessWidget {
   }
 }
 
-enum TileVariant { approved, pending, rejected }
+List<String> _expertiseNames(ExpertisesModel m) =>
+    m.data?.expertises
+        ?.map((e) => e.name ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList() ??
+    const [];
 
-class _ExpertiseListTab extends StatelessWidget {
-  const _ExpertiseListTab({
+class ExpertiseTabFromState extends StatelessWidget {
+  const ExpertiseTabFromState({
+    super.key,
     required this.title,
-    required this.items,
     required this.variant,
-    required this.onItemTap,
+    required this.state,
+    required this.onRetry,
+    required this.onItemTap, // void Function(Expertises)
     this.showAddButton = false,
     this.onAdd,
   });
 
   final String title;
-  final List<String> items;
+  final TileVariant variant;
+  final ExpertiseState state;
+  final Future<void> Function() onRetry;
+  final void Function(Expertises) onItemTap; // ⬅️ changed
+  final bool showAddButton;
+  final VoidCallback? onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is ExpertiseInitially || state is ExpertiseLoading) {
+      return const Center(child: DottedProgressWithLogo());
+    }
+    if (state is ExpertiseFailure) {
+      final msg = (state as ExpertiseFailure).message;
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              msg.isNotEmpty ? msg : 'Failed to load',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, color: Colors.red),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    final model = (state as ExpertiseLoaded).model;
+    final items = model.data?.expertises ?? []; // ⬅️ now objects
+
+    if (items.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: onRetry,
+        child: ListView(
+          children: const [
+            SizedBox(height: 120),
+            Center(
+              child: Text(
+                'No items found',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: onRetry,
+      child: _ExpertiseListTab(
+        title: title,
+        items: items, // ⬅️ pass objects
+        variant: variant,
+        showAddButton: showAddButton,
+        onAdd: onAdd,
+        onItemTap: onItemTap, // ⬅️ callback with object
+      ),
+    );
+  }
+}
+
+enum TileVariant { approved, pending, rejected }
+
+class _ExpertiseListTab extends StatelessWidget {
+  const _ExpertiseListTab({
+    required this.title,
+    required this.items, // ← List<Expertises>
+    required this.variant,
+    required this.onItemTap, // ← void Function(Expertises)
+    this.showAddButton = false,
+    this.onAdd,
+  });
+
+  final String title;
+  final List<Expertises> items; // ⬅️ changed
   final TileVariant variant;
   final bool showAddButton;
   final VoidCallback? onAdd;
-  final void Function(String) onItemTap;
+  final void Function(Expertises) onItemTap; // ⬅️ changed
 
   Color _tileColor() {
     switch (variant) {
@@ -210,12 +319,9 @@ class _ExpertiseListTab extends StatelessWidget {
     }
   }
 
-  BoxBorder? _tileBorder() {
-    if (variant == TileVariant.approved) {
-      return Border.all(color: const Color(0xFFE6E6E9));
-    }
-    return null;
-  }
+  BoxBorder? _tileBorder() => variant == TileVariant.approved
+      ? Border.all(color: const Color(0xFFE6E6E9))
+      : null;
 
   @override
   Widget build(BuildContext context) {
@@ -247,10 +353,11 @@ class _ExpertiseListTab extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, i) {
-                final label = items[i];
+                final item = items[i]; // ⬅️ an Expertises
+                final label = item.name ?? ''; // for display
                 return InkWell(
                   borderRadius: BorderRadius.circular(12),
-                  onTap: () => onItemTap(label),
+                  onTap: () => onItemTap(item), // ⬅️ pass object
                   child: Container(
                     height: 44,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -279,291 +386,6 @@ class _ExpertiseListTab extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Detail Page: shows chip boxes like the screenshot and an Add option.
-/// No cancel/remove action on chips (kept clean).
-class ExpertiseDetailScreen extends StatefulWidget {
-  const ExpertiseDetailScreen({
-    super.key,
-    required this.categoryTitle,
-    required this.initialChips,
-  });
-
-  final String categoryTitle; // e.g., "React"
-  final List<String> initialChips;
-
-  @override
-  State<ExpertiseDetailScreen> createState() => _ExpertiseDetailScreenState();
-}
-
-class _ExpertiseDetailScreenState extends State<ExpertiseDetailScreen> {
-  late List<String> chips;
-
-  @override
-  void initState() {
-    super.initState();
-    chips = [...widget.initialChips];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const bg = LinearGradient(
-      colors: [Color(0xFFF6F7FF), Color(0xFFFFF5FF)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leadingWidth: 44,
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 8),
-          child: BackButton(),
-        ),
-        centerTitle: true,
-        title: const Text(
-          'Expertise',
-          style: TextStyle(
-            fontSize: 18,
-            fontFamily: "segeo",
-            color: Color(0xff121212),
-            fontWeight: FontWeight.w700,
-            letterSpacing: .1,
-          ),
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(gradient: bg),
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 6),
-              Text(
-                'IN-${widget.categoryTitle}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF121212),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Chips area
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      // Existing chips
-                      for (final label in chips)
-                        _ChipPill(
-                          label: label,
-                          // showCancel: false  // keep default: no cancel icon/action
-                        ),
-
-                      // Add new chip
-                      _AddChipPill(onTap: () => _openAddChipSheet(context)),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _openAddChipSheet(BuildContext context) {
-    final controller = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6E6E9),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Add item',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: controller,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Enter chip name',
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 44,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF9C5BF7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  onPressed: () {
-                    final value = controller.text.trim();
-                    if (value.isNotEmpty && !chips.contains(value)) {
-                      setState(() => chips.add(value));
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: .2,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-/// Visual chip pill like the screenshot. No cancel by default.
-class _ChipPill extends StatelessWidget {
-  const _ChipPill({
-    required this.label,
-    this.showCancel = false,
-    this.onCancel,
-  });
-
-  final String label;
-  final bool showCancel; // keep false per requirement
-  final VoidCallback? onCancel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFFE8ECF4)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF121212),
-            ),
-          ),
-          if (showCancel) ...[
-            const SizedBox(width: 6),
-            GestureDetector(
-              onTap: onCancel,
-              behavior: HitTestBehavior.opaque,
-              child: const Icon(
-                Icons.close_rounded,
-                size: 16,
-                color: Color(0xFF9AA3AF),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-/// “Add” pill chip (purple) to match the style in your list screen.
-class _AddChipPill extends StatelessWidget {
-  const _AddChipPill({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFF9C5BF7),
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add_rounded, size: 16, color: Colors.white),
-              SizedBox(width: 6),
-              Text(
-                'Add',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontFamily: "segeo",
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: .2,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

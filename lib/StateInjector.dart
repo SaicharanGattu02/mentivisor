@@ -41,6 +41,11 @@ import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/ExpertiseDetails/expertise_details_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Expertises/ApprovedExpertiseCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Expertises/ExpertiseRepo.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Expertises/PendingExpertiseCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Expertises/RejectedExpertiseCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/FeedBack/feedback_repository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilityRepo.dart';
@@ -48,9 +53,11 @@ import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashbo
 import 'package:mentivisor/Mentor/data/Cubits/MentorSessionCancel/mentor_session_cancle_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/NonAttachedExpertises/NonAttachedExpertisesCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ReportMentee/report_mentee_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsRepository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/UpdateExpertise/UpdateExpertiseCubit.dart';
 import '../bloc/internet_status/internet_status_bloc.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
@@ -100,6 +107,7 @@ import 'Mentor/data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancle_repo.dart';
+import 'Mentor/data/Cubits/NonAttachedExpertiseDetails/NonAttachedExpertiseDetailsCubit.dart';
 import 'Mentor/data/MentorRemoteDataSource.dart';
 
 class StateInjector {
@@ -312,6 +320,12 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
+    RepositoryProvider<ExpertisesRepo>(
+      create: (context) => ExpertisesRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -479,12 +493,10 @@ class StateInjector {
           NotificationsCubit(context.read<NotificationsRepo>()),
     ),
     BlocProvider<TagsCubit>(
-      create: (context) =>
-          TagsCubit(context.read<TagsRepository>()),
+      create: (context) => TagsCubit(context.read<TagsRepository>()),
     ),
     BlocProvider<TagsSearchCubit>(
-      create: (context) =>
-          TagsSearchCubit(context.read<TagsRepository>()),
+      create: (context) => TagsSearchCubit(context.read<TagsRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(
@@ -538,6 +550,32 @@ class StateInjector {
     BlocProvider<MentorSessionCancleCubit>(
       create: (context) =>
           MentorSessionCancleCubit(context.read<SessionCanceledRepo>()),
+    ),
+    BlocProvider<ApprovedExpertiseCubit>(
+      create: (context) =>
+          ApprovedExpertiseCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<PendingExpertiseCubit>(
+      create: (context) =>
+          PendingExpertiseCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<RejectedExpertiseCubit>(
+      create: (context) =>
+          RejectedExpertiseCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<MentorExpertiseCubit>(
+      create: (context) => MentorExpertiseCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<UpdateExpertiseCubit>(
+      create: (context) => UpdateExpertiseCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<NonAttachedExpertisesCubit>(
+      create: (context) =>
+          NonAttachedExpertisesCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<NonAttachedExpertiseDetailsCubit>(
+      create: (context) =>
+          NonAttachedExpertiseDetailsCubit(context.read<ExpertisesRepo>()),
     ),
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(

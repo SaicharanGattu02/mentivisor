@@ -159,7 +159,10 @@ class AppDrawer extends StatelessWidget {
                       child: _DrawerItem(
                         icon: Icons.trending_up_outlined,
                         title: 'Update Mentor Profile',
-                        onTap: () {},
+                        onTap: () {
+                          context.pop();
+                          context.push("/update_expertise");
+                        },
                       ),
                     ),
 
