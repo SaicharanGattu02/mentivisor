@@ -1,14 +1,14 @@
 class NonAttachedExpertisesModel {
   bool? status;
   String? message;
-  Data? data;
+  ExpertisesData? data;
 
   NonAttachedExpertisesModel({this.status, this.message, this.data});
 
   NonAttachedExpertisesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new ExpertisesData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -22,13 +22,13 @@ class NonAttachedExpertisesModel {
   }
 }
 
-class Data {
+class ExpertisesData {
   List<NotAttachedExpertises>? notAttachedExpertises;
   List<NotAttachedSubExpertises>? notAttachedSubExpertises;
 
-  Data({this.notAttachedExpertises, this.notAttachedSubExpertises});
+  ExpertisesData({this.notAttachedExpertises, this.notAttachedSubExpertises});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ExpertisesData.fromJson(Map<String, dynamic> json) {
     if (json['not_attached_expertises'] != null) {
       notAttachedExpertises = <NotAttachedExpertises>[];
       json['not_attached_expertises'].forEach((v) {

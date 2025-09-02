@@ -12,6 +12,7 @@ abstract class ExpertisesRepo {
   Future<ExpertisesModel?> fetchRejected();
   Future<MentorExpertiseModel?> getExpertiseDetails(int id);
   Future<SuccessModel?> updateExpertise(Map<String, dynamic> data);
+  Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
   Future<NonAttachedExpertisesModel?> getNonAttachedExpertises();
   Future<NonAttachedExpertiseDetailsModel?> getNonAttachedExpertiseDetails(
     int id,
@@ -58,5 +59,10 @@ class ExpertisesRepoImpl implements ExpertisesRepo {
     int id,
   ) async {
     return await mentorRemoteDataSource.getNonAttachedExpertiseDetails(id);
+  }
+
+  @override
+  Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data) async {
+    return await mentorRemoteDataSource.newExpertiseRequest(data);
   }
 }

@@ -8,11 +8,11 @@ import 'package:mentivisor/Mentee/presentation/MenteeHomeScreens.dart';
 import 'package:mentivisor/Mentee/presentation/PdfViewerPage.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CustomerServiceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.dart';
+import 'package:mentivisor/Mentor/presentation/AddExpertiseScreen.dart';
 import 'package:mentivisor/Mentor/presentation/CancelSessionScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/AddPostScreen.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/AddResourceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/BecomeMentorScreen.dart';
-import 'package:mentivisor/Mentor/presentation/ExpertiseAddlink.dart';
 import 'package:mentivisor/Mentor/presentation/FeedbackScreen.dart';
 import 'package:mentivisor/Mentee/presentation/Community/CommunityScreen.dart';
 import 'package:mentivisor/Mentee/presentation/becomeMentor/CostPerMinuteScreen.dart';
@@ -59,6 +59,7 @@ import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/MentorProfile/EditMentorProfileScreen.dart';
 import '../Mentor/presentation/MentorProfile/MentorProfileScreen.dart';
+import '../Mentor/presentation/ProofOfExpertise.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
@@ -551,6 +552,21 @@ final GoRouter appRouter = GoRouter(
       path: '/update_expertise',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(ExpertiseScreen(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/add_expertise',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(AddExpertiseScreen(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/proof_expertise',
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>? ?? {};
+        return buildSlideTransitionPage(ProofOfExpertise(data: data), state);
       },
     ),
 

@@ -53,6 +53,7 @@ import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashbo
 import 'package:mentivisor/Mentor/data/Cubits/MentorSessionCancel/mentor_session_cancle_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dart';
+import 'package:mentivisor/Mentor/data/Cubits/NewExpertiseRequest/NewExpertiseRequestCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/NonAttachedExpertises/NonAttachedExpertisesCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ReportMentee/report_mentee_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
@@ -576,6 +577,10 @@ class StateInjector {
     BlocProvider<NonAttachedExpertiseDetailsCubit>(
       create: (context) =>
           NonAttachedExpertiseDetailsCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<NewExpertiseRequestCubit>(
+      create: (context) =>
+          NewExpertiseRequestCubit(context.read<ExpertisesRepo>()),
     ),
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(

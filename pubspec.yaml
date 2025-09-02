@@ -66,6 +66,7 @@ dependencies:
   flutter_pdfview: ^1.4.1+1
   path_provider: ^2.1.5
   share_plus: ^11.1.0
+  dotted_line: ^3.2.3
 
 
 

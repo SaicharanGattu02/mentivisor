@@ -343,7 +343,14 @@ class _ExpertiseListTab extends StatelessWidget {
               ),
               const Spacer(),
               if (showAddButton) const SizedBox(width: 8),
-              if (showAddButton) AddChip(onPressed: onAdd ?? () {}),
+              if (showAddButton)
+                AddChip(
+                  onPressed:
+                      onAdd ??
+                      () {
+                        context.push("/add_expertise");
+                      },
+                ),
             ],
           ),
           const SizedBox(height: 10),

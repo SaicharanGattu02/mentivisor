@@ -21,4 +21,5 @@ class MentorEndpointsUrls {
       "${userUrl}/mentor/expertise/details";
   static const String update_expertises = "${userUrl}/mentor/expertise/update";
   static const String non_attached_expertises = "${userUrl}/mentor/not-attached-expertise";
+  static const String new_expertise_request = "${userUrl}/mentor/new-expertise-request";
 }
