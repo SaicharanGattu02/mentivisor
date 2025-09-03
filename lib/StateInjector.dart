@@ -110,6 +110,7 @@ import 'Mentor/data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancel_repo.dart';
+import 'Mentor/data/Cubits/PendingSubExpertise/PendingSubExpertiseCubit.dart';
 import 'Mentor/data/Cubits/ReportMentor/report_mentor_cubit.dart';
 import 'Mentor/data/Cubits/ReportMentor/report_repository.dart';
 import 'Mentor/data/Cubits/SessionDetails/SessionsDetailsCubit.dart';
@@ -614,9 +615,12 @@ class StateInjector {
       create: (context) =>
           ReportMentorCubit(context.read<ReportMentorRepository>()),
     ),
-    BlocProvider<CoinHistoryCubit>(
+    BlocProvider<PendingSubExpertisesCubit>(
       create: (context) =>
-          CoinHistoryCubit(context.read<CoinHistoryRepo>()),
+          PendingSubExpertisesCubit(context.read<ExpertisesRepo>()),
+    ),
+    BlocProvider<CoinHistoryCubit>(
+      create: (context) => CoinHistoryCubit(context.read<CoinHistoryRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

@@ -5,6 +5,10 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentor/data/Cubits/UpdateExpertise/UpdateExpertiseCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/UpdateExpertise/UpdateExpertiseStates.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/AddChipPill.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/ChipPill.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/ErrorView.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/SelectableChip.dart';
 import '../Models/MentorExpertiseModel.dart';
 
 import 'package:flutter/material.dart';
@@ -88,14 +92,14 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
         decoration: const BoxDecoration(gradient: bg),
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
           child: BlocBuilder<MentorExpertiseCubit, MentorExpertiseStates>(
             builder: (context, state) {
               if (state is MentorExpertiseLoading) {
                 return const Center(child: DottedProgressWithLogo());
               }
               if (state is MentorExpertiseFailure) {
-                return _ErrorView(
+                return ErrorView(
                   message: state.error,
                   onRetry: () {
                     _seeded = false; // allow reseed on next success
@@ -111,7 +115,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
                 final data = model.data;
 
                 if (model.status != true || data == null) {
-                  return _ErrorView(
+                  return ErrorView(
                     message: model.message ?? 'Failed to load',
                     onRetry: () {
                       _seeded = false;
@@ -136,10 +140,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
                         color: Color(0xFF121212),
                       ),
                     ),
-                    const SizedBox(height: 12),
-
-                    // Chips area
-                    // Chips area
+                    const SizedBox(height: 16),
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.only(bottom: 24),
@@ -152,7 +153,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
                               runSpacing: 10,
                               children: [
                                 for (final item in _attached)
-                                  _ChipPill(label: item.name ?? ''),
+                                  ChipPill(label: item.name ?? ''),
                               ],
                             ),
 
@@ -160,7 +161,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
 
                             // "Add" button (only when there are unattached and the picker is hidden)
                             if (_unattached.isNotEmpty && !_showUnattached)
-                              _AddChipPill(
+                              AddChipPill(
                                 onTap: () =>
                                     setState(() => _showUnattached = true),
                               ),
@@ -181,7 +182,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
                                 runSpacing: 10,
                                 children: [
                                   for (final item in _unattached)
-                                    _SelectableChip(
+                                    SelectableChip(
                                       label: item.name ?? '',
                                       selected: _selectedUnattached.contains(
                                         item.id,
@@ -247,178 +248,5 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
   }
 }
 
-class _AddChipPill extends StatelessWidget {
-  const _AddChipPill({required this.onTap});
-  final VoidCallback onTap;
 
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFF9C5BF7),
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add_rounded, size: 16, color: Colors.white),
-              SizedBox(width: 6),
-              Text(
-                'Add',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontFamily: "segeo",
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: .2,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
-/// =====================
-/// UI Bits
-/// =====================
-
-class _ChipPill extends StatelessWidget {
-  const _ChipPill({
-    required this.label,
-    this.showCancel = false,
-    this.onCancel,
-  });
-
-  final String label;
-  final bool showCancel;
-  final VoidCallback? onCancel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFFE8ECF4)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF121212),
-            ),
-          ),
-          if (showCancel) ...[
-            const SizedBox(width: 6),
-            GestureDetector(
-              onTap: onCancel,
-              behavior: HitTestBehavior.opaque,
-              child: const Icon(
-                Icons.close_rounded,
-                size: 16,
-                color: Color(0xFF9AA3AF),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _SelectableChip extends StatelessWidget {
-  const _SelectableChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = selected ? const Color(0xFF9C5BF7) : Colors.white;
-    final fg = selected ? Colors.white : const Color(0xFF121212);
-
-    return Material(
-      color: bg,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: fg,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message, required this.onRetry});
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Failed to load',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.red.shade700,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
-          ),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: onRetry,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF9C5BF7),
-              foregroundColor: Colors.white,
-              elevation: 0,
-            ),
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
-}

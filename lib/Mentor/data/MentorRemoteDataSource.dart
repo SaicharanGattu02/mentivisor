@@ -14,6 +14,7 @@ import '../Models/MentorExpertiseModel.dart';
 import '../Models/MentorProfileModel.dart';
 import '../Models/MentorinfoResponseModel.dart';
 import '../Models/MyMenteesModel.dart';
+import '../Models/PendingSubExpertisesModel.dart';
 import '../Models/SessionDetailsModel.dart';
 import '../Models/NonAttachedExpertiseDetailsModel.dart';
 import '../Models/NonAttachedExpertisesModel.dart';
@@ -29,9 +30,8 @@ abstract class MentorRemoteDataSource {
   Future<MentorinfoResponseModel?> mentorinfo();
   Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
   Future<AvailableSlotsModel?> getMentorAvailability();
-  Future<SuccessModel?> mentorSessionCanceled( Map<String, dynamic> data);
+  Future<SuccessModel?> mentorSessionCanceled(Map<String, dynamic> data);
   Future<MentorCoinHistoryModel?> CoinsHistory(String filter);
-
 
   Future<SessionDetailsModel?> getSessionsDetails(int sessionId);
   Future<ExpertisesModel?> fetchApproved();
@@ -45,6 +45,7 @@ abstract class MentorRemoteDataSource {
   );
   Future<SuccessModel?> mentorReport(Map<String, dynamic> data);
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
+  Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status);
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -81,6 +82,51 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+  Future<FormData> _buildNewExpertiseFormData(Map<String, dynamic> data) async {
+    final map = <String, dynamic>{};
+
+    // 1) Arrays -> append [] in key
+    void addArray(String key, dynamic v) {
+      if (v == null) return;
+      final list = (v is List) ? v : [v];
+      map["$key[]"] = list;
+    }
+
+    addArray('expertise_id', data['expertise_id']);
+    addArray('sub_expertise_ids', data['sub_expertise_ids']);
+
+    // 2) proof_link
+    final link = data['proof_link'];
+    if (link is String && link.trim().isNotEmpty) {
+      map['proof_link'] = link.trim();
+    }
+
+    Future<MultipartFile?> asMultipart(dynamic v) async {
+      if (v == null) return null;
+      if (v is MultipartFile) return v;
+      if (v is File) {
+        final name = v.path.split('/').last;
+        return MultipartFile.fromFile(v.path, filename: name);
+      }
+      if (v is String && v.contains('/')) {
+        final name = v.split('/').last;
+        return MultipartFile.fromFile(v, filename: name);
+      }
+      return null;
+    }
+
+    final mf = await asMultipart(
+      data['proof_doc'] ?? data['proof_file'] ?? data['proof_file_path'],
+    );
+    if (mf != null) {
+      map['proof_doc'] = mf;
+    }
+
+    // Optional: log for debug
+    map.forEach((k, v) => AppLogger.log('🔹 $k -> $v'));
+
+    return FormData.fromMap(map);
   }
 
   @override
@@ -125,6 +171,20 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
+  Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status) async {
+    try {
+      final res = await ApiClient.get(
+        "${MentorEndpointsUrls.pending_expertises}/$id?status=${status}"
+      );
+      AppLogger.log('getPendingSubExpertises : ${res.data}');
+      return PendingSubExpertisesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getPendingSubExpertises : $e');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data) async {
     try {
       // Build FormData to match the cURL shape
@@ -141,56 +201,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       AppLogger.error('newExpertiseRequest : $e');
       return null;
     }
-  }
-
-  /// Accepts your existing `data` and emits FormData like the given cURL
-  /// - expertise_id (List<int>)      -> expertise_id[]
-  /// - sub_expertise_ids (List<int>) -> sub_expertise_ids[]
-  /// - proof_link (String)           -> proof_link
-  /// - proof_file / proof_file_path  -> proof_doc (MultipartFile)
-  Future<FormData> _buildNewExpertiseFormData(Map<String, dynamic> data) async {
-    final map = <String, dynamic>{};
-
-    // 1) Arrays -> append [] in key
-    void addArray(String key, dynamic v) {
-      if (v == null) return;
-      final list = (v is List) ? v : [v];
-      map["$key[]"] = list;
-    }
-
-    addArray('expertise_id', data['expertise_id']);
-    addArray('sub_expertise_ids', data['sub_expertise_ids']);
-
-    // 2) proof_link
-    final link = data['proof_link'];
-    if (link is String && link.trim().isNotEmpty) {
-      map['proof_link'] = link.trim();
-    }
-
-    Future<MultipartFile?> asMultipart(dynamic v) async {
-      if (v == null) return null;
-      if (v is MultipartFile) return v;
-      if (v is File) {
-        final name = v.path.split('/').last;
-        return MultipartFile.fromFile(v.path, filename: name);
-      }
-      if (v is String && v.contains('/')) {
-        final name = v.split('/').last;
-        return MultipartFile.fromFile(v, filename: name);
-      }
-      return null;
-    }
-
-    final mf =
-    await asMultipart(data['proof_doc'] ?? data['proof_file'] ?? data['proof_file_path']);
-    if (mf != null) {
-      map['proof_doc'] = mf;
-    }
-
-    // Optional: log for debug
-    map.forEach((k, v) => AppLogger.log('🔹 $k -> $v'));
-
-    return FormData.fromMap(map);
   }
 
 
@@ -256,7 +266,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   Future<ExpertisesModel?> fetchPending() async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.approved_expertises}",
+        "${MentorEndpointsUrls.pending_expertises}?status=requested",
       );
       AppLogger.log('fetchPending: ${res.data}');
       return ExpertisesModel.fromJson(res.data);
@@ -270,7 +280,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   Future<ExpertisesModel?> fetchRejected() async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.approved_expertises}",
+        "${MentorEndpointsUrls.rejected_expertises}?status=rejected",
       );
       AppLogger.log('fetchRejected: ${res.data}');
       return ExpertisesModel.fromJson(res.data);
@@ -454,6 +464,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<MentorCoinHistoryModel?> CoinsHistory(String filter) async {
     try {

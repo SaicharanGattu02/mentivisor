@@ -7,6 +7,9 @@ import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabil
 import '../../Components/CustomSnackBar.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
+import '../Models/AvailableSlotsModel.dart';
+import '../data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
+import '../data/Cubits/AvailabilitySlots/AvailabilitySlotsStates.dart';
 import '../data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 
 const Color kPurple = Color(0xFF9333EA);
@@ -58,6 +61,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   @override
   void initState() {
     super.initState();
+    context.read<AvailableSlotsCubit>().getAvailableSlots();
   }
 
   void prevMonth() {
@@ -309,6 +313,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
             // const SizedBox(height: 18),
 
             // ---------------- Recent Added header ----------------
+            // ---------------- Recent Added header ----------------
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -346,44 +351,59 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
             ),
             const SizedBox(height: 12),
 
-            // ---------------- Recent Added Cards ----------------
-            _recentGroupCard(
-              title: "15 Jun - 21 Jun 25",
-              badge: "1 week",
-              slots: const [
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-              ],
+            BlocBuilder<AvailableSlotsCubit, AvailableSlotsStates>(
+              builder: (context, state) {
+                if (state is AvailableSlotsLoading) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+                if (state is AvailableSlotsFailure) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Text(
+                      state.error,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontFamily: 'segeo',
+                      ),
+                    ),
+                  );
+                }
+                if (state is AvailableSlotsLoaded) {
+                  final data = state.availableSlotsModel.recentSlots ?? [];
+                  if (data.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Text(
+                        "No recent slots found",
+                        style: TextStyle(fontFamily: 'segeo'),
+                      ),
+                    );
+                  }
+
+                  final groups = _groupRecent(data);
+
+                  return Column(
+                    children: [
+                      for (final g in groups) ...[
+                        _recentGroupCard(
+                          title: g.title,
+                          badge: g.badge,
+                          slots: g.chips,
+                          count: g.count, // NEW
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
-            const SizedBox(height: 12),
-            _recentGroupCard(
-              title: "16 Jun 25",
-              slots: const [
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-              ],
-            ),
-            const SizedBox(height: 12),
-            _recentGroupCard(
-              title: "15 Jun 25",
-              slots: const [
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-                "9:00 - 10:00",
-              ],
-            ),
-            const SizedBox(height: 12),
           ],
         ),
       ),
@@ -450,7 +470,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     required String title,
     String? badge,
     required List<String> slots,
+    required int count, // NEW
   }) {
+    String countLabel = "$count slot${count == 1 ? '' : 's'}";
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -465,7 +487,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title row with calendar icon and optional badge
             Row(
               children: [
                 const Icon(
@@ -485,7 +506,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                 if (badge != null) ...[
                   const SizedBox(width: 6),
                   Text(
-                    badge,
+                    badge!,
                     style: const TextStyle(
                       fontFamily: 'segeo',
                       fontSize: 12,
@@ -496,17 +517,17 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                 ],
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              "6 slots",
-              style: TextStyle(
+              countLabel, // DYNAMIC
+              style: const TextStyle(
                 fontFamily: 'segeo',
                 fontSize: 13,
                 color: Color(0xFF7C8596),
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -550,6 +571,71 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     final a = DateTime(day.year, day.month, day.day, from.hour, from.minute);
     final b = DateTime(day.year, day.month, day.day, to.hour, to.minute);
     return b.difference(a);
+  }
+
+  DateTime _parseYmd(String ymd) => DateTime.parse(ymd); // "2025-09-04"
+  DateTime _combine(DateTime d, String hhmmss) {
+    final t = DateFormat('HH:mm:ss').parse(hhmmss);
+    return DateTime(d.year, d.month, d.day, t.hour, t.minute, t.second);
+  }
+
+  String _fmtDay(DateTime d) => DateFormat('d MMM yy').format(d);
+  String _fmtTime(String hhmmss) {
+    final t = DateFormat('HH:mm:ss').parse(hhmmss);
+    return DateFormat('h:mm').format(t); // 9:00
+  }
+
+  String _rangeTime(String start, String end) =>
+      "${_fmtTime(start)} - ${_fmtTime(end)}";
+
+  // week starts on Sunday (to match your calendar header Su–Sa)
+  DateTime _weekStartSunday(DateTime d) {
+    final dow = d.weekday % 7; // Sun=0, Mon=1,... Sat=6
+    return d.subtract(Duration(days: dow));
+  }
+
+  List<_Grouped> _groupRecent(List<RecentSlots> raw) {
+    final weekly = <RecentSlots>[];
+    final singles = <RecentSlots>[];
+    for (final r in raw) (r.repeatWeekly == 1 ? weekly : singles).add(r);
+
+    final out = <_Grouped>[];
+
+    // Weekly groups (Sun–Sat)
+    final Map<DateTime, List<RecentSlots>> byWeek = {};
+    for (final r in weekly) {
+      final d = _parseYmd(r.date!);
+      final ws = _weekStartSunday(d);
+      final key = DateTime(ws.year, ws.month, ws.day);
+      byWeek.putIfAbsent(key, () => []).add(r);
+    }
+    byWeek.forEach((start, items) {
+      final end = start.add(const Duration(days: 6));
+      final title =
+          "${DateFormat('d MMM').format(start)} - ${DateFormat('d MMM yy').format(end)}";
+      final chips = items
+          .map((e) => _rangeTime(e.startTime!, e.endTime!))
+          .toList();
+      out.add(_Grouped(start, title, "1 week", chips, items.length)); // count
+    });
+
+    // Single-day groups
+    final Map<DateTime, List<RecentSlots>> byDate = {};
+    for (final r in singles) {
+      final d = _parseYmd(r.date!);
+      final key = DateTime(d.year, d.month, d.day);
+      byDate.putIfAbsent(key, () => []).add(r);
+    }
+    byDate.forEach((day, items) {
+      final title = _fmtDay(day);
+      final chips = items
+          .map((e) => _rangeTime(e.startTime!, e.endTime!))
+          .toList();
+      out.add(_Grouped(day, title, null, chips, items.length)); // count
+    });
+
+    out.sort((a, b) => b.sortKey.compareTo(a.sortKey));
+    return out;
   }
 
   Future<void> _showAddSlotDialog() async {
@@ -805,6 +891,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             listener: (context, state) {
                               if (state is MentorAvailabilityLoaded) {
                                 _showSuccessDialog();
+                                context
+                                    .read<AvailableSlotsCubit>()
+                                    .getAvailableSlots();
                               } else if (state is MentorAvailabilityFailure) {
                                 CustomSnackBar1.show(context, state.error);
                               }
@@ -939,4 +1028,13 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       ),
     );
   }
+}
+
+class _Grouped {
+  final DateTime sortKey;
+  final String title;
+  final String? badge;
+  final List<String> chips;
+  final int count; // NEW
+  _Grouped(this.sortKey, this.title, this.badge, this.chips, this.count);
 }

@@ -21,6 +21,7 @@ import 'package:mentivisor/Mentee/presentation/becomeMentor/ExpertiseSelection.d
 import 'package:mentivisor/Mentee/presentation/CampusMentorList.dart';
 import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/Mentor/presentation/MentorInfoScreen.dart';
+import 'package:mentivisor/Mentor/presentation/PendingSubExpertiseScreen.dart';
 import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
@@ -457,7 +458,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/mentor_dashboard',
       pageBuilder: (context, state) {
-        final selectedIndex = int.tryParse(state.uri.queryParameters['selectedIndex'] ?? '0');
+        final selectedIndex = int.tryParse(
+          state.uri.queryParameters['selectedIndex'] ?? '0',
+        );
         return buildSlideTransitionPage(
           MentorDashboard(selectedIndex: selectedIndex),
           state,
@@ -470,7 +473,10 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final sessionIdParam = state.uri.queryParameters['sessionId'];
         final sessionId = int.tryParse(sessionIdParam ?? "0") ?? 0;
-        return buildSlideTransitionPage(CancelSessionScreen(sessionId: sessionId,), state);
+        return buildSlideTransitionPage(
+          CancelSessionScreen(sessionId: sessionId),
+          state,
+        );
       },
     ),
     GoRoute(
@@ -588,6 +594,23 @@ final GoRouter appRouter = GoRouter(
         final categoryTitle = state.uri.queryParameters['categoryTitle'] ?? '';
         return buildSlideTransitionPage(
           SubExpertisesScreen(categoryTitle: categoryTitle, id: id),
+          state,
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/pending_sub_expertise',
+      pageBuilder: (context, state) {
+        final id = int.tryParse(state.uri.queryParameters['id'] ?? '') ?? 0;
+        final categoryTitle = state.uri.queryParameters['categoryTitle'] ?? '';
+        final status = state.uri.queryParameters['status'] ?? '';
+        return buildSlideTransitionPage(
+          PendingSubExpertisesScreen(
+            id: id,
+            categoryTitle: categoryTitle,
+            status: status,
+          ),
           state,
         );
       },

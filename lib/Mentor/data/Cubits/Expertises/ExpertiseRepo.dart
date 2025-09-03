@@ -1,6 +1,7 @@
 import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
 import 'package:mentivisor/Mentor/Models/NonAttachedExpertiseDetailsModel.dart';
 import 'package:mentivisor/Mentor/Models/NonAttachedExpertisesModel.dart';
+import 'package:mentivisor/Mentor/Models/PendingSubExpertisesModel.dart';
 import 'package:mentivisor/Mentor/data/MentorRemoteDataSource.dart';
 
 import '../../../Models/ExpertisesModel.dart';
@@ -14,6 +15,7 @@ abstract class ExpertisesRepo {
   Future<SuccessModel?> updateExpertise(Map<String, dynamic> data);
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
   Future<NonAttachedExpertisesModel?> getNonAttachedExpertises();
+  Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status);
   Future<NonAttachedExpertiseDetailsModel?> getNonAttachedExpertiseDetails(
     int id,
   );
@@ -64,5 +66,10 @@ class ExpertisesRepoImpl implements ExpertisesRepo {
   @override
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data) async {
     return await mentorRemoteDataSource.newExpertiseRequest(data);
+  }
+
+  @override
+  Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status) async{
+    return await mentorRemoteDataSource.getPendingSubExpertises(id, status);
   }
 }

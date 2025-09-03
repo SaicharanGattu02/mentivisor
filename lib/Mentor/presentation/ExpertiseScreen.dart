@@ -132,7 +132,11 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                         state: state,
                         onRetry: () =>
                             context.read<PendingExpertiseCubit>().fetch(),
-                        onItemTap: (_) {}, // view-only
+                        onItemTap: (label) {
+                          context.push(
+                            "/pending_sub_expertise?id=${label.id}&categoryTitle=${label.name}&status=requested",
+                          );
+                        },
                       );
                     },
                   ),
@@ -146,7 +150,11 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                         state: state,
                         onRetry: () =>
                             context.read<RejectedExpertiseCubit>().fetch(),
-                        onItemTap: (_) {}, // view-only
+                        onItemTap: (label) {
+                          context.push(
+                            "/pending_sub_expertise?id=${label.id}&categoryTitle=${label.name}&status=rejected",
+                          );
+                        },
                       );
                     },
                   ),
