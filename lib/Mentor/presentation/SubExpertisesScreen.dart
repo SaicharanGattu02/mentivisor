@@ -216,7 +216,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(
+      bottomNavigationBar: _showUnattached? SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
           child: BlocConsumer<UpdateExpertiseCubit, UpdateExpertiseStates>(
@@ -243,7 +243,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
             },
           ),
         ),
-      ),
+      ): SizedBox.shrink(),
     );
   }
 }
