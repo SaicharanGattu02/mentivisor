@@ -259,7 +259,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                             }
                           },
                         );
-                        ;
                       },
                     );
                   },

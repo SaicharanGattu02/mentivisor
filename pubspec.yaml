@@ -67,6 +67,7 @@ dependencies:
   path_provider: ^2.1.5
   share_plus: ^11.1.0
   dotted_line: ^3.2.3
+  socket_io_client: ^3.1.2
 
 
 

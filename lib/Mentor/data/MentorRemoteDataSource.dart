@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mentivisor/core/network/mentor_endpoints.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import '../../Mentee/Models/CommentsModel.dart';
 import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/AvailableSlotsModel.dart';
@@ -45,7 +46,11 @@ abstract class MentorRemoteDataSource {
   );
   Future<SuccessModel?> mentorReport(Map<String, dynamic> data);
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
-  Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status);
+  Future<PendingSubExpertisesModel?> getPendingSubExpertises(
+    int id,
+    String status,
+  );
+  Future<CommentsModel?> getComments(int entityId);
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -83,6 +88,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
 
     return FormData.fromMap(formMap);
   }
+
   Future<FormData> _buildNewExpertiseFormData(Map<String, dynamic> data) async {
     final map = <String, dynamic>{};
 
@@ -130,6 +136,38 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
+  Future<PendingSubExpertisesModel?> getPendingSubExpertises(
+    int id,
+    String status,
+  ) async {
+    try {
+      final res = await ApiClient.get(
+        "${MentorEndpointsUrls.pending_expertises}/$id?status=${status}",
+      );
+      AppLogger.log('getPendingSubExpertises : ${res.data}');
+      return PendingSubExpertisesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getPendingSubExpertises : $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<CommentsModel?> getComments(int entityId) async {
+    try {
+      final res = await ApiClient.get(
+        "${MentorEndpointsUrls.comments}/$entityId",
+      );
+      AppLogger.log('getComments : ${res.data}');
+      // return CommentsModel.fromJson(res.data);
+      return null;
+    } catch (e) {
+      AppLogger.error('getComments : $e');
+      return null;
+    }
+  }
+
+  @override
   Future<SuccessModel?> updateExpertise(Map<String, dynamic> data) async {
     try {
       // Build FormData manually to match: sub_expertise_ids[]=32&sub_expertise_ids[]=25&mode=add
@@ -171,20 +209,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status) async {
-    try {
-      final res = await ApiClient.get(
-        "${MentorEndpointsUrls.pending_expertises}/$id?status=${status}"
-      );
-      AppLogger.log('getPendingSubExpertises : ${res.data}');
-      return PendingSubExpertisesModel.fromJson(res.data);
-    } catch (e) {
-      AppLogger.error('getPendingSubExpertises : $e');
-      return null;
-    }
-  }
-
-  @override
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data) async {
     try {
       // Build FormData to match the cURL shape
@@ -202,7 +226,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<NonAttachedExpertiseDetailsModel?> getNonAttachedExpertiseDetails(

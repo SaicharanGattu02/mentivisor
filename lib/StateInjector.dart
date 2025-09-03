@@ -10,6 +10,8 @@ import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/Comments/CommentsRepo.dart';
+import 'package:mentivisor/Mentee/data/cubits/Comments/FetchCommentsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
@@ -352,6 +354,12 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
+    RepositoryProvider<CommentsRepo>(
+      create: (context) => CommentsRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -621,6 +629,10 @@ class StateInjector {
     ),
     BlocProvider<CoinHistoryCubit>(
       create: (context) => CoinHistoryCubit(context.read<CoinHistoryRepo>()),
+    ),
+
+    BlocProvider<FetchCommentsCubit>(
+      create: (context) => FetchCommentsCubit(context.read<CommentsRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

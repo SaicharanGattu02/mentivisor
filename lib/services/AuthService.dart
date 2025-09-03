@@ -31,13 +31,21 @@ class AuthService {
   static Future<String?> getRole() async {
     return await _storage.read(key: _role);
   }
+
+  /// Get USer_id
+  static Future<String?> getUSerId() async {
+    return await _storage.read(key: _userId);
+  }
+
   /// get Name
   static Future<String?> getName() async {
     return await _storage.read(key: _userName);
   }
+
   static Future<String?> getEmail() async {
     return await _storage.read(key: _email);
   }
+
   static Future<String?> getMobile() async {
     return await _storage.read(key: _mobile);
   }
@@ -49,7 +57,6 @@ class AuthService {
   static Future<String?> getCoins() async {
     return await _storage.read(key: _coins);
   }
-
 
   /// Get stored refresh token
   static Future<String?> getRefreshToken() async {
@@ -77,7 +84,10 @@ class AuthService {
     String refreshToken,
     int expiresIn,
     String role,
-    int userid, String userName, String email,int mobile
+    int userid,
+    String userName,
+    String email,
+    int mobile,
   ) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
     await _storage.write(key: _refreshTokenKey, value: refreshToken);

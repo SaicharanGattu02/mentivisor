@@ -68,8 +68,7 @@ class _PostCardState extends State<PostCard>
 
   @override
   Widget build(BuildContext context) {
-    return
-    Container(
+    return Container(
       decoration: BoxDecoration(
         color: widget.communityPosts.popular == 1
             ? const Color(0xffFFF7CE)
@@ -78,11 +77,9 @@ class _PostCardState extends State<PostCard>
       ),
       child: Stack(
         children: [
-          // 🔹 Post Content
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Image Section
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
@@ -142,7 +139,7 @@ class _PostCardState extends State<PostCard>
                     Row(
                       children: [
                         CachedNetworkImage(
-                          imageUrl: widget.communityPosts.imgUrl ?? "",
+                          imageUrl: widget.communityPosts.image ?? "",
                           imageBuilder: (context, imageProvider) =>
                               CircleAvatar(
                                 radius: 16,

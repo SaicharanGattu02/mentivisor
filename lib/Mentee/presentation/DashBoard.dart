@@ -4,7 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/MeteeStudyzoneScreens.dart';
+import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import '../../bloc/internet_status/internet_status_bloc.dart';
+import '../../services/SocketService.dart';
 import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
 import 'Ecc/EccScreen.dart';
@@ -34,6 +37,13 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     _selectedIndex = widget.selectedIndex ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
+    getUserId();
+  }
+
+  Future<void> getUserId() async {
+    final userId = await AuthService.getUSerId();
+    AppLogger.info("userId: ${userId}");
+    SocketService.connect(userId.toString());
   }
 
   void _onItemTapped(int index) {
