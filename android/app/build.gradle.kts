@@ -33,13 +33,13 @@ android {
             keyAlias = "upload"
             keyPassword = "mentivisor"
             storePassword = "mentivisor"
-            storeFile = file("C:\\Users\\Dell\\AndroidStudioProjects\\mentivisor1\\android\\upload-keystore.jks")
+            storeFile = file("D:\\mentivisor\\android\\app\\upload-keystore.jks")
         }
     }
 
     defaultConfig {
         applicationId = "com.example.mentivisor"
-        minSdk = 23          // <-- Updated from flutter.minSdkVersion
+        minSdk = flutter.minSdkVersion          // <-- Updated from flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -49,8 +49,8 @@ android {
     buildTypes {
         getByName("release") {
             // Enable minification (default in Flutter release), and use your rules:
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

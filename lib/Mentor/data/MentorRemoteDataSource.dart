@@ -159,8 +159,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
         "${MentorEndpointsUrls.comments}/$entityId",
       );
       AppLogger.log('getComments : ${res.data}');
-      // return CommentsModel.fromJson(res.data);
-      return null;
+      return CommentsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('getComments : $e');
       return null;
