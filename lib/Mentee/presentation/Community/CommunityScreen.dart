@@ -12,6 +12,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../services/AuthService.dart';
 import '../../Models/CommunityPostsModel.dart';
+import '../Widgets/CommonChoiceChip.dart';
 import '../Widgets/FilterButton.dart';
 import '../Widgets/PostCard.dart';
 
@@ -236,56 +237,25 @@ class _CommunityScreenState extends State<Communityscreen> {
                       separatorBuilder: (_, __) => const SizedBox(width: 8),
                       itemBuilder: (context, i) {
                         final selected = i == _selectedFilter.value;
-                        return ChoiceChip(
-                          showCheckmark: false,
-                          labelPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 0,
-                          ),
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                          label: Text(
-                            _filters[i],
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: selected
-                                  ? Color(0xFF4076ED)
-                                  : Colors.black54,
-                            ),
-                          ),
+                         return CustomChoiceChip(
+                          label: _filters[i],
                           selected: selected,
                           onSelected: (_) {
                             _selectedFilter.value = i;
                             if (_onCampus.value) {
-                              context
-                                  .read<CommunityPostsCubit>()
-                                  .getCommunityPosts(
-                                    "",
-                                    _filters[i].toLowerCase(),
-                                  );
+                              context.read<CommunityPostsCubit>().getCommunityPosts(
+                                "",
+                                _filters[i].toLowerCase(),
+                              );
                             } else {
-                              context
-                                  .read<CommunityPostsCubit>()
-                                  .getCommunityPosts(
-                                    "beyond",
-                                    _filters[i].toLowerCase(),
-                                  );
+                              context.read<CommunityPostsCubit>().getCommunityPosts(
+                                "beyond",
+                                _filters[i].toLowerCase(),
+                              );
                             }
                           },
-                          selectedColor: const Color(
-                            0xFF4076ED,
-                          ).withOpacity(0.1),
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            side: selected
-                                ? const BorderSide(color: Color(0xFF4076ED))
-                                : const BorderSide(color: Colors.transparent),
-                          ),
                         );
+                        ;
                       },
                     );
                   },

@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/Men
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../../Components/CustomAppButton.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
 import '../Widgets/CommentBottomSheet.dart';
@@ -122,7 +123,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                   SizedBox(height: 8),
 
                   Text(
-                    menteeProfile?.user?.name ?? "UnKnown",
+                    capitalize(menteeProfile?.user?.name ?? "UnKnown") ,
                     style: TextStyle(
                       color: Color(0xff121212),
                       fontSize: 18,
@@ -132,7 +133,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'SVR College NZB ${menteeProfile?.user?.year ?? ""} year\n${menteeProfile?.user?.stream ?? ""}',
+                    'SVR College NZB ${menteeProfile?.user?.yearName ?? ""} year\n${menteeProfile?.user?.stream ?? ""}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xff666666),

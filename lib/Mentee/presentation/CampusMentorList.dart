@@ -134,7 +134,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: 0.7,
+                              childAspectRatio: 0.66,
                             ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
@@ -200,18 +200,35 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                         width: 14,
                                       ),
                                       const SizedBox(width: 4),
-                                      Text(
-                                        m.averageRating?.toStringAsFixed(1) ??
-                                            '0.0',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'segeo',
-                                          color: Color(0xff333333),
-
-                                          fontWeight: FontWeight.w700,
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  m.averageRating
+                                                      ?.toStringAsFixed(1) ??
+                                                  '0.0',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontFamily: 'segeo',
+                                                color: Color(0xff333333),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text:
+                                                  ' (${m.totalReviews ?? 0.0})',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontFamily: 'segeo',
+                                                color: Color(0xff666666),
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8),
                                       Image.asset(
                                         "assets/images/coinsgold.png",
                                         height: 16,

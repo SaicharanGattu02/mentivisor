@@ -420,10 +420,13 @@ class SessionCard extends StatelessWidget {
                       },
                       builder: (context, state) {
                         return CustomAppButton1(
-                          isLoading: state is ReportMentorLoading, // ✅ show loader
+                          isLoading:
+                              state is ReportMentorLoading, // ✅ show loader
                           text: "Submit Report",
                           onPlusTap: () {
-                            String finalReason = _selected == "Other" && _otherController.text.isNotEmpty
+                            String finalReason =
+                                _selected == "Other" &&
+                                    _otherController.text.isNotEmpty
                                 ? _otherController.text
                                 : _selected ?? "";
 
@@ -433,7 +436,9 @@ class SessionCard extends StatelessWidget {
                               "reason": finalReason,
                             };
 
-                            context.read<ReportMentorCubit>().reportMentor(data);
+                            context.read<ReportMentorCubit>().reportMentor(
+                              data,
+                            );
                           },
                         );
                       },

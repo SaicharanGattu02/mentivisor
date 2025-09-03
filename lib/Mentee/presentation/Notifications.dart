@@ -5,6 +5,7 @@ import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_cubit.
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states.dart';
 
 import '../../Components/CommonLoader.dart';
+import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
 
 class Notifications extends StatefulWidget {
@@ -69,11 +70,11 @@ class _NotificationsState extends State<Notifications> {
                     //   itemCount: data.reminder!.length,
                     //   itemBuilder: (context, index) {
                     //     final reminder = data.reminder![index];
-                        // return _buildCard(
-                        //   icon: "assets/icons/calendar.png",
-                        //   title: reminder.title ?? "",
-                        //   subtitle: reminder.message ?? "",
-                        // );
+                    // return _buildCard(
+                    //   icon: "assets/icons/calendar.png",
+                    //   title: reminder.title ?? "",
+                    //   subtitle: reminder.message ?? "",
+                    // );
                     //   },
                     // ),
                   ],
@@ -85,30 +86,56 @@ class _NotificationsState extends State<Notifications> {
                     //   itemCount: data.rewards!.length,
                     //   itemBuilder: (context, index) {
                     //     final reward = data.rewards![index];
-                        // return _buildCard(
-                        //   icon: "assets/icons/coin.png",
-                        //   title: reward.title ?? "",
-                        //   subtitle: reward.message ?? "",
-                        // );
+                    // return _buildCard(
+                    //   icon: "assets/icons/coin.png",
+                    //   title: reward.title ?? "",
+                    //   subtitle: reward.message ?? "",
+                    // );
                     //   },
                     // ),
                   ],
 
-                  // Rejections Section
-                  if (data?.rejections != null &&
-                      data!.rejections!.isNotEmpty) ...[
-                    _buildHeader("Rejections"),
-                    _buildList(
-                      itemCount: data.rejections!.length,
-                      itemBuilder: (context, index) {
-                        final rejection = data.rejections![index];
-                        return _buildCard(
-                          icon: "assets/icons/meet.png",
-                          title: rejection.message ?? "",
-                          subtitle: rejection.date ?? "",
-                        );
-                      },
-                    ),
+                  if (data?.rejections != null) ...[
+                    if (data!.rejections!.isEmpty)
+                      SliverToBoxAdapter(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 200,
+                                width: 200,
+                                child: Image.asset("assets/nodata/no_data.png"),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'No Data Found!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: primarycolor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else //
+                      _buildHeader("Rejections"),// 👉 Show List if not empty
+                      _buildList(
+                        itemCount: data.rejections!.length,
+                        itemBuilder: (context, index) {
+                          final rejection = data.rejections![index];
+                          return _buildCard(
+                            icon: "assets/icons/meet.png",
+                            title: rejection.message ?? "",
+                            subtitle: rejection.date ?? "",
+                          );
+                        },
+                      ),
                   ],
                 ],
               );
@@ -146,10 +173,7 @@ class _NotificationsState extends State<Notifications> {
     required Widget Function(BuildContext, int) itemBuilder,
   }) {
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        itemBuilder,
-        childCount: itemCount,
-      ),
+      delegate: SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
     );
   }
 

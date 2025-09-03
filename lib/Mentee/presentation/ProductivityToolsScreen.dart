@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:intl/intl.dart';
 
+import '../../Components/CommonLoader.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_states.dart';
 import '../data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
@@ -28,15 +29,19 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
   @override
   void initState() {
     super.initState();
-    final formattedDate = DateFormat(
-      'yyyy-MM-dd',
-    ).format(_selectedDateNotifier.value);
-    context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
-    context.read<TaskByStatusCubit>().fetchTasksByStatus();
-    _generateDayList(
-      _selectedDateNotifier.value.year,
-      _selectedDateNotifier.value.month,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final formattedDate = DateFormat(
+        'yyyy-MM-dd',
+      ).format(_selectedDateNotifier.value);
+      await Future.wait([
+        context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate),
+        context.read<TaskByStatusCubit>().fetchTasksByStatus(),
+      ]);
+      _generateDayList(
+        _selectedDateNotifier.value.year,
+        _selectedDateNotifier.value.month,
+      );
+    });
   }
 
   void _generateDayList(int year, int month) {
@@ -122,7 +127,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                               state.taskStatesModel.todayTask?.toString() ??
                                   "0",
                               Colors.blue[100]!,
-                              "assets/images/vector3.png", // your image 3
+                              "assets/images/vector3.png",
                             ),
                           ),
                         ],
@@ -130,7 +135,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                     } else if (state is TaskByStatusFailure) {
                       return Center(child: Text(state.msg ?? ""));
                     }
-                    return const Center(child: Text("No Data"));
+                    return const SizedBox();
                   },
                 ),
                 const SizedBox(height: 20),
@@ -516,8 +521,8 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             BlocBuilder<TaskByDateCubit, TaskBydateStates>(
                               builder: (context, taskState) {
                                 if (taskState is TaskBydateLoading) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
+                                  return Center(
+                                    child: DottedProgressWithLogo(),
                                   );
                                 } else if (taskState is TaskBydateLoaded) {
                                   final tasks =
@@ -527,7 +532,6 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                       [];
                                   if (tasks.isEmpty) {
                                     return Container(
-                                      height: 160,
                                       alignment: Alignment.center,
                                       child: Column(
                                         children: [
@@ -592,7 +596,12 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                             'Are you sure you want to mark "\n ${task.title}" as completed?',
                                                             style:
                                                                 const TextStyle(
-                                                                  fontSize: 20,
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      'segeo',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
                                                                   color: Color(
                                                                     0xFF666666,
                                                                   ),
@@ -603,6 +612,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                               children: [
                                                                 Expanded(
                                                                   child: CustomOutlinedButton(
+                                                                    radius: 100,
                                                                     text:
                                                                         "Cancel",
                                                                     onTap: () {
@@ -717,6 +727,15 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                                     ),
                                                     content: Text(
                                                       'Are you sure you want to delete \n"${task.title}"?',
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontFamily: 'segeo',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Color(
+                                                          0xFF666666,
+                                                        ),
+                                                      ),
                                                     ),
                                                     actions: [
                                                       Row(

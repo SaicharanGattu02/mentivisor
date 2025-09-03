@@ -72,6 +72,8 @@ class User {
   String? lastLoginAt;
   String? mentorStatus;
   String? profilePicUrl;
+  int? yearId;
+  String? yearName;
   int? availabilityCoins;
   List<StudyZoneBooks>? studyZoneBooks;
   List<CommunityPost>? communityPost;
@@ -90,7 +92,8 @@ class User {
     this.exp,
     this.bio,
     this.collegeId,
-    this.year,
+    this.year,    this.yearId,
+    this.yearName,
     this.stream,
     this.gender,
     this.status,
@@ -130,6 +133,8 @@ class User {
     year = json['year'];
     stream = json['stream'];
     gender = json['gender'];
+    yearId = json['year_id'];
+    yearName = json['year_name'];
     status = json['status'];
     profilePic = json['profile_pic'];
     state = json['state'];
@@ -188,6 +193,8 @@ class User {
     map['expired_time'] = expiredTime;
     map['created_at'] = createdAt;
     map['updated_at'] = updatedAt;
+    map['year_id'] = yearId;
+    map['year_name'] = yearName;
     map['deleted_at'] = deletedAt;
     map['active_status'] = activeStatus;
     map['last_login_at'] = lastLoginAt;

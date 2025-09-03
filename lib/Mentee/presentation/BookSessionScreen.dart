@@ -55,12 +55,22 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   }
 
   Future<void> pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
     if (result != null && result.files.single.path != null) {
-      setState(() {
-        selectedFilePath = result.files.single.path; // full path for API
-        selectedFileName = result.files.single.name; // file name for UI
-      });
+      final file = result.files.single;
+
+      if (file.extension?.toLowerCase() == "pdf") {
+        setState(() {
+          selectedFilePath = file.path;
+          selectedFileName = file.name;
+        });
+      } else {
+       CustomSnackBar1.show(context, "Only PDF files are allowed.");
+      }
     }
   }
 
@@ -267,49 +277,89 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                               final width =
                                   (c.maxWidth - spacing * (count - 1)) / count;
 
+                              final today = DateTime.now();
+                              final todayDate = DateTime(
+                                today.year,
+                                today.month,
+                                today.day,
+                              );
+
                               return Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   for (final d in days)
-                                    SizedBox(
-                                      width: width,
-                                      child: DayCell(
-                                        dayAbbrev: d.day ?? '',
-                                        dayNum: d.dayNum ?? '',
-                                        month: d.month ?? '',
-                                        slotCount: d.slotCount ?? 0,
-                                        selected: selectedDate == d.date,
-                                        onTap: () async {
-                                          // if ((d.slotCount ?? 0) == 0) return;
+                                    if (d.date != null) ...[
+                                      Builder(
+                                        builder: (context) {
+                                          final dayDate = DateTime.parse(
+                                            d.date!,
+                                          );
+                                          final onlyDate = DateTime(
+                                            dayDate.year,
+                                            dayDate.month,
+                                            dayDate.day,
+                                          );
+                                          final isPast = onlyDate.isBefore(
+                                            todayDate,
+                                          );
 
-                                          setState(() => selectedDate = d.date);
+                                          return SizedBox(
+                                            width: width,
+                                            child: IgnorePointer(
+                                              ignoring: isPast,
+                                              child: Opacity(
+                                                opacity: isPast ? 0.2 : 1.0,
+                                                child: DayCell(
+                                                  dayAbbrev: d.day ?? '',
+                                                  dayNum: d.dayNum ?? '',
+                                                  month: d.month ?? '',
+                                                  slotCount: d.slotCount ?? 0,
+                                                  selected:
+                                                      selectedDate == d.date,
+                                                  onTap: () async {
+                                                    setState(
+                                                      () =>
+                                                          selectedDate = d.date,
+                                                    );
 
-                                          final picked =
-                                              await showDailySlotsBottomSheet(
-                                                context,
-                                                mentorId:
-                                                    widget.data.userId ?? 0,
-                                                date: d.date!, // ISO date
-                                              );
+                                                    final picked =
+                                                        await showDailySlotsBottomSheet(
+                                                          context,
+                                                          mentorId:
+                                                              widget
+                                                                  .data
+                                                                  .userId ??
+                                                              0,
+                                                          date: d
+                                                              .date!, // ISO date
+                                                        );
 
-                                          if (picked == null) return;
+                                                    if (picked == null) return;
 
-                                          setState(() {
-                                            selectedDate = d.date;
-                                            selectedTime = picked.timeLabel;
-                                            selectedSlotId = picked.id;
-                                          });
+                                                    setState(() {
+                                                      selectedDate = d.date;
+                                                      selectedTime =
+                                                          picked.timeLabel;
+                                                      selectedSlotId =
+                                                          picked.id;
+                                                    });
 
-                                          context
-                                              .read<SelectSlotCubit>()
-                                              .getSelectSlot(
-                                                widget.data.userId ?? 0,
-                                                picked.id ?? 0,
-                                              );
+                                                    context
+                                                        .read<SelectSlotCubit>()
+                                                        .getSelectSlot(
+                                                          widget.data.userId ??
+                                                              0,
+                                                          picked.id ?? 0,
+                                                        );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
-                                    ),
+                                    ],
                                 ],
                               );
                             },

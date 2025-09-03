@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
+import '../../../utils/constants.dart';
 import '../../Models/MentorProfileModel.dart';
 import '../../data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import '../../data/Cubits/MentorProfile/mentor_profile_states.dart';
@@ -124,13 +125,11 @@ class _ProfileBody extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 10),
-
-          // Name
+           SizedBox(height: 10),
           Text(
-            name,
+            capitalize(name),
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style:  TextStyle(
               fontFamily: 'segeo',
               fontWeight: FontWeight.w700,
               fontSize: 18,

@@ -35,11 +35,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-
   File? _image;
   String? imagePath;
   int? _yearId;
-  final ImagePicker _picker = ImagePicker();
+
 
   bool isLoading = true;
 
@@ -55,9 +54,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _emailController.text = data?.user?.email ?? "";
           _phoneController.text = data?.user?.contact?.toString() ?? "";
           _streamController.text = data?.user?.stream ?? "";
-          _yearController.text = data?.user?.year ?? "";
           _bioController.text = data?.user?.bio ?? "";
           imagePath = data?.user?.profilePicUrl ?? "";
+          if (data?.user?.yearId != null) {
+            _yearId = int.tryParse(data?.user?.yearId.toString()??"");
+            _yearController.text = data?.user?.yearName.toString()??"";
+          }
         });
       }
       setState(() => isLoading = false);
@@ -75,68 +77,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.photo_library, color: primarycolor),
-                title: const Text("Choose from Gallery"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImageFromGallery();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.camera_alt, color: primarycolor),
-                title: const Text("Take a Photo"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImageFromCamera();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
-  Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
+  Future<void> _selectImage() async {
+    final pickedImage = await ImagePickerHelper.pickImage(
+      context,
+      iconColor: primarycolor,
     );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        setState(() => _image = compressedFile);
-      }
+    if (pickedImage != null) {
+      setState(() => _image = pickedImage);
     }
   }
 
-  Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.camera,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        setState(() => _image = compressedFile);
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +123,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             bottom: 4,
                             right: 4,
                             child: GestureDetector(
-                              onTap: _pickImage,
+                              onTap: (){
+                               _selectImage();
+                              },
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -229,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onTap: () {
                         _openYearSelectionBottomSheet(context);
                       },
-                      decoration: InputDecoration(
+                      decoration: InputDecoration(suffixIcon: Icon(Icons.arrow_drop_down_sharp),
                         hintText: 'Select Year',
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,

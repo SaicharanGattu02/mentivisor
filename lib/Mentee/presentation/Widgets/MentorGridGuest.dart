@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
+import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CompusMentorListModel.dart';
 import '../../Models/GuestMentorsModel.dart';
@@ -34,7 +35,7 @@ class MentorGridGuest extends StatelessWidget {
             image: url ?? "",
             rating: (m?.ratingsReceivedCount ?? 0).toDouble(),
             ratingCount: m?.ratingsReceivedCount ?? 0,
-            coinsPerMinute: "",
+            coinsPerMinute:m?.costPerMinute??"",
           ),
         );
       },
@@ -54,9 +55,9 @@ class MentorGridCampus extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       itemCount: mentors_list?.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
@@ -126,9 +127,9 @@ class _MentorCard extends StatelessWidget {
               backgroundImage: AssetImage("assets/images/profile.png"),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
-            name,
+            capitalize(name),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -140,19 +141,22 @@ class _MentorCard extends StatelessWidget {
           ),
           SizedBox(height: 5),
           SizedBox(
-            width: SizeConfig.screenWidth * 0.18,
-            child: Text(
-              designation,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xff555555),
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.w400,
+            width: SizeConfig.screenWidth * 0.4,
+            child: Center(
+              child: Text(
+                designation,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xff555555),
+                  fontFamily: 'segeo',
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
           ),
+
           SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -164,13 +168,28 @@ class _MentorCard extends StatelessWidget {
                 width: 14,
               ),
               SizedBox(width: 4),
-              Text(
-                "${rating.toStringAsFixed(1)} ($ratingCount)",
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'segeo',
-                  color: Color(0xff333333),
-                  fontWeight: FontWeight.w700,
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: rating.toStringAsFixed(1),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'segeo',
+                        color: Color(0xff333333),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    TextSpan(
+                      text: " ($ratingCount)",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'segeo',
+                        color: Color(0xff666666),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
@@ -180,8 +199,9 @@ class _MentorCard extends StatelessWidget {
                 '$coinsPerMinute',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xff666666),
-                  fontWeight: FontWeight.w400,
+                  fontFamily: 'segeo',
+                  color: Color(0xff333333),
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],

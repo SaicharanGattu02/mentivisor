@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ImageUtils {
   static Future<File?> compressImage(File file) async {
@@ -52,5 +55,64 @@ class ImageUtils {
       print("Error compressing image: $e");
       return null;
     }
+  }
+}
+
+
+class ImagePickerHelper {
+  static final ImagePicker _picker = ImagePicker();
+
+  /// Show bottom sheet for choosing camera or gallery
+  static Future<File?> pickImage(BuildContext context, {Color? iconColor}) async {
+    return await showModalBottomSheet<File?>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo_library, color: iconColor ?? Colors.blue),
+                title: const Text("Choose from Gallery"),
+                onTap: () async {
+                  Navigator.pop(context,
+                      await _pickImageFromGallery());
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt, color: iconColor ?? Colors.blue),
+                title: const Text("Take a Photo"),
+                onTap: () async {
+                  Navigator.pop(context,
+                      await _pickImageFromCamera());
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<File?> _pickImageFromGallery() async {
+    final XFile? pickedFile =
+    await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return await ImageUtils.compressImage(File(pickedFile.path));
+    }
+    return null;
+  }
+
+  static Future<File?> _pickImageFromCamera() async {
+    final XFile? pickedFile =
+    await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      return await ImageUtils.compressImage(File(pickedFile.path));
+    }
+    return null;
   }
 }

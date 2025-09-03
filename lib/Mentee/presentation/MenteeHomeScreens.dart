@@ -13,8 +13,6 @@ import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
-import '../data/cubits/GetBanners/GetBannersCubit.dart';
-import '../data/cubits/GetBanners/GetBannersState.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_state.dart';
 import 'Widgets/FilterButton.dart';
@@ -110,7 +108,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               AuthService.saveCoins(coins);
               AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
               return Scaffold(
-               drawerEnableOpenDragGesture: !isGuest,
+                drawerEnableOpenDragGesture: !isGuest,
                 key: _scaffoldKey,
                 appBar: AppBar(
                   backgroundColor: Colors.white,
@@ -197,28 +195,35 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           },
                         ),
                       ),
-                    if (!isGuest)
-                      IconButton(
-                        icon: Image.asset(
-                          "assets/images/crownonly.png",
-                          height: 21,
-                          width: 26,
+                    if (!isGuest) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Image.asset(
+                                "assets/images/crownonly.png",
+                                height: 21,
+                                width: 26,
+                              ),
+                              onPressed: () {
+                                context.push('/executiveservices');
+                              },
+                            ),
+                            IconButton(
+                              icon: Image.asset(
+                                "assets/icons/notifications.png",
+                                height: 21,
+                                width: 26,
+                              ),
+                              onPressed: () {
+                                context.push('/notifications');
+                              },
+                            ),
+                          ],
                         ),
-                        onPressed: () {
-                          // context.push('/executiveservices');
-                          context.push('/mentor_dashboard');
-                        },
                       ),
-                    IconButton(
-                      icon: Image.asset(
-                        "assets/icons/notifications.png",
-                        height: 21,
-                        width: 26,
-                      ),
-                      onPressed: () {
-                        context.push('/notifications');
-                      },
-                    ),
+                    ],
                   ],
                 ),
                 drawer: Drawer(
@@ -522,18 +527,23 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               onTap: () {
                                 if (b.link != null) _launchUrl(b.link!);
                               },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  b.imgUrl ?? '',
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  errorBuilder: (_, __, ___) => Container(
-                                    color: Colors.grey[200],
-                                    alignment: Alignment.center,
-                                    child: const Icon(
-                                      Icons.broken_image,
-                                      color: Colors.grey,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2.5,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.network(
+                                    b.imgUrl ?? '',
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
+                                    errorBuilder: (_, __, ___) => Container(
+                                      color: Colors.grey[200],
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -626,8 +636,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               'Mentors',
                               style: TextStyle(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: "Inter",
+                                color: Color(0xff222222),
                               ),
                             ),
                             TextButton(
@@ -644,13 +655,18 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   }
                                 }
                               },
-                              child: const Text(
+                              child: Text(
                                 'View All',
                                 style: TextStyle(
                                   color: Color(0xff4076ED),
                                   fontFamily: 'segeo',
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 14,
                                   decoration: TextDecoration.underline,
+                                  decorationStyle: TextDecorationStyle.solid,
                                   decorationColor: Color(0xff4076ED),
+                                  decorationThickness: 1,
                                 ),
                               ),
                             ),

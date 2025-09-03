@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../services/AuthService.dart';
+import '../../../services/SecureStorageService.dart';
 import '../../../utils/color_constants.dart';
 import '../../data/cubits/Login/LoginCubit.dart';
 import '../../data/cubits/Login/LoginState.dart';
@@ -28,6 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
   String passwordError = '';
 
   bool _obscurePassword = true;
+  @override
+  void initState() {
+    _loadRememberedCredentials();
+    super.initState();
+  }
 
   void validateAndSubmit() {
     setState(() {
@@ -64,6 +70,39 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _handleRememberMe(String email, String password) async {
+    if (_rememberMe) {
+      await SecureStorageService.instance.setString("saved_email", email);
+      await SecureStorageService.instance.setString("saved_password", password);
+      await SecureStorageService.instance.setBool("remember_me", true);
+    } else {
+      await SecureStorageService.instance.delete("saved_email");
+      await SecureStorageService.instance.delete("saved_password");
+      await SecureStorageService.instance.setBool("remember_me", false);
+    }
+  }
+
+  Future<void> _loadRememberedCredentials() async {
+    final remember =
+        await SecureStorageService.instance.getBool("remember_me") ?? false;
+    if (remember) {
+      final savedEmail = await SecureStorageService.instance.getString(
+        "saved_email",
+      );
+      final savedPassword = await SecureStorageService.instance.getString(
+        "saved_password",
+      );
+
+      if (savedEmail != null && savedPassword != null) {
+        setState(() {
+          _rememberMe = true;
+          emailController.text = savedEmail;
+          passwordController.text = savedPassword;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +127,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       gradient: kCommonGradient,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Icon(Icons.school, color: Colors.white, size: 28),
+                    child: const Icon(
+                      Icons.school,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                   ),
 
                   const SizedBox(height: 18),
@@ -138,7 +181,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Text(
                           'Email Address',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
@@ -148,29 +194,54 @@ class _LoginScreenState extends State<LoginScreen> {
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
                               isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                              prefixIcon: const Icon(Icons.email_outlined, color: Colors.black26, size: 20),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.email_outlined,
+                                color: Colors.black26,
+                                size: 20,
+                              ),
                               hintText: 'Enter your email',
-                              hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF9CA3AF),
+                                fontSize: 14,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                             ),
                           ),
@@ -179,14 +250,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (showEmailError)
                           Text(
                             emailError,
-                            style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
 
                         const SizedBox(height: 16),
 
                         const Text(
                           'Password',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
@@ -197,37 +275,66 @@ class _LoginScreenState extends State<LoginScreen> {
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
                               isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                              prefixIcon: const Icon(Icons.lock_outline, color: Colors.black26, size: 20),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.lock_outline,
+                                color: Colors.black26,
+                                size: 20,
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                  _obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
                                   color: Colors.black26,
                                   size: 22,
                                 ),
-                                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
                               ),
                               hintText: 'Enter your password',
-                              hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF9CA3AF),
+                                fontSize: 14,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xffE5E7EB), width: 1),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffE5E7EB),
+                                  width: 1,
+                                ),
                               ),
                             ),
                           ),
@@ -236,7 +343,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (showPasswordError)
                           Text(
                             passwordError,
-                            style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
 
                         const SizedBox(height: 12),
@@ -249,23 +360,28 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 22,
                               child: Checkbox(
                                 value: _rememberMe,
-                                onChanged: (v) => setState(() => _rememberMe = v ?? false),
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                activeColor: const Color(0xff367BF3),
-                                side: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+                                onChanged: (v) {
+                                  setState(() => _rememberMe = v ?? false);
+                                },
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                activeColor: primarycolor,
+                                side: BorderSide(color: primarycolor, width: 1),
                               ),
                             ),
                             const SizedBox(width: 8),
                             const Text(
                               'Remember me',
-                              style: TextStyle(fontSize: 12, color: Color(0xFF000000), fontFamily: 'segeo',fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF000000),
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 18),
-
-                        // NEXT button inside the card
                         BlocConsumer<LoginCubit, LoginState>(
                           listener: (context, state) async {
                             if (state is LoginSucess) {
@@ -279,6 +395,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 data.user?.name ?? "",
                                 data.user?.email ?? "",
                                 data.user?.contact ?? 0,
+                              );
+                              await _handleRememberMe(
+                                emailController.text.trim(),
+                                passwordController.text.trim(),
                               );
                               if (data.role == "Both") {
                                 context.pushReplacement('/selected_screen');
@@ -328,7 +448,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Color(0xffA258F7),
                             fontWeight: FontWeight.w600,
                           ),
-                          recognizer: TapGestureRecognizer()..onTap = () => context.push('/sign_up'),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => context.push('/sign_up'),
                         ),
                       ],
                     ),

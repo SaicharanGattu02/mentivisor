@@ -236,7 +236,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                 );
                               }
                               return ListView.separated(
-                                scrollDirection: Axis.horizontal,
+                                scrollDirection: Axis.horizontal,physics: BouncingScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),

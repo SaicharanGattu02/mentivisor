@@ -38,8 +38,6 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
   File? _image;
   String? imagePath;
   int? _yearId;
-  final ImagePicker _picker = ImagePicker();
-
   bool isLoading = true;
 
   @override
@@ -89,70 +87,16 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
     _streamController.dispose();
     _bioController.dispose();
     _emailController.dispose();
-    // _phoneController.dispose();
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.photo_library, color: primarycolor),
-                title: const Text("Choose from Gallery"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImageFromGallery();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.camera_alt, color: primarycolor),
-                title: const Text("Take a Photo"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImageFromCamera();
-                },
-              ),
-            ],
-          ),
-        );
-      },
+  Future<void> _selectImage() async {
+    final pickedImage = await ImagePickerHelper.pickImage(
+      context,
+      iconColor: primarycolor,
     );
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        setState(() => _image = compressedFile);
-      }
-    }
-  }
-
-  Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.camera,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        setState(() => _image = compressedFile);
-      }
+    if (pickedImage != null) {
+      setState(() => _image = pickedImage);
     }
   }
 
@@ -196,7 +140,9 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                             bottom: 4,
                             right: 4,
                             child: GestureDetector(
-                              onTap: _pickImage,
+                              onTap: () {
+                                _selectImage();
+                              },
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -252,7 +198,7 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                       onTap: () {
                         _openYearSelectionBottomSheet(context);
                       },
-                      decoration: InputDecoration(
+                      decoration: InputDecoration(suffixIcon: Icon(Icons.arrow_drop_down_sharp),
                         hintText: 'Select Year',
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,

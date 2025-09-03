@@ -132,6 +132,7 @@ class Mentor {
   double? ratingsReceivedAvgRating;
   List<Slot>? slots;
   String? profilePicUrl;
+  String? costPerMinute;
 
   Mentor({
     this.id,
@@ -168,6 +169,7 @@ class Mentor {
     this.ratingsReceivedAvgRating,
     this.slots,
     this.profilePicUrl,
+    this.costPerMinute,
   });
 
   Mentor.fromJson(Map<String, dynamic> json) {
@@ -200,6 +202,7 @@ class Mentor {
     deletedAt = json['deleted_at'];
     activeStatus = json['active_status'];
     lastLoginAt = json['last_login_at'];
+    costPerMinute = json['coins_per_minute'];
     mentorStatus = json['mentor_status'];
     ratingsReceivedCount = json['ratings_received_count'];
     ratingsReceivedAvgRating = json['ratings_received_avg_rating'] != null
@@ -243,6 +246,7 @@ class Mentor {
     map['created_at'] = createdAt;
     map['updated_at'] = updatedAt;
     map['deleted_at'] = deletedAt;
+    map['coins_per_minute'] = costPerMinute;
     map['active_status'] = activeStatus;
     map['last_login_at'] = lastLoginAt;
     map['mentor_status'] = mentorStatus;
