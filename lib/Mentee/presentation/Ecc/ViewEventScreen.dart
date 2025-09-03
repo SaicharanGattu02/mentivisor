@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/Models/ECCModel.dart';
+
+import '../../../utils/constants.dart';
 
 class ViewEventScreen extends StatelessWidget {
   final ECCList eccList;
@@ -12,30 +15,7 @@ class ViewEventScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        // subtle gradient from white→pale purple behind the bar
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.white, Color(0xFFFAF5FF)],
-              begin: Alignment.topLeft,
-              end: Alignment.topRight,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        leading: const BackButton(color: Colors.black87),
-        title: const Text(
-          'View Event',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
-      ),
+      appBar: CustomAppBar1(title: 'View Event', actions: []),
 
       body: Column(
         children: [
@@ -84,8 +64,6 @@ class ViewEventScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    // — Info rows
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -96,8 +74,7 @@ class ViewEventScreen extends StatelessWidget {
                             iconBg: const Color(0xFFE8F1FF),
                             iconColor: const Color(0xFF4A90E2),
                             label: 'Date & Time',
-                            value:
-                                '${eccList.dateofevent ?? ""}\n${eccList.time ?? ""}',
+                            value:  '${formatDate(eccList.dateofevent)}\n${formatTimeRange(eccList.time)}',
                           ),
                           _InfoRow(
                             icon: Icons.location_on,

@@ -227,7 +227,7 @@ class _SlotChip extends StatelessWidget {
     const chipBg = Color(0xFFE9F1FF);
     const chipText = Color(0xFF2F65F5);
     const selBg = Color(0xFFE7F9EE);
-    const selText = Color(0xFF12834C);
+    const selText = Color(0xFF15803D);
 
     final bg = isSelected ? selBg : chipBg;
     final txt = isSelected ? selText : chipText;
@@ -242,7 +242,7 @@ class _SlotChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(100),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

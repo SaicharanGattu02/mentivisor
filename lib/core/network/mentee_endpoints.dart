@@ -66,6 +66,7 @@ class APIEndpointUrls {
   static const String notification = "${userUrl}get_user_notification";
   static const String comment_like = "${userUrl}comments/";
   static const String tags = "${userUrl}tags";
+  static const String guestTags = "${apiUrl}tags";
   static const String tagSearch = "${userUrl}tags/search";
 
   ///Guest urls

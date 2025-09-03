@@ -237,21 +237,25 @@ class _CommunityScreenState extends State<Communityscreen> {
                       separatorBuilder: (_, __) => const SizedBox(width: 8),
                       itemBuilder: (context, i) {
                         final selected = i == _selectedFilter.value;
-                         return CustomChoiceChip(
+                        return CustomChoiceChip(
                           label: _filters[i],
                           selected: selected,
                           onSelected: (_) {
                             _selectedFilter.value = i;
                             if (_onCampus.value) {
-                              context.read<CommunityPostsCubit>().getCommunityPosts(
-                                "",
-                                _filters[i].toLowerCase(),
-                              );
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .getCommunityPosts(
+                                    "",
+                                    _filters[i].toLowerCase(),
+                                  );
                             } else {
-                              context.read<CommunityPostsCubit>().getCommunityPosts(
-                                "beyond",
-                                _filters[i].toLowerCase(),
-                              );
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .getCommunityPosts(
+                                    "beyond",
+                                    _filters[i].toLowerCase(),
+                                  );
                             }
                           },
                         );

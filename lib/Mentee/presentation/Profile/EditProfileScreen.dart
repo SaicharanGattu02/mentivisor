@@ -34,11 +34,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _streamController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  // final TextEditingController _phoneController = TextEditingController();
   File? _image;
   String? imagePath;
   int? _yearId;
-
 
   bool isLoading = true;
 
@@ -52,13 +51,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           _nameController.text = data?.user?.name ?? "";
           _emailController.text = data?.user?.email ?? "";
-          _phoneController.text = data?.user?.contact?.toString() ?? "";
+          // _phoneController.text = data?.user?.contact?.toString() ?? "";
           _streamController.text = data?.user?.stream ?? "";
           _bioController.text = data?.user?.bio ?? "";
           imagePath = data?.user?.profilePicUrl ?? "";
           if (data?.user?.yearId != null) {
-            _yearId = int.tryParse(data?.user?.yearId.toString()??"");
-            _yearController.text = data?.user?.yearName.toString()??"";
+            _yearId = int.tryParse(data?.user?.yearId.toString() ?? "");
+            _yearController.text = data?.user?.yearName.toString() ?? "";
           }
         });
       }
@@ -73,10 +72,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _streamController.dispose();
     _bioController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
+    // _phoneController.dispose();
     super.dispose();
   }
-
 
   Future<void> _selectImage() async {
     final pickedImage = await ImagePickerHelper.pickImage(
@@ -87,7 +85,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() => _image = pickedImage);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +101,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(alignment: Alignment.center,
+                    Align(
+                      alignment: Alignment.center,
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
@@ -123,8 +122,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             bottom: 4,
                             right: 4,
                             child: GestureDetector(
-                              onTap: (){
-                               _selectImage();
+                              onTap: () {
+                                _selectImage();
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -182,7 +181,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onTap: () {
                         _openYearSelectionBottomSheet(context);
                       },
-                      decoration: InputDecoration(suffixIcon: Icon(Icons.arrow_drop_down_sharp),
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.arrow_drop_down_sharp),
                         hintText: 'Select Year',
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,
@@ -207,16 +207,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             : "Enter valid email";
                       },
                     ),
-                    _buildField(
-                      "Phone",
-                      _phoneController,
-                      keyboard: TextInputType.phone,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return "Phone required";
-                        if (v.length < 10) return "Enter valid phone";
-                        return null;
-                      },
-                    ),
+                    // _buildField(
+                    //   "Phone",
+                    //   _phoneController,
+                    //   keyboard: TextInputType.phone,
+                    //   validator: (v) {
+                    //     if (v == null || v.isEmpty) return "Phone required";
+                    //     if (v.length < 10) return "Enter valid phone";
+                    //     return null;
+                    //   },
+                    // ),
                     _buildField(
                       "Bio",
                       _bioController,
@@ -259,7 +259,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             "stream": _streamController.text.trim(),
                             "bio": _bioController.text.trim(),
                             "email": _emailController.text.trim(),
-                            "phone": _phoneController.text.trim(),
+                            // "phone": _phoneController.text.trim(),
                             "college_id": widget.collegeId,
                           };
                           if (_image != null) {

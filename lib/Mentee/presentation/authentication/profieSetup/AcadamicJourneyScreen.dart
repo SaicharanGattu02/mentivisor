@@ -32,8 +32,12 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
   void initState() {
     super.initState();
     AppLogger.log("Final data:${widget.data}");
-    context.read<CampusesCubit>().getCampuses();
-    context.read<YearsCubit>().getYears();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        context.read<CampusesCubit>().getCampuses(),
+        context.read<YearsCubit>().getYears(),
+      ]);
+    });
   }
 
   @override
@@ -200,7 +204,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                               onTap: () {
                                 _openYearSelectionBottomSheet(context);
                               },
-                              decoration: InputDecoration(
+                              decoration: InputDecoration(suffixIcon: Icon(Icons.arrow_drop_down_sharp),
                                 hintText: 'Select Year',
                                 contentPadding: EdgeInsets.symmetric(
                                   horizontal: 12,

@@ -578,7 +578,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                       "image": imagefile!.path,
                       "file_pdf": file!.path,
                     };
-                    context.read<AddResourceCubit>().addResource(data);
+                    context.read<AddResourceCubit>().addResource(data,"");
                   }
                 },
               ),

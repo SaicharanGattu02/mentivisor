@@ -159,8 +159,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     return FormData.fromMap(formMap);
   }
 
-
-
   @override
   Future<SuccessModel?> resourceDownload(String id) async {
     try {
@@ -970,18 +968,26 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<TagsModel?> getTags() async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.tags}");
-      AppLogger.log('get Tags ::${res.data}');
+      final isGuest = await AuthService.isGuest;
+      final endpoint = isGuest
+          ? APIEndpointUrls.guestTags
+          : APIEndpointUrls.tags;
+
+      Response res = await ApiClient.get(endpoint);
+      AppLogger.log('get Tags :: ${res.data}');
       return TagsModel.fromJson(res.data);
     } catch (e) {
-      AppLogger.error('Tags ::${e}');
+      AppLogger.error('Tags :: $e');
       return null;
     }
   }
+
   @override
   Future<TagsModel?> getTagSearch(String query) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.tagSearch}?keyword=${query}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.tagSearch}?keyword=${query}",
+      );
       AppLogger.log('get Tags Search ::${res.data}');
       return TagsModel.fromJson(res.data);
     } catch (e) {

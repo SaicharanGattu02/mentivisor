@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
@@ -236,7 +237,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                 );
                               }
                               return ListView.separated(
-                                scrollDirection: Axis.horizontal,physics: BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                physics: BouncingScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
@@ -564,14 +566,42 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                 },
                                                               ),
                                                             ),
-                                                            BlocBuilder<
+                                                            BlocConsumer<
                                                               AddResourceCubit,
                                                               AddResourceStates
                                                             >(
+                                                              listener: (context, state) {
+                                                                if (state
+                                                                    is AddResourceLoaded) {
+                                                                  CustomSnackBar1.show(
+                                                                    context,
+                                                                    "Downloaded Successfully",
+                                                                  );
+                                                                } else if (state
+                                                                    is AddResourceFailure) {
+                                                                  CustomSnackBar1.show(
+                                                                    context,
+                                                                    state
+                                                                            .error
+                                                                            .isNotEmpty
+                                                                        ? state
+                                                                              .error
+                                                                        : "Download Failed",
+                                                                  );
+                                                                }
+                                                              },
                                                               builder: (context, state) {
+                                                                final currentId =
+                                                                    campusList
+                                                                        ?.id
+                                                                        .toString() ??
+                                                                    "";
                                                                 final isLoading =
                                                                     state
-                                                                        is AddResourceLoading;
+                                                                        is AddResourceLoading &&
+                                                                    state.resourceId ==
+                                                                        currentId;
+
                                                                 return Expanded(
                                                                   child: CustomAppButton1(
                                                                     radius: 24,
@@ -593,8 +623,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                               AddResourceCubit
                                                                             >()
                                                                             .resourceDownload(
-                                                                              campusList?.id.toString() ??
-                                                                                  "",
+                                                                              currentId,
                                                                             );
                                                                       }
                                                                     },

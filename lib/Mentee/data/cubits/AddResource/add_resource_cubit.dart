@@ -6,31 +6,33 @@ class AddResourceCubit extends Cubit<AddResourceStates> {
   AddResourceRepository addResourceRepository;
   AddResourceCubit(this.addResourceRepository) : super(AddResourceInitially());
 
-  Future<void> addResource(Map<String, dynamic> data) async {
-    emit(AddResourceLoading());
-    try {
-      final response = await addResourceRepository.addResource(data);
-      if (response != null && response.status == true) {
-        emit(AddResourceLoaded(response));
-      } else {
-        emit(AddResourceFailure(response?.message ?? ""));
-      }
-    } catch (e) {
-      emit(AddResourceFailure(e.toString()));
-    }
-  }
-
   Future<void> resourceDownload(String id) async {
-    emit(AddResourceLoading());
+    emit(AddResourceLoading(id));
     try {
       final response = await addResourceRepository.resourceDownload(id);
       if (response != null && response.status == true) {
-        emit(AddResourceLoaded(response));
+        emit(AddResourceLoaded(response, id));
       } else {
-        emit(AddResourceFailure(response?.message ?? ""));
+        emit(AddResourceFailure(response?.message ?? "Unknown error", id));
+
       }
     } catch (e) {
-      emit(AddResourceFailure(e.toString()));
+      emit(AddResourceFailure(e.toString(), id));
     }
   }
+
+  Future<void> addResource(Map<String, dynamic> data, String id) async {
+    emit(AddResourceLoading(id));
+    try {
+      final response = await addResourceRepository.addResource(data);
+      if (response != null && response.status == true) {
+        emit(AddResourceLoaded(response, id));
+      } else {
+        emit(AddResourceFailure(response?.message ?? "Unknown error", id));
+      }
+    } catch (e) {
+      emit(AddResourceFailure(e.toString(), id));
+    }
+  }
+
 }

@@ -32,7 +32,8 @@ class ApiClient {
     '/api/study-zone/top-downloads',
     '/api/guest-list-ecc',
     '/api/community-zone-post-without-login',
-    '/api/top-mentors'
+    '/api/top-mentors',
+    '/api/tags'
   ];
 
   static void setupInterceptors() {
