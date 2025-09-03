@@ -50,7 +50,7 @@ void showAnimatedTopSnackBar(BuildContext context, String message) {
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
-                fontFamily: "roboto_serif",
+                fontFamily: "segeo",
               ),
             ),
           ),
@@ -84,11 +84,11 @@ class InputDecorationUtils {
       hintText: hint,
       hintStyle: const TextStyle(
         color: Colors.grey,
-        fontFamily: 'roboto_serif',
+        fontFamily: 'segeo',
         fontSize: 14,
       ),
       labelStyle: const TextStyle(
-        fontFamily: 'roboto_serif',
+        fontFamily: 'segeo',
         fontSize: 16,
         color: Colors.grey,
       ),

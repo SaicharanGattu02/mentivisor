@@ -3,20 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/Models/ECCModel.dart';
+import 'package:mentivisor/utils/AppLauncher.dart';
 
 import '../../../utils/constants.dart';
 
-class ViewEventScreen extends StatelessWidget {
+class ViewEventScreen extends StatefulWidget {
   final ECCList eccList;
 
   const ViewEventScreen({super.key, required this.eccList});
+
+  @override
+  State<ViewEventScreen> createState() => _ViewEventScreenState();
+}
+
+class _ViewEventScreenState extends State<ViewEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: CustomAppBar1(title: 'View Event', actions: []),
-
       body: Column(
         children: [
           SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
@@ -46,7 +52,7 @@ class ViewEventScreen extends StatelessWidget {
                         spacing: 12,
                         children: [
                           Text(
-                            eccList.name ?? "",
+                            widget.eccList.name ?? "",
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 24,
@@ -54,7 +60,7 @@ class ViewEventScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            eccList.description ?? "",
+                            widget.eccList.description ?? "",
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -74,21 +80,22 @@ class ViewEventScreen extends StatelessWidget {
                             iconBg: const Color(0xFFE8F1FF),
                             iconColor: const Color(0xFF4A90E2),
                             label: 'Date & Time',
-                            value:  '${formatDate(eccList.dateofevent)}\n${formatTimeRange(eccList.time)}',
+                            value:
+                                '${formatDate(widget.eccList.dateofevent)}\n${formatTimeRange(widget.eccList.time)}',
                           ),
                           _InfoRow(
                             icon: Icons.location_on,
                             iconBg: const Color(0xFFE8FFEE),
                             iconColor: const Color(0xFF2ECC71),
                             label: 'Location',
-                            value: eccList.location ?? "",
+                            value: widget.eccList.location ?? "",
                           ),
                           _InfoRow(
                             icon: Icons.apartment,
                             iconBg: const Color(0xFFF4E8FF),
                             iconColor: const Color(0xFF9013FE),
                             label: 'Organizing Institution',
-                            value: eccList.college ?? "",
+                            value: widget.eccList.college ?? "",
                           ),
                         ],
                       ),
@@ -114,7 +121,7 @@ class ViewEventScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            eccList.description ?? "",
+                            widget.eccList.description ?? "",
                             style: const TextStyle(
                               color: Colors.black54,
                               height: 1.4,
@@ -147,13 +154,17 @@ class ViewEventScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: CustomAppButton1(
-                    text: "Register for Event",
-                    radius: 24,
-                    onPlusTap: () {},
+                if ((widget.eccList.link ?? "").isNotEmpty) ...[
+                  Expanded(
+                    child: CustomAppButton1(
+                      text: "Register for Event",
+                      radius: 24,
+                      onPlusTap: () {
+                        AppLauncher.openWebsite(widget.eccList.link ?? "");
+                      },
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

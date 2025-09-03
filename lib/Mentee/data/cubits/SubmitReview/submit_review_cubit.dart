@@ -22,10 +22,13 @@ class SubmitReviewCubit extends Cubit<SubmitReviewStates> {
       emit(SubmitReviewFailure(e.toString()));
     }
   }
-  Future<void> reportReview(Map<String, dynamic> data,) async {
+
+  Future<void> reportReview(Map<String, dynamic> data) async {
     emit(SessionReportReviewLoading());
     try {
-      final response = await sessionCompletedRepository.sessionReportSubmit(data);
+      final response = await sessionCompletedRepository.sessionReportSubmit(
+        data,
+      );
       if (response != null && response.status == true) {
         emit(SessionReportSuccess(response));
       } else {

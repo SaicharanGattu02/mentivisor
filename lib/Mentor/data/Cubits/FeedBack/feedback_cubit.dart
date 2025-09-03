@@ -7,10 +7,10 @@ class FeedbackCubit extends Cubit<FeedbackStates> {
   FeedBackRepository feedBackRepository;
   FeedbackCubit(this.feedBackRepository) : super(FeedbackInitially());
 
-  Future<void> getFeedback(int user_id) async {
+  Future<void> getFeedback(int user_id,List<int> stars,int page) async {
     emit(FeedbackLoading());
     try {
-      final response = await feedBackRepository.getFeedback(user_id);
+      final response = await feedBackRepository.getFeedback(user_id,stars,page);
       if (response != null && response.status == true) {
         emit(FeedbackLoaded(response));
       } else {

@@ -45,7 +45,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           ? (state as DownloadLoaded).downloadsModel
                           : (state as DownloadLoadingMore).downloadsModel;
 
-                      final downloads = downloadsModel.downloads ?? [];
+                      final downloads = downloadsModel.data?.downloads ?? [];
                       final loadingMore = state is DownloadLoadingMore;
                       if (downloads.isEmpty) {
                         return Center(

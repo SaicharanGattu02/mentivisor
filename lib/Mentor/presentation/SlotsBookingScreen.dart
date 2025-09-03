@@ -87,10 +87,19 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   }
 
   void _onDateSelected(int day) {
+    final selected = DateTime(visibleMonth.year, visibleMonth.month, day);
+    final today = DateTime.now();
+    final currentDateOnly = DateTime(today.year, today.month, today.day);
+
+    if (selected.isBefore(currentDateOnly)) {
+      return;
+    }
+
     setState(() {
-      selectedDate = DateTime(visibleMonth.year, visibleMonth.month, day);
+      selectedDate = selected;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,9 +143,17 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                         ),
                         const Spacer(),
                         IconButton(
-                          onPressed: prevMonth,
-                          icon: const Icon(Icons.chevron_left),
+                          onPressed: visibleMonth.isAfter(DateTime(2025, 9))
+                              ? prevMonth
+                              : null,
+                          icon: Icon(
+                            Icons.chevron_left,
+                            color: visibleMonth.isAfter(DateTime(2025, 9))
+                                ? Colors.black
+                                : Colors.grey.withOpacity(0.5), // make it visually disabled
+                          ),
                         ),
+
                         IconButton(
                           onPressed: nextMonth,
                           icon: const Icon(Icons.chevron_right),
@@ -182,52 +199,63 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             childAspectRatio: 1.0,
                           ),
                       itemCount: gridDays.length,
-                      itemBuilder: (context, index) {
-                        final day = gridDays[index];
-                        if (day == null) return const SizedBox();
-                        final isSelected =
-                            selectedDate.day == day &&
-                            selectedDate.month == visibleMonth.month &&
-                            selectedDate.year == visibleMonth.year;
-                        final now = DateTime.now();
-                        final isToday =
-                            now.day == day &&
-                            now.month == visibleMonth.month &&
-                            now.year == visibleMonth.year;
-                        return GestureDetector(
-                          onTap: () => _onDateSelected(day),
-                          child: Center(
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? kPurple.withOpacity(0.08)
-                                    : (isToday
-                                          ? const Color(0xFFE8F0FF)
-                                          : Colors.white),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: isSelected
-                                      ? kPurple
-                                      : (isToday
-                                            ? kPurple.withOpacity(0.25)
-                                            : const Color(0xFFDDDDDD)),
-                                  width: isSelected ? 2 : 1,
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                day.toString(),
-                                style: const TextStyle(
-                                  fontFamily: 'segeo',
-                                  fontSize: 12,
+                        itemBuilder: (context, index) {
+                          final day = gridDays[index];
+                          if (day == null) return const SizedBox();
+
+                          final isSelected =
+                              selectedDate.day == day &&
+                                  selectedDate.month == visibleMonth.month &&
+                                  selectedDate.year == visibleMonth.year;
+
+                          DateTime now = DateTime.now();
+                          final currentDateOnly = DateTime(now.year, now.month, now.day);
+
+                          final date = DateTime(visibleMonth.year, visibleMonth.month, day);
+                          final isPast = date.isBefore(currentDateOnly);
+
+                          final isToday =
+                              now.day == day &&
+                                  now.month == visibleMonth.month &&
+                                  now.year == visibleMonth.year;
+
+                          return GestureDetector(
+                            onTap: isPast ? null : () => _onDateSelected(day), // disable tap
+                            child: Opacity(
+                              opacity: isPast ? 0.4 : 1.0, // fade past dates
+                              child: Center(
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? kPurple.withOpacity(0.08)
+                                        : (isToday
+                                        ? const Color(0xFFE8F0FF)
+                                        : Colors.white),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? kPurple
+                                          : (isToday
+                                          ? kPurple.withOpacity(0.25)
+                                          : const Color(0xFFDDDDDD)),
+                                      width: isSelected ? 2 : 1,
+                                    ),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    day.toString(),
+                                    style: const TextStyle(
+                                      fontFamily: 'segeo',
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        }
                     ),
                   ],
                 ),

@@ -122,7 +122,6 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
 
                       const SizedBox(height: 16),
 
-                      // Author row (small avatar + name)
                       Row(
                         children: [
                           _MiniAvatar(name: name, imageUrl: banner), // or use a separate author image if you have it

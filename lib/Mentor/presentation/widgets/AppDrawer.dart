@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_states.dart';
 
+import '../../../services/AuthService.dart';
+import '../../../utils/color_constants.dart';
+
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   static const _textColor = Color(0xFF4D4F55);
-  static const _labelBlue = Color(0xFF3C506B);
   static const _separatorStart = Color(0xFFF7F8FE);
   static const _separatorEnd = Color(0xFFEFF4FF);
   static const _paleFillTop = Color(0xFFF5F8FF);
@@ -178,7 +180,7 @@ class AppDrawer extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
                 child: InkWell(
                   onTap: () {
-                    // Handle logout
+                    showLogoutDialog(context);
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: Row(
@@ -266,34 +268,137 @@ class _DrawerItem extends StatelessWidget {
   }
 }
 
-/// The blue "Info" row that looks like a label rather than a tappable tile
-class _SectionLabel extends StatelessWidget {
-  final IconData icon;
-  final String label;
+void showLogoutDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        elevation: 4.0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 14.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: SizedBox(
+          width: 300.0,
+          height: 230.0,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Power Icon Positioned Above Dialog
+              Positioned(
+                top: -35.0,
+                left: 0.0,
+                right: 0.0,
+                child: Container(
+                  width: 70.0,
+                  height: 70.0,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 6.0, color: Colors.white),
+                    shape: BoxShape.circle,
+                    color: Colors.red.shade100, // Light red background
+                  ),
+                  child: const Icon(
+                    Icons.power_settings_new,
+                    size: 40.0,
+                    color: Colors.red, // Power icon color
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                top: 30.0, // Moves content down
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 15.0),
+                      Text(
+                        "Logout",
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w700,
+                          color: primarycolor,
+                          fontFamily: "segeo",
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      const Text(
+                        "Are you sure you want to logout?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.black54,
+                          fontFamily: "segeo",
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
 
-  const _SectionLabel({required this.icon, required this.label});
+                      // Buttons Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // No Button (Filled)
+                          SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                primarycolor, // Filled button color
+                                foregroundColor: Colors.white, // Text color
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 10,
+                                ),
+                              ),
+                              child: const Text(
+                                "No",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "roboto_serif",
+                                ),
+                              ),
+                            ),
+                          ),
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.white),
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-      child: Row(
-        children: [
-          // Circle outline with i icon inside (visual approximation)
-          Icon(icon, size: 18, color: AppDrawer._labelBlue),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'segeo',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppDrawer._labelBlue,
-            ),
+                          // Yes Button (Outlined)
+                          SizedBox(
+                            width: 100,
+                            child: OutlinedButton(
+                              onPressed: () async {
+                                await AuthService.logout();
+                                context.go("/login");
+                              },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: primarycolor,
+                                side: BorderSide(
+                                  color: primarycolor,
+                                ), // Border color
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 10,
+                                ),
+                              ),
+                              child: const Text(
+                                "Yes",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "roboto_serif",
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
+    },
+  );
 }

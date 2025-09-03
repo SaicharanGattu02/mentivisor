@@ -1,7 +1,5 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
 import '../core/network/api_config.dart';
-import '../core/network/mentee_endpoints.dart';
 import '../utils/AppLogger.dart';
 
 class SocketService {
@@ -12,9 +10,7 @@ class SocketService {
       _socket = IO.io(ApiConfig.socket_url, <String, dynamic>{
         'transports': ['websocket', 'polling'],
         'autoConnect': true,
-        'query': {
-          'userId': userId,
-        },
+        'query': {'userId': userId},
       });
 
       _socket!.connect();

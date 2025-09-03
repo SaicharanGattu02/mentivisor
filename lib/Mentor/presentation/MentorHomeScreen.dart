@@ -10,6 +10,7 @@ import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsStates.dart';
 import 'package:mentivisor/Mentor/presentation/MentorDashBoard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
+import 'package:mentivisor/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersState.dart';
@@ -213,9 +214,12 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.startTime ?? "",
                                     session?.endTime ?? "",
                                   );
-                                  return SessionCard(sessionId: session?.id??0,
+                                  return SessionCard(
+                                    sessionId: session?.id ?? 0,
                                     status: 'Upcoming',
-                                    sessionDate: session?.date ?? "",
+                                    sessionDate: formatDate(
+                                      session?.date ?? "",
+                                    ),
                                     sessionTime: '${duration} Minutes to go',
                                     sessionName:
                                         'G-Meet with Suresh from SVG Collage',

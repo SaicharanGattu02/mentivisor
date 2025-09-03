@@ -127,7 +127,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                                     ),
                                     Text(
                                       textAlign: TextAlign.center,
-                                      'No Search Data Found!',
+                                      'No Data Found!',
                                       style: TextStyle(
                                         color: primarycolor,
                                         fontSize: 18,

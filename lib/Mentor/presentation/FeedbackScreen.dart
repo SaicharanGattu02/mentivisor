@@ -19,11 +19,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<FeedbackCubit>().getFeedback(widget.userId);
+    context.read<FeedbackCubit>().getFeedback(widget.userId,[],0);
   }
 
   void showReview(BuildContext context) {
-    // keep selected filters
     List<int> _selectedRatings = [];
     String _selectedTime = "All Time";
 

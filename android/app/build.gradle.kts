@@ -18,7 +18,6 @@ android {
     namespace = "com.example.mentivisor"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -40,11 +39,12 @@ android {
 
     defaultConfig {
         applicationId = "com.example.mentivisor"
-        minSdk = flutter.minSdkVersion
+        minSdk = 23          // <-- Updated from flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
 
     buildTypes {
         getByName("release") {

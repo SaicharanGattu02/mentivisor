@@ -43,7 +43,7 @@ class CustomSnackBar1 {
               message,
               style: const TextStyle(
                 color: Colors.white,
-                fontFamily: "roboto_serif",
+                fontFamily: "segeo",
               ),
             ),
           ),

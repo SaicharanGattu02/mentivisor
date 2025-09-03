@@ -1,3 +1,4 @@
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppLauncher {
@@ -16,9 +17,23 @@ class AppLauncher {
     await _launch(url);
   }
 
-  static Future<void> openWebsite(String url) async {
-    final Uri uri = Uri.parse(url);
-    await _launch(uri);
+  static Future<void> openWebsite(String? url) async {
+    if (url == null || url.trim().isEmpty) {
+      AppLogger.info("URL is null or empty");
+      return;
+    }
+    String finalUrl = url.trim();
+    if (!finalUrl.startsWith(RegExp(r'https?://'))) {
+      finalUrl = 'https://$finalUrl';
+    }
+
+    final Uri? uri = Uri.tryParse(finalUrl);
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      AppLogger.info("Cannot launch URL: $finalUrl");
+
+    }
   }
 
   static Future<void> openMap(double lat, double lng) async {

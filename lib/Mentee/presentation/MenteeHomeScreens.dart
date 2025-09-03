@@ -29,7 +29,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
   ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
   ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
-
+  String? role;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _onCampus = true;
   String selectedFilter = 'On Campus';
@@ -37,7 +37,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      role = await AuthService.getRole();
       context.read<MenteeDashboardCubit>().fetchDashboard("");
     });
   }
@@ -197,9 +198,21 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                       ),
                     if (!isGuest) ...[
                       Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
+                        padding: EdgeInsets.only(right: 16.0),
                         child: Row(
                           children: [
+                            if (role == "Both") ...[
+                              IconButton(
+                                icon: Image.asset(
+                                  "assets/images/mentor.png",
+                                  height: 21,
+                                  width: 26,
+                                ),
+                                onPressed: () {
+                                  context.push('/mentor_dashboard');
+                                },
+                              ),
+                            ],
                             IconButton(
                               icon: Image.asset(
                                 "assets/images/crownonly.png",

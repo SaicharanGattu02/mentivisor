@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/FilterButton.dart';
+import '../../utils/constants.dart';
 import '../data/Cubits/Sessions/SessionsCubit.dart';
 import '../data/Cubits/Sessions/SessionsStates.dart';
 
@@ -182,7 +183,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               menteeId: session?.mentee?.id ?? 0,
                               sessionId: session?.id ?? 0,
                               status: selectedFilter,
-                              sessionDate: session?.date ?? "",
+                              sessionDate: formatDate(session?.date ?? ""),
                               sessionTime: '${duration} to go',
                               sessionName:
                                   'G-Meet with Suresh from SVG Collage',
