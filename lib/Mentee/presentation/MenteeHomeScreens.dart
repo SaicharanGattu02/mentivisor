@@ -645,8 +645,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Mentors',
+                             Text(
+                              isGuest?'Top Mentors':'Mentors',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,

@@ -110,7 +110,7 @@ class _NotificationsState extends State<Notifications> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                'No Data Found!',
+                                'No Notifications Found!',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: primarycolor,
