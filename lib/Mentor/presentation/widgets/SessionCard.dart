@@ -77,7 +77,7 @@ class SessionCard extends StatelessWidget {
                 spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     width: SizeConfig.screenWidth * 0.575,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

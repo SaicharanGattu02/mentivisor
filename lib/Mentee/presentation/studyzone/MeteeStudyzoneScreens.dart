@@ -43,11 +43,9 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.wait([
-        context.read<TagsCubit>().getTags(),
-        context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", ""),
-      ]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TagsCubit>().getTags();
+      context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
     });
   }
 
