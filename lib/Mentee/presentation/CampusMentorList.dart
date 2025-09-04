@@ -134,7 +134,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: 0.9,
+                              childAspectRatio: 0.85,
                             ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];

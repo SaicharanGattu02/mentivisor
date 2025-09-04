@@ -36,6 +36,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
 
   final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true);
 
+  String? selectedTag;
+
   Timer? _debounce;
 
   @override
@@ -53,7 +55,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   void dispose() {
     _selectedTagIndex.dispose();
     searchController.dispose();
-    _fabVisible.dispose(); // NEW
+    _fabVisible.dispose();
     super.dispose();
   }
 
@@ -66,6 +68,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
       builder: (context, snapshot) {
         final isGuest = snapshot.data ?? false;
         return Scaffold(
+          resizeToAvoidBottomInset: true,
           body: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -118,10 +121,15 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       text: 'On Campus',
                                       isSelected: isOnCampus,
                                       onPressed: () {
+                                        searchController.clear();
                                         onCampusNotifier.value = true;
                                         context
                                             .read<StudyZoneCampusCubit>()
-                                            .fetchStudyZoneCampus("", "", "");
+                                            .fetchStudyZoneCampus(
+                                              "",
+                                              selectedTag ?? "",
+                                              searchController.text,
+                                            );
                                       },
                                     ),
                                   ),
@@ -130,12 +138,13 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       text: 'Beyond Campus',
                                       isSelected: !isOnCampus,
                                       onPressed: () {
+                                        searchController.clear();
                                         onCampusNotifier.value = false;
                                         context
                                             .read<StudyZoneCampusCubit>()
                                             .fetchStudyZoneCampus(
                                               "beyond",
-                                              "",
+                                              selectedTag ?? "",
                                               "",
                                             );
                                       },
@@ -243,9 +252,11 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   horizontal: 16,
                                 ),
                                 itemCount: tags.length ?? 0,
-                                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(width: 8),
                                 itemBuilder: (context, index) {
                                   final tagItem = tags![index];
+                                  selectedTag = tagItem;
                                   final isSelected = index == selectedIndex;
                                   return GestureDetector(
                                     onTap: () {
@@ -256,7 +267,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             .fetchStudyZoneCampus(
                                               "",
                                               tagItem,
-                                              "",
+                                              searchController.text,
                                             );
                                       } else {
                                         context
@@ -264,7 +275,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             .fetchStudyZoneCampus(
                                               "beyond",
                                               tagItem,
-                                              "",
+                                              searchController.text,
                                             );
                                       }
                                     },

@@ -69,7 +69,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
           selectedFileName = file.name;
         });
       } else {
-       CustomSnackBar1.show(context, "Only PDF files are allowed.");
+        CustomSnackBar1.show(context, "Only PDF files are allowed.");
       }
     }
   }
@@ -223,25 +223,25 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
-                      builder: (context, state) {
-                        if (state is WeeklySlotsLoaded) {
-                          final r = state.weeklySlotsModel.weekRange;
-                          if (r?.start != null && r?.end != null) {
-                            return Text(
-                              '${r!.start} — ${r.end}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF6A6A6A),
-                              ),
-                            );
-                          }
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
+                    // BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
+                    //   builder: (context, state) {
+                    //     if (state is WeeklySlotsLoaded) {
+                    //       final r = state.weeklySlotsModel.weekRange;
+                    //       if (r?.start != null && r?.end != null) {
+                    //         return Text(
+                    //           '${r!.start} — ${r.end}',
+                    //           style: const TextStyle(
+                    //             fontSize: 12,
+                    //             color: Color(0xFF6A6A6A),
+                    //           ),
+                    //         );
+                    //       }
+                    //     }
+                    //     return const SizedBox.shrink();
+                    //   },
+                    // ),
+                    // const SizedBox(height: 12),
                     BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
                       builder: (context, state) {
                         if (state is WeeklySlotsLoading) {
@@ -309,7 +309,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                             child: IgnorePointer(
                                               ignoring: isPast,
                                               child: Opacity(
-                                                opacity: isPast ? 0.2 : 1.0,
+                                                opacity: isPast ? 0.5 : 1.0,
                                                 child: DayCell(
                                                   dayAbbrev: d.day ?? '',
                                                   dayNum: d.dayNum ?? '',
@@ -721,113 +721,124 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                           );
                         },
                       ),
-
                       const SizedBox(height: 12),
                     ],
                   ],
                 ),
               ),
+              SizedBox(height: 30),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: ValueListenableBuilder<bool>(
-            valueListenable: enoughBalance,
-            builder: (context, value, child) {
-              final enough_coins = value ?? false;
-              return BlocConsumer<SessionBookingCubit, SessionBookingStates>(
-                listener: (context, state) {
-                  if (state is SessionBookingLoaded) {
-                    context.read<MenteeProfileCubit>().fetchMenteeProfile();
-                    context.pushReplacement(
-                      '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/dashboard&selectedIndex=0',
-                    );
-                  } else if (state is SessionBookingFailure) {
-                    CustomSnackBar1.show(context, state.error ?? "");
-                  }
-                },
-                builder: (context, state) {
-                  final isLoading = state is SessionBookingLoading;
-                  return CustomAppButton1(
-                    text: 'Book Session',
-                    isLoading: isLoading,
-                    onPlusTap: enough_coins
-                        ? () {
-                            if (selectedSlotId != null) {
-                              final Map<String, dynamic> data = {
-                                "mentor_id": widget.data.userId ?? 0,
-                                "slot_id": selectedSlotId,
-                                "topic": sessionController.text.trim(),
-                              };
-                              if (selectedFilePath != null &&
-                                  selectedFilePath!.isNotEmpty) {
-                                data["attachment"] = selectedFilePath;
-                              }
+      bottomNavigationBar: selectedSlotId != null
+          ? SafeArea(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: enoughBalance,
+                  builder: (context, value, child) {
+                    final enough_coins = value ?? false;
+                    return BlocConsumer<
+                      SessionBookingCubit,
+                      SessionBookingStates
+                    >(
+                      listener: (context, state) {
+                        if (state is SessionBookingLoaded) {
+                          context
+                              .read<MenteeProfileCubit>()
+                              .fetchMenteeProfile();
+                          context.pushReplacement(
+                            '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/dashboard&selectedIndex=0',
+                          );
+                        } else if (state is SessionBookingFailure) {
+                          CustomSnackBar1.show(context, state.error ?? "");
+                        }
+                      },
+                      builder: (context, state) {
+                        final isLoading = state is SessionBookingLoading;
+                        return CustomAppButton1(
+                          text: 'Book Session',
+                          isLoading: isLoading,
+                          onPlusTap: enough_coins
+                              ? () {
+                                  if (selectedSlotId != null) {
+                                    final Map<String, dynamic> data = {
+                                      "mentor_id": widget.data.userId ?? 0,
+                                      "slot_id": selectedSlotId,
+                                      "topic": sessionController.text.trim(),
+                                    };
+                                    if (selectedFilePath != null &&
+                                        selectedFilePath!.isNotEmpty) {
+                                      data["attachment"] = selectedFilePath;
+                                    }
 
-                              context
-                                  .read<SessionBookingCubit>()
-                                  .sessionBooking(data);
-                            }
-                          }
-                        : () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                title: const Text(
-                                  "Insufficient Coins",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.redAccent,
-                                  ),
-                                ),
-                                content: const Text(
-                                  "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text(
-                                      "Cancel",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      context.push(
-                                        "/buy_coins_screens?mentor_id=${widget.data.userId ?? 0}&slot_id=${selectedSlotId}",
-                                      );
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange,
+                                    context
+                                        .read<SessionBookingCubit>()
+                                        .sessionBooking(data);
+                                  }
+                                }
+                              : () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
+                                      title: const Text(
+                                        "Insufficient Coins",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.redAccent,
+                                        ),
+                                      ),
+                                      content: const Text(
+                                        "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            context.push(
+                                              "/buy_coins_screens?mentor_id=${widget.data.userId ?? 0}&slot_id=${selectedSlotId}",
+                                            );
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.orange,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text("Purchase Coins"),
+                                        ),
+                                      ],
                                     ),
-                                    child: const Text("Purchase Coins"),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ),
+                                  );
+                                },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
+          : SizedBox.shrink(),
     );
   }
 }

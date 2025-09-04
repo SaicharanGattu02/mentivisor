@@ -303,6 +303,29 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       valueListenable: isPost,
                       builder: (context, value, _) {
                         if (value) {
+                          if(state.menteeProfileModel.data?.user?.communityPost?.length==0){
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/nodata/no_data.png",
+                                    height: 120,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    "No Posts Available",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'segeo',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                           return CustomScrollView(
                             slivers: [
                               SliverPadding(
@@ -310,11 +333,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                     (context, index) {
-                                      final menteePosts = state
-                                          .menteeProfileModel
-                                          .data
-                                          ?.user
-                                          ?.communityPost?[index];
+                                      final menteePosts = state.menteeProfileModel.data?.user?.communityPost?[index];
                                       return Container(
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -580,6 +599,29 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                             ],
                           );
                         } else {
+                          if(menteeProfile?.user?.studyZoneBooks?.length==0){
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/nodata/no_data.png",
+                                    height: 120,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    "No Resources Available",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'segeo',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                           return CustomScrollView(
                             slivers: [
                               SliverPadding(

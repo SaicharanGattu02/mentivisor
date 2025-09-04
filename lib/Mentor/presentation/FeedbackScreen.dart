@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/services/AuthService.dart';
 
 import '../../Mentor/Models/FeedbackModel.dart';
 import '../data/Cubits/FeedBack/feedback_cubit.dart';
 import '../data/Cubits/FeedBack/feedback_states.dart';
 
 class FeedbackScreen extends StatefulWidget {
-  final int userId;
-  const FeedbackScreen({super.key, required this.userId});
+  const FeedbackScreen({super.key});
 
   @override
   State<FeedbackScreen> createState() => _FeedbackScreenState();
@@ -19,7 +19,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<FeedbackCubit>().getFeedback(widget.userId,[],0);
+    getUserID();
+  }
+
+  Future<void> getUserID() async {
+    final userid = await AuthService.getUSerId();
+    context.read<FeedbackCubit>().getFeedback(userid ?? "");
   }
 
   void showReview(BuildContext context) {

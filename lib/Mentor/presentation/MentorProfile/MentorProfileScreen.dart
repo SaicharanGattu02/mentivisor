@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
 import '../../../utils/constants.dart';
@@ -27,9 +28,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFF3F7FF), Color(0xFFF7F3FF)],
+          colors: [
+            Color(0xFFEFF6FF), Color(0xFFF5F6FF),Color(0xffFAF5FF )],
         ),
       ),
       child: Scaffold(
@@ -39,16 +39,15 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
           child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFFF3F7FF), Color(0xFFF7F3FF)],
+                colors: [
+                  Color(0xFFEFF6FF), Color(0xFFF5F6FF),Color(0xffFAF5FF )],
               ),
             ),
             child: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
               builder: (context, state) {
                 if (state is MentorProfileLoading ||
                     state is MentorProfileInitially) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: DottedProgressWithLogo());
                 }
                 if (state is MentorProfileFailure) {
                   return Center(child: Text(state.error));
@@ -136,7 +135,7 @@ class _ProfileBody extends StatelessWidget {
               color: Color(0xFF111827),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 3),
           Text(
             "$college $year $stream".trim(),
             textAlign: TextAlign.center,
@@ -147,7 +146,7 @@ class _ProfileBody extends StatelessWidget {
               color: Color(0xFF6B7280),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 3),
           if (bio.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -164,7 +163,7 @@ class _ProfileBody extends StatelessWidget {
               ),
             ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -186,9 +185,7 @@ class _ProfileBody extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 30),
-
           // Languages
           Align(
             alignment: Alignment.centerLeft,
@@ -257,10 +254,10 @@ class _ProfileBody extends StatelessWidget {
                             children: ex.subExpertises!
                                 .map(
                                   (s) => Chip(
+                                    labelPadding: EdgeInsets.symmetric(horizontal: 16),
                                     shape: RoundedRectangleBorder(
-                                      side: BorderSide(color: Colors.grey),
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(8),
+                                      side: BorderSide(color: Colors.white),
+                                      borderRadius: BorderRadiusGeometry.circular(36),
                                     ),
                                     label: Text(
                                       s.name ?? '',
@@ -320,7 +317,7 @@ class _LangChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(100),

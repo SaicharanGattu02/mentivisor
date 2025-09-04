@@ -139,7 +139,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
           },
           children: [
             const MentorHomeScreen(),
-            MySessionsScreen(),
+            const MySessionsScreen(),
             const Slotsbookingscreen(),
             const CouponsHomeScreen(),
           ],
@@ -188,9 +188,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
-                child: Icon(
-                  _selectedIndex == 0 ? Icons.home : Icons.home_outlined,
-                  size: 24,
+                child: Image.asset(
+                  _selectedIndex == 0
+                      ? "assets/icons/homefilled.png"
+                      : "assets/icons/homeoutline.png",
                 ),
               ),
             ),
@@ -208,11 +209,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
-                child: Icon(
+                child: Image.asset(
                   _selectedIndex == 1
-                      ? Icons.video_camera_front
-                      : Icons.video_camera_front_outlined,
-                  size: 24,
+                      ? "assets/icons/sessionfilled.png"
+                      : "assets/icons/sessionoutline.png",
                 ),
               ),
             ),
@@ -230,11 +230,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
-                child: Icon(
+                child: Image.asset(
                   _selectedIndex == 2
-                      ? Icons.access_time
-                      : Icons.access_time_outlined,
-                  size: 24,
+                      ? "assets/icons/ClockUserfilled.png"
+                      : "assets/icons/ClockUseroutline.png",
                 ),
               ),
             ),
@@ -252,9 +251,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
-                child: Icon(
-                  _selectedIndex == 3 ? Icons.money : Icons.money_outlined,
-                  size: 24,
+                child: Image.asset(
+                  _selectedIndex == 3
+                      ? "assets/icons/coinsfilled.png"
+                      : "assets/icons/coinsoutline.png",
                 ),
               ),
             ),

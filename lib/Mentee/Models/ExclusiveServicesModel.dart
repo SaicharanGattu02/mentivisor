@@ -106,6 +106,7 @@ class ExclusiveServiceData {
   String? imageUrl;
   String? createdAt;
   String? updatedAt;
+  String? link;
 
   ExclusiveServiceData({
     this.id,
@@ -114,6 +115,7 @@ class ExclusiveServiceData {
     this.imageUrl,
     this.createdAt,
     this.updatedAt,
+    this.link,
   });
 
   ExclusiveServiceData.fromJson(Map<String, dynamic> json) {
@@ -123,6 +125,7 @@ class ExclusiveServiceData {
     imageUrl = json['image_url'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    link = json['link'];
   }
 
   Map<String, dynamic> toJson() {
@@ -133,6 +136,7 @@ class ExclusiveServiceData {
     data['image_url'] = this.imageUrl;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['link'] = this.link;
     return data;
   }
 }

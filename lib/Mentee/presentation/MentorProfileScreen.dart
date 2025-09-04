@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
@@ -18,6 +19,9 @@ class MentorProfileScreen extends StatefulWidget {
 }
 
 class _MentorProfileScreenState extends State<MentorProfileScreen> {
+  bool hasTodaySlots = false;
+  bool hasTomorrowSlots = false;
+  bool hasRemainingSlots = false;
   @override
   void initState() {
     super.initState();
@@ -32,15 +36,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
           builder: (context, state) {
             if (state is MentorProfileLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: DottedProgressWithLogo());
             } else if (state is MentorProfileFailure) {
               return Center(child: Text(state.message));
             } else if (state is MentorProfileLoaded) {
               final mentorData = state.mentorProfileModel.data;
-              final hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
-              final hasTomorrowSlots =
-                  (mentorData?.tomorrowSlots ?? []).isNotEmpty;
-              final hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
+              hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
+              hasTomorrowSlots = (mentorData?.tomorrowSlots ?? []).isNotEmpty;
+              hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
               return Container(
                 padding: EdgeInsets.all(16),
                 decoration: const BoxDecoration(
@@ -276,34 +279,37 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           },
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-          child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
-            builder: (context, state) {
-              final mentorData = (state is MentorProfileLoaded)
-                  ? state.mentorProfileModel.data
-                  : null;
-
-              return SizedBox(
-                width: double.infinity,
-                child: CustomAppButton1(
-                  text: 'Book Session',
-                  onPlusTap: mentorData == null
-                      ? null // disable until loaded
-                      : () {
-                          context.push(
-                            '/book_sessions_screen',
-                            extra:
-                                mentorData, // << pass the exact object you have
-                          );
-                        },
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+      bottomNavigationBar:
+          (hasTodaySlots || hasTomorrowSlots || hasRemainingSlots)
+          ?
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+              child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
+                builder: (context, state) {
+                  final mentorData = (state is MentorProfileLoaded)
+                      ? state.mentorProfileModel.data
+                      : null;
+                  return SizedBox(
+                    width: double.infinity,
+                    child: CustomAppButton1(
+                      text: 'Book Session',
+                      onPlusTap: mentorData == null
+                          ? null // disable until loaded
+                          : () {
+                              context.push(
+                                '/book_sessions_screen',
+                                extra:
+                                    mentorData, // << pass the exact object you have
+                              );
+                            },
+                    ),
+                  );
+                },
+              ),
+            ),
+          )
+      : SizedBox.shrink(),
     );
   }
 

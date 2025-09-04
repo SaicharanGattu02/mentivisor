@@ -42,7 +42,7 @@ class CouponsHomeScreen extends StatelessWidget {
                         title: 'Total Coins',
                         value: '28,000',
                         trailing: Image.asset(
-                          'assets/images/groupcoins.png',
+                          'assets/images/coinsimage.png',
                           height: 36,
                           fit: BoxFit.contain,
                         ),
@@ -57,7 +57,7 @@ class CouponsHomeScreen extends StatelessWidget {
                         title: 'This Month',
                         value: '6800',
                         trailing: Image.asset(
-                          'assets/images/groupcoins.png',
+                          'assets/images/calender.png',
                           height: 36,
                           fit: BoxFit.contain,
                         ),

@@ -31,6 +31,7 @@ class Data {
   final String? imageUrl;
   final String? createdAt;
   final String? updatedAt;
+  final String? link;
 
   const Data({
     this.id,
@@ -39,13 +40,15 @@ class Data {
     this.imageUrl,
     this.createdAt,
     this.updatedAt,
+    this.link,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) {
     // id may come as int or string
     final dynamic rawId = json['id'];
-    final int? parsedId =
-    rawId is int ? rawId : (rawId is String ? int.tryParse(rawId) : null);
+    final int? parsedId = rawId is int
+        ? rawId
+        : (rawId is String ? int.tryParse(rawId) : null);
 
     return Data(
       id: parsedId,
@@ -55,6 +58,7 @@ class Data {
       imageUrl: (json['image_url'] ?? json['imageUrl']) as String?,
       createdAt: (json['created_at'] ?? json['createdAt']) as String?,
       updatedAt: (json['updated_at'] ?? json['updatedAt']) as String?,
+      link: (json['link'] ?? json['link']) as String?,
     );
   }
 
@@ -66,6 +70,7 @@ class Data {
       'image_url': imageUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'link': link,
     };
   }
 }

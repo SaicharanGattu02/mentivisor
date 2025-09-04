@@ -15,7 +15,7 @@ class StudyZoneCampusCubit extends Cubit<StudyZoneCampusState> {
   bool _hasNextPage = true;
   bool _isLoadingMore = false;
 
-  Future<void> fetchStudyZoneCampus(String scope, String tag,String search,) async {
+  Future<void> fetchStudyZoneCampus(String scope, String tag,String search) async {
     emit(StudyZoneCampusLoading());
     _currentPage = 1;
     try {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/utils/AppLauncher.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CutomAppBar.dart';
@@ -30,7 +31,9 @@ class CustomerServiceScreen extends StatelessWidget {
               >(
                 builder: (context, state) {
                   if (state is MenteeCustomersupportLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: SizedBox(
+                      height: SizeConfig.screenHeight*0.7,
+                        child: DottedProgressWithLogo()));
                   }
 
                   if (state is MenteeCustomersupportFailure) {

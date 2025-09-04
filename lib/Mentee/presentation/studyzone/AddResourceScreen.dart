@@ -453,10 +453,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     ],
                   ),
                 ),
-              ] else
-                ...[
-                  SizedBox.shrink(),
-                ],
+              ] else ...[
+                SizedBox.shrink(),
+              ],
               const SizedBox(height: 8),
               const Text(
                 'Upload',

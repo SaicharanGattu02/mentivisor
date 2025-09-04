@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import '../../Components/CutomAppBar.dart';
 import '../../Mentor/data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
 import '../../Mentor/data/Cubits/MentorInfo/Mentor_Info_states.dart';
@@ -38,7 +39,7 @@ class _InfoScreenState extends State<InfoScreen> {
           child: BlocBuilder<MentorInfoCubit, MentorInfoStates>(
             builder: (context, state) {
               if (state is MentorinfoLoading) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: DottedProgressWithLogo());
               }
 
               if (state is MentorinfoFailure) {

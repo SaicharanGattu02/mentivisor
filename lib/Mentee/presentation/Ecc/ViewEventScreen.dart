@@ -4,6 +4,7 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/Models/ECCModel.dart';
 import 'package:mentivisor/utils/AppLauncher.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../utils/constants.dart';
 
@@ -137,39 +138,43 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
           ),
         ],
       ),
-
       // — Bottom buttons
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          child: SizedBox(
-            height: 52,
-            child: Row(
-              children: [
-                Expanded(
-                  child: CustomOutlinedButton(
-                    text: "Share Event",
-                    onTap: () {},
-                    radius: 24,
+      bottomNavigationBar: ((widget.eccList.link ?? "").isNotEmpty)
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: SizedBox(
+                  height: 52,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomOutlinedButton(
+                          text: "Share Event",
+                          onTap: () {
+                            final url = widget.eccList.link ?? "";
+                            if (url.isNotEmpty) {
+                              Share.share("Check out this event: $url");
+                            }
+                          },
+                          radius: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomAppButton1(
+                          text: "Register for Event",
+                          radius: 24,
+                          onPlusTap: () {
+                            AppLauncher.openWebsite(widget.eccList.link ?? "");
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                if ((widget.eccList.link ?? "").isNotEmpty) ...[
-                  Expanded(
-                    child: CustomAppButton1(
-                      text: "Register for Event",
-                      radius: 24,
-                      onPlusTap: () {
-                        AppLauncher.openWebsite(widget.eccList.link ?? "");
-                      },
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            )
+          : SizedBox.shrink(),
     );
   }
 }

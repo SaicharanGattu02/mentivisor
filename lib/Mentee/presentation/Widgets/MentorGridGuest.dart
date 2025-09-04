@@ -22,7 +22,7 @@ class MentorGridGuest extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.67,
+        childAspectRatio: 0.88,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
@@ -61,7 +61,7 @@ class MentorGridCampus extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.95,
+        childAspectRatio: 0.88,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];

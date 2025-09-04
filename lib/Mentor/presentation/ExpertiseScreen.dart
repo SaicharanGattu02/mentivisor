@@ -113,7 +113,7 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                         state: state,
                         onRetry: () =>
                             context.read<ApprovedExpertiseCubit>().fetch(),
-                        showAddButton: showAddButton ?? false,
+                        showAddButton: !(showAddButton ?? false),
                         onItemTap: (label) {
                           context.push(
                             "/expertise_details?id=${label.id}&categoryTitle=${label.name}",

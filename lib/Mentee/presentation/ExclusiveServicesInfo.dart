@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
+import '../../Components/CommonLoader.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
 import '../data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_State.dart';
@@ -21,7 +22,8 @@ class ExclusiveServiceDetails extends StatefulWidget {
   });
 
   @override
-  State<ExclusiveServiceDetails> createState() => _ExclusiveServiceDetailsState();
+  State<ExclusiveServiceDetails> createState() =>
+      _ExclusiveServiceDetailsState();
 }
 
 class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
@@ -32,7 +34,9 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
   }
 
   void _fetch() {
-    context.read<ExclusiveservicedetailsCubit>().exclusiveServiceDetails(widget.id);
+    context.read<ExclusiveservicedetailsCubit>().exclusiveServiceDetails(
+      widget.id,
+    );
   }
 
   Future<void> _open(String url) async {
@@ -45,7 +49,7 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final bgTop = const Color(0xFFF2F4FF); // subtle tint like screenshot
+    final bgTop = const Color(0xFFF2F4FF);
     return Scaffold(
       appBar: CustomAppBar1(title: "Exclusive Services", actions: const []),
       body: Container(
@@ -59,23 +63,32 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
         child: BlocBuilder<ExclusiveservicedetailsCubit, ExclusiveservicedetailsState>(
           builder: (context, state) {
             if (state is ExclusiveservicedetailsStateLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: DottedProgressWithLogo());
             }
             if (state is ExclusiveservicedetailsFailure) {
-              return Center(child: Text(state.msg, style: const TextStyle(fontFamily: 'segeo')));
+              return Center(
+                child: Text(
+                  state.msg,
+                  style: const TextStyle(fontFamily: 'segeo'),
+                ),
+              );
             }
             if (state is ExclusiveservicedetailsStateLoaded) {
               final d = state.exclusiveservicedetailsModel.data;
               final name = (d?.name ?? '').trim();
               final desc = (d?.description ?? '').trim();
               final banner = (d?.imageUrl ?? '').trim();
+              final link = (d?.link ?? '').trim();
               // final link = (d?.link ?? '').trim(); // make sure your model has `link`
 
               return Stack(
                 alignment: Alignment.center,
                 children: [
                   ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                     children: [
                       // Banner Card (rounded light container with inner image)
                       Container(
@@ -98,24 +111,34 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                             width: double.infinity,
                             child: banner.isEmpty
                                 ? Container(
-                              color: Colors.grey.shade200,
-                              child: const Icon(Icons.broken_image_outlined, color: Colors.grey, size: 40),
-                            )
+                                    color: Colors.grey.shade200,
+                                    child: const Icon(
+                                      Icons.broken_image_outlined,
+                                      color: Colors.grey,
+                                      size: 40,
+                                    ),
+                                  )
                                 : CachedNetworkImage(
-                              imageUrl: banner,
-                              fit: BoxFit.cover,
-                              placeholder: (c, _) => const Center(
-                                child: SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(strokeWidth: 1.8),
-                                ),
-                              ),
-                              errorWidget: (c, _, __) => Container(
-                                color: Colors.grey.shade200,
-                                child: const Icon(Icons.broken_image_outlined, color: Colors.grey, size: 40),
-                              ),
-                            ),
+                                    imageUrl: banner,
+                                    fit: BoxFit.cover,
+                                    placeholder: (c, _) => const Center(
+                                      child: SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 1.8,
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (c, _, __) => Container(
+                                      color: Colors.grey.shade200,
+                                      child: const Icon(
+                                        Icons.broken_image_outlined,
+                                        color: Colors.grey,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -124,7 +147,10 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
 
                       Row(
                         children: [
-                          _MiniAvatar(name: name, imageUrl: banner), // or use a separate author image if you have it
+                          _MiniAvatar(
+                            name: name,
+                            imageUrl: banner,
+                          ), // or use a separate author image if you have it
                           const SizedBox(width: 8),
                           Text(
                             name.isEmpty ? '—' : name,
@@ -190,44 +216,15 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                             color: Color(0xFF9D5AF7), // blue
                             fontWeight: FontWeight.w700,
                           ),
-                          // recognizer: TapGestureRecognizer()..onTap = () => _open(link),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => _open(link),
                         ),
                       ),
 
-                      const SizedBox(height: 80), // space so badge doesn’t overlap last line
+                      const SizedBox(
+                        height: 80,
+                      ), // space so badge doesn’t overlap last line
                     ],
-                  ),
-
-                  // Center bottom circular badge with initial (like the “S” in screenshot)
-                  Positioned(
-                    bottom: 28,
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        backgroundColor: const Color(0xFF6B7280),
-                        child: Text(
-                          (name.isEmpty ? 'S' : name.characters.first.toUpperCase()),
-                          style: const TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
                 ],
               );
@@ -250,7 +247,9 @@ class _MiniAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initial = (name.isEmpty ? 'S' : name.trim().characters.first.toUpperCase());
+    final initial = (name.isEmpty
+        ? 'S'
+        : name.trim().characters.first.toUpperCase());
     if (imageUrl.isEmpty) {
       return CircleAvatar(
         radius: 12,
@@ -268,7 +267,8 @@ class _MiniAvatar extends StatelessWidget {
     }
     return CachedNetworkImage(
       imageUrl: imageUrl,
-      imageBuilder: (context, provider) => CircleAvatar(radius: 12, backgroundImage: provider),
+      imageBuilder: (context, provider) =>
+          CircleAvatar(radius: 12, backgroundImage: provider),
       placeholder: (context, url) => CircleAvatar(
         radius: 12,
         backgroundColor: Colors.grey.shade200,

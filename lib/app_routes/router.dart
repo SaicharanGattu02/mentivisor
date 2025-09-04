@@ -504,7 +504,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/feedback',
       pageBuilder: (context, state) {
-        return buildSlideTransitionPage(FeedbackScreen(userId: 76), state);
+        return buildSlideTransitionPage(const FeedbackScreen(), state);
       },
     ),
     GoRoute(
@@ -515,7 +515,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/shoppingcouponscreen',
+      path: '/coupon_details',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CouponDetailsScreen(), state),
     ),

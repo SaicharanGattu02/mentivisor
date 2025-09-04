@@ -3,11 +3,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_state.dart';
 
 import '../../utils/color_constants.dart';
+import '../../utils/media_query_helper.dart';
 
 class ExclusiveServices extends StatefulWidget {
   @override
@@ -35,15 +37,14 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFF4F5FA),
-      appBar: CustomAppBar1(title: "Exclusive Services", actions:[]),
+      appBar: CustomAppBar1(title: "Exclusive Services", actions: []),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFF6F8FF), Color(0xFFF4F5FA)],
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xffEFF6FF)],
           ),
         ),
         child: Column(
@@ -91,7 +92,16 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
             BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
               builder: (context, state) {
                 if (state is ExclusiveserviceStateLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return SingleChildScrollView(
+                    child: SizedBox(
+                      height: SizeConfig.screenHeight * 0.7,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [DottedProgressWithLogo()],
+                      ),
+                    ),
+                  );
                 } else if (state is ExclusiveserviceStateFailure) {
                   return Center(child: Text(state.msg ?? 'Failed to load'));
                 } else if (state is! ExclusiveserviceStateLoaded) {
@@ -142,7 +152,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                           )
                         else
                           SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                            padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
                             sliver: SliverList.separated(
                               itemCount: list.length,
                               separatorBuilder: (_, __) =>
@@ -163,7 +173,6 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                               },
                             ),
                           ),
-
                         if (state is ExclusiveserviceStateLoadingMore)
                           const SliverToBoxAdapter(
                             child: Padding(
@@ -213,7 +222,7 @@ class _ServiceCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFFE9EEF6).withOpacity(0.5),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(

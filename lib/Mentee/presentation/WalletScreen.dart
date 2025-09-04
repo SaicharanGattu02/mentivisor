@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 
 import '../../Components/CutomAppBar.dart';
 import '../../utils/media_query_helper.dart';
@@ -54,11 +55,11 @@ class _WalletScreenState extends State<WalletScreen> {
                 floating: true,
                 snap: true,
                 pinned: false,
-                expandedHeight: 500,
+                expandedHeight: 400,
                 automaticallyImplyLeading: false,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
                         const Text(
@@ -66,7 +67,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 40,
+                            fontSize: 30,
                             fontWeight: FontWeight.w600,
                             fontFamily: "segeo",
                           ),
@@ -86,7 +87,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 37,
-                            vertical: 32,
+                            vertical: 20,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(24),
@@ -114,7 +115,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                   "assets/icons/Coins.png",
                                   color: Colors.white,
                                   width: SizeConfig.screenWidth * 0.064,
-                                  height: SizeConfig.screenHeight * 0.064,
+                                  height: SizeConfig.screenHeight * 0.03,
                                 ),
                               ),
                               Text(
@@ -132,15 +133,15 @@ class _WalletScreenState extends State<WalletScreen> {
                                   return Text(
                                     balance ?? "0",
                                     style: const TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                       fontFamily: 'segeo',
                                     ),
                                   );
                                 },
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -162,7 +163,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                             earned ?? "0",
                                             style: const TextStyle(
                                               fontSize: 30,
-                                              fontWeight: FontWeight.w700,
+                                              fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                               fontFamily: 'segeo',
                                             ),
@@ -188,7 +189,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                             spent ?? "0",
                                             style: const TextStyle(
                                               fontSize: 30,
-                                              fontWeight: FontWeight.w700,
+                                              fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                               fontFamily: 'segeo',
                                             ),
@@ -365,7 +366,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         builder: (context, state) {
                           if (state is WalletmoneyStateLoading) {
                             return const Center(
-                              child: CircularProgressIndicator(),
+                              child: DottedProgressWithLogo(),
                             );
                           } else if (state is WalletmoneyStateLoaded ||
                               state is WalletmoneyStateLoadingMore) {
@@ -383,27 +384,24 @@ class _WalletScreenState extends State<WalletScreen> {
                                 [];
 
                             if (coinsHistoryList.isEmpty) {
-                              return Container(
-                                height: 160,
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    Center(
-                                      child: Image.asset(
-                                        "assets/nodata/no_data.png",
-                                      ),
+                              return Column(
+                                children: [
+                                  Center(
+                                    child: Image.asset(
+                                      "assets/nodata/no_data.png",
+                                      width: 200,
                                     ),
-                                    Text(
-                                      "No Coins History available",
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'segeo',
-                                      ),
+                                  ),
+                                  Text(
+                                    "No Coins History available",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'segeo',
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               );
                             }
 

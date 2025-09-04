@@ -8,9 +8,9 @@ class SocketService {
   static IO.Socket connect(String userId) {
     if (_socket == null) {
       _socket = IO.io(ApiConfig.socket_url, <String, dynamic>{
-        'transports': ['websocket', 'polling'],
+        // 'transports': ['websocket', 'polling'],
         'autoConnect': true,
-        'query': {'userId': userId},
+        // 'query': {'userId': userId},
       });
 
       _socket!.connect();

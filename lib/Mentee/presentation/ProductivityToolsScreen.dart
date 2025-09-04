@@ -5,7 +5,6 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:intl/intl.dart';
-
 import '../../Components/CommonLoader.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_states.dart';
@@ -93,7 +92,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                 const SizedBox(height: 20),
                 BlocBuilder<TaskByStatusCubit, TaskByStatusStates>(
                   builder: (context, state) {
-                    if (state is TaskByStatusLoaded) {
+                    final data =  state is TaskByStatusLoaded? state.taskStatesModel: null;
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -102,8 +101,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             height: 110,
                             child: _buildStatCard(
                               'Current Streak',
-                              state.taskStatesModel.currentStreak?.toString() ??
-                                  "0",
+                              data?.currentStreak?.toString() ?? "0",
                               Colors.orange[100]!,
                               "assets/images/Vector1.png",
                             ),
@@ -113,8 +111,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             height: 110,
                             child: _buildStatCard(
                               'Completed Task',
-                              state.taskStatesModel.completedTask?.toString() ??
-                                  "0",
+                              data?.completedTask?.toString() ?? "0",
                               Colors.green[100]!,
                               "assets/images/vector2.png", // your image 2
                             ),
@@ -124,18 +121,13 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             height: 110,
                             child: _buildStatCard(
                               'Today  \n Task',
-                              state.taskStatesModel.todayTask?.toString() ??
-                                  "0",
+                              data?.todayTask?.toString() ?? "0",
                               Colors.blue[100]!,
                               "assets/images/vector3.png",
                             ),
                           ),
                         ],
                       );
-                    } else if (state is TaskByStatusFailure) {
-                      return Center(child: Text(state.msg ?? ""));
-                    }
-                    return const SizedBox();
                   },
                 ),
                 const SizedBox(height: 20),

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Mentee/data/cubits/Campuses/campuses_cubit.dart';
@@ -107,283 +108,292 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
         .toList();
 
     return Scaffold(
-      backgroundColor: Color(0xFFF2F4FD),
-      appBar: CustomAppBar1(
-        title: "Edit Profile",
-        actions: [],
-        color: Color(0xFFF2F4FD),
-      ),
+      appBar: CustomAppBar1(title: "Edit Profile", actions: []),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: _image != null
-                                ? FileImage(_image!)
-                                : (imagePath?.startsWith('http') ?? false)
-                                ? CachedNetworkImageProvider(imagePath!)
-                                : const AssetImage('assets/images/profile.png')
-                                      as ImageProvider,
-                          ),
-                          Positioned(
-                            bottom: 4,
-                            right: 4,
-                            child: GestureDetector(
-                              onTap: () {
-                                _selectImage();
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: primarycolor,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
+          ? const Center(child: DottedProgressWithLogo())
+          : Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFEFF6FF),
+                    Color(0xFFF5F6FF),
+                    Color(0xffFAF5FF),
+                  ],
+                ),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: _image != null
+                                  ? FileImage(_image!)
+                                  : (imagePath?.startsWith('http') ?? false)
+                                  ? CachedNetworkImageProvider(imagePath!)
+                                  : const AssetImage(
+                                          'assets/images/profile.png',
+                                        )
+                                        as ImageProvider,
+                            ),
+                            Positioned(
+                              bottom: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () {
+                                  _selectImage();
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: primarycolor,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
                                   ),
-                                ),
-                                padding: const EdgeInsets.all(6),
-                                child: const Icon(
-                                  Icons.edit,
-                                  color: Colors.white,
-                                  size: 18,
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildField(
-                      "Name",
-                      _nameController,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? "Name required" : null,
-                    ),
-                    _buildField(
-                      "Stream",
-                      _streamController,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? "Stream required" : null,
-                    ),
-                    Text(
-                      "Year",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: 'segeo',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff374151),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    TextFormField(
-                      controller: _yearController,
-                      readOnly: true,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      onTap: () {
-                        _openYearSelectionBottomSheet(context);
-                      },
-                      decoration: InputDecoration(suffixIcon: Icon(Icons.arrow_drop_down_sharp),
-                        hintText: 'Select Year',
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 14,
+                          ],
                         ),
                       ),
-                      validator: (val) =>
-                          val!.isEmpty ? 'Please Select Year' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildField(
-                      "Email",
-                      _emailController,
-                      keyboard: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return "Email required";
-                        final emailRegex = RegExp(
-                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                        );
-                        return emailRegex.hasMatch(v)
-                            ? null
-                            : "Enter valid email";
-                      },
-                    ),
-                    // _buildField(
-                    //   "Phone",
-                    //   _phoneController,
-                    //   keyboard: TextInputType.phone,
-                    //   validator: (v) {
-                    //     if (v == null || v.isEmpty) return "Phone required";
-                    //     if (v.length < 10) return "Enter valid phone";
-                    //     return null;
-                    //   },
-                    // ),
-                    _buildField(
-                      "Bio",
-                      _bioController,
-                      maxLines: 4,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? "Bio required" : null,
-                    ),
-                    Text(
-                      "Languages",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: 'segeo',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xff121212),
+                      const SizedBox(height: 24),
+                      _buildField(
+                        "Name",
+                        _nameController,
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Name required" : null,
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        ..._selectedLanguages.map(
-                          (lang) => Chip(
-                            backgroundColor: const Color(0xffFFFFFF),
+                      _buildField(
+                        "Stream",
+                        _streamController,
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Stream required" : null,
+                      ),
+                      Text(
+                        "Year",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff374151),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextFormField(
+                        controller: _yearController,
+                        readOnly: true,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        onTap: () {
+                          _openYearSelectionBottomSheet(context);
+                        },
+                        decoration: InputDecoration(
+                          suffixIcon: Icon(Icons.arrow_drop_down_sharp),
+                          hintText: 'Select Year',
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                        ),
+                        validator: (val) =>
+                            val!.isEmpty ? 'Please Select Year' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildField(
+                        "Email",
+                        _emailController,
+                        keyboard: TextInputType.emailAddress,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return "Email required";
+                          final emailRegex = RegExp(
+                            r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                          );
+                          return emailRegex.hasMatch(v)
+                              ? null
+                              : "Enter valid email";
+                        },
+                      ),
+                      // _buildField(
+                      //   "Phone",
+                      //   _phoneController,
+                      //   keyboard: TextInputType.phone,
+                      //   validator: (v) {
+                      //     if (v == null || v.isEmpty) return "Phone required";
+                      //     if (v.length < 10) return "Enter valid phone";
+                      //     return null;
+                      //   },
+                      // ),
+                      _buildField(
+                        "Bio",
+                        _bioController,
+                        maxLines: 4,
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Bio required" : null,
+                      ),
+                      Text(
+                        "Languages",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff121212),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ..._selectedLanguages.map(
+                            (lang) => Chip(
+                              backgroundColor: const Color(0xffFFFFFF),
+                              visualDensity: VisualDensity.compact,
+                              label: Text(
+                                lang,
+                                style: const TextStyle(
+                                  color: Color(0xff555555),
+                                  fontFamily: 'segeo',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              deleteIcon: Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xffCDCDCD),
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: const EdgeInsets.all(2),
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Color(0xff444444),
+                                ),
+                              ),
+                              onDeleted: () {
+                                setState(() {
+                                  _selectedLanguages.remove(lang);
+                                });
+                              },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                side: const BorderSide(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          ActionChip(
                             visualDensity: VisualDensity.compact,
-                            label: Text(
-                              lang,
-                              style: const TextStyle(
+                            avatar: const Icon(
+                              Icons.add,
+                              size: 20,
+                              color: Colors.black,
+                            ),
+                            label: const Text(
+                              "Add new",
+                              style: TextStyle(
                                 color: Color(0xff555555),
                                 fontFamily: 'segeo',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14,
                               ),
                             ),
-                            deleteIcon: Container(
-                              decoration: const BoxDecoration(
-                                color: Color(0xffCDCDCD),
-                                shape: BoxShape.circle,
-                              ),
-                              padding: const EdgeInsets.all(2),
-                              child: const Icon(
-                                Icons.close,
-                                size: 16,
-                                color: Color(0xff444444),
-                              ),
-                            ),
-                            onDeleted: () {
-                              setState(() {
-                                _selectedLanguages.remove(lang);
-                              });
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        ActionChip(
-                          visualDensity: VisualDensity.compact,
-                          avatar: const Icon(
-                            Icons.add,
-                            size: 20,
-                            color: Colors.black,
-                          ),
-                          label: const Text(
-                            "Add new",
-                            style: TextStyle(
-                              color: Color(0xff555555),
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _showAvailableLanguages =
-                                  !_showAvailableLanguages;
-                            });
-                          },
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                              color: Colors.white,
-                              style: BorderStyle.none,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-                    if (_showAvailableLanguages) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Select from below",
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff555555),
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
                             onPressed: () {
                               setState(() {
-                                _showAvailableLanguages = false;
+                                _showAvailableLanguages =
+                                    !_showAvailableLanguages;
                               });
                             },
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                color: Colors.white,
+                                style: BorderStyle.none,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: availableLanguages.map((lang) {
-                          return ChoiceChip(
-                            label: Text(
-                              lang,
-                              style: const TextStyle(
-                                color: Color(0xff121212),
+
+                      const SizedBox(height: 16),
+                      if (_showAvailableLanguages) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Select from below",
+                              style: TextStyle(
                                 fontFamily: 'segeo',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff555555),
                               ),
                             ),
-                            selected: false,
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _showAvailableLanguages = false;
+                                });
+                              },
                             ),
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedLanguages.add(lang);
-                                _showAvailableLanguages = false;
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: availableLanguages.map((lang) {
+                            return ChoiceChip(
+                              label: Text(
+                                lang,
+                                style: const TextStyle(
+                                  color: Color(0xff121212),
+                                  fontFamily: 'segeo',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              selected: false,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              onSelected: (_) {
+                                setState(() {
+                                  _selectedLanguages.add(lang);
+                                  _showAvailableLanguages = false;
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),

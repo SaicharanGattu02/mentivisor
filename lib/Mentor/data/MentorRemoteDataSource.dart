@@ -25,7 +25,7 @@ abstract class MentorRemoteDataSource {
   Future<SessionsModel?> getSessions(String sessionType);
   Future<MentorprofileModel?> getMentorProfile();
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data);
-  Future<FeedbackModel?> getFeedback(int user_id,List<int> stars,int page);
+  Future<FeedbackModel?> getFeedback(String user_id);
   Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
   Future<MentorinfoResponseModel?> mentorinfo();
@@ -383,10 +383,10 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<FeedbackModel?> getFeedback(int user_id,List<int> stars,int page,) async {
+  Future<FeedbackModel?> getFeedback(String user_id) async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.feedback}/${user_id}?stars[${stars}]&page=${page}",
+        "${MentorEndpointsUrls.feedback}/${user_id}",
       );
       AppLogger.log('getFeedback: ${res.data}');
       return FeedbackModel.fromJson(res.data);

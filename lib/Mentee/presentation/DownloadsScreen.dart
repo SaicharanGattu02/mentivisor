@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
@@ -43,7 +44,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                 child: BlocBuilder<DownloadsCubit, DownloadStates>(
                   builder: (context, state) {
                     if (state is DownloadLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: DottedProgressWithLogo());
                     } else if (state is DownloadLoaded ||
                         state is DownloadLoadingMore) {
                       final downloadsModel = (state is DownloadLoaded)
@@ -58,7 +59,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/nodata/no_data.png",
+                                "assets/images/nodownloads.png",
                                 height: 120,
                               ),
                               const SizedBox(height: 16),
