@@ -76,7 +76,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     },
                     style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
                     decoration: InputDecoration(
-                      hintText: 'Search by employee name, phone',
+                      hintText: 'Search by Employee name',
                       prefixIcon: const Icon(Icons.search),
                     ),
                   ),
@@ -134,7 +134,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: 0.66,
+                              childAspectRatio: 0.9,
                             ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
@@ -157,7 +157,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               child: Column(
                                 children: [
                                   CircleAvatar(
-                                    radius: 60,
+                                    radius: 40,
                                     backgroundColor: Colors.grey.shade200,
                                     backgroundImage: hasPic
                                         ? CachedNetworkImageProvider(url)
@@ -183,6 +183,8 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                   SizedBox(height: 4),
                                   Text(
                                     m.user?.bio ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       color: Color(0xff555555),

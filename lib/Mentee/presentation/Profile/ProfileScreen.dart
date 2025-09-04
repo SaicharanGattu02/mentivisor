@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'package:mentivisor/utils/color_constants.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
@@ -45,18 +47,15 @@ class _ProfileScreen1State extends State<ProfileScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
             colors: [Color(0xFFFAF5FF), Color(0xFFF2F4FD)],
-            stops: [0.0, 1.0],
           ),
         ),
         child: BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
           builder: (context, state) {
             if (state is MenteeProfileLoading) {
-              return const SizedBox(
-                height: 180,
-                child: Center(child: CircularProgressIndicator()),
+              return SizedBox(
+                height: SizeConfig.screenHeight,
+                child: Center(child: DottedProgressWithLogo()),
               );
             } else if (state is MenteeProfileLoaded) {
               final menteeProfile = state.menteeProfileModel.data;
@@ -123,7 +122,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                   SizedBox(height: 8),
 
                   Text(
-                    capitalize(menteeProfile?.user?.name ?? "UnKnown") ,
+                    capitalize(menteeProfile?.user?.name ?? "UnKnown"),
                     style: TextStyle(
                       color: Color(0xff121212),
                       fontSize: 18,
@@ -523,36 +522,16 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                             vertical:
                                                                                 12,
                                                                           ),
-                                                                          child: CommentBottomSheet(communityPost:CommunityPosts(   // 👈 construct UI object from model
-                                                                            id: menteePosts?.id,
-                                                                            heading: menteePosts?.heading,
-                                                                            description: menteePosts?.description,
-                                                                            // map the rest...
+                                                                          child: CommentBottomSheet(
+                                                                            communityPost: CommunityPosts(
+                                                                              // 👈 construct UI object from model
+                                                                              id: menteePosts?.id,
+                                                                              heading: menteePosts?.heading,
+                                                                              description: menteePosts?.description,
+                                                                            ),
+                                                                            scrollController:
+                                                                                scrollController,
                                                                           ),
-                                                                          comments: (menteePosts?.comments ??
-                                                                              [])
-                                                                              .map(
-                                                                                (
-                                                                                comments,
-                                                                                ) => {
-                                                                              "name":
-                                                                              comments.user?.name ??
-                                                                                  "Unknown",
-                                                                              "profile":
-                                                                              comments.user?.profilePicUrl ??
-                                                                                  "assets/images/profile.png",
-                                                                              "comment":
-                                                                              comments.content ??
-                                                                                  "",
-                                                                              "time":
-                                                                              comments.createdAt ??
-                                                                                  "",
-                                                                            },
-                                                                          )
-                                                                              .toList(),
-                                                                          scrollController:
-                                                                          scrollController,
-                                                                        ),
                                                                         ),
                                                                   );
                                                                 },

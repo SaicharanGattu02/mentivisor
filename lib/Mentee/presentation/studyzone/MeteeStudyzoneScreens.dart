@@ -243,8 +243,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   horizontal: 16,
                                 ),
                                 itemCount: tags.length ?? 0,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(width: 8),
+                                separatorBuilder: (_, __) => const SizedBox(width: 8),
                                 itemBuilder: (context, index) {
                                   final tagItem = tags![index];
                                   final isSelected = index == selectedIndex;
@@ -270,8 +269,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       }
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
@@ -283,7 +282,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       child: Text(
                                         tagItem,
                                         style: TextStyle(
-                                          fontFamily: 'segeo',
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12,
                                           color: isSelected

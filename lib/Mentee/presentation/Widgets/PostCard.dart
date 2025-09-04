@@ -280,51 +280,14 @@ class _PostCardState extends State<PostCard>
                                             maxChildSize: 0.95,
                                             expand: false,
                                             builder: (_, scrollController) => Container(
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xffF4F8FD),
-                                                borderRadius:
-                                                    BorderRadius.vertical(
-                                                      top: Radius.circular(16),
-                                                    ),
+                                                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                                               ),
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 12,
-                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                               child: CommentBottomSheet(
-                                                communityPost:
-                                                    widget.communityPosts,
-                                                comments:
-                                                    (widget
-                                                                .communityPosts
-                                                                .comments ??
-                                                            [])
-                                                        .map(
-                                                          (comments) => {
-                                                            "id": comments.id,
-                                                            "name":
-                                                                comments
-                                                                    .user
-                                                                    ?.name ??
-                                                                "Unknown",
-                                                            "profile":
-                                                                comments
-                                                                    .user
-                                                                    ?.profilePicUrl ??
-                                                                "assets/images/profile.png",
-                                                            "comment":
-                                                                comments
-                                                                    .content ??
-                                                                "",
-                                                            "time":
-                                                                comments
-                                                                    .createdAt ??
-                                                                "",
-                                                          },
-                                                        )
-                                                        .toList(),
-                                                scrollController:
-                                                    scrollController,
+                                                communityPost: widget.communityPosts,
+                                                scrollController: scrollController,
                                               ),
                                             ),
                                           );
@@ -334,23 +297,13 @@ class _PostCardState extends State<PostCard>
                                   },
                                   child: Row(
                                     children: [
-                                      Image.asset(
-                                        "assets/icons/Chat.png",
-                                        width: 16,
-                                        height: 16,
-                                      ),
+                                      Image.asset("assets/icons/Chat.png", width: 16, height: 16),
                                       const SizedBox(width: 6),
-                                      BlocBuilder<
-                                        PostCommentCubit,
-                                        PostCommentStates
-                                      >(
+                                      BlocBuilder<PostCommentCubit, PostCommentStates>(
                                         builder: (context, state) {
                                           return Text(
-                                            widget.communityPosts.commentsCount
-                                                .toString(),
-                                            style: const TextStyle(
-                                              fontFamily: 'segeo',
-                                            ),
+                                            widget.communityPosts.commentsCount.toString(),
+                                            style: const TextStyle(fontFamily: 'segeo'),
                                           );
                                         },
                                       ),
@@ -366,12 +319,12 @@ class _PostCardState extends State<PostCard>
                                     final post = widget.communityPosts;
                                     final shareText =
                                         """
-${post.heading ?? "Check this out!"}
-
-${post.description ?? ""}
-
-${post.imgUrl ?? ""}
-""";
+                                      ${post.heading ?? "Check this out!"}
+                                      
+                                      ${post.description ?? ""}
+                                      
+                                      ${post.imgUrl ?? ""}
+                                      """;
                                     await Share.share(shareText.trim());
                                   },
                                   child: Image.asset(

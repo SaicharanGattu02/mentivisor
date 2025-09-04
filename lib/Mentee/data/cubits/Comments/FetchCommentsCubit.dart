@@ -9,7 +9,7 @@ class FetchCommentsCubit extends Cubit<FetchCommentsStates> {
   final CommentsRepo repo;
   FetchCommentsCubit(this.repo) : super(FetchCommentsInitially());
 
-  Future<CommentsModel?> getComments({required int entityId}) async {
+  Future<CommentsModel?> getComments(int entityId) async {
     emit(FetchCommentsLoading());
     try {
       final res = await repo.getComments(entityId);

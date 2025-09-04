@@ -61,7 +61,7 @@ class MentorGridCampus extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.67,
+        childAspectRatio: 0.95,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
@@ -112,7 +112,7 @@ class _MentorCard extends StatelessWidget {
           CachedNetworkImage(
             imageUrl: image,
             imageBuilder: (context, imageProvider) =>
-                CircleAvatar(radius: 60, backgroundImage: imageProvider),
+                CircleAvatar(radius: 40, backgroundImage: imageProvider),
             placeholder: (context, url) => CircleAvatar(
               radius: 20,
               backgroundColor: Colors.grey,
@@ -146,7 +146,7 @@ class _MentorCard extends StatelessWidget {
               child: Text(
                 designation,
                 textAlign: TextAlign.center,
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Color(0xff555555),

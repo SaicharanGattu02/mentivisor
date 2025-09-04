@@ -98,44 +98,46 @@ class _NotificationsState extends State<Notifications> {
                   if (data?.rejections != null) ...[
                     if (data!.rejections!.isEmpty)
                       SliverToBoxAdapter(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 200,
-                                width: 200,
-                                child: Image.asset("assets/nodata/no_data.png"),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'No Notifications Found!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: primarycolor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins',
+                        child: SizedBox(
+                          height: SizeConfig.screenHeight*0.55,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  width: 200,
+                                  child: Image.asset("assets/nodata/no_data.png"),
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  'No Notifications Found!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: primarycolor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )
                     else //
-                      _buildHeader("Rejections"),// 👉 Show List if not empty
-                      _buildList(
-                        itemCount: data.rejections!.length,
-                        itemBuilder: (context, index) {
-                          final rejection = data.rejections![index];
-                          return _buildCard(
-                            icon: "assets/icons/meet.png",
-                            title: rejection.message ?? "",
-                            subtitle: rejection.date ?? "",
-                          );
-                        },
-                      ),
+                      _buildHeader("Rejections"), // 👉 Show List if not empty
+                    _buildList(
+                      itemCount: data.rejections!.length,
+                      itemBuilder: (context, index) {
+                        final rejection = data.rejections![index];
+                        return _buildCard(
+                          icon: "assets/icons/meet.png",
+                          title: rejection.message ?? "",
+                          subtitle: rejection.date ?? "",
+                        );
+                      },
+                    ),
                   ],
                 ],
               );

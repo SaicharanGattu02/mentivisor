@@ -28,7 +28,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(title: 'Mentor profile', actions: []),
-      body: Background1(
+      body: Background(
         child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
           builder: (context, state) {
             if (state is MentorProfileLoading) {
@@ -41,7 +41,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               final hasTomorrowSlots =
                   (mentorData?.tomorrowSlots ?? []).isNotEmpty;
               final hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
-
               return Container(
                 padding: EdgeInsets.all(16),
                 decoration: const BoxDecoration(
@@ -100,7 +99,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             ],
                           ),
                           child: Column(
-                            spacing: 10,
+                            spacing: 8,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -121,12 +120,12 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               ),
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.language,
-                                    color: Colors.green,
-                                    size: 16,
+                                  Image.asset(
+                                    "assets/icons/language.png",
+                                    width: 18,
+                                    height: 18,
                                   ),
-                                  SizedBox(width: 4),
+                                  SizedBox(width: 6),
                                   Text(
                                     (mentorData?.langages ?? []).join(
                                       ', ',
@@ -336,7 +335,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               color: Color(0xff333333),
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 10),
           child,
         ],
       ),
@@ -367,7 +366,10 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       side: BorderSide(color: Color(0xFFf3e8ff)),
       backgroundColor: Color(0xFFf3e8ff),
       labelStyle: TextStyle(color: Color(0xFF7e22ce), fontFamily: "Inter"),
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(36), // change 12 to your need
+      ),
     );
   }
 }

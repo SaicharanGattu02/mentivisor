@@ -370,6 +370,7 @@ class ResourceDetailScreen extends StatelessWidget {
                           ),
                         ),
                         value: reason,
+                        visualDensity: VisualDensity.compact,
                         groupValue: _selected,
                         onChanged: (String? value) {
                           setState(() {

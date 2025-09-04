@@ -18,7 +18,7 @@ class MenteeCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       elevation: 2, // Subtle shadow
-      color: Color(0xFFF5F6F5), // Light grayish-white background
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Stack(
         children: [
@@ -42,7 +42,7 @@ class MenteeCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: imageProvider,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                             ),
                             color: Color(
                               0xFFF5E6CC,
@@ -81,16 +81,15 @@ class MenteeCard extends StatelessWidget {
                               color: Color(0xFF222222), // Dark gray for name
                             ),
                           ),
-                          SizedBox(height: 5),
-                          Text(
-                            "",
-                            // mentee.name ?? "",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF666666), // Gray for email
-                            ),
-                          ),
+                          // SizedBox(height: 5),
+                          // Text(
+                          //   mentee.name ?? "",
+                          //   style: TextStyle(
+                          //     fontSize: 12,
+                          //     fontWeight: FontWeight.w600,
+                          //     color: Color(0xFF666666), // Gray for email
+                          //   ),
+                          // ),
                           SizedBox(height: 5),
                           Text(
                             'Last interaction was ${mentee.lastSession?.date ?? "N/A"}',
@@ -119,7 +118,7 @@ class MenteeCard extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                       decoration: BoxDecoration(
                         color: Color(0xffF5F5F5),
                         borderRadius: BorderRadius.circular(24),

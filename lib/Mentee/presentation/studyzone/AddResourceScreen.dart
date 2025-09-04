@@ -340,7 +340,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   } else if (state is TagsSearchLoaded) {
                     final allTags = [...state.tagsModel.data!, ..._customTags];
                     if (allTags.isEmpty) {
-                      return const SizedBox.shrink();
+                      return Center(child: Text("No Tags Found!"));
                     }
                     return Container(
                       padding: const EdgeInsets.all(10),
@@ -396,43 +396,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                               );
                             }).toList(),
                           ),
-                          if (_selectedTags.isNotEmpty) ...[
-                            const SizedBox(height: 15),
-                            const Text(
-                              "Selected Tags",
-                              style: TextStyle(
-                                color: Color(0xff374151),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'segeo',
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Wrap(
-                              spacing: 5,
-                              runSpacing: 0,
-                              children: _selectedTags.map((tag) {
-                                return Chip(
-                                  label: Text(
-                                    tag,
-                                    style: const TextStyle(
-                                      color: Color(0xff333333),
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  backgroundColor: Colors.blue.shade50,
-                                  deleteIcon: const Icon(Icons.close, size: 16),
-                                  onDeleted: () {
-                                    setState(() {
-                                      _selectedTags.remove(tag);
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          ],
                         ],
                       ),
                     );
@@ -441,6 +404,59 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   }
                 },
               ),
+              const SizedBox(height: 8),
+              if (_selectedTags.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Selected Tags",
+                        style: TextStyle(
+                          color: Color(0xff374151),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'segeo',
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 0,
+                        children: _selectedTags.map((tag) {
+                          return Chip(
+                            label: Text(
+                              tag,
+                              style: const TextStyle(
+                                color: Color(0xff333333),
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                            side: BorderSide(color: Colors.blue.shade50),
+                            backgroundColor: Colors.blue.shade50,
+                            deleteIcon: const Icon(Icons.close, size: 16),
+                            onDeleted: () {
+                              setState(() {
+                                _selectedTags.remove(tag);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else
+                ...[
+                  SizedBox.shrink(),
+                ],
               const SizedBox(height: 8),
               const Text(
                 'Upload',
