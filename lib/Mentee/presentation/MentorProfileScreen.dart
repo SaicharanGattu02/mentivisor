@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/MentorProfile/MentorProfileCubit.dart';
 import '../data/cubits/MentorProfile/MentorProfileState.dart';
@@ -41,9 +42,15 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               return Center(child: Text(state.message));
             } else if (state is MentorProfileLoaded) {
               final mentorData = state.mentorProfileModel.data;
-              hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
-              hasTomorrowSlots = (mentorData?.tomorrowSlots ?? []).isNotEmpty;
-              hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+                  hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
+                  hasTomorrowSlots = (mentorData?.tomorrowSlots ?? []).isNotEmpty;
+                  hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
+                });
+              });
+
+              AppLogger.info("hasTodaySlots:${hasTodaySlots}, hasTomorrowSlots:${hasTomorrowSlots} ,hasRemainingSlots:${hasRemainingSlots} ");
               return Container(
                 padding: EdgeInsets.all(16),
                 decoration: const BoxDecoration(

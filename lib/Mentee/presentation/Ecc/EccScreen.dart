@@ -105,13 +105,14 @@ class _EccScreenState extends State<EccScreen> {
                                         text: 'On Campus',
                                         isSelected: isOnCampus,
                                         onPressed: () {
+                                          _searchController.clear();
                                           final selectedUpdate =
                                               _filters[_selectedFilter]
                                                   .toLowerCase();
                                           context.read<ECCCubit>().getECC(
                                             "",
                                             selectedUpdate,
-                                            "",
+                                            _searchController.text,
                                           );
                                           onCampusNotifier.value =
                                               true; // update state
@@ -123,13 +124,14 @@ class _EccScreenState extends State<EccScreen> {
                                         text: 'Beyond Campus',
                                         isSelected: !isOnCampus,
                                         onPressed: () {
+                                          _searchController.clear();
                                           final selectedUpdate =
                                               _filters[_selectedFilter]
                                                   .toLowerCase();
                                           context.read<ECCCubit>().getECC(
                                             "beyond",
                                             selectedUpdate,
-                                            "",
+                                            _searchController.text,
                                           );
                                           onCampusNotifier.value =
                                               false; // update state

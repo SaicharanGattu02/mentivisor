@@ -126,201 +126,43 @@ class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
             Expanded(
               child: BlocBuilder<ExpertiseCategoryCubit, ExpertiseCategoryStates>(
                 builder: (context, state) {
-                  if (state is ExpertiseCategoryLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is ExpertiseCategoryLoaded ||
-                      state is ExpertiseCategoryLoadingMore) {
-                    final hasNextPage = (state is ExpertiseCategoryLoaded)
-                        ? state.hasNextPage
-                        : (state as ExpertiseCategoryLoadingMore).hasNextPage;
-
-                    final categoryList = (state is ExpertiseCategoryLoaded)
-                        ? state.expertiseModel.data?.data ?? []
-                        : (state as ExpertiseCategoryLoadingMore)
-                                  .expertiseModel
-                                  .data
-                                  ?.data ??
-                              [];
-
-                    expertiseCategories = categoryList;
-
-                    if (categoryList.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Oops !',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              textAlign: TextAlign.center,
-                              'No Data Found!',
-                              style: TextStyle(
-                                color: Color(0xFF7F00FF),
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    return SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: categoryList
-                                .where(
-                                  (cat) =>
-                                      !selectedCategoryIds.contains(cat.id),
-                                )
-                                .map((cat) {
-                                  return _PillChip(
-                                    text: cat.name ?? "",
-                                    selected: false,
-                                    onTap: () {
-                                      setState(() {
-                                        selectedCategoryIds.add(cat.id ?? -1);
-                                        context
-                                            .read<ExpertiseSubCategoryCubit>()
-                                            .getExpertiseSubCategories(
-                                              cat.id ?? -1,
-                                            );
-                                      });
-                                    },
-                                  );
-                                })
-                                .toList(),
-                          ),
-
-                          ...selectedCategoryIds.map((catId) {
-                            final category = expertiseCategories.firstWhere(
-                              (c) => c.id == catId,
-                              orElse: () => ExpertiseData(subExpertises: []),
-                            );
-                            final subs = category.subExpertises ?? [];
-                            final pickedSubs =
-                                pickedSubTopicsPerCategory[catId] ?? {};
-
-                            return Padding(
-                              padding: EdgeInsets.only(top: 16),
-                              child: DottedBorder(
-                                color: const Color(0xFFD9BFC4),
-                                strokeWidth: 1.2,
-                                dashPattern: const [6, 4],
-                                borderType: BorderType.RRect,
-                                radius: const Radius.circular(16),
-                                padding: const EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Selected category chip with remove button
-                                    _SelectedCategoryChip(
-                                      categoryName: category.name ?? "",
-                                      onClear: () {
-                                        setState(() {
-                                          selectedCategoryIds.remove(catId);
-                                          pickedSubTopicsPerCategory.remove(
-                                            catId,
-                                          );
-                                        });
-                                      },
-                                    ),
-
-                                    const SizedBox(height: 12),
-
-                                    if (subs.isNotEmpty)
-                                      Wrap(
-                                        spacing: 10,
-                                        runSpacing: 10,
-                                        children: subs.map((sub) {
-                                          final isPicked = pickedSubs.contains(
-                                            sub.name ?? "",
-                                          );
-                                          return _PillChip(
-                                            text: sub.name ?? "",
-                                            selected: isPicked,
-                                            onTap: () {
-                                              setState(() {
-                                                final setForCat =
-                                                    pickedSubTopicsPerCategory
-                                                        .putIfAbsent(
-                                                          catId,
-                                                          () => {},
-                                                        );
-                                                if (isPicked) {
-                                                  setForCat.remove(
-                                                    sub.name ?? "",
-                                                  );
-                                                  selectedSubCategoryIds.remove(
-                                                    sub.id ?? 0,
-                                                  );
-                                                } else {
-                                                  setForCat.add(sub.name ?? "");
-                                                  selectedSubCategoryIds.add(
-                                                    sub.id ?? 0,
-                                                  );
-                                                }
-                                              });
-                                            },
-                                            selectedBorder: const Color(
-                                              0xFFC9CED6,
-                                            ),
-                                            selectedText: const Color(
-                                              0xFF2F3B52,
-                                            ),
-                                          );
-                                        }).toList(),
-                                      )
-                                    else
-                                      const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "No Subcategories Found",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Color(0xFF7F00FF),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-
-                          if (state is ExpertiseCategoryLoadingMore)
-                            const Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: Center(child: CircularProgressIndicator()),
-                            ),
-
-                          if (!hasNextPage) const SizedBox(height: 20),
-                        ],
-                      ),
-                    );
-                  } else if (state is ExpertiseCategoryFailure) {
-                    return Center(child: Text(state.error));
-                  }
-                  return const SizedBox();
+                  return CategorySelectionFromState(
+                    state: state,
+                    selectedCategoryIds: selectedCategoryIds,
+                    selectedSubCategoryIds: selectedSubCategoryIds,
+                    pickedSubTopicsPerCategory: pickedSubTopicsPerCategory,
+                    onCategorySelected: (catId) {
+                      setState(() {
+                        selectedCategoryIds.add(catId);
+                        context
+                            .read<ExpertiseSubCategoryCubit>()
+                            .getExpertiseSubCategories(catId);
+                      });
+                    },
+                    onSubCategoryToggle: (catId, subName, subId, isPicked) {
+                      setState(() {
+                        final setForCat =
+                        pickedSubTopicsPerCategory.putIfAbsent(catId, () => {});
+                        if (isPicked) {
+                          setForCat.remove(subName);
+                          selectedSubCategoryIds.remove(subId);
+                        } else {
+                          setForCat.add(subName);
+                          selectedSubCategoryIds.add(subId);
+                        }
+                      });
+                    },
+                    onCategoryClear: (catId) {
+                      setState(() {
+                        selectedCategoryIds.remove(catId);
+                        pickedSubTopicsPerCategory.remove(catId);
+                      });
+                    },
+                  );
                 },
               ),
             ),
+
           ],
         ),
       ),
@@ -415,6 +257,125 @@ class _SelectedCategoryChip extends StatelessWidget {
     );
   }
 }
+class CategorySelectionFromState extends StatelessWidget {
+  final ExpertiseCategoryStates state;
+  final Set<int> selectedCategoryIds;
+  final Set<int> selectedSubCategoryIds;
+  final Map<int, Set<String>> pickedSubTopicsPerCategory;
+  final Function(int) onCategorySelected;
+  final Function(int, String, int, bool) onSubCategoryToggle;
+  final Function(int) onCategoryClear;
+
+  const CategorySelectionFromState({
+    super.key,
+    required this.state,
+    required this.selectedCategoryIds,
+    required this.selectedSubCategoryIds,
+    required this.pickedSubTopicsPerCategory,
+    required this.onCategorySelected,
+    required this.onSubCategoryToggle,
+    required this.onCategoryClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is ExpertiseCategoryLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state is ExpertiseCategoryFailure) {
+      final failure = state as ExpertiseCategoryFailure;
+      return Center(child: Text(failure.error));
+    }
+
+    final categoryList = (state is ExpertiseCategoryLoaded)
+        ? (state as ExpertiseCategoryLoaded).expertiseModel.data?.data ?? []
+        : (state is ExpertiseCategoryLoadingMore)
+        ? (state as ExpertiseCategoryLoadingMore).expertiseModel.data?.data ?? []
+        : [];
+
+    if (categoryList.isEmpty) {
+      return const Center(child: Text("No Data Found"));
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Available categories
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: categoryList
+                .where((cat) => !selectedCategoryIds.contains(cat.id))
+                .map((cat) => _PillChip(
+              text: cat.name ?? "",
+              selected: false,
+              onTap: () => onCategorySelected(cat.id ?? -1),
+            ))
+                .toList(),
+          ),
+
+          // Selected categories with subs
+          ...selectedCategoryIds.map((catId) {
+            final category = categoryList.firstWhere(
+                  (c) => c.id == catId,
+              orElse: () => ExpertiseData(subExpertises: []),
+            );
+            final subs = category.subExpertises ?? [];
+            final pickedSubs = pickedSubTopicsPerCategory[catId] ?? {};
+
+            return Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: DottedBorder(
+                color: const Color(0xFFD9BFC4),
+                dashPattern: const [6, 4],
+                borderType: BorderType.RRect,
+                radius: const Radius.circular(16),
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SelectedCategoryChip(
+                      categoryName: category.name ?? "",
+                      onClear: () => onCategoryClear(catId),
+                    ),
+                    const SizedBox(height: 12),
+                    if (subs.isNotEmpty)
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: subs.map((sub) {
+                          final isPicked = pickedSubs.contains(sub.name ?? "");
+                          return _PillChip(
+                            text: sub.name ?? "",
+                            selected: isPicked,
+                            onTap: () => onSubCategoryToggle(
+                              catId,
+                              sub.name ?? "",
+                              sub.id ?? 0,
+                              isPicked,
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    else
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("No Subcategories Found"),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
 
 class _PillChip extends StatelessWidget {
   final String text;
