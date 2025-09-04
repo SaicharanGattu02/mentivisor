@@ -351,8 +351,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
 
                         const SizedBox(height: 12),
-
-                        // Remember me row
+                        TextButton(
+                          onPressed: () {
+                            context.push('/forgot_password');
+                          },
+                          child: const Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF477EF6),
+                              fontFamily: 'segeo',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                         Row(
                           children: [
                             SizedBox(

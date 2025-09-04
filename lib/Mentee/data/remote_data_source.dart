@@ -119,6 +119,9 @@ abstract class RemoteDataSource {
   Future<NotificationModel?> notifications();
   Future<TagsModel?> getTags();
   Future<TagsModel?> getTagSearch(String query);
+  Future<SuccessModel?> forgotPassword(Map<String, dynamic> data);
+  Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
+  Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -889,6 +892,57 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return ReviewSubmitModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Submit Review ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> forgotPassword(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.forgot_password}",
+        data: formData,
+      );
+      AppLogger.log('forgotPassword::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('forgotPassword ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> forgotVerify(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.forgot_verify_otp}",
+        data: formData,
+      );
+      AppLogger.log('forgot Verify::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('forgot Verify ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> resetPassword(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.resetPassword}",
+        data: formData,
+      );
+      AppLogger.log('reset Password::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('reset Password ::${e}');
 
       return null;
     }

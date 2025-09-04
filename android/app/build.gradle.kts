@@ -39,7 +39,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.mentivisor"
-        minSdk = flutter.minSdkVersion          // <-- Updated from flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

@@ -39,6 +39,9 @@ import '../Mentee/presentation/Profile/EditProfileScreen.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
+import '../Mentee/presentation/authentication/ForgotPassword/ForgotVerifyOtp.dart';
+import '../Mentee/presentation/authentication/ForgotPassword/ForgotPassword.dart';
+import '../Mentee/presentation/authentication/ForgotPassword/ResetPassword.dart';
 import '../Mentee/presentation/authentication/LoginScreen.dart';
 import '../Mentee/presentation/authentication/OTPVerificationScreen.dart';
 import '../Mentee/presentation/authentication/SelecterScreen.dart';
@@ -83,10 +86,28 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      // path: '/',
       path: '/coinhistory',
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(CoinHistoryScreen(), state),
+    ),
+    GoRoute(
+      path: '/forgot_password',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(ForgotPassword(), state),
+    ),
+    GoRoute(
+      path: '/forgot_otp',
+      pageBuilder: (context, state) {
+        final num = state.uri.queryParameters['num'] ?? "";
+        return buildSlideTransitionPage(ForgotOtp(num: num), state);
+      },
+    ),
+    GoRoute(
+      path: '/reset_password',
+      pageBuilder: (context, state) {
+        final num = state.uri.queryParameters['num'] ?? "";
+        return buildSlideTransitionPage(ResetPassword(num: num), state);
+      },
     ),
 
     GoRoute(

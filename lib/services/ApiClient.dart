@@ -33,7 +33,10 @@ class ApiClient {
     '/api/guest-list-ecc',
     '/api/community-zone-post-without-login',
     '/api/top-mentors',
-    '/api/tags'
+    '/api/tags',
+    '/api/forget-password',
+    '/api/verify-otp',
+    '/api/reset-password',
   ];
 
   static void setupInterceptors() {
@@ -151,10 +154,10 @@ class ApiClient {
   // }
 
   static Future<Response> get(
-      String path, {
-        Map<String, dynamic>? queryParameters,
-        Options? options, // 👈 add this
-      }) async {
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options, // 👈 add this
+  }) async {
     try {
       AppLogger.log("called get method");
       return await _dio.get(
@@ -176,21 +179,16 @@ class ApiClient {
   }
 
   static Future<Response> put(
-      String path, {
-        dynamic data,
-        Options? options, // ✅ allow passing custom options
-      }) async {
+    String path, {
+    dynamic data,
+    Options? options, // ✅ allow passing custom options
+  }) async {
     try {
-      return await _dio.put(
-        path,
-        data: data,
-        options: options,
-      );
+      return await _dio.put(path, data: data, options: options);
     } catch (e) {
       return _handleError(e);
     }
   }
-
 
   static Future<Response> delete(String path) async {
     try {

@@ -24,6 +24,8 @@ import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/ForgotPassword/forgot_passsword_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/ForgotPassword/forgot_passsword_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
@@ -287,6 +289,12 @@ class StateInjector {
           TagsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
+    RepositoryProvider<ForgotPassswordRepository>(
+      create: (context) => ForgotPassswordImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+
     ///Mentor Repositories
     RepositoryProvider<SessionSRepo>(
       create: (context) => SessionSRepoImpl(
@@ -354,6 +362,8 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
+
 
     RepositoryProvider<CommentsRepo>(
       create: (context) => CommentsRepoImpl(
@@ -531,6 +541,9 @@ class StateInjector {
     ),
     BlocProvider<TagsSearchCubit>(
       create: (context) => TagsSearchCubit(context.read<TagsRepository>()),
+    ),
+    BlocProvider<ForgotPassswordCubit>(
+      create: (context) => ForgotPassswordCubit(context.read<ForgotPassswordRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(
