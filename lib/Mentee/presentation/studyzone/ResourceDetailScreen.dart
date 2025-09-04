@@ -407,6 +407,10 @@ class ResourceDetailScreen extends StatelessWidget {
                   BlocConsumer<StudyZoneReportCubit, StudyZoneReportState>(
                     listener: (context, state) {
                       if (state is StudyZoneReportSuccess) {
+                        CustomSnackBar1.show(
+                          context,
+                            "Report submitted successfully."
+                        );
                         context.pop();
                       } else if (state is StudyZoneReportFailure) {
                         return CustomSnackBar1.show(

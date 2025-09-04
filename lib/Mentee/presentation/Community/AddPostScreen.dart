@@ -752,118 +752,116 @@ class _AddPostScreenState extends State<AddPostScreen> {
             valueListenable: enoughBalance,
             builder: (context, enough_coins, _) {
               AppLogger.info("enough_coins:$enough_coins");
-              return Expanded(
-                child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
-                  listener: (context, state) async {
-                    if (state is AddCommunityPostSuccess) {
-                      if (_isHighlighted.value) {
-                        final requiredCoins =
-                            int.tryParse(highlitedCoinValue.value) ?? 0;
-                        await context
-                            .read<MenteeProfileCubit>()
-                            .fetchMenteeProfile();
-                        enoughBalance.value =
-                            AppState.coinsNotifier.value >= requiredCoins;
-                      }
-                      context.read<CommunityPostsCubit>().getCommunityPosts(
-                        "",
-                        "${widget.type}",
-                      );
-                      Future.microtask(() => context.pop());
-                    } else if (state is AddCommunityPostFailure) {
-                      CustomSnackBar1.show(context, state.error);
+              return BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
+                listener: (context, state) async {
+                  if (state is AddCommunityPostSuccess) {
+                    if (_isHighlighted.value) {
+                      final requiredCoins =
+                          int.tryParse(highlitedCoinValue.value) ?? 0;
+                      await context
+                          .read<MenteeProfileCubit>()
+                          .fetchMenteeProfile();
+                      enoughBalance.value =
+                          AppState.coinsNotifier.value >= requiredCoins;
                     }
-                  },
-                  builder: (context, state) {
-                    final isLoading = state is AddCommunityPostLoading;
-
-                    return CustomAppButton1(
-                      text: "Post It",
-                      isLoading: isLoading,
-                      onPlusTap: () {
-                        if (!enough_coins) {
-                          // show insufficient coins dialog
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              title: const Text(
-                                "Insufficient Coins",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                              content: const Text(
-                                "You don’t have enough coins to post this.\n\nPlease purchase more coins to continue.",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    context.push("/buy_coins_screens");
-                                    Navigator.pop(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: const Text("Purchase Coins"),
-                                ),
-                              ],
-                            ),
-                          );
-                          return;
-                        }
-                        FocusScope.of(context).unfocus();
-                        if (!(_formKey.currentState?.validate() ?? false))
-                          return;
-
-                        final isHighlighted = _isHighlighted.value;
-                        final anonymous = _anonymousNotifier.value;
-                        final file = _imageFile.value;
-
-                        final Map<String, dynamic> data = {
-                          "heading": _headingController.text.trim(),
-                          "description": _describeController.text.trim(),
-                          "anonymous": anonymous ? 1 : 0,
-                          "popular": isHighlighted ? 1 : 0,
-                          "tags[]": _selectedTags,
-                        };
-
-                        if (file != null) {
-                          data["image"] = file.path;
-                        }
-                        if (isHighlighted) {
-                          data["coins"] =
-                              double.tryParse(
-                                highlitedCoinValue.value,
-                              )?.toInt() ??
-                              0;
-                        }
-
-                        context.read<AddCommunityPostCubit>().addCommunityPost(
-                          data,
-                        );
-                      },
+                    context.read<CommunityPostsCubit>().getCommunityPosts(
+                      "",
+                      "${widget.type}",
                     );
-                  },
-                ),
+                    Future.microtask(() => context.pop());
+                  } else if (state is AddCommunityPostFailure) {
+                    CustomSnackBar1.show(context, state.error);
+                  }
+                },
+                builder: (context, state) {
+                  final isLoading = state is AddCommunityPostLoading;
+
+                  return CustomAppButton1(
+                    text: "Post It",
+                    isLoading: isLoading,
+                    onPlusTap: () {
+                      if (!enough_coins) {
+                        // show insufficient coins dialog
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            title: const Text(
+                              "Insufficient Coins",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                            content: const Text(
+                              "You don’t have enough coins to post this.\n\nPlease purchase more coins to continue.",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  context.push("/buy_coins_screens");
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text("Purchase Coins"),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
+                      FocusScope.of(context).unfocus();
+                      if (!(_formKey.currentState?.validate() ?? false))
+                        return;
+
+                      final isHighlighted = _isHighlighted.value;
+                      final anonymous = _anonymousNotifier.value;
+                      final file = _imageFile.value;
+
+                      final Map<String, dynamic> data = {
+                        "heading": _headingController.text.trim(),
+                        "description": _describeController.text.trim(),
+                        "anonymous": anonymous ? 1 : 0,
+                        "popular": isHighlighted ? 1 : 0,
+                        "tags[]": _selectedTags,
+                      };
+
+                      if (file != null) {
+                        data["image"] = file.path;
+                      }
+                      if (isHighlighted) {
+                        data["coins"] =
+                            double.tryParse(
+                              highlitedCoinValue.value,
+                            )?.toInt() ??
+                            0;
+                      }
+
+                      context.read<AddCommunityPostCubit>().addCommunityPost(
+                        data,
+                      );
+                    },
+                  );
+                },
               );
             },
           ),
