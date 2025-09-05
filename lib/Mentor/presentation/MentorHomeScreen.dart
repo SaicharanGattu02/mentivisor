@@ -222,7 +222,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     ),
                                     sessionTime: '${duration} Minutes to go',
                                     sessionName:
-                                        'G-Meet with Suresh from SVG Collage',
+                                        'Zoom Meet with ${session?.mentee?.name}',
                                     sessionImage:
                                         session?.mentee?.menteeProfile ?? "",
                                     sessionTopics: session?.topics ?? "",

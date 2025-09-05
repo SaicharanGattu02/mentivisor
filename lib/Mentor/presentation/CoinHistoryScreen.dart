@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../Components/CommonLoader.dart';
 import '../../Components/CustomAppButton.dart';
@@ -79,9 +80,9 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
               BlocBuilder<CoinHistoryCubit, CoinHistoryStates>(
                 builder: (context, state) {
                   if (state is CoinhistoryLoading) {
-                    return const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 32),
+                    return SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: SizeConfig.screenHeight*0.6 ,
                         child: Center(child: DottedProgressWithLogo()),
                       ),
                     );
@@ -114,7 +115,7 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
                     }
 
                     return SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
                           final item = items[index];
@@ -190,88 +191,81 @@ class _CoinRowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x140E1240),
-              blurRadius: 14,
-              offset: Offset(0, 6),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            // Left: Title + date
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF333333),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  Row(
-                    children: [
-                      Image.asset(
-                        "assets/images/Radiocalenderimg.png",
-                        height: 16,
-                        width: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        dateLabel,
-                        style: const TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF575757),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Right: +XX 🪙
-            Row(
-              mainAxisSize: MainAxisSize.min,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x140E1240),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          // Left: Title + date
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  coinsText,
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontFamily: 'segeo',
-                    fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    // fontWeight: FontWeight.w700,
-                    color: Color(0xFF121212),
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF333333),
                   ),
                 ),
-                const SizedBox(width: 6),
-                Image.asset(
-                  "assets/images/GoldCoins.png",
-                  height: 24,
-                  width: 24,
+                const SizedBox(height: 8),
+
+                Row(
+                  children: [
+                    Image.asset(
+                      "assets/images/Radiocalenderimg.png",
+                      height: 16,
+                      width: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      dateLabel,
+                      style: const TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF575757),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+
+          // Right: +XX 🪙
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                coinsText,
+                style: const TextStyle(
+                  fontFamily: 'segeo',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  // fontWeight: FontWeight.w700,
+                  color: Color(0xFF121212),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Image.asset("assets/images/GoldCoins.png", height: 24, width: 24),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -1,8 +1,11 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../Models/NonAttachedExpertisesModel.dart';
 import '../Models/NonAttachedExpertiseDetailsModel.dart';
@@ -56,12 +59,25 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
     final expertiseIds = selectedExpertises.map((e) => e.id!).toList();
     final subExpertiseIds = <int>[];
     selectedSubIds.forEach((_, subs) => subExpertiseIds.addAll(subs));
+
+    if (expertiseIds.isEmpty) {
+      CustomSnackBar1.show(context, "Please select at least one expertise");
+      return;
+    }
+
+    // If you also require sub-expertises
+    if (subExpertiseIds.isEmpty) {
+      CustomSnackBar1.show(context, "Please select at least one sub-expertise");
+      return;
+    }
+
     final data = <String, dynamic>{
       'expertise_id': expertiseIds,
       'sub_expertise_ids': subExpertiseIds,
     };
+
     context.push("/proof_expertise", extra: data);
-    AppLogger.info("data:${data}");
+    AppLogger.info("data:$data");
   }
 
   @override
@@ -103,7 +119,7 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                 final modelData = state.nonAttachedExpertiseDetailsModel.data;
                 print(
                   'Model Data Type: ${modelData?.runtimeType}, Data: $modelData',
-                ); // Debug output
+                );
                 setState(() {
                   subExpertises[lastRequestedId!] = (modelData ?? [])
                       .whereType<Data>()
@@ -152,14 +168,26 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                   hintText: 'Search',
                   hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(36),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(36),
+                    borderSide: BorderSide.none,
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(36),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(36),
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
-                    vertical: 16,
+                    vertical: 10,
                   ),
                 ),
               ),
@@ -171,7 +199,7 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
             >(
               builder: (context, state) {
                 if (state is NonAttachedExpertisesLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: DottedProgressWithLogo());
                 }
                 if (state is NonAttachedExpertisesFailure) {
                   return Center(child: Text(state.error));
@@ -238,7 +266,7 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                       if (state is NonAttachedExpertiseDetailsLoading) {
                         return const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Center(child: CircularProgressIndicator()),
+                          child: Center(child: DottedProgressWithLogo()),
                         );
                       }
                       if (state is NonAttachedExpertiseDetailsFailure) {
@@ -282,24 +310,25 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                               dashColor: Colors.grey,
                             ),
                           ),
+
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16.0,
                             ),
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]!),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: Padding(
+                            child: DottedBorder(
+                              color: Colors.grey[400]!,
+                              strokeWidth: 1.5,
+                              borderType: BorderType.RRect,
+                              radius: const Radius.circular(12),
+                              dashPattern: const [6, 3], // 6px line, 3px space
+                              child: Container(
+                                width: double.infinity,
                                 padding: const EdgeInsets.all(8.0),
                                 child: Wrap(
                                   spacing: 8.0,
                                   runSpacing: 8.0,
                                   children: subs.map((sub) {
                                     if (sub != null) {
-                                      // Null check for safety
                                       final isSubSelected =
                                           selectedSubIds[exp.id]?.contains(
                                             sub.id,
@@ -319,18 +348,18 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                                             } else {
                                               selectedSubIds[exp.id!]!.add(
                                                 sub.id!,
-                                              ); // Safe with null check
+                                              );
                                             }
                                           });
                                         },
                                         child: Chip(
                                           label: Text(sub.name ?? 'Unnamed'),
                                           backgroundColor: isSubSelected
-                                              ? Color(
+                                              ? const Color(
                                                   0xff726CF7,
                                                 ).withOpacity(0.3)
-                                              : Color(0xffF5F5F5),
-                                          labelStyle: TextStyle(
+                                              : const Color(0xffF5F5F5),
+                                          labelStyle: const TextStyle(
                                             color: Colors.black,
                                           ),
                                           shape: StadiumBorder(
@@ -345,12 +374,13 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                                         ),
                                       );
                                     }
-                                    return const SizedBox.shrink(); // Fallback for null items
+                                    return const SizedBox.shrink();
                                   }).toList(),
                                 ),
                               ),
                             ),
                           ),
+
                           const SizedBox(height: 16.0),
                         ],
                       );

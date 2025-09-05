@@ -35,11 +35,11 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("List",style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              ),),
-              SizedBox(height: 16,),
+              Text(
+                "List",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
               Expanded(
                 child: BlocBuilder<DownloadsCubit, DownloadStates>(
                   builder: (context, state) {

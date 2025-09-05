@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/MenteeCard.dart';
 
 import '../../Components/CutomAppBar.dart';
@@ -53,7 +54,7 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
               child: BlocBuilder<MyMenteeCubit, MyMenteesStates>(
                 builder: (context, state) {
                   if (state is MyMenteeLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: DottedProgressWithLogo());
                   } else if (state is MyMenteeLoaded) {
                     return CustomScrollView(
                       slivers: [

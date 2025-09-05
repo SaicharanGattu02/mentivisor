@@ -16,6 +16,7 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
+
   @override
   void initState() {
     super.initState();
@@ -172,13 +173,60 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           if (state is FeedbackFailure) {
             return Center(child: Text(state.error));
           }
+
           final data = (state as FeedbackLoaded).feedbackModel.data!;
+
+          // Prefer filtered average if filters are applied; else fall back to overall
+          final rawAvg = data.filteredOverall?.average ?? data.overall?.average;
+
+          // Normalize to double safely (handles int, double, string, null)
+          final avg = rawAvg == null ? null : double.tryParse('$rawAvg');
+
+          final hasNoFeedback =
+              avg == null || avg == 0.0 || (data.reviews?.items?.isEmpty ?? true);
+
+          if (hasNoFeedback) {
+            return const NoFeedbackUI();
+          }
+
           return _FeedbackBody(data: data);
         },
       ),
     );
   }
+
 }
+
+class NoFeedbackUI extends StatelessWidget {
+  const NoFeedbackUI({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.reviews_outlined, size: 64, color: Colors.black26),
+            const SizedBox(height: 12),
+            const Text(
+              "No feedback yet",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              "Once reviews start coming in, you’ll see ratings and comments here.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 // ========== BODY CONTENT ==========
 class _FeedbackBody extends StatelessWidget {

@@ -40,16 +40,29 @@ class _MentorDashboardState extends State<MentorDashboard> {
   }
 
   Future<bool> _onWillPop() async {
+    // 1) Close drawer if open
+    final scaffoldState = _scaffoldKey.currentState;
+    if (scaffoldState?.isDrawerOpen ?? false) {
+      Navigator.of(context).pop(); // closes drawer
+      return false; // don't exit
+    }
+
+    // 2) If not on 0th index, go to 0th and don't exit
+    if (_selectedIndex != 0) {
+      _onItemTapped(0); // this jumpToPage + setState
+      return false;
+    }
+
+    // 3) Already on 0th index → exit
     SystemNavigator.pop();
-    return false;
+    return false; // we handled it
   }
+
 
   void _toggleDrawerOrExit() {
     final scaffoldState = _scaffoldKey.currentState;
     if (scaffoldState != null && scaffoldState.isDrawerOpen) {
       Navigator.of(context).pop();
-      // If you truly wanted to exit instead, replace the pop() with:
-      // exit(0);
     } else {
       scaffoldState?.openDrawer();
     }

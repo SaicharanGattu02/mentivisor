@@ -113,7 +113,7 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                         state: state,
                         onRetry: () =>
                             context.read<ApprovedExpertiseCubit>().fetch(),
-                        showAddButton: (showAddButton ?? false),
+                        showAddButton: !(showAddButton ?? false),
                         onItemTap: (label) {
                           context.push(
                             "/expertise_details?id=${label.id}&categoryTitle=${label.name}",
@@ -377,7 +377,7 @@ class _ExpertiseListTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   onTap: () => onItemTap(item), // ⬅️ pass object
                   child: Container(
-                    height: 44,
+                    height: 52,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: tileColor,
