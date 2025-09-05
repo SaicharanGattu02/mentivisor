@@ -25,7 +25,7 @@ abstract class MentorRemoteDataSource {
   Future<SessionsModel?> getSessions(String sessionType);
   Future<MentorprofileModel?> getMentorProfile();
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data);
-  Future<FeedbackModel?> getFeedback(String user_id);
+  Future<FeedbackModel?> getFeedback(String user_id,List<int>stars,String time);
   Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
   Future<MentorinfoResponseModel?> mentorinfo();
@@ -383,18 +383,35 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<FeedbackModel?> getFeedback(String user_id) async {
+  Future<FeedbackModel?> getFeedback(
+      String userId,
+      List<int> stars,
+      String time,
+      ) async {
     try {
+      final queryParams = <String, dynamic>{};
+
+      if (stars.isNotEmpty) {
+        queryParams["stars"] = "[${stars.join(",")}]";
+      }
+      if (time.isNotEmpty) {
+        queryParams["time"] = time;
+      }
+
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.feedback}/${user_id}",
+        "${MentorEndpointsUrls.feedback}/$userId",
+        queryParameters: queryParams,
       );
+      AppLogger.log('getFeedback: ${res.realUri}');
       AppLogger.log('getFeedback: ${res.data}');
       return FeedbackModel.fromJson(res.data);
     } catch (e) {
-      AppLogger.error('getFeedback:${e}');
+      AppLogger.error('getFeedback: $e');
       return null;
     }
   }
+
+
 
   @override
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data) async {

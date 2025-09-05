@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
+import 'package:simple_pdf_compression/simple_pdf_compression.dart';
 
 class BecomeMentorData extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -24,27 +27,54 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
   final TextEditingController _githubUrlController = TextEditingController();
 
   Future<void> _pickResumeFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ["pdf", "doc", "docx"],
     );
 
     if (result != null && result.files.single.path != null) {
-      setState(() {
-        selectedResumeFile = File(result.files.single.path!);
-      });
+      final pickedFile = File(result.files.single.path!);
+
+      if (pickedFile.path.toLowerCase().endsWith('.pdf')) {
+        final compressor = PDFCompression();
+        final compressedPdf = await compressor.compressPdf(
+          pickedFile,
+          thresholdSize: 500 * 1024,
+          quality: 60,
+        );
+
+        AppLogger.info(
+          "Compressed size: ${compressedPdf.lengthSync() / 1024} KB",
+        );
+
+        setState(() {
+          selectedResumeFile = compressedPdf;
+        });
+      } else {
+        setState(() {
+          selectedResumeFile = pickedFile;
+        });
+      }
     }
   }
+
+  // Future<void> _pickResumeFile() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ["pdf", "doc", "docx"],
+  //   );
+  //
+  //   if (result != null && result.files.single.path != null) {
+  //     setState(() {
+  //       selectedResumeFile = File(result.files.single.path!);
+  //     });
+  //   }
+  // }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       if (selectedResumeFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Please upload your resume."),
-            backgroundColor: Colors.red,
-          ),
-        );
+        CustomSnackBar1.show(context, "Please upload your resume.");
         return;
       }
 
@@ -111,7 +141,8 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                   if (value == null || value.trim().isEmpty) {
                     return "Portfolio URL is required";
                   }
-                  final urlPattern = r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
+                  final urlPattern =
+                      r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
                   final result = RegExp(urlPattern).hasMatch(value);
                   if (!result) {
                     return "Enter a valid URL";
@@ -131,7 +162,8 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                   if (value == null || value.trim().isEmpty) {
                     return "LinkedIn URL is required";
                   }
-                  final urlPattern = r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
+                  final urlPattern =
+                      r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
                   final result = RegExp(urlPattern).hasMatch(value);
                   if (!result) {
                     return "Enter a valid URL";
@@ -151,7 +183,8 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                   if (value == null || value.trim().isEmpty) {
                     return "GitHub URL is required";
                   }
-                  final urlPattern = r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
+                  final urlPattern =
+                      r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
                   final result = RegExp(urlPattern).hasMatch(value);
                   if (!result) {
                     return "Enter a valid URL";
@@ -220,7 +253,9 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
               ),
             ),
             const SizedBox(height: 10),
-            SafeArea(child: CustomAppButton1(text: "Okay", onPlusTap: _submitForm)),
+            SafeArea(
+              child: CustomAppButton1(text: "Okay", onPlusTap: _submitForm),
+            ),
           ],
         ),
       ),

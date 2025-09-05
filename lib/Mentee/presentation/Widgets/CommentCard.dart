@@ -12,6 +12,8 @@ class CommentCard extends StatelessWidget {
   final String content;
   final String createdAt;
   final VoidCallback onLike;
+  final int? likesCount;
+
   final VoidCallback onReply;
   final List<Replies> replies;
 
@@ -26,6 +28,7 @@ class CommentCard extends StatelessWidget {
     required this.content,
     required this.createdAt,
     required this.onLike,
+    required this.likesCount,
     required this.onReply,
     required this.replies,
     required this.onReplyLike, // NEW
@@ -120,6 +123,18 @@ class CommentCard extends StatelessWidget {
                               ),
                             ),
                           ),
+                          // GestureDetector(
+                          //   onTap: onLike,
+                          //   child: Icon(
+                          //     (isLiked ?? false)
+                          //         ? Icons.favorite
+                          //         : Icons.favorite_border,
+                          //     size: 16,
+                          //     color: (isLiked ?? false)
+                          //         ? Colors.red
+                          //         : Colors.black26,
+                          //   ),
+                          // ),
                           const SizedBox(width: 12),
                           TextButton(
                             onPressed: onReply,

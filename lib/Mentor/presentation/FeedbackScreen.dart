@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 
 import '../../Mentor/Models/FeedbackModel.dart';
 import '../data/Cubits/FeedBack/feedback_cubit.dart';
@@ -16,7 +18,7 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-
+  final ValueNotifier<String?> userIdNotifier = ValueNotifier(null);
   @override
   void initState() {
     super.initState();
@@ -24,8 +26,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   Future<void> getUserID() async {
-    final userid = await AuthService.getUSerId();
-    context.read<FeedbackCubit>().getFeedback(userid ?? "");
+    final userId = await AuthService.getUSerId();
+    userIdNotifier.value = userId;
+    context.read<FeedbackCubit>().getFeedback(
+      userIdNotifier.value ?? "",
+      [],
+      "",
+    );
   }
 
   void showReview(BuildContext context) {
@@ -125,9 +132,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   // ),
                   const SizedBox(height: 8),
 
-                  // Time
-
-                  // Apply Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -183,18 +187,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           final avg = rawAvg == null ? null : double.tryParse('$rawAvg');
 
           final hasNoFeedback =
-              avg == null || avg == 0.0 || (data.reviews?.items?.isEmpty ?? true);
+              avg == null ||
+              avg == 0.0 ||
+              (data.reviews?.items?.isEmpty ?? true);
 
           if (hasNoFeedback) {
             return const NoFeedbackUI();
           }
 
-          return _FeedbackBody(data: data);
+          return _FeedbackBody(data: data, userIdNotifier: userIdNotifier);
         },
       ),
     );
   }
-
 }
 
 class NoFeedbackUI extends StatelessWidget {
@@ -227,11 +232,12 @@ class NoFeedbackUI extends StatelessWidget {
   }
 }
 
-
 // ========== BODY CONTENT ==========
 class _FeedbackBody extends StatelessWidget {
   final Data data;
-  const _FeedbackBody({required this.data});
+  final ValueNotifier<String?> userIdNotifier;
+
+  const _FeedbackBody({required this.data, required this.userIdNotifier});
 
   @override
   Widget build(BuildContext context) {
@@ -326,10 +332,10 @@ class _FeedbackBody extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 GestureDetector(
                   onTap: () {
-                    showReview(context);
+                    showReview(context, userIdNotifier.value ?? '');
                   },
                   child: Container(
                     width: double.infinity,
@@ -377,9 +383,25 @@ class _FeedbackBody extends StatelessWidget {
     );
   }
 
-  void showReview(BuildContext context) {
+  void showReview(BuildContext context, String userID) {
     List<int> _selectedRatings = [];
-    String _selectedTime = "All Time";
+    String _selectedTime = "All Time"; // default for UI
+
+    // 🔹 map UI labels to API params
+    String mapTime(String time) {
+      switch (time) {
+        case "All Time":
+          return "all_time";
+        case "This Week":
+          return "week";
+        case "This Month":
+          return "month";
+        case "This Quarter":
+          return "quarter";
+        default:
+          return "";
+      }
+    }
 
     showModalBottomSheet(
       context: context,
@@ -425,6 +447,7 @@ class _FeedbackBody extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // ⭐ Ratings
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -463,6 +486,7 @@ class _FeedbackBody extends StatelessWidget {
 
                       const SizedBox(width: 16),
 
+                      // ⏰ Time Filter
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,27 +500,25 @@ class _FeedbackBody extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             ...[
-                                  "All Time",
-                                  "This Week",
-                                  "This Month",
-                                  "This Quarter",
-                                ]
-                                .map(
-                                  (time) => CheckboxListTile(
-                                    title: Text(time),
-                                    value: _selectedTime == time,
-                                    onChanged: (bool? checked) {
-                                      setState(() {
-                                        _selectedTime = time; // only one active
-                                      });
-                                    },
-                                    activeColor: const Color(0xFF4A00E0),
-                                    contentPadding: EdgeInsets.zero,
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  ),
-                                )
-                                .toList(),
+                              "All Time",
+                              "This Week",
+                              "This Month",
+                              "This Quarter",
+                            ].map(
+                              (time) => CheckboxListTile(
+                                title: Text(time),
+                                value: _selectedTime == time,
+                                onChanged: (bool? checked) {
+                                  setState(() {
+                                    _selectedTime = time; // only one active
+                                  });
+                                },
+                                activeColor: const Color(0xFF4A00E0),
+                                contentPadding: EdgeInsets.zero,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -507,8 +529,25 @@ class _FeedbackBody extends StatelessWidget {
 
                   SafeArea(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
-                      child: CustomAppButton1(text: "Apply", onPlusTap: () {}),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      child: CustomAppButton1(
+                        text: "Apply",
+                        onPlusTap: () {
+                          final apiTime = mapTime(_selectedTime);
+
+                          AppLogger.info("Selected Ratings (UI): $_selectedRatings");
+                          AppLogger.info("Selected Time (UI): $_selectedTime");
+                          AppLogger.info("Selected Time (API): $apiTime");
+
+                          context.read<FeedbackCubit>().getFeedback(
+                            userID,
+                            _selectedRatings,
+                            apiTime,
+                          );
+
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
                   ),
                 ],

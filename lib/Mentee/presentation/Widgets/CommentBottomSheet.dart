@@ -120,7 +120,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                         itemCount: list.length,
                         itemBuilder: (ctx, i) {
                           final c = list[i];
-                          return CommentCard(
+                          return CommentCard(likesCount: c.likesCount,
                             id: c.id!,
                             name: c.user?.name ?? 'Unknown',
                             profileUrl: c.user?.profilePicUrl ?? '',
