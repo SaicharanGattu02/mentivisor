@@ -1,76 +1,67 @@
 class ExclusiveservicedetailsModel {
-  final bool? status;
-  final Data? data;
-  final String? message;
+  bool? status;
+  Data? data;
+  String? message;
 
-  const ExclusiveservicedetailsModel({this.status, this.data, this.message});
+  ExclusiveservicedetailsModel({this.status, this.data,this.message});
 
-  factory ExclusiveservicedetailsModel.fromJson(Map<String, dynamic> json) {
-    return ExclusiveservicedetailsModel(
-      status: json['status'] as bool?,
-      message: json['message'] as String?, // <— was missing
-      data: json['data'] != null
-          ? Data.fromJson(json['data'] as Map<String, dynamic>)
-          : null,
-    );
+  ExclusiveservicedetailsModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    message = json['error'];
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'message': message, // <— was missing
-      if (data != null) 'data': data!.toJson(),
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    return data;
   }
 }
 
 class Data {
-  final int? id;
-  final String? name;
-  final String? description;
-  final String? imageUrl;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? link;
+  int? id;
+  String? name;
+  String? description;
+  String? imageUrl;
+  String? createdAt;
+  String? updatedAt;
+  String? link;
+  String? exclusiveService;
 
-  const Data({
-    this.id,
-    this.name,
-    this.description,
-    this.imageUrl,
-    this.createdAt,
-    this.updatedAt,
-    this.link,
-  });
+  Data(
+      {this.id,
+        this.name,
+        this.description,
+        this.imageUrl,
+        this.createdAt,
+        this.updatedAt,
+        this.link,
+        this.exclusiveService});
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    // id may come as int or string
-    final dynamic rawId = json['id'];
-    final int? parsedId = rawId is int
-        ? rawId
-        : (rawId is String ? int.tryParse(rawId) : null);
-
-    return Data(
-      id: parsedId,
-      name: json['name'] as String?,
-      description: json['description'] as String?,
-      // accept both snake_case and camelCase keys
-      imageUrl: (json['image_url'] ?? json['imageUrl']) as String?,
-      createdAt: (json['created_at'] ?? json['createdAt']) as String?,
-      updatedAt: (json['updated_at'] ?? json['updatedAt']) as String?,
-      link: (json['link'] ?? json['link']) as String?,
-    );
+  Data.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    description = json['description'];
+    imageUrl = json['image_url'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    link = json['link'];
+    exclusiveService = json['exclusive_service'];
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'image_url': imageUrl,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'link': link,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['description'] = this.description;
+    data['image_url'] = this.imageUrl;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['link'] = this.link;
+    data['exclusive_service'] = this.exclusiveService;
+    return data;
   }
 }

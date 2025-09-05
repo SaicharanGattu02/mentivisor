@@ -122,6 +122,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> forgotPassword(Map<String, dynamic> data);
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
   Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
+  Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -789,6 +790,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('StudyZone Report ::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.community_zone_report}",
+        data: formData,
+      );
+      AppLogger.log('Community Report::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Community Report ::${e}');
 
       return null;
     }

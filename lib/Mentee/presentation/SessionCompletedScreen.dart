@@ -778,6 +778,7 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportSta
 import 'package:mentivisor/Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/SubmitReview/submit_review_states.dart';
 
+import '../../Components/CommonLoader.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/media_query_helper.dart';
@@ -813,9 +814,8 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
         child: BlocBuilder<SessionCompletedCubit, SessionCompletedStates>(
           builder: (context, state) {
             if (state is SessionCompletedLoading) {
-              return Center(
-                child: CircularProgressIndicator(color: primarycolor),
-              );
+              return Scaffold(body: Center(child: DottedProgressWithLogo()));
+
             } else if (state is SessionCompletedLoaded) {
               final sessions = state.completedSessionModel.data ?? [];
 

@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../Components/CustomAppButton.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
+import '../../data/cubits/CommunityPostReport/CommunityZoneReportState.dart';
 import '../../data/cubits/PostComment/post_comment_cubit.dart';
 import '../../data/cubits/PostComment/post_comment_states.dart';
 import 'CommentBottomSheet.dart';
@@ -365,7 +368,10 @@ class _PostCardState extends State<PostCard>
                                 ),
                                 Spacer(),
                                 GestureDetector(
-                                  onTap: () => _showReportSheet(context),
+                                  onTap: () => _showReportSheet(
+                                    context,
+                                    widget.communityPosts,
+                                  ),
                                   child: Row(
                                     children: [
                                       Image.asset(
@@ -442,7 +448,7 @@ class _PostCardState extends State<PostCard>
   }
 }
 
-void _showReportSheet(BuildContext context) {
+void _showReportSheet(BuildContext context, communityPosts) {
   String _selected = 'False Information';
   final TextEditingController _otherController = TextEditingController();
   final List<String> _reportReasons = [
@@ -537,40 +543,42 @@ void _showReportSheet(BuildContext context) {
                     ),
                   ],
                   const SizedBox(height: 24),
-                  // Submit Button
-                  // BlocConsumer<StudyZoneReportCubit, StudyZoneReportState>(
-                  //   listener: (context, state) {
-                  //     if (state is StudyZoneReportSuccess) {
-                  //       CustomSnackBar1.show(
-                  //         context,
-                  //         "Report submitted successfully.",
-                  //       );
-                  //       context.pop();
-                  //     } else if (state is StudyZoneReportFailure) {
-                  //       return CustomSnackBar1.show(
-                  //         context,
-                  //         state.message ?? "",
-                  //       );
-                  //     }
-                  //   },
-                  //   builder: (context, state) {
-                  //     return SafeArea(
-                  //       child: CustomAppButton1(
-                  //         isLoading: state is StudyZoneReportLoading,
-                  //         text: "Submit Report",
-                  //         onPlusTap: () {
-                  //           final Map<String, dynamic> data = {
-                  //             "content_id": studyZoneCampusData.id,
-                  //             "reason": _selected,
-                  //           };
-                  //           context
-                  //               .read<StudyZoneReportCubit>()
-                  //               .postStudyZoneReport(data);
-                  //         },
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
+                  BlocConsumer<
+                    CommunityZoneReportCubit,
+                    CommunityZoneReportState
+                  >(
+                    listener: (context, state) {
+                      if (state is CommunityZoneReportSuccess) {
+                        CustomSnackBar1.show(
+                          context,
+                          "Report submitted successfully.",
+                        );
+                        context.pop();
+                      } else if (state is CommunityZoneReportFailure) {
+                        return CustomSnackBar1.show(
+                          context,
+                          state.message ?? "",
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SafeArea(
+                        child: CustomAppButton1(
+                          isLoading: state is CommunityZoneReportLoading,
+                          text: "Submit Report",
+                          onPlusTap: () {
+                            final Map<String, dynamic> data = {
+                              "content_id": communityPosts.id,
+                              "reason": _selected,
+                            };
+                            context
+                                .read<CommunityZoneReportCubit>()
+                                .postCommunityZoneReport(data);
+                          },
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 16),
                 ],
               ),

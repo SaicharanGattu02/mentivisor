@@ -69,6 +69,7 @@ import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
+import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Repository.dart';
@@ -363,8 +364,6 @@ class StateInjector {
       ),
     ),
 
-
-
     RepositoryProvider<CommentsRepo>(
       create: (context) => CommentsRepoImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
@@ -486,6 +485,10 @@ class StateInjector {
       create: (context) =>
           ExclusiveservicelistCubit(context.read<ExclusiveserviceslistRepo>()),
     ),
+    BlocProvider<CommunityZoneReportCubit>(
+      create: (context) =>
+          CommunityZoneReportCubit(context.read<CommunityPostsRepo>()),
+    ),
     BlocProvider<MenteeProfileUpdateCubit>(
       create: (context) =>
           MenteeProfileUpdateCubit(context.read<MenteeProfileRepository>()),
@@ -543,7 +546,8 @@ class StateInjector {
       create: (context) => TagsSearchCubit(context.read<TagsRepository>()),
     ),
     BlocProvider<ForgotPassswordCubit>(
-      create: (context) => ForgotPassswordCubit(context.read<ForgotPassswordRepository>()),
+      create: (context) =>
+          ForgotPassswordCubit(context.read<ForgotPassswordRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

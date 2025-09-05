@@ -250,9 +250,9 @@ class _ServiceCard extends StatelessWidget {
                   child: SizedBox(
                     height: 140,
                     width: double.infinity,
-                    child: imageUrl.isNotEmpty
+                    child: exclusiveServiceImageUrl.isNotEmpty
                         ? CachedNetworkImage(
-                            imageUrl: imageUrl,
+                            imageUrl: exclusiveServiceImageUrl,
                             fit: BoxFit.cover,
                             placeholder: (c, _) => const Center(
                               child: SizedBox(

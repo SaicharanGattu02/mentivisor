@@ -41,7 +41,7 @@ class ResourceDetailScreen extends StatelessWidget {
                 width: SizeConfig.screenWidth,
                 height: 200,
                 imageUrl: studyZoneCampusData.image ?? "",
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.fill,
                 placeholder: (context, url) => SizedBox(
                   width: 120,
                   height: 120,
