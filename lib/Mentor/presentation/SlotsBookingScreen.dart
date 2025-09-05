@@ -622,6 +622,17 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     return d.subtract(Duration(days: dow));
   }
 
+// Helper: keep first occurrence per key (stable order)
+  List<T> uniqueBy<T, K>(Iterable<T> list, K Function(T) key) {
+    final seen = <K>{};
+    final out = <T>[];
+    for (final item in list) {
+      final k = key(item);
+      if (seen.add(k)) out.add(item);
+    }
+    return out;
+  }
+
   List<_Grouped> _groupRecent(List<RecentSlots> raw) {
     final weekly = <RecentSlots>[];
     final singles = <RecentSlots>[];
@@ -637,17 +648,26 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       final key = DateTime(ws.year, ws.month, ws.day);
       byWeek.putIfAbsent(key, () => []).add(r);
     }
+
     byWeek.forEach((start, items) {
+      // ✅ Dedupe by time range within the same week
+      final uniq = uniqueBy<RecentSlots, String>(
+        items,
+            (e) => "${e.startTime}-${e.endTime}",
+      );
+
       final end = start.add(const Duration(days: 6));
       final title =
           "${DateFormat('d MMM').format(start)} - ${DateFormat('d MMM yy').format(end)}";
-      final chips = items
+
+      final chips = uniq
           .map((e) => _rangeTime(e.startTime!, e.endTime!))
           .toList();
-      out.add(_Grouped(start, title, "1 week", chips, items.length)); // count
+
+      out.add(_Grouped(start, title, "1 week", chips, uniq.length)); // count = unique
     });
 
-    // Single-day groups
+    // Single-day groups (leave as-is)
     final Map<DateTime, List<RecentSlots>> byDate = {};
     for (final r in singles) {
       final d = _parseYmd(r.date!);
@@ -659,12 +679,13 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       final chips = items
           .map((e) => _rangeTime(e.startTime!, e.endTime!))
           .toList();
-      out.add(_Grouped(day, title, null, chips, items.length)); // count
+      out.add(_Grouped(day, title, null, chips, items.length));
     });
 
     out.sort((a, b) => b.sortKey.compareTo(a.sortKey));
     return out;
   }
+
 
   Future<void> _showAddSlotDialog() async {
     TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);

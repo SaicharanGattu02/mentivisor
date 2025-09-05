@@ -39,7 +39,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.mentivisor"
-        minSdk = 33
+        minSdk = 28
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -48,15 +48,12 @@ android {
 
     buildTypes {
         getByName("release") {
-            // Enable minification (default in Flutter release), and use your rules:
             isMinifyEnabled = false
             isShrinkResources = false
-
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
             signingConfig = signingConfigs.getByName("release")
         }
     }

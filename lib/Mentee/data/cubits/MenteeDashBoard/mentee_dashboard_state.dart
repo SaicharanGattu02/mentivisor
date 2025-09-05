@@ -21,9 +21,25 @@ class MenteeDashboardLoaded extends MenteeDashboardState {
     required this.guestMentorsModel,
     required this.campusMentorListModel,
   });
+
+  MenteeDashboardLoaded copyWith({
+    GetBannersRespModel? getbannerModel,
+    MenteeProfileModel? menteeProfileModel,
+    GuestMentorsModel? guestMentorsModel,
+    CompusMentorListModel? campusMentorListModel,
+  }) {
+    return MenteeDashboardLoaded(
+      getbannerModel: getbannerModel ?? this.getbannerModel,
+      menteeProfileModel: menteeProfileModel ?? this.menteeProfileModel,
+      guestMentorsModel: guestMentorsModel ?? this.guestMentorsModel,
+      campusMentorListModel:
+      campusMentorListModel ?? this.campusMentorListModel,
+    );
+  }
 }
 
 class MenteeDashboardFailure extends MenteeDashboardState {
   final String message;
   MenteeDashboardFailure(this.message);
 }
+

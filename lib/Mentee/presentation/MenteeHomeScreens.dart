@@ -37,10 +37,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      role = await AuthService.getRole();
-      context.read<MenteeDashboardCubit>().fetchDashboard("");
-    });
+    context.read<MenteeDashboardCubit>().fetchDashboard("");
+    getData();
+  }
+
+  Future<void> getData() async{
+    role = await AuthService.getRole();
   }
 
   void _navigateToScreen(String name) {
@@ -591,12 +593,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                             isSelected:
                                                 selectedFilter == 'On Campus',
                                             onPressed: () {
-                                              context
-                                                  .read<CampusMentorListCubit>()
-                                                  .fetchCampusMentorList(
-                                                    "",
-                                                    "",
-                                                  );
                                               setState(() {
                                                 selectedFilter = 'On Campus';
                                                 _onCampus = true; // ✅ FIX
@@ -604,7 +600,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                     .read<
                                                       MenteeDashboardCubit
                                                     >()
-                                                    .fetchDashboard("");
+                                                    .fetchDashboard("On Campus");
                                               });
                                             },
                                           ),
@@ -616,12 +612,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 selectedFilter ==
                                                 'Beyond Campus',
                                             onPressed: () {
-                                              context
-                                                  .read<CampusMentorListCubit>()
-                                                  .fetchCampusMentorList(
-                                                    "beyond",
-                                                    "",
-                                                  );
                                               setState(() {
                                                 selectedFilter =
                                                     'Beyond Campus';
@@ -728,8 +718,10 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               );
             } else if (state is MenteeDashboardFailure) {
               return Center(child: Text(state.message));
+            }else{
+              return Center(child: Text("No Data"));
             }
-            return Center(child: Text("No Data"));
+
           },
         );
       },
