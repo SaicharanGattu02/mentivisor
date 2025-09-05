@@ -30,7 +30,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         // color: Colors.transparent,
       ),
       body: SafeArea(
-        child: Padding(
+        child:Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

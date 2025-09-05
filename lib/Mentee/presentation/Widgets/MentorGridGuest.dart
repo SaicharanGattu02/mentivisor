@@ -177,7 +177,7 @@ class _MentorCard extends StatelessWidget {
                         fontSize: 12,
                         fontFamily: 'segeo',
                         color: Color(0xff333333),
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     TextSpan(
@@ -201,7 +201,7 @@ class _MentorCard extends StatelessWidget {
                   fontSize: 12,
                   fontFamily: 'segeo',
                   color: Color(0xff333333),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],

@@ -53,11 +53,11 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
     return Scaffold(
       appBar: CustomAppBar1(title: "Exclusive Services", actions: const []),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.center,
-            colors: [bgTop, Colors.white],
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
         ),
         child: BlocBuilder<ExclusiveservicedetailsCubit, ExclusiveservicedetailsState>(

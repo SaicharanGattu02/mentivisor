@@ -11,6 +11,8 @@ import '../../../utils/color_constants.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/StudyZoneCampusModel.dart';
+import '../../data/cubits/AddResource/add_resource_cubit.dart';
+import '../../data/cubits/AddResource/add_resource_states.dart';
 
 class ResourceDetailScreen extends StatelessWidget {
   final StudyZoneCampusData studyZoneCampusData;
@@ -39,7 +41,7 @@ class ResourceDetailScreen extends StatelessWidget {
                 width: SizeConfig.screenWidth,
                 height: 200,
                 imageUrl: studyZoneCampusData.image ?? "",
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 placeholder: (context, url) => SizedBox(
                   width: 120,
                   height: 120,
@@ -290,7 +292,34 @@ class ResourceDetailScreen extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 24),
-          child: CustomAppButton1(text: "Download", onPlusTap: () {}),
+          child: BlocConsumer<AddResourceCubit, AddResourceStates>(
+            listener: (context, state) {
+              if (state is AddResourceLoaded) {
+                CustomSnackBar1.show(context, "Downloaded Successfully");
+              } else if (state is AddResourceFailure) {
+                CustomSnackBar1.show(
+                  context,
+                  state.error.isNotEmpty ? state.error : "Download Failed",
+                );
+              }
+            },
+            builder: (context, state) {
+              final currentId = studyZoneCampusData.id.toString();
+              final isLoading =
+                  state is AddResourceLoading && state.resourceId == currentId;
+              return CustomAppButton1(
+                radius: 24,
+                isLoading: isLoading,
+                text: "Download",
+                textSize: 14,
+                onPlusTap: () {
+                  context.read<AddResourceCubit>().resourceDownload(
+                    currentId,
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -410,7 +439,7 @@ class ResourceDetailScreen extends StatelessWidget {
                       if (state is StudyZoneReportSuccess) {
                         CustomSnackBar1.show(
                           context,
-                            "Report submitted successfully."
+                          "Report submitted successfully.",
                         );
                         context.pop();
                       } else if (state is StudyZoneReportFailure) {

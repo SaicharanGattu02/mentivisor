@@ -385,7 +385,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
         return buildSlideTransitionPage(
-          SubTopicSelectionScreen(data: data),
+          SubTopicSelection(data: data),
           state,
         );
       },

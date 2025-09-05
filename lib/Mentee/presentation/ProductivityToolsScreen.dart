@@ -73,14 +73,12 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
       appBar: CustomAppBar1(
         title: 'Productivity Tools',
         actions: [],
-        color: const Color(0xFFEFF6FF),
       ),
       body: SafeArea(
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
-              stops: [0.0, 0.5, 1.0],
+              colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),

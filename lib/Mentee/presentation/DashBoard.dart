@@ -77,23 +77,23 @@ class _DashboardState extends State<Dashboard> {
             }
           },
           // Wrap the PageView with our scroll listener wrapper
-          child: _HideNavbarOnScroll(
-            controller: _showBottomBar,
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (i) {
-                HapticFeedback.lightImpact();
-                setState(() => _selectedIndex = i);
-              },
-              children: const [
-                MenteeHomeScreen(),
-                MenteeStudyZone(),
-                EccScreen(),
-                Communityscreen(),
-              ],
-            ),
+          // child: _HideNavbarOnScroll(
+          //   controller: _showBottomBar,
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (i) {
+              HapticFeedback.lightImpact();
+              setState(() => _selectedIndex = i);
+            },
+            children: const [
+              MenteeHomeScreen(),
+              MenteeStudyZone(),
+              EccScreen(),
+              Communityscreen(),
+            ],
           ),
+          // ),
         ),
         bottomNavigationBar: ValueListenableBuilder<bool>(
           valueListenable: _showBottomBar,

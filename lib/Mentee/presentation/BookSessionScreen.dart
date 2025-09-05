@@ -734,7 +734,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       bottomNavigationBar: selectedSlotId != null
           ? SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                padding: EdgeInsets.all(16),
                 child: ValueListenableBuilder<bool>(
                   valueListenable: enoughBalance,
                   builder: (context, value, child) {

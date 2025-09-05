@@ -1,422 +1,490 @@
 import 'dart:async';
 import 'dart:developer' as AppLogger;
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/Expertise/ExpertiseCategory/expertise_category_cubit.dart';
+import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
-import '../../../Components/CutomAppBar.dart';
-import '../../../utils/color_constants.dart';
 import '../../Models/GetExpertiseModel.dart';
 import '../../data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import '../../data/cubits/BecomeMentor/become_mentor_state.dart';
 import '../../data/cubits/Expertise/ExpertiseCategory/expertise_category_state.dart';
-import '../../data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category_cubit.dart';
-import '../../data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category_state.dart';
 
-class SubTopicSelectionScreen extends StatefulWidget {
-  final Map<String, dynamic> data;
-  const SubTopicSelectionScreen({super.key, required this.data});
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:dotted_line/dotted_line.dart';
+import 'package:go_router/go_router.dart';
+
+// === Your imports (models/cubits/utils) ===
+// import 'package:mentivisor/.../expertise_category_cubit.dart';
+// import 'package:mentivisor/.../become_mentor_cubit.dart';
+// import 'package:mentivisor/.../models/get_expertise_model.dart';
+// import 'package:mentivisor/.../widgets/custom_app_button_1.dart';
+// import 'package:mentivisor/.../widgets/custom_snackbar_1.dart';
+// import 'package:mentivisor/.../widgets/dotted_progress_with_logo.dart';
+// import 'package:mentivisor/.../utils/app_logger.dart';
+
+class SubTopicSelection extends StatefulWidget {
+  final Map<String, dynamic> data; // carry-over from previous step
+  const SubTopicSelection({super.key, required this.data});
 
   @override
-  State<SubTopicSelectionScreen> createState() =>
-      _SubTopicSelectionScreenState();
+  State<SubTopicSelection> createState() => _SubTopicSelectionV2State();
 }
 
-class _SubTopicSelectionScreenState extends State<SubTopicSelectionScreen> {
-  final Set<int> selectedCategoryIds = {};
+class _SubTopicSelectionV2State extends State<SubTopicSelection> {
+  /// Selection state
+  final Set<int> selectedCategoryIds = <int>{};
+  final Map<int, Set<int>> selectedSubIds = <int, Set<int>>{};
 
-  final Set<int> selectedSubCategoryIds = {};
+  /// Cache selected category objects so they survive filtered searches
+  final Map<int, ExpertiseData> _selectedCatCache = <int, ExpertiseData>{};
 
-  final Map<int, Set<String>> pickedSubTopicsPerCategory = {};
-
+  /// Search & pagination
   final TextEditingController searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scroll = ScrollController();
   Timer? _debounce;
-
-  List<ExpertiseData> expertiseCategories = [];
 
   @override
   void initState() {
     super.initState();
-    AppLogger.log("BecomeMentorData: ${widget.data}");
+
+    // Initial load
     context.read<ExpertiseCategoryCubit>().getExpertiseCategories("");
 
-    _scrollController.addListener(() {
-      final cubit = context.read<ExpertiseCategoryCubit>();
-      final state = cubit.state;
-      bool hasNextPage = false;
+    // Debounced server search
+    searchController.addListener(_onSearchChanged);
 
-      if (state is ExpertiseCategoryLoaded) {
-        hasNextPage = state.hasNextPage;
-      } else if (state is ExpertiseCategoryLoadingMore) {
-        hasNextPage = state.hasNextPage;
-      }
+    // Infinite scroll
+    _scroll.addListener(_onScroll);
+  }
 
-      if (hasNextPage &&
-          _scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 200) {
-        cubit.fetchMoreExpertiseCategories("");
-      }
+  void _onSearchChanged() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final q = searchController.text.trim();
+      context.read<ExpertiseCategoryCubit>().getExpertiseCategories(q);
     });
+  }
+
+  void _onScroll() {
+    final cubit = context.read<ExpertiseCategoryCubit>();
+    final s = cubit.state;
+    bool hasNext = false;
+    if (s is ExpertiseCategoryLoaded) hasNext = s.hasNextPage;
+    if (s is ExpertiseCategoryLoadingMore) hasNext = s.hasNextPage;
+
+    if (hasNext &&
+        _scroll.position.pixels >= _scroll.position.maxScrollExtent - 200) {
+      cubit.fetchMoreExpertiseCategories(searchController.text.trim());
+    }
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     searchController.dispose();
-    _scrollController.dispose();
+    _scroll.dispose();
     super.dispose();
+  }
+
+  /// Toggle a parent category. Cache the object when selecting.
+  void _toggleCategory(ExpertiseData cat) {
+    final id = cat.id ?? -1;
+    if (id == -1) return;
+
+    setState(() {
+      if (selectedCategoryIds.contains(id)) {
+        // Unselect: also clear its sub picks and cache
+        selectedCategoryIds.remove(id);
+        selectedSubIds.remove(id);
+        _selectedCatCache.remove(id);
+      } else {
+        selectedCategoryIds.add(id);
+        selectedSubIds.putIfAbsent(id, () => <int>{});
+        // Cache for survival across searches
+        _selectedCatCache[id] = cat;
+      }
+    });
+  }
+
+  void _clearCategory(int id) {
+    setState(() {
+      selectedCategoryIds.remove(id);
+      selectedSubIds.remove(id);
+      _selectedCatCache.remove(id);
+    });
+  }
+
+  void _toggleSub(int parentId, SubExpertises sub) {
+    if (sub.id == null) return;
+    final set = selectedSubIds.putIfAbsent(parentId, () => <int>{});
+    setState(() {
+      if (set.contains(sub.id)) {
+        set.remove(sub.id);
+      } else {
+        set.add(sub.id!);
+      }
+    });
+  }
+
+  void _submit() {
+    // Flatten selected
+    final expertiseIds = selectedCategoryIds.toList();
+    final subIds = <int>[];
+    selectedSubIds.forEach((_, s) => subIds.addAll(s));
+
+    if (expertiseIds.isEmpty) {
+      CustomSnackBar1.show(context, "Please select at least one expertise");
+      return;
+    }
+    if (subIds.isEmpty) {
+      CustomSnackBar1.show(context, "Please select at least one sub-expertise");
+      return;
+    }
+
+    final payload = <String, dynamic>{
+      ...widget.data,
+      "expertise_ids[]": expertiseIds,
+      "sub_expertise_ids[]": subIds,
+    };
+
+    AppLogger.log("BecomeMentor payload (single cubit): $payload");
+    context.read<BecomeMentorCubit>().becomeMentor(payload);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF5FF),
-      appBar: CustomAppBar1(title: "", actions: []),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
+      backgroundColor: const Color(0xFFF8F8FF),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<BecomeMentorCubit, BecomeMentorStates>(
+            listener: (context, state) {
+              if (state is BecomeMentorSuccess) {
+                context.go(
+                  '/cost_per_minute_screen?coins=${state.becomeMentorSuccessModel.coinsPerMinute ?? ""}',
+                );
+              } else if (state is BecomeMentorFailure) {
+                CustomSnackBar1.show(context, state.error);
+              }
+            },
           ),
-        ),
+        ],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Text(
-                'Now Select topic you want to\nmentor',
-                style: TextStyle(
-                  fontSize: 22,
-                  height: 1.25,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'segeo',
-                  color: Color(0xFF2563EC),
+            // Header
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 48,
-              child: TextField(
-                controller: searchController,
-                cursorColor: primarycolor,
-                onChanged: (query) {
-                  if (_debounce?.isActive ?? false) _debounce!.cancel();
-                  _debounce = Timer(const Duration(milliseconds: 300), () {
-                    context
-                        .read<ExpertiseCategoryCubit>()
-                        .getExpertiseCategories(query);
-                  });
-                },
-                style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
-                decoration: const InputDecoration(
-                  hintText: 'Search by topic ',
-                  prefixIcon: Icon(Icons.search),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Expanded(
-              child: BlocBuilder<ExpertiseCategoryCubit, ExpertiseCategoryStates>(
-                builder: (context, state) {
-                  return CategorySelectionFromState(
-                    state: state,
-                    selectedCategoryIds: selectedCategoryIds,
-                    selectedSubCategoryIds: selectedSubCategoryIds,
-                    pickedSubTopicsPerCategory: pickedSubTopicsPerCategory,
-                    onCategorySelected: (catId) {
-                      setState(() {
-                        selectedCategoryIds.add(catId);
-                        context
-                            .read<ExpertiseSubCategoryCubit>()
-                            .getExpertiseSubCategories(catId);
-                      });
-                    },
-                    onSubCategoryToggle: (catId, subName, subId, isPicked) {
-                      setState(() {
-                        final setForCat =
-                        pickedSubTopicsPerCategory.putIfAbsent(catId, () => {});
-                        if (isPicked) {
-                          setForCat.remove(subName);
-                          selectedSubCategoryIds.remove(subId);
-                        } else {
-                          setForCat.add(subName);
-                          selectedSubCategoryIds.add(subId);
-                        }
-                      });
-                    },
-                    onCategoryClear: (catId) {
-                      setState(() {
-                        selectedCategoryIds.remove(catId);
-                        pickedSubTopicsPerCategory.remove(catId);
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-
-          ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: BlocConsumer<BecomeMentorCubit, BecomeMentorStates>(
-          listener: (context, state) {
-            if (state is BecomeMentorSuccess) {
-              context.go('/cost_per_minute_screen?coins=${state.becomeMentorSuccessModel.coinsPerMinute??""}');
-            } else if (state is BecomeMentorFailure) {
-              CustomSnackBar1.show(context, state.error);
-            }
-          },
-          builder: (context, state) {
-            return CustomAppButton1(
-              isLoading: state is BecomeMentorLoading,
-              text: "Done",
-              onPlusTap: () {
-                if (selectedSubCategoryIds.isEmpty &&
-                    selectedCategoryIds.isEmpty) {
-                  CustomSnackBar1.show(
-                    context,
-                    "Please tell us about your achievements to continue.",
-                  );
-                } else {
-                  final Map<String, dynamic> data = {
-                    ...widget.data,
-                    "expertise_ids[]": selectedCategoryIds.toList(),
-                    "sub_expertise_ids[]": selectedSubCategoryIds.toList(),
-                  };
-                  context.read<BecomeMentorCubit>().becomeMentor(data);
-                }
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _SelectedCategoryChip extends StatelessWidget {
-  final String categoryName;
-  final VoidCallback onClear;
-  const _SelectedCategoryChip({
-    required this.categoryName,
-    required this.onClear,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7F00FF), Color(0xFF00BFFF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              categoryName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13.5,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: onClear,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.2),
-                  border: Border.all(color: Colors.white, width: 1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.close, size: 14, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-class CategorySelectionFromState extends StatelessWidget {
-  final ExpertiseCategoryStates state;
-  final Set<int> selectedCategoryIds;
-  final Set<int> selectedSubCategoryIds;
-  final Map<int, Set<String>> pickedSubTopicsPerCategory;
-  final Function(int) onCategorySelected;
-  final Function(int, String, int, bool) onSubCategoryToggle;
-  final Function(int) onCategoryClear;
-
-  const CategorySelectionFromState({
-    super.key,
-    required this.state,
-    required this.selectedCategoryIds,
-    required this.selectedSubCategoryIds,
-    required this.pickedSubTopicsPerCategory,
-    required this.onCategorySelected,
-    required this.onSubCategoryToggle,
-    required this.onCategoryClear,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (state is ExpertiseCategoryLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state is ExpertiseCategoryFailure) {
-      final failure = state as ExpertiseCategoryFailure;
-      return Center(child: Text(failure.error));
-    }
-
-    final categoryList = (state is ExpertiseCategoryLoaded)
-        ? (state as ExpertiseCategoryLoaded).expertiseModel.data?.data ?? []
-        : (state is ExpertiseCategoryLoadingMore)
-        ? (state as ExpertiseCategoryLoadingMore).expertiseModel.data?.data ?? []
-        : [];
-
-    if (categoryList.isEmpty) {
-      return const Center(child: Text("No Data Found"));
-    }
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Available categories
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: categoryList
-                .where((cat) => !selectedCategoryIds.contains(cat.id))
-                .map((cat) => _PillChip(
-              text: cat.name ?? "",
-              selected: false,
-              onTap: () => onCategorySelected(cat.id ?? -1),
-            ))
-                .toList(),
-          ),
-
-          // Selected categories with subs
-          ...selectedCategoryIds.map((catId) {
-            final category = categoryList.firstWhere(
-                  (c) => c.id == catId,
-              orElse: () => ExpertiseData(subExpertises: []),
-            );
-            final subs = category.subExpertises ?? [];
-            final pickedSubs = pickedSubTopicsPerCategory[catId] ?? {};
-
-            return Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: DottedBorder(
-                color: const Color(0xFFD9BFC4),
-                dashPattern: const [6, 4],
-                borderType: BorderType.RRect,
-                radius: const Radius.circular(16),
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    _SelectedCategoryChip(
-                      categoryName: category.name ?? "",
-                      onClear: () => onCategoryClear(catId),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    const SizedBox(height: 12),
-                    if (subs.isNotEmpty)
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: subs.map((sub) {
-                          final isPicked = pickedSubs.contains(sub.name ?? "");
-                          return _PillChip(
-                            text: sub.name ?? "",
-                            selected: isPicked,
-                            onTap: () => onSubCategoryToggle(
-                              catId,
-                              sub.name ?? "",
-                              sub.id ?? 0,
-                              isPicked,
-                            ),
-                          );
-                        }).toList(),
-                      )
-                    else
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("No Subcategories Found"),
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          'Add Expertise',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
+                    ),
                   ],
                 ),
               ),
-            );
-          }),
-        ],
+            ),
+
+            // Search
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(36),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(36),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(36),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // BODY
+            Expanded(
+              child: BlocBuilder<ExpertiseCategoryCubit, ExpertiseCategoryStates>(
+                builder: (context, state) {
+                  if (state is ExpertiseCategoryLoading &&
+                      (state is! ExpertiseCategoryLoadingMore)) {
+                    return const Center(child: DottedProgressWithLogo());
+                  }
+                  if (state is ExpertiseCategoryFailure) {
+                    // If failure during search, still show selected section using cache
+                    return _buildScrollBody(
+                      categories: const <ExpertiseData>[],
+                      showAvailable: false,
+                      searching: searchController.text.trim().isNotEmpty,
+                    );
+                  }
+
+                  // Combine for both loaded/loadingMore
+                  final model = (state is ExpertiseCategoryLoaded)
+                      ? state.expertiseModel
+                      : (state is ExpertiseCategoryLoadingMore)
+                      ? state.expertiseModel
+                      : GetExpertiseModel();
+
+                  final categories = model.data?.data ?? <ExpertiseData>[];
+                  final q = searchController.text.trim();
+
+                  // Build lookup of items present on current page
+                  final Map<int, ExpertiseData> currentPageMap = {
+                    for (final c in categories.where((c) => c.id != null))
+                      c.id!: c,
+                  };
+
+                  // Refresh cache names/subs when item reappears (optional but nice)
+                  for (final id in selectedCategoryIds) {
+                    final updated = currentPageMap[id];
+                    if (updated != null) {
+                      _selectedCatCache[id] = updated;
+                    }
+                  }
+
+                  // Available (not selected) chips for current filtered page
+                  final unselected = categories.where(
+                    (c) => c.id != null && !selectedCategoryIds.contains(c.id!),
+                  );
+
+                  // While searching, if zero matches, DON'T show "No Data Found"
+                  final showAvailable = !(q.isNotEmpty && unselected.isEmpty);
+
+                  // When not searching and there's truly no data at all, show empty state
+                  if (q.isEmpty &&
+                      categories.isEmpty &&
+                      selectedCategoryIds.isEmpty) {
+                    return const Center(child: Text("No Data Found"));
+                  }
+
+                  return _buildScrollBody(
+                    categories: categories,
+                    showAvailable: showAvailable,
+                    searching: q.isNotEmpty,
+                    unselectedOverride: unselected.toList(),
+                    currentPageMap: currentPageMap,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      // Done button -> BecomeMentor
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: BlocBuilder<BecomeMentorCubit, BecomeMentorStates>(
+            builder: (context, state) {
+              final isLoading = state is BecomeMentorLoading;
+              return CustomAppButton1(
+                isLoading: isLoading,
+                text: "Done",
+                onPlusTap: isLoading ? null : _submit,
+              );
+            },
+          ),
+        ),
       ),
     );
   }
-}
 
+  /// Builds the scrollable body with (optional) available chips + always-visible selected section.
+  Widget _buildScrollBody({
+    required List<ExpertiseData> categories,
+    required bool showAvailable,
+    required bool searching,
+    List<ExpertiseData>? unselectedOverride,
+    Map<int, ExpertiseData>? currentPageMap,
+  }) {
+    final unselected =
+        (unselectedOverride ??
+        categories
+            .where((c) => c.id != null && !selectedCategoryIds.contains(c.id!))
+            .toList());
 
-class _PillChip extends StatelessWidget {
-  final String text;
-  final bool selected;
-  final VoidCallback onTap;
-  final Color selectedBorder;
-  final Color selectedText;
+    final pageMap =
+        currentPageMap ??
+        {for (final c in categories.where((c) => c.id != null)) c.id!: c};
 
-  const _PillChip({
-    required this.text,
-    required this.selected,
-    required this.onTap,
-    this.selectedBorder = const Color(0xFF7F00FF),
-    this.selectedText = const Color(0xFF7F00FF),
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected ? selectedBorder : Colors.transparent,
-            width: 1,
+    return CustomScrollView(
+      controller: _scroll,
+      slivers: [
+        if (showAvailable)
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: unselected.map((cat) {
+                  final isSel = selectedCategoryIds.contains(cat.id);
+                  return GestureDetector(
+                    onTap: () => _toggleCategory(cat),
+                    child: Chip(
+                      label: Text(cat.name ?? ''),
+                      backgroundColor: Colors.white,
+                      labelStyle: const TextStyle(color: Colors.black),
+                      shape: StadiumBorder(
+                        side: BorderSide(
+                          color: isSel ? const Color(0xff726CF7) : Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
+
+        // Selected categories (ALWAYS visible, from current page OR cache)
+        SliverList.separated(
+          itemCount: selectedCategoryIds.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (_, idx) {
+            final catId = selectedCategoryIds.elementAt(idx);
+
+            final cat =
+                pageMap[catId] ??
+                _selectedCatCache[catId] ??
+                ExpertiseData(subExpertises: []);
+            final subs = cat.subExpertises ?? <SubExpertises>[];
+
+            return Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Selected parent chip + clear
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Chip(
+                          label: Text(cat.name ?? ''),
+                          backgroundColor: const Color(0xff726CF7),
+                          labelStyle: const TextStyle(color: Colors.white),
+                          shape: const StadiumBorder(
+                            side: BorderSide(color: Color(0xff726CF7)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.close, size: 18),
+                          onPressed: () => _clearCategory(catId),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Padding(
+                    padding: EdgeInsets.only(left: 32.0),
+                    child: DottedLine(
+                      direction: Axis.vertical,
+                      lineLength: 20.0,
+                      dashLength: 4.0,
+                      dashGapLength: 4.0,
+                      dashColor: Colors.grey,
+                    ),
+                  ),
+
+                  // Sub chips (from cat.subExpertises; stays visible even if searching)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: DottedBorder(
+                      color: Colors.grey[400]!,
+                      strokeWidth: 1.5,
+                      borderType: BorderType.RRect,
+                      radius: const Radius.circular(12),
+                      dashPattern: const [6, 3],
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: subs.map((sub) {
+                            final picked =
+                                selectedSubIds[catId]?.contains(sub.id) ??
+                                false;
+                            return GestureDetector(
+                              onTap: () => _toggleSub(catId, sub),
+                              child: Chip(
+                                label: Text(sub.name ?? 'Unnamed'),
+                                backgroundColor: picked
+                                    ? const Color(0xff726CF7).withOpacity(0.3)
+                                    : const Color(0xffF5F5F5),
+                                labelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
+                                shape: StadiumBorder(
+                                  side: BorderSide(
+                                    color: picked
+                                        ? const Color(
+                                            0xff726CF7,
+                                          ).withOpacity(0.3)
+                                        : const Color(0xffF5F5F5),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontFamily: 'segeo',
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: selected ? selectedText : const Color(0xFF2F3B52),
-          ),
-        ),
-      ),
+
+        // Bottom padding for FAB/CTA spacing
+        const SliverToBoxAdapter(child: SizedBox(height: 120)),
+      ],
     );
   }
 }
