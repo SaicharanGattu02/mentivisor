@@ -11,9 +11,9 @@ class PostCommentLoaded extends PostCommentStates {
   SuccessModel successModel;
   PostCommentLoaded(this.successModel);
 }
-class PostCommentOnLikeLoaded extends PostCommentStates {
+class PostCommentOnLikeSuccess extends PostCommentStates {
   SuccessModel successModel;
-  PostCommentOnLikeLoaded(this.successModel);
+  PostCommentOnLikeSuccess(this.successModel);
 }
 
 class PostCommentFailure extends PostCommentStates {

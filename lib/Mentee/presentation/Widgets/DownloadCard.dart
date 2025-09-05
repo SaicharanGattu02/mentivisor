@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
 
 import '../../../Components/CustomAppButton.dart';
+import '../../../utils/media_query_helper.dart';
+import '../../../utils/spinkittsLoader.dart';
 
 class DownloadCard extends StatelessWidget {
   final Downloads downloads;
@@ -20,12 +23,45 @@ class DownloadCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                "assets/images/download.jpg",
-                height: 145,
-                width: 145,
+              borderRadius:
+              BorderRadiusGeometry.circular(
+                8,
+              ),
+              child: CachedNetworkImage(
+                width: SizeConfig.screenWidth * 0.3,
+                height: 144,
+                imageUrl:
+                downloads.filePath ?? "",
                 fit: BoxFit.cover,
+                placeholder:
+                    (
+                    context,
+                    url,
+                    ) => SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Center(
+                    child: spinkits
+                        .getSpinningLinespinkit(),
+                  ),
+                ),
+                errorWidget:
+                    (
+                    context,
+                    url,
+                    error,
+                    ) => Container(
+                  width: 120,
+                  height: 120,
+                  color: Color(
+                    0xffF8FAFE,
+                  ),
+                  child: Icon(
+                    Icons.broken_image,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
             ),
             SizedBox(width: 10),

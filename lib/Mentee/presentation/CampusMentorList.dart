@@ -238,11 +238,11 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        '${m.averageRating ?? 0}',
+                                        '${m.coinsPerMinute ?? 0}',
                                         style: const TextStyle(
                                           fontSize: 12,
-                                          color: Color(0xff666666),
-                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xff333333),
+                                          fontWeight: FontWeight.w700,
                                         ),
                                       ),
                                     ],

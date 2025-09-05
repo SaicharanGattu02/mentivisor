@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
+import 'package:mentivisor/utils/constants.dart';
 
 import '../../Components/CutomAppBar.dart';
 import '../../utils/media_query_helper.dart';
@@ -297,7 +298,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     ),
                                   ),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   "Coin History",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -482,8 +483,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    historyItem.date ??
-                                                        'No Date',
+                                                    "on ${formatDate(historyItem.date ?? 'No Date')}",
                                                     style: const TextStyle(
                                                       color: Color(0xff666666),
                                                       fontFamily: 'segeo',

@@ -674,7 +674,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
     await showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setLocal) {

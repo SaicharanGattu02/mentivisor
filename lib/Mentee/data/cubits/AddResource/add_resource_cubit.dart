@@ -26,7 +26,7 @@ class AddResourceCubit extends Cubit<AddResourceStates> {
     try {
       final response = await addResourceRepository.addResource(data);
       if (response != null && response.status == true) {
-        emit(AddResourceLoaded(response, id));
+        emit(AddResourceSuccess(response, id));
       } else {
         emit(AddResourceFailure(response?.message ?? "Unknown error", id));
       }

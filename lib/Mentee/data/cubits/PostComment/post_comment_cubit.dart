@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
+import '../../../Models/CommentsModel.dart';
 import '../../../Models/CommunityPostsModel.dart';
 
 class PostCommentCubit extends Cubit<PostCommentStates> {
@@ -64,37 +65,36 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
 
 
   Future<void> postOnCommentLike(
-      int id
-      // Comments comments,
+      int id,
+   CommunityOnComments comments,
   ) async {
-    // final wasLiked = comments.isLiked ?? false;
-    // comments.isLiked = !wasLiked;
+    final wasLiked = comments.isLiked ?? false;
+    comments.isLiked = !wasLiked;
     //
-    // if (comments.likesCount == null) comments.likesCount = 0;
-    // comments.likesCount = wasLiked
-    //     ? (comments.likesCount! - 1)
-    //     : (comments.likesCount! + 1);
+    if (comments.likesCount == null) comments.likesCount = 0;
+    comments.likesCount = wasLiked
+        ? (comments.likesCount! - 1)
+        : (comments.likesCount! + 1);
 
-    emit(PostCommentLoading());
+    emit(PostCommentOnLikeLoading());
 
     try {
       final response = await postCommentRepository.commentLike(id);
       if (response != null && response.status == true) {
-        emit(PostCommentLoaded(response));
+        emit(PostCommentOnLikeSuccess(response));
       } else {
-        // Revert changes on failure
-        // comments.isLiked = wasLiked;
-        // comments.likesCount = wasLiked
-        //     ? (comments.likesCount! + 1)
-        //     : (comments.likesCount! - 1);
+        comments.isLiked = wasLiked;
+        comments.likesCount = wasLiked
+            ? (comments.likesCount! + 1)
+            : (comments.likesCount! - 1);
         emit(PostCommentFailure(response?.message ?? ""));
       }
     } catch (e) {
-      // Revert changes on exception
-      // comments.isLiked = wasLiked;
-      // comments.likesCount = wasLiked
-      //     ? (comments.likesCount! + 1)
-      //     : (comments.likesCount! - 1);
+
+      comments.isLiked = wasLiked;
+      comments.likesCount = wasLiked
+          ? (comments.likesCount! + 1)
+          : (comments.likesCount! - 1);
       emit(PostCommentFailure(e.toString()));
     }
   }

@@ -14,6 +14,7 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsState.d
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/tags_cubit.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
@@ -23,7 +24,9 @@ import '../../../utils/color_constants.dart';
 import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
 import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../../data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
+import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
+import 'package:image/image.dart' as img;
 
 class AddResourceScreen extends StatefulWidget {
   const AddResourceScreen({super.key});
@@ -44,133 +47,174 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   Timer? _debounce;
   List<String> _selectedTags = [];
   List<String> _customTags = [];
+  //
+  // Future<void> _pickFile() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+  //   );
+  //
+  //   if (result != null && result.files.single.path != null) {
+  //     _pickedFile.value = File(result.files.single.path!);
+  //   }
+  // }
+  //
+  // void _cancelFile() {
+  //   _pickedFile.value = null;
+  // }
+  //
+  // final ImagePicker _picker = ImagePicker();
+  // Future<void> _pickImage() async {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+  //     ),
+  //     backgroundColor: Colors.white,
+  //     builder: (BuildContext context) {
+  //       return SafeArea(
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.stretch,
+  //             children: [
+  //               // Drag handle
+  //               Center(
+  //                 child: Container(
+  //                   width: 40,
+  //                   height: 4,
+  //                   margin: const EdgeInsets.symmetric(vertical: 8),
+  //                   decoration: BoxDecoration(
+  //                     color: primarycolor.withOpacity(0.3),
+  //                     borderRadius: BorderRadius.circular(2),
+  //                   ),
+  //                 ),
+  //               ),
+  //
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.end,
+  //                 children: [
+  //                   IconButton(
+  //                     icon: const Icon(Icons.close, color: Colors.red),
+  //                     onPressed: () => Navigator.pop(context),
+  //                   ),
+  //                 ],
+  //               ),
+  //               ListTile(
+  //                 leading: Icon(Icons.photo_library, color: primarycolor),
+  //                 title: const Text(
+  //                   'Choose from Gallery',
+  //                   style: TextStyle(
+  //                     fontFamily: 'Poppins',
+  //                     fontSize: 16,
+  //                     color: Colors.black87,
+  //                     fontWeight: FontWeight.w400,
+  //                   ),
+  //                 ),
+  //                 onTap: () {
+  //                   Navigator.pop(context);
+  //                   _pickImageFromGallery();
+  //                 },
+  //               ),
+  //
+  //               // Camera Option
+  //               ListTile(
+  //                 leading: Icon(Icons.camera_alt, color: primarycolor),
+  //                 title: const Text(
+  //                   'Take a Photo',
+  //                   style: TextStyle(
+  //                     fontFamily: 'Poppins',
+  //                     fontSize: 16,
+  //                     color: Colors.black87,
+  //                     fontWeight: FontWeight.w400,
+  //                   ),
+  //                 ),
+  //                 onTap: () {
+  //                   Navigator.pop(context);
+  //                   _pickImageFromCamera();
+  //                 },
+  //               ),
+  //               const SizedBox(height: 8),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  // Future<void> _pickImageFromGallery() async {
+  //   final XFile? pickedFile = await _picker.pickImage(
+  //     source: ImageSource.gallery,
+  //   );
+  //   if (pickedFile != null) {
+  //     File? compressedFile = await ImageUtils.compressImage(
+  //       File(pickedFile.path),
+  //     );
+  //     if (compressedFile != null) {
+  //       _imageFile.value = compressedFile;
+  //     }
+  //   }
+  // }
+  //
+  // Future<void> _pickImageFromCamera() async {
+  //   final XFile? pickedFile = await _picker.pickImage(
+  //     source: ImageSource.camera,
+  //   );
+  //   if (pickedFile != null) {
+  //     File? compressedFile = await ImageUtils.compressImage(
+  //       File(pickedFile.path),
+  //     );
+  //     if (compressedFile != null) {
+  //       _imageFile.value = compressedFile;
+  //     }
+  //   }
+  // }
+  //
+  // void _cancelImage() {
+  //   _imageFile.value = null;
+  // }
 
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
-    );
-
-    if (result != null && result.files.single.path != null) {
-      _pickedFile.value = File(result.files.single.path!);
+  Future<void> _selectFile() async {
+    final file = await FileImagePicker.pickFile();
+    if (file != null) {
+      setState(() => _pickedFile.value = file);
     }
   }
 
-  void _cancelFile() {
-    _pickedFile.value = null;
-  }
-
-  final ImagePicker _picker = ImagePicker();
-  Future<void> _pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Drag handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: primarycolor.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                ListTile(
-                  leading: Icon(Icons.photo_library, color: primarycolor),
-                  title: const Text(
-                    'Choose from Gallery',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageFromGallery();
-                  },
-                ),
-
-                // Camera Option
-                ListTile(
-                  leading: Icon(Icons.camera_alt, color: primarycolor),
-                  title: const Text(
-                    'Take a Photo',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageFromCamera();
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        _imageFile.value = compressedFile;
-      }
+  Future<void> _selectImage() async {
+    final image = await FileImagePicker.pickImageBottomSheet(context);
+    if (image != null) {
+      // Resize the image before uploading
+      final resizedImage = await _resizeImage(image);
+      setState(() => _imageFile.value = resizedImage);
+      // Upload resizedImage to your server and get the URL
     }
   }
 
-  Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.camera,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        _imageFile.value = compressedFile;
-      }
-    }
+  Future<File> _resizeImage(File imageFile) async {
+    // Read the image
+    final image = img.decodeImage(await imageFile.readAsBytes());
+    if (image == null) return imageFile;
+
+    // Resize to a maximum width (e.g., 800 pixels) while maintaining aspect ratio
+    final resized = img.copyResize(image, width: 800);
+
+    // Save the resized image to a temporary file
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File('${tempDir.path}/resized_image.jpg');
+    await tempFile.writeAsBytes(img.encodeJpg(resized));
+
+    return tempFile;
   }
 
   void _cancelImage() {
     _imageFile.value = null;
+  }
+
+  void _cancelFile() {
+    _pickedFile.value = null;
   }
 
   @override
@@ -212,7 +256,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                 valueListenable: _imageFile,
                 builder: (context, file, _) {
                   return GestureDetector(
-                    onTap: file == null ? _pickImage : null,
+                    onTap: file == null ? _selectImage : null,
                     child: DottedBorder(
                       borderType: BorderType.RRect,
                       radius: Radius.circular(8),
@@ -321,8 +365,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   },
                   style: TextStyle(fontFamily: "segeo", fontSize: 15),
                   decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search, color: Colors.grey),
                     hoverColor: Colors.white,
-                    hintText: "Enter Tag",
+                    hintText: "Search Tags here",
                     hintStyle: const TextStyle(color: Colors.grey),
                     fillColor: Colors.white,
                     filled: true,
@@ -470,7 +515,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                 valueListenable: _pickedFile,
                 builder: (context, file, _) {
                   return GestureDetector(
-                    onTap: file == null ? _pickFile : null,
+                    onTap: file == null ? _selectFile : null,
                     child: DottedBorder(
                       borderType: BorderType.RRect,
                       radius: const Radius.circular(8),
@@ -555,7 +600,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
       ),
       bottomNavigationBar: BlocConsumer<AddResourceCubit, AddResourceStates>(
         listener: (context, state) {
-          if (state is AddResourceLoaded) {
+          if (state is AddResourceSuccess) {
             context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
             context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
               "",

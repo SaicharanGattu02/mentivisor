@@ -405,17 +405,27 @@ class _CommunityScreenState extends State<Communityscreen> {
         future: AuthService.isGuest,
         builder: (context, snapshot) {
           final isGuest = snapshot.data ?? false;
+
           return Container(
             height: 64,
             width: 64,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              gradient: kCommonGradient,
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF9B40EF), // #9B40EF
+                  Color(0xFF5B4BEB), // #5B4BEB
+                  Color(0xFF315DEA), // #315DEA
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
             ),
             child: FloatingActionButton(
-              shape: CircleBorder(),
+              shape: const CircleBorder(),
               onPressed: () {
                 if (isGuest) {
+                  // ✅ Do guest action
                 } else {
                   CustomSnackBar1.show(
                     context,
@@ -423,8 +433,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                   );
                 }
               },
-              backgroundColor: Colors.transparent,
-              elevation: 0,
+              backgroundColor: Colors.transparent, // ✅ keep transparent
+              elevation: 0, // ✅ so gradient is visible
               child: Image.asset(
                 "assets/images/ChatCircleDots.png",
                 width: 28,
@@ -434,6 +444,7 @@ class _CommunityScreenState extends State<Communityscreen> {
           );
         },
       ),
+
     );
   }
 }

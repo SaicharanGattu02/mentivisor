@@ -11,28 +11,32 @@ class CommentCard extends StatelessWidget {
   final String profileUrl;
   final String content;
   final String createdAt;
-  final VoidCallback onLike;
-  final int? likesCount;
 
+  final bool? isLiked; // ✅ NEW
+  final int? likesCount; // ✅ already had
+
+  final VoidCallback onLike;
   final VoidCallback onReply;
   final List<Replies> replies;
 
-  // NEW:
+  // for replies
   final void Function(int replyId) onReplyLike;
-  final void Function(String replyUserName) onReplyReply;
+  final void Function(String replyUserName, String replyMsg) onReplyReply;
 
   const CommentCard({
+    super.key,
     required this.id,
     required this.name,
     required this.profileUrl,
     required this.content,
     required this.createdAt,
+    required this.isLiked, // ✅ NEW required param
+    required this.likesCount, // ✅
     required this.onLike,
-    required this.likesCount,
     required this.onReply,
     required this.replies,
-    required this.onReplyLike, // NEW
-    required this.onReplyReply, // NEW
+    required this.onReplyLike,
+    required this.onReplyReply,
   });
 
   @override
@@ -68,7 +72,7 @@ class CommentCard extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 8),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xffFFFFFF),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -107,35 +111,32 @@ class CommentCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          TextButton(
-                            onPressed: onLike,
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(40, 20),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text(
-                              "Like",
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'segeo',
-                                color: Color(0xFF4076ED),
-                              ),
+                          GestureDetector(
+                            onTap: onLike,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  (isLiked ?? false)
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  size: 16,
+                                  color: (isLiked ?? false)
+                                      ? Colors.red
+                                      : Colors.black26,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "${likesCount ?? 0}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: "segeo",
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          // GestureDetector(
-                          //   onTap: onLike,
-                          //   child: Icon(
-                          //     (isLiked ?? false)
-                          //         ? Icons.favorite
-                          //         : Icons.favorite_border,
-                          //     size: 16,
-                          //     color: (isLiked ?? false)
-                          //         ? Colors.red
-                          //         : Colors.black26,
-                          //   ),
-                          // ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           TextButton(
                             onPressed: onReply,
                             style: TextButton.styleFrom(
@@ -161,7 +162,7 @@ class CommentCard extends StatelessWidget {
             ],
           ),
 
-          // replies (one level)
+          /// replies (one level)
           if (replies.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 32, top: 8),
@@ -172,7 +173,8 @@ class CommentCard extends StatelessWidget {
                     onLike: () => onReplyLike(r.id ?? 0),
                     onReply: () => onReplyReply(
                       r.user?.name ?? 'Unknown',
-                    ), // parent stays this comment
+                      r.content ?? '',
+                    ),
                   );
                 }).toList(),
               ),
@@ -185,8 +187,6 @@ class CommentCard extends StatelessWidget {
 
 class _ReplyTile extends StatelessWidget {
   final Replies reply;
-
-  // NEW:
   final VoidCallback onLike;
   final VoidCallback onReply;
 
@@ -226,7 +226,7 @@ class _ReplyTile extends StatelessWidget {
               margin: const EdgeInsets.only(left: 8),
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xffFFFFFF),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -264,23 +264,32 @@ class _ReplyTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
 
-                  // NEW: actions for reply row
+                  /// reply actions
                   Row(
                     children: [
-                      TextButton(
-                        onPressed: onLike,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(40, 20),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          "Like",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'segeo',
-                            color: Color(0xFF4076ED),
-                          ),
+                      GestureDetector(
+                        onTap: onLike,
+                        child: Row(
+                          children: [
+                            Icon(
+                              (reply.isLiked ?? false)
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 14,
+                              color: (reply.isLiked ?? false)
+                                  ? Colors.red
+                                  : Colors.black26,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${reply.likesCount ?? 0}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: "segeo",
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 12),

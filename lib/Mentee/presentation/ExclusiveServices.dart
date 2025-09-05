@@ -10,6 +10,7 @@ import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveSer
 
 import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
+import '../../utils/spinkittsLoader.dart';
 
 class ExclusiveServices extends StatefulWidget {
   @override
@@ -49,6 +50,16 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
         ),
         child: Column(
           children: [
+            Text(
+              "To Post your Services mail to rohit@gmail.com",
+              style: TextStyle(
+                fontFamily: 'segeo',
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: Color(0xff666666),
+              ),
+            ),
+            SizedBox(height: 20),
             SizedBox(
               height: 48,
               child: TextField(
@@ -160,6 +171,8 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                               itemBuilder: (context, index) {
                                 final serviceList = list[index];
                                 return _ServiceCard(
+                                  exclusiveServiceImageUrl:
+                                      serviceList.exclusiveService ?? '',
                                   imageUrl: serviceList.imageUrl ?? '',
                                   authorName: serviceList.name ?? '',
                                   title: serviceList.name ?? '',
@@ -198,6 +211,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
 }
 
 class _ServiceCard extends StatelessWidget {
+  final String exclusiveServiceImageUrl;
   final String imageUrl;
   final String authorName;
   final String title;
@@ -205,6 +219,7 @@ class _ServiceCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ServiceCard({
+    required this.exclusiveServiceImageUrl,
     required this.imageUrl,
     required this.authorName,
     required this.title,
@@ -221,10 +236,6 @@ class _ServiceCard extends StatelessWidget {
         onTap: onTap,
         child: Ink(
           padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -267,9 +278,25 @@ class _ServiceCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 12,
-                    backgroundImage: AssetImage('assets/images/bannerimg.png'),
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    imageBuilder: (context, imageProvider) => CircleAvatar(
+                      radius: 12,
+                      backgroundImage: imageProvider,
+                    ),
+                    placeholder: (context, url) => CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.grey,
+                      child: SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: Center(child: spinkits.getSpinningLinespinkit()),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => const CircleAvatar(
+                      radius: 12,
+                      backgroundImage: AssetImage("assets/images/profile.png"),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text(

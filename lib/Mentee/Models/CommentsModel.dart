@@ -1,15 +1,15 @@
 class CommentsModel {
   bool? status;
-  List<Data>? data;
+  List<CommunityOnComments>? data;
 
   CommentsModel({this.status, this.data});
 
   CommentsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <CommunityOnComments>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new CommunityOnComments.fromJson(v));
       });
     }
   }
@@ -24,7 +24,7 @@ class CommentsModel {
   }
 }
 
-class Data {
+class CommunityOnComments {
   int? id;
   int? userId;
   int? communityId;
@@ -38,7 +38,7 @@ class Data {
   User? user;
   List<Replies>? replies;
 
-  Data(
+  CommunityOnComments(
       {this.id,
         this.userId,
         this.communityId,
@@ -52,7 +52,7 @@ class Data {
         this.user,
         this.replies});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  CommunityOnComments.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     communityId = json['community_id'];

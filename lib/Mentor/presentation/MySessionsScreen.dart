@@ -186,7 +186,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               sessionDate: formatDate(session?.date ?? ""),
                               sessionTime: '${duration} to go',
                               sessionName:
-                                  'G-Meet with Suresh from SVG Collage',
+                                  'G-Meet with ${session?.mentee?.name}',
                               sessionImage:
                                   session?.mentee?.menteeProfile ??
                                   "", // Image for upcoming sessions

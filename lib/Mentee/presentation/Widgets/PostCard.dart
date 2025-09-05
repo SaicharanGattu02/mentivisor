@@ -89,7 +89,15 @@ class _PostCardState extends State<PostCard>
                   alignment: Alignment.center,
                   children: [
                     GestureDetector(
-                      onDoubleTap: _handleDoubleTap,
+                      onDoubleTap: () async {
+                        final isGuest = await AuthService.isGuest;
+
+                        if (isGuest) {
+                          if (mounted) context.push('/auth_landing');
+                        } else {
+                          _handleDoubleTap();
+                        }
+                      },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: CachedNetworkImage(
@@ -279,17 +287,29 @@ class _PostCardState extends State<PostCard>
                                             minChildSize: 0.4,
                                             maxChildSize: 0.95,
                                             expand: false,
-                                            builder: (_, scrollController) => Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xffF4F8FD),
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                                              ),
-                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                              child: CommentBottomSheet(
-                                                communityPost: widget.communityPosts,
-                                                scrollController: scrollController,
-                                              ),
-                                            ),
+                                            builder: (_, scrollController) =>
+                                                Container(
+                                                  decoration: const BoxDecoration(
+                                                    color: Color(0xffF4F8FD),
+                                                    borderRadius:
+                                                        BorderRadius.vertical(
+                                                          top: Radius.circular(
+                                                            16,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 12,
+                                                      ),
+                                                  child: CommentBottomSheet(
+                                                    communityPost:
+                                                        widget.communityPosts,
+                                                    scrollController:
+                                                        scrollController,
+                                                  ),
+                                                ),
                                           );
                                         },
                                       );
@@ -297,13 +317,23 @@ class _PostCardState extends State<PostCard>
                                   },
                                   child: Row(
                                     children: [
-                                      Image.asset("assets/icons/Chat.png", width: 16, height: 16),
+                                      Image.asset(
+                                        "assets/icons/Chat.png",
+                                        width: 16,
+                                        height: 16,
+                                      ),
                                       const SizedBox(width: 6),
-                                      BlocBuilder<PostCommentCubit, PostCommentStates>(
+                                      BlocBuilder<
+                                        PostCommentCubit,
+                                        PostCommentStates
+                                      >(
                                         builder: (context, state) {
                                           return Text(
-                                            widget.communityPosts.commentsCount.toString(),
-                                            style: const TextStyle(fontFamily: 'segeo'),
+                                            widget.communityPosts.commentsCount
+                                                .toString(),
+                                            style: const TextStyle(
+                                              fontFamily: 'segeo',
+                                            ),
                                           );
                                         },
                                       ),
@@ -331,6 +361,29 @@ class _PostCardState extends State<PostCard>
                                     'assets/icons/share.png',
                                     width: 16,
                                     height: 16,
+                                  ),
+                                ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: () => _showReportSheet(context),
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/ReportmenteImg.png",
+                                        width: 16,
+                                        height: 16,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'Report',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                          fontFamily: 'segeo',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -387,4 +440,144 @@ class _PostCardState extends State<PostCard>
       ),
     );
   }
+}
+
+void _showReportSheet(BuildContext context) {
+  String _selected = 'False Information';
+  final TextEditingController _otherController = TextEditingController();
+  final List<String> _reportReasons = [
+    'Copied',
+    'Scam or Fraud ',
+    'Abusing Post',
+    'Other',
+  ];
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (BuildContext builderContext) {
+      return SafeArea(
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Post Report',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xff444444),
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.grey),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: _reportReasons.map((String reason) {
+                      return RadioListTile<String>(
+                        title: Text(
+                          reason,
+                          style: const TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 16,
+                          ),
+                        ),
+                        value: reason,
+                        visualDensity: VisualDensity.compact,
+                        groupValue: _selected,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selected = value!;
+                          });
+                        },
+                        activeColor: const Color(0xFF4A00E0),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  // Custom Reason TextField
+                  if (_selected == 'Other') ...[
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _otherController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Please explain your reason',
+                        hintStyle: const TextStyle(fontFamily: 'segeo'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  // Submit Button
+                  // BlocConsumer<StudyZoneReportCubit, StudyZoneReportState>(
+                  //   listener: (context, state) {
+                  //     if (state is StudyZoneReportSuccess) {
+                  //       CustomSnackBar1.show(
+                  //         context,
+                  //         "Report submitted successfully.",
+                  //       );
+                  //       context.pop();
+                  //     } else if (state is StudyZoneReportFailure) {
+                  //       return CustomSnackBar1.show(
+                  //         context,
+                  //         state.message ?? "",
+                  //       );
+                  //     }
+                  //   },
+                  //   builder: (context, state) {
+                  //     return SafeArea(
+                  //       child: CustomAppButton1(
+                  //         isLoading: state is StudyZoneReportLoading,
+                  //         text: "Submit Report",
+                  //         onPlusTap: () {
+                  //           final Map<String, dynamic> data = {
+                  //             "content_id": studyZoneCampusData.id,
+                  //             "reason": _selected,
+                  //           };
+                  //           context
+                  //               .read<StudyZoneReportCubit>()
+                  //               .postStudyZoneReport(data);
+                  //         },
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
 }

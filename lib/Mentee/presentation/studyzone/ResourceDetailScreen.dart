@@ -41,7 +41,7 @@ class ResourceDetailScreen extends StatelessWidget {
                 width: SizeConfig.screenWidth,
                 height: 200,
                 imageUrl: studyZoneCampusData.image ?? "",
-                fit: BoxFit.fill,
+                fit: BoxFit.fitWidth,
                 placeholder: (context, url) => SizedBox(
                   width: 120,
                   height: 120,
@@ -313,9 +313,7 @@ class ResourceDetailScreen extends StatelessWidget {
                 text: "Download",
                 textSize: 14,
                 onPlusTap: () {
-                  context.read<AddResourceCubit>().resourceDownload(
-                    currentId,
-                  );
+                  context.read<AddResourceCubit>().resourceDownload(currentId);
                 },
               );
             },
@@ -344,134 +342,136 @@ class ResourceDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (BuildContext builderContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 16,
-                right: 16,
-                top: 16,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title and Close Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Report Content',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'segeo',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.grey),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // Report Reasons List
-                  const Text(
-                    'Reason for reporting',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Radio Buttons for Report Reasons
-                  Column(
-                    children: _reportReasons.map((String reason) {
-                      return RadioListTile<String>(
-                        title: Text(
-                          reason,
-                          style: const TextStyle(
+        return SafeArea(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Close Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Report Content',
+                          style: TextStyle(
+                            fontSize: 20,
                             fontFamily: 'segeo',
-                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        value: reason,
-                        visualDensity: VisualDensity.compact,
-                        groupValue: _selected,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _selected = value!;
-                          });
-                        },
-                        activeColor: const Color(0xFF4A00E0),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.grey),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  // Custom Reason TextField
-                  if (_selected == 'Other') ...[
+                      ],
+                    ),
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: _otherController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        hintText: 'Please explain your reason',
-                        hintStyle: const TextStyle(fontFamily: 'segeo'),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
+                    // Report Reasons List
+                    const Text(
+                      'Reason for reporting',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
                     ),
-                  ],
-                  const SizedBox(height: 24),
-                  // Submit Button
-                  BlocConsumer<StudyZoneReportCubit, StudyZoneReportState>(
-                    listener: (context, state) {
-                      if (state is StudyZoneReportSuccess) {
-                        CustomSnackBar1.show(
-                          context,
-                          "Report submitted successfully.",
-                        );
-                        context.pop();
-                      } else if (state is StudyZoneReportFailure) {
-                        return CustomSnackBar1.show(
-                          context,
-                          state.message ?? "",
-                        );
-                      }
-                    },
-                    builder: (context, state) {
-                      return SafeArea(
-                        child: CustomAppButton1(
-                          isLoading: state is StudyZoneReportLoading,
-                          text: "Submit Report",
-                          onPlusTap: () {
-                            final Map<String, dynamic> data = {
-                              "content_id": studyZoneCampusData.id,
-                              "reason": _selected,
-                            };
-                            context
-                                .read<StudyZoneReportCubit>()
-                                .postStudyZoneReport(data);
+                    const SizedBox(height: 8),
+                    // Radio Buttons for Report Reasons
+                    Column(
+                      children: _reportReasons.map((String reason) {
+                        return RadioListTile<String>(
+                          title: Text(
+                            reason,
+                            style: const TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 16,
+                            ),
+                          ),
+                          value: reason,
+                          visualDensity: VisualDensity.compact,
+                          groupValue: _selected,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selected = value!;
+                            });
                           },
+                          activeColor: const Color(0xFF4A00E0),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    // Custom Reason TextField
+                    if (_selected == 'Other') ...[
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _otherController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Please explain your reason',
+                          hintStyle: const TextStyle(fontFamily: 'segeo'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            );
-          },
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    // Submit Button
+                    BlocConsumer<StudyZoneReportCubit, StudyZoneReportState>(
+                      listener: (context, state) {
+                        if (state is StudyZoneReportSuccess) {
+                          CustomSnackBar1.show(
+                            context,
+                            "Report submitted successfully.",
+                          );
+                          context.pop();
+                        } else if (state is StudyZoneReportFailure) {
+                          return CustomSnackBar1.show(
+                            context,
+                            state.message ?? "",
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return SafeArea(
+                          child: CustomAppButton1(
+                            isLoading: state is StudyZoneReportLoading,
+                            text: "Submit Report",
+                            onPlusTap: () {
+                              final Map<String, dynamic> data = {
+                                "content_id": studyZoneCampusData.id,
+                                "reason": _selected,
+                              };
+                              context
+                                  .read<StudyZoneReportCubit>()
+                                  .postStudyZoneReport(data);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );

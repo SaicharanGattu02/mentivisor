@@ -14,6 +14,11 @@ class AddResourceLoaded extends AddResourceStates {
   final String resourceId;
   AddResourceLoaded(this.successModel, this.resourceId);
 }
+class AddResourceSuccess extends AddResourceStates {
+  final SuccessModel successModel;
+  final String resourceId;
+  AddResourceSuccess(this.successModel, this.resourceId);
+}
 
 class AddResourceFailure extends AddResourceStates {
   final String error;

@@ -227,107 +227,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
               buildCustomLabel('Tags'),
               const SizedBox(height: 8),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: buildCustomTextField(
-              //         controller: _tagController,
-              //         hint: "Enter Tag",
-              //       ),
-              //     ),
-              //     const SizedBox(width: 8),
-              //     SizedBox(
-              //       height: 48,
-              //       width: 48,
-              //       child: ElevatedButton(
-              //         onPressed: () {
-              //           final tag = _tagController.text.trim();
-              //           if (tag.isNotEmpty) {
-              //             context.read<CommunityTagsCubit>().addTag(tag);
-              //             _tagController.clear();
-              //           }
-              //         },
-              //         style: ElevatedButton.styleFrom(
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(5),
-              //           ),
-              //           backgroundColor: const Color(0xff315DEA),
-              //           padding: const EdgeInsets.all(12),
-              //         ),
-              //         child: const Icon(
-              //           Icons.add,
-              //           size: 20,
-              //           color: Colors.white,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // const SizedBox(height: 8),
-              //
-              // Container(
-              //   padding: const EdgeInsets.all(10),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         "Suggested",
-              //         style: TextStyle(
-              //           fontWeight: FontWeight.w600,
-              //           fontFamily: 'segeo',
-              //           fontSize: 14,
-              //           color: Color(0xff374151E5).withOpacity(0.9),
-              //         ),
-              //       ),
-              //       SizedBox(height: 12),
-              //       BlocBuilder<CommunityTagsCubit, CommunityTagsStates>(
-              //         builder: (context, state) {
-              //           if (state is CommunityTagsLoading) {
-              //             return const SizedBox(
-              //               height: 24,
-              //               width: 24,
-              //               child: CircularProgressIndicator(strokeWidth: 2),
-              //             );
-              //           } else if (state is CommunityTagsLoaded) {
-              //             _selectedTags = state.selectedTags;
-              //             return Wrap(
-              //               spacing: 5,
-              //               runSpacing: 0,
-              //               children: state.allTags.map((tag) {
-              //                 final isSelected = state.selectedTags.contains(
-              //                   tag,
-              //                 );
-              //                 return ChoiceChip(
-              //                   label: Text(tag),
-              //                   selected: isSelected,
-              //                   onSelected: (_) {
-              //                     context.read<CommunityTagsCubit>().toggleTag(
-              //                       tag,
-              //                     );
-              //                   },
-              //                   selectedColor: Colors.blue.shade100,
-              //                   backgroundColor: Colors.white,
-              //                   side: BorderSide(
-              //                     color: isSelected
-              //                         ? Colors.blue.shade100
-              //                         : Colors.grey,
-              //                   ),
-              //                 );
-              //               }).toList(),
-              //             );
-              //           } else {
-              //             return const Text("No Tags Found");
-              //           }
-              //         },
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // const SizedBox(height: 8),
+
               SizedBox(
                 height: 48,
                 child: TextField(
@@ -340,9 +240,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     });
                   },
                   style: TextStyle(fontFamily: "segeo", fontSize: 15),
-                  decoration: InputDecoration(
+                  decoration: InputDecoration(prefixIcon: Icon(Icons.search,color: Colors.grey),
                     hoverColor: Colors.white,
-                    hintText: "Enter Tag",
+                    hintText: "Search Tags here",
                     hintStyle: const TextStyle(color: Colors.grey),
                     fillColor: Colors.white,
                     filled: true,
@@ -360,7 +260,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   } else if (state is TagsSearchLoaded) {
                     final allTags = [...state.tagsModel.data!, ..._customTags];
                     if (allTags.isEmpty) {
-                      return const SizedBox.shrink();
+                      return Center(child: Text("No Tags Found!"));
                     }
                     return Container(
                       padding: const EdgeInsets.all(10),
@@ -416,43 +316,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               );
                             }).toList(),
                           ),
-                          if (_selectedTags.isNotEmpty) ...[
-                            const SizedBox(height: 15),
-                            const Text(
-                              "Selected Tags",
-                              style: TextStyle(
-                                color: Color(0xff374151),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'segeo',
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Wrap(
-                              spacing: 5,
-                              runSpacing: 0,
-                              children: _selectedTags.map((tag) {
-                                return Chip(
-                                  label: Text(
-                                    tag,
-                                    style: const TextStyle(
-                                      color: Color(0xff333333),
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  backgroundColor: Colors.blue.shade50,
-                                  deleteIcon: const Icon(Icons.close, size: 16),
-                                  onDeleted: () {
-                                    setState(() {
-                                      _selectedTags.remove(tag);
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          ],
                         ],
                       ),
                     );
@@ -462,8 +325,58 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 },
               ),
               const SizedBox(height: 8),
-
-              // const SizedBox(height: 24),
+              if (_selectedTags.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Selected Tags",
+                        style: TextStyle(
+                          color: Color(0xff374151),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'segeo',
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 0,
+                        children: _selectedTags.map((tag) {
+                          return Chip(
+                            label: Text(
+                              tag,
+                              style: const TextStyle(
+                                color: Color(0xff333333),
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                            side: BorderSide(color: Colors.blue.shade50),
+                            backgroundColor: Colors.blue.shade50,
+                            deleteIcon: const Icon(Icons.close, size: 16),
+                            onDeleted: () {
+                              setState(() {
+                                _selectedTags.remove(tag);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                SizedBox.shrink(),
+              ],
+              const SizedBox(height: 8),
               const Text(
                 'Image',
                 style: TextStyle(

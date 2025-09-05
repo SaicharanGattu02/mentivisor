@@ -401,9 +401,13 @@ class _EccScreenState extends State<EccScreen> {
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
-                              colors: [Color(0xFF975CF7), Color(0xFF7A40F2)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFF9B40EF), // #9B40EF at 0%
+                                Color(0xFF5B4BEB), // #5B4BEB at 50%
+                                Color(0xFF315DEA)
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
                             ),
                           ),
                           child: const Icon(

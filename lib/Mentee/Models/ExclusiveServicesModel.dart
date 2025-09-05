@@ -6,11 +6,11 @@ class ExclusiveServicesModel {
 
   ExclusiveServicesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = json['data'] != null ? ServiceList.fromJson(json['data']) : null;
+    data = json['data'] != null ? new ServiceList.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
@@ -34,28 +34,27 @@ class ServiceList {
   int? to;
   int? total;
 
-  ServiceList({
-    this.currentPage,
-    this.data,
-    this.firstPageUrl,
-    this.from,
-    this.lastPage,
-    this.lastPageUrl,
-    this.links,
-    this.nextPageUrl,
-    this.path,
-    this.perPage,
-    this.prevPageUrl,
-    this.to,
-    this.total,
-  });
+  ServiceList(
+      {this.currentPage,
+        this.data,
+        this.firstPageUrl,
+        this.from,
+        this.lastPage,
+        this.lastPageUrl,
+        this.links,
+        this.nextPageUrl,
+        this.path,
+        this.perPage,
+        this.prevPageUrl,
+        this.to,
+        this.total});
 
   ServiceList.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
       data = <ExclusiveServiceData>[];
       json['data'].forEach((v) {
-        data!.add(ExclusiveServiceData.fromJson(v));
+        data!.add(new ExclusiveServiceData.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -65,7 +64,7 @@ class ServiceList {
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
-        links!.add(Links.fromJson(v));
+        links!.add(new Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -77,7 +76,7 @@ class ServiceList {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['current_page'] = this.currentPage;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
@@ -107,16 +106,17 @@ class ExclusiveServiceData {
   String? createdAt;
   String? updatedAt;
   String? link;
+  String? exclusiveService;
 
-  ExclusiveServiceData({
-    this.id,
-    this.name,
-    this.description,
-    this.imageUrl,
-    this.createdAt,
-    this.updatedAt,
-    this.link,
-  });
+  ExclusiveServiceData(
+      {this.id,
+        this.name,
+        this.description,
+        this.imageUrl,
+        this.createdAt,
+        this.updatedAt,
+        this.link,
+        this.exclusiveService});
 
   ExclusiveServiceData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -126,10 +126,11 @@ class ExclusiveServiceData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     link = json['link'];
+    exclusiveService = json['exclusive_service'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
     data['description'] = this.description;
@@ -137,6 +138,7 @@ class ExclusiveServiceData {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['link'] = this.link;
+    data['exclusive_service'] = this.exclusiveService;
     return data;
   }
 }
@@ -155,7 +157,7 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
     data['label'] = this.label;
     data['active'] = this.active;
