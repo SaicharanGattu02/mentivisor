@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileState.dart';
+import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
@@ -96,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         color: Color(0xFFF2F4FD),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ?    Center(child: DottedProgressWithLogo())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Form(
@@ -111,12 +112,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         children: [
                           CircleAvatar(
                             radius: 50,
+                            backgroundColor: Colors.grey[200],
                             backgroundImage: _image != null
                                 ? FileImage(_image!)
                                 : (imagePath?.startsWith('http') ?? false)
                                 ? CachedNetworkImageProvider(imagePath!)
-                                : const AssetImage('assets/images/profile.png')
-                                      as ImageProvider,
+                                : const AssetImage('assets/images/profile.png') as ImageProvider,
                           ),
                           Positioned(
                             bottom: 4,

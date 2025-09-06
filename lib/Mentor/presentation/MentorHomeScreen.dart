@@ -98,7 +98,9 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                               if (b?.link != null) _launchUrl(b?.link ?? "");
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric( horizontal: 2.5),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 2.5,
+                              ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
                                 child: Image.network(
@@ -136,10 +138,12 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: List.generate(
                               banners_data?.data?.length ?? 0,
-                                  (index) {
+                              (index) {
                                 return AnimatedContainer(
                                   duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 3,
+                                  ),
                                   height: SizeConfig.screenHeight * 0.008,
                                   width: currentIndex == index
                                       ? SizeConfig.screenWidth * 0.05
@@ -209,14 +213,16 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.startTime ?? "",
                                     session?.endTime ?? "",
                                   );
-                                  return SessionCard(attachment: session?.attachment??"",
-                                    sessionLink: session?.zoomLink??"",
+                                  return SessionCard(
+                                    attachment: session?.attachment ?? "",
+                                    sessionLink: session?.zoomLink ?? "",
                                     sessionId: session?.id ?? 0,
                                     status: 'upcoming',
                                     sessionDate: formatDate(
                                       session?.date ?? "",
                                     ),
-                                    sessionStartTime: '${session?.startTime ?? ""}',
+                                    sessionStartTime:
+                                        '${session?.startTime ?? ""}',
                                     sessionEndTime: '${session?.endTime ?? ""}',
                                     sessionTime: '${duration}  to go',
                                     sessionName:
@@ -228,7 +234,8 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     buttonText:
                                         'Message from ${session?.mentee?.name ?? ""}',
                                     buttonIcon: 'assets/icons/chaticon.png',
-                                    remainingTime: '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
+                                    remainingTime:
+                                        '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
                                   );
                                 }, childCount: session_data?.data?.length),
                               ),
