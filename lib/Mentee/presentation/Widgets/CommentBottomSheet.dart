@@ -32,6 +32,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
   // reply state
   int? _replyParentId; // if set, we're replying to that comment id
+  int? _replyingToUserId; // if set, we're replying to that comment id
   String? _replyingToName;
   String? _replyingToMsg;
 
@@ -44,13 +45,15 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
     );
   }
 
-  void _startReply(int parentId, String displayName, String msg) {
+  void _startReply(int parentId, String displayName, String msg, int replyingToUserId) {
     setState(() {
       _replyParentId = parentId;
       _replyingToName = displayName;
       _replyingToMsg = msg;
+      _replyingToUserId = replyingToUserId;  // Store the user ID of the person you're replying to
     });
   }
+
 
   void _cancelReply() {
     setState(() {
@@ -70,11 +73,13 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
       if (_replyParentId != null) ...{
         "parent_id": _replyParentId,
         "is_reply": 1,
+        "hashUser": _replyingToUserId, // Pass the user ID of the person being replied to
       },
     };
 
     context.read<PostCommentCubit>().postComment(payload, widget.communityPost);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -155,10 +160,10 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                     context.read<PostCommentCubit>().likeReply(parent: c, reply: reply);
                                   }
                                 },
-                                onReplyReply: (replyUserName, replyMsg) =>
-                                    _startReply(c.id!, replyUserName, replyMsg),
+                                onReplyReply: (replyUserName, replyMsg, replyUserId) =>
+                                    _startReply(c.id!, replyUserName, replyMsg, replyUserId),
                                 onReply: () => _startReply(
-                                  c.id!, c.user?.name ?? 'Unknown', c.content ?? "",
+                                  c.id!, c.user?.name ?? 'Unknown', c.content ?? "",c.user?.id??0
                                 ),
                               );
                             },

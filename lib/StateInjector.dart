@@ -61,6 +61,8 @@ import 'package:mentivisor/Mentor/data/Cubits/MyMentees/mymentees_repository.dar
 import 'package:mentivisor/Mentor/data/Cubits/NewExpertiseRequest/NewExpertiseRequestCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/NonAttachedExpertises/NonAttachedExpertisesCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ReportMentee/report_mentee_cubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Reviews/ReviewsCubit.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Reviews/ReviewsRepo.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsRepository.dart';
 import 'package:mentivisor/Mentor/data/Cubits/UpdateExpertise/UpdateExpertiseCubit.dart';
@@ -376,6 +378,12 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+
+    RepositoryProvider<ReviewsRepo>(
+      create: (context) => ReviewsRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -661,6 +669,10 @@ class StateInjector {
 
 BlocProvider<SessionCompleteCubit>(
       create: (context) => SessionCompleteCubit(context.read<SessionCompleteRepo>()),
+    ),
+
+    BlocProvider<ReviewsCubit>(
+      create: (context) => ReviewsCubit(context.read<ReviewsRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

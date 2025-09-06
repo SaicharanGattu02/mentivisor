@@ -21,7 +21,7 @@ class CommentCard extends StatelessWidget {
 
   // for replies
   final void Function(int replyId) onReplyLike;
-  final void Function(String replyUserName, String replyMsg) onReplyReply;
+  final void Function(String replyUserName, String replyMsg,int replyUserId) onReplyReply;
 
   const CommentCard({
     super.key,
@@ -174,6 +174,7 @@ class CommentCard extends StatelessWidget {
                     onReply: () => onReplyReply(
                       r.user?.name ?? 'Unknown',
                       r.content ?? '',
+                      r.user?.id??0
                     ),
                   );
                 }).toList(),

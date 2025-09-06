@@ -8,7 +8,6 @@ class CoinHistoryCubit extends Cubit<CoinHistoryStates> {
 
   Future<void> getCoinHistory(String filter) async {
     emit(CoinhistoryLoading());
-
     try {
       final response = await coinHistoryRepo.getCoinsHistory(filter);
       if (response != null && response.status == true) {
@@ -19,7 +18,5 @@ class CoinHistoryCubit extends Cubit<CoinHistoryStates> {
     } catch (e) {
       emit(CoinhistoryFailure(e.toString()));
     }
-
   }
-
 }

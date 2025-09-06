@@ -16,6 +16,7 @@ import '../Models/MentorProfileModel.dart';
 import '../Models/MentorinfoResponseModel.dart';
 import '../Models/MyMenteesModel.dart';
 import '../Models/PendingSubExpertisesModel.dart';
+import '../Models/ReviewsModel.dart';
 import '../Models/SessionDetailsModel.dart';
 import '../Models/NonAttachedExpertiseDetailsModel.dart';
 import '../Models/NonAttachedExpertisesModel.dart';
@@ -25,7 +26,7 @@ abstract class MentorRemoteDataSource {
   Future<SessionsModel?> getSessions(String sessionType);
   Future<MentorprofileModel?> getMentorProfile();
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data);
-  Future<FeedbackModel?> getFeedback(String user_id,List<int>stars,String time);
+  Future<FeedbackModel?> getFeedback(String user_id);
   Future<MyMenteesModel?> getMyMentees(int page);
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
   Future<MentorinfoResponseModel?> mentorinfo();
@@ -51,90 +52,55 @@ abstract class MentorRemoteDataSource {
     String status,
   );
   Future<CommentsModel?> getComments(int entityId);
+  Future<ReviewsModel?> getReviews(
+    int page,
+    String userId,
+    List<int> stars,
+    String time,
+  );
   Future<SuccessModel?> sessionCompleted(int sessionId);
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
-  Future<FormData> buildFormData(Map<String, dynamic> data) async {
-    final formMap = <String, dynamic>{};
-    for (final entry in data.entries) {
-      final key = entry.key;
-      final value = entry.value;
-      if (value == null) continue;
-      final isFile =
-          value is String &&
-          value.contains('/') &&
-          (key.contains('image') ||
-              key.contains('file') ||
-              key.contains('uploaded_file') ||
-              key.contains('picture') ||
-              key.contains('profile_pic') ||
-              key.contains('resume') ||
-              key.contains('payment_screenshot'));
+  @override
+  Future<ReviewsModel?> getReviews(
+      int page,
+      String userId,
+      List<int> stars,
+      String time,
+      ) async {
+    try {
+      AppLogger.log('getReviews : $stars');
+      final queryParams = <String, dynamic>{};
 
-      if (isFile) {
-        final file = await MultipartFile.fromFile(
-          value,
-          filename: value.split('/').last,
-        );
-        formMap[key] = file;
-      } else {
-        formMap[key] = value;
+      // If stars are provided, send them as repeated query parameters (stars[]=2&stars[]=5)
+      if (stars.isNotEmpty) {
+        for (var star in stars) {
+          // Append to a list of values for "stars[]"
+          queryParams.putIfAbsent("stars[]", () => []).add(star.toString());
+        }
       }
-    }
 
-    formMap.forEach((key, value) {
-      AppLogger.log('$key -> $value');
-    });
-
-    return FormData.fromMap(formMap);
-  }
-
-  Future<FormData> _buildNewExpertiseFormData(Map<String, dynamic> data) async {
-    final map = <String, dynamic>{};
-
-    // 1) Arrays -> append [] in key
-    void addArray(String key, dynamic v) {
-      if (v == null) return;
-      final list = (v is List) ? v : [v];
-      map["$key[]"] = list;
-    }
-
-    addArray('expertise_id', data['expertise_id']);
-    addArray('sub_expertise_ids', data['sub_expertise_ids']);
-
-    // 2) proof_link
-    final link = data['proof_link'];
-    if (link is String && link.trim().isNotEmpty) {
-      map['proof_link'] = link.trim();
-    }
-
-    Future<MultipartFile?> asMultipart(dynamic v) async {
-      if (v == null) return null;
-      if (v is MultipartFile) return v;
-      if (v is File) {
-        final name = v.path.split('/').last;
-        return MultipartFile.fromFile(v.path, filename: name);
+      if (time.isNotEmpty) {
+        queryParams["time"] = time;
       }
-      if (v is String && v.contains('/')) {
-        final name = v.split('/').last;
-        return MultipartFile.fromFile(v, filename: name);
-      }
+
+      // Debugging: Print query parameters before sending request
+      print("Query Parameters: $queryParams");
+
+      final res = await ApiClient.get(
+        "${MentorEndpointsUrls.reviews}/$userId?page=$page",
+        queryParameters: queryParams,
+      );
+
+      AppLogger.log('getReviews : ${res.data}');
+      return ReviewsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getReviews : $e');
       return null;
     }
-
-    final mf = await asMultipart(
-      data['proof_doc'] ?? data['proof_file'] ?? data['proof_file_path'],
-    );
-    if (mf != null) {
-      map['proof_doc'] = mf;
-    }
-
-    // Optional: log for debug
-    map.forEach((k, v) => AppLogger.log('🔹 $k -> $v'));
-
-    return FormData.fromMap(map);
   }
+
 
   @override
   Future<PendingSubExpertisesModel?> getPendingSubExpertises(
@@ -398,23 +364,11 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
 
   @override
   Future<FeedbackModel?> getFeedback(
-      String userId,
-      List<int> stars,
-      String time,
+      String userId
       ) async {
     try {
-      final queryParams = <String, dynamic>{};
-
-      if (stars.isNotEmpty) {
-        queryParams["stars"] = "[${stars.join(",")}]";
-      }
-      if (time.isNotEmpty) {
-        queryParams["time"] = time;
-      }
-
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.feedback}/$userId",
-        queryParameters: queryParams,
+        "${MentorEndpointsUrls.feedback}/$userId"
       );
       AppLogger.log('getFeedback: ${res.realUri}');
       AppLogger.log('getFeedback: ${res.data}');
@@ -530,5 +484,86 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       AppLogger.error('Coins History:${e}');
       return null;
     }
+  }
+
+  Future<FormData> buildFormData(Map<String, dynamic> data) async {
+    final formMap = <String, dynamic>{};
+    for (final entry in data.entries) {
+      final key = entry.key;
+      final value = entry.value;
+      if (value == null) continue;
+      final isFile =
+          value is String &&
+          value.contains('/') &&
+          (key.contains('image') ||
+              key.contains('file') ||
+              key.contains('uploaded_file') ||
+              key.contains('picture') ||
+              key.contains('profile_pic') ||
+              key.contains('resume') ||
+              key.contains('payment_screenshot'));
+
+      if (isFile) {
+        final file = await MultipartFile.fromFile(
+          value,
+          filename: value.split('/').last,
+        );
+        formMap[key] = file;
+      } else {
+        formMap[key] = value;
+      }
+    }
+
+    formMap.forEach((key, value) {
+      AppLogger.log('$key -> $value');
+    });
+
+    return FormData.fromMap(formMap);
+  }
+
+  Future<FormData> _buildNewExpertiseFormData(Map<String, dynamic> data) async {
+    final map = <String, dynamic>{};
+
+    // 1) Arrays -> append [] in key
+    void addArray(String key, dynamic v) {
+      if (v == null) return;
+      final list = (v is List) ? v : [v];
+      map["$key[]"] = list;
+    }
+
+    addArray('expertise_id', data['expertise_id']);
+    addArray('sub_expertise_ids', data['sub_expertise_ids']);
+
+    // 2) proof_link
+    final link = data['proof_link'];
+    if (link is String && link.trim().isNotEmpty) {
+      map['proof_link'] = link.trim();
+    }
+
+    Future<MultipartFile?> asMultipart(dynamic v) async {
+      if (v == null) return null;
+      if (v is MultipartFile) return v;
+      if (v is File) {
+        final name = v.path.split('/').last;
+        return MultipartFile.fromFile(v.path, filename: name);
+      }
+      if (v is String && v.contains('/')) {
+        final name = v.split('/').last;
+        return MultipartFile.fromFile(v, filename: name);
+      }
+      return null;
+    }
+
+    final mf = await asMultipart(
+      data['proof_doc'] ?? data['proof_file'] ?? data['proof_file_path'],
+    );
+    if (mf != null) {
+      map['proof_doc'] = mf;
+    }
+
+    // Optional: log for debug
+    map.forEach((k, v) => AppLogger.log('🔹 $k -> $v'));
+
+    return FormData.fromMap(map);
   }
 }
