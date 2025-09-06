@@ -69,26 +69,33 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: CachedNetworkImage(
-                            imageUrl: mentorData?.user?.profilePicUrl ?? "",
-                            placeholder: (context, url) => CircleAvatar(
-                              radius: 20,
-                              backgroundColor: Colors.grey,
-                              child: SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: Center(
-                                  child: spinkits.getSpinningLinespinkit(),
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: AssetImage(
-                                    "assets/images/profile.png",
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: mentorData?.user?.profilePicUrl ?? "",
+                              width: 150, // Set a fixed width for the image
+                              height:
+                                  150, // Set a fixed height to maintain the circle shape
+                              fit: BoxFit
+                                  .cover, // Ensures the image scales correctly to fit within the circle
+                              placeholder: (context, url) => CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.grey,
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: Center(
+                                    child: spinkits.getSpinningLinespinkit(),
                                   ),
                                 ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: AssetImage(
+                                      "assets/images/profile.png",
+                                    ),
+                                  ),
+                            ),
                           ),
                         ),
                         SizedBox(height: 12),

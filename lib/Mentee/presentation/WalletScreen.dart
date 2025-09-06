@@ -355,12 +355,9 @@ class _WalletScreenState extends State<WalletScreen> {
                       listener: (context, state) {
                         if (state is WalletmoneyStateLoaded) {
                           final wallet = state.walletResponseModel.data?.wallet;
-                          _currentBalence.value =
-                              wallet?.currentBalance.toString() ?? "0";
-                          _totelEarned.value =
-                              wallet?.totalEarned.toString() ?? "0";
-                          _totelSpent.value =
-                              wallet?.totalSpent.toString() ?? "0";
+                          _currentBalence.value = wallet?.currentBalance.toString() ?? "0";
+                          _totelEarned.value = wallet?.totalEarned.toString() ?? "0";
+                          _totelSpent.value = wallet?.totalSpent.toString() ?? "0";
                         }
                       },
                       child: BlocBuilder<WalletmoneyCubit, WalletmoneyState>(
