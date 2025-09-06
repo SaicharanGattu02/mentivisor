@@ -4,7 +4,7 @@ import '../../MentorRemoteDataSource.dart';
 
 abstract class MentorAvailabilityRepo {
   Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
-  Future<AvailableSlotsModel?> getMentorAvailability();
+  Future<AvailableSlotsModel?> getMentorAvailability(String status);
 }
 
 class MentorAvailabilityImpl implements MentorAvailabilityRepo {
@@ -17,7 +17,7 @@ class MentorAvailabilityImpl implements MentorAvailabilityRepo {
   }
 
   @override
-  Future<AvailableSlotsModel?> getMentorAvailability() async {
-    return await mentorRemoteDataSource.getMentorAvailability();
+  Future<AvailableSlotsModel?> getMentorAvailability(String status) async {
+    return await mentorRemoteDataSource.getMentorAvailability(status);
   }
 }

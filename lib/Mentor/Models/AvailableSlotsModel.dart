@@ -1,75 +1,179 @@
 class AvailableSlotsModel {
   bool? status;
-  List<RecentSlots>? recentSlots;
+  RecentSlots? recentSlots;
 
   AvailableSlotsModel({this.status, this.recentSlots});
 
   AvailableSlotsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    if (json['recent_slots'] != null) {
-      recentSlots = <RecentSlots>[];
-      json['recent_slots'].forEach((v) {
-        recentSlots!.add(new RecentSlots.fromJson(v));
-      });
-    }
+    recentSlots = json['recent_slots'] != null
+        ? RecentSlots.fromJson(json['recent_slots'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
     if (this.recentSlots != null) {
-      data['recent_slots'] = this.recentSlots!.map((v) => v.toJson()).toList();
+      data['recent_slots'] = this.recentSlots!.toJson();
     }
     return data;
   }
 }
 
 class RecentSlots {
-  int? mentorId;
-  String? date;
-  String? startTime;
-  String? endTime;
-  int? repeatWeekly;
-  int? slots;
-  String? updatedAt;
-  String? createdAt;
-  int? id;
+  String? filter;
+  String? range;
+  String? duration;
+  List<String>? uniqueDates;
+  List<UniqueTimeSlot>? uniqueTimeSlots;
+  int? totalSlots;
+  StatusCounts? statusCounts;
+  List<DaySlot>? days;
 
-  RecentSlots({
-    this.mentorId,
-    this.date,
-    this.startTime,
-    this.endTime,
-    this.repeatWeekly,
-    this.slots,
-    this.updatedAt,
-    this.createdAt,
-    this.id,
-  });
+  RecentSlots(
+      {this.filter,
+        this.range,
+        this.duration,
+        this.uniqueDates,
+        this.uniqueTimeSlots,
+        this.totalSlots,
+        this.statusCounts,
+        this.days});
 
   RecentSlots.fromJson(Map<String, dynamic> json) {
-    mentorId = json['mentor_id'];
-    date = json['date'];
-    startTime = json['start_time'];
-    endTime = json['end_time'];
-    repeatWeekly = json['repeat_weekly'];
-    slots = json['slots'];
-    updatedAt = json['updated_at'];
-    createdAt = json['created_at'];
-    id = json['id'];
+    filter = json['filter'];
+    range = json['range'];
+    duration = json['duration'];
+    uniqueDates = List<String>.from(json['unique_dates']);
+    if (json['unique_time_slots'] != null) {
+      uniqueTimeSlots = [];
+      json['unique_time_slots'].forEach((v) {
+        uniqueTimeSlots!.add(UniqueTimeSlot.fromJson(v));
+      });
+    }
+    totalSlots = json['total_slots'];
+    statusCounts = json['status_counts'] != null
+        ? StatusCounts.fromJson(json['status_counts'])
+        : null;
+    if (json['days'] != null) {
+      days = [];
+      json['days'].forEach((v) {
+        days!.add(DaySlot.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['mentor_id'] = this.mentorId;
+    data['filter'] = this.filter;
+    data['range'] = this.range;
+    data['duration'] = this.duration;
+    data['unique_dates'] = this.uniqueDates;
+    if (this.uniqueTimeSlots != null) {
+      data['unique_time_slots'] =
+          this.uniqueTimeSlots!.map((v) => v.toJson()).toList();
+    }
+    data['total_slots'] = this.totalSlots;
+    if (this.statusCounts != null) {
+      data['status_counts'] = this.statusCounts!.toJson();
+    }
+    if (this.days != null) {
+      data['days'] = this.days!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class UniqueTimeSlot {
+  String? time;
+  String? status;
+
+  UniqueTimeSlot({this.time, this.status});
+
+  UniqueTimeSlot.fromJson(Map<String, dynamic> json) {
+    time = json['time'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['time'] = this.time;
+    data['status'] = this.status;
+    return data;
+  }
+}
+
+class StatusCounts {
+  int? active;
+  int? booked;
+
+  StatusCounts({this.active, this.booked});
+
+  StatusCounts.fromJson(Map<String, dynamic> json) {
+    active = json['active'];
+    booked = json['booked'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['active'] = this.active;
+    data['booked'] = this.booked;
+    return data;
+  }
+}
+
+class DaySlot {
+  String? date;
+  int? count;
+  StatusCounts? statusCounts;
+  List<TimeSlot>? slots;
+
+  DaySlot({this.date, this.count, this.statusCounts, this.slots});
+
+  DaySlot.fromJson(Map<String, dynamic> json) {
+    date = json['date'];
+    count = json['count'];
+    statusCounts = json['status_counts'] != null
+        ? StatusCounts.fromJson(json['status_counts'])
+        : null;
+    if (json['slots'] != null) {
+      slots = [];
+      json['slots'].forEach((v) {
+        slots!.add(TimeSlot.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['date'] = this.date;
-    data['start_time'] = this.startTime;
-    data['end_time'] = this.endTime;
-    data['repeat_weekly'] = this.repeatWeekly;
-    data['slots'] = this.slots;
-    data['updated_at'] = this.updatedAt;
-    data['created_at'] = this.createdAt;
-    data['id'] = this.id;
+    data['count'] = this.count;
+    if (this.statusCounts != null) {
+      data['status_counts'] = this.statusCounts!.toJson();
+    }
+    if (this.slots != null) {
+      data['slots'] = this.slots!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class TimeSlot {
+  String? time;
+  String? status;
+
+  TimeSlot({this.time, this.status});
+
+  TimeSlot.fromJson(Map<String, dynamic> json) {
+    time = json['time'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['time'] = this.time;
+    data['status'] = this.status;
     return data;
   }
 }

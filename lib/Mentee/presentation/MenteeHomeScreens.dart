@@ -602,7 +602,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                       MenteeDashboardCubit
                                                     >()
                                                     .fetchDashboard(
-                                                      "On Campus",
+                                                      "",
                                                     );
                                               });
                                             },

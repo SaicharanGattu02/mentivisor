@@ -31,7 +31,7 @@ abstract class MentorRemoteDataSource {
   Future<SuccessModel?> reportMentee(Map<String, dynamic> data);
   Future<MentorinfoResponseModel?> mentorinfo();
   Future<SuccessModel?> addMentorAvailability(Map<String, dynamic> data);
-  Future<AvailableSlotsModel?> getMentorAvailability();
+  Future<AvailableSlotsModel?> getMentorAvailability(String status);
   Future<SuccessModel?> mentorSessionCanceled(Map<String, dynamic> data);
   Future<MentorCoinHistoryModel?> CoinsHistory(String filter);
 
@@ -279,10 +279,10 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<AvailableSlotsModel?> getMentorAvailability() async {
+  Future<AvailableSlotsModel?> getMentorAvailability(String status) async {
     try {
       Response res = await ApiClient.post(
-        "${MentorEndpointsUrls.mentor_availability_slots}",
+        "${MentorEndpointsUrls.mentor_availability_slots}?filter=${status}",
       );
       AppLogger.log('getMentorAvailability: ${res.data}');
       return AvailableSlotsModel.fromJson(res.data);

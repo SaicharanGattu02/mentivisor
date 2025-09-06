@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
@@ -58,10 +59,12 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
   bool keepForWeek = true;
 
+  String _weekFilter = 'this_week';
+
   @override
   void initState() {
     super.initState();
-    context.read<AvailableSlotsCubit>().getAvailableSlots();
+    context.read<AvailableSlotsCubit>().getAvailableSlots(_weekFilter);
   }
 
   void prevMonth() {
@@ -99,7 +102,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       selectedDate = selected;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +184,8 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                                   ),
                                 ),
                               ),
-                            ).toList(),
+                            )
+                            .toList(),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -197,63 +200,73 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             childAspectRatio: 1.0,
                           ),
                       itemCount: gridDays.length,
-                        itemBuilder: (context, index) {
-                          final day = gridDays[index];
-                          if (day == null) return const SizedBox();
+                      itemBuilder: (context, index) {
+                        final day = gridDays[index];
+                        if (day == null) return const SizedBox();
 
-                          final isSelected =
-                              selectedDate.day == day &&
-                                  selectedDate.month == visibleMonth.month &&
-                                  selectedDate.year == visibleMonth.year;
+                        final isSelected =
+                            selectedDate.day == day &&
+                            selectedDate.month == visibleMonth.month &&
+                            selectedDate.year == visibleMonth.year;
 
-                          DateTime now = DateTime.now();
-                          final currentDateOnly = DateTime(now.year, now.month, now.day);
+                        DateTime now = DateTime.now();
+                        final currentDateOnly = DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                        );
 
-                          final date = DateTime(visibleMonth.year, visibleMonth.month, day);
-                          final isPast = date.isBefore(currentDateOnly);
+                        final date = DateTime(
+                          visibleMonth.year,
+                          visibleMonth.month,
+                          day,
+                        );
+                        final isPast = date.isBefore(currentDateOnly);
 
-                          final isToday =
-                              now.day == day &&
-                                  now.month == visibleMonth.month &&
-                                  now.year == visibleMonth.year;
+                        final isToday =
+                            now.day == day &&
+                            now.month == visibleMonth.month &&
+                            now.year == visibleMonth.year;
 
-                          return GestureDetector(
-                            onTap: isPast ? null : () => _onDateSelected(day), // disable tap
-                            child: Opacity(
-                              opacity: isPast ? 0.4 : 1.0, // fade past dates
-                              child: Center(
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
+                        return GestureDetector(
+                          onTap: isPast
+                              ? null
+                              : () => _onDateSelected(day), // disable tap
+                          child: Opacity(
+                            opacity: isPast ? 0.4 : 1.0, // fade past dates
+                            child: Center(
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? kPurple.withOpacity(0.08)
+                                      : (isToday
+                                            ? const Color(0xFFE8F0FF)
+                                            : Colors.white),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
                                     color: isSelected
-                                        ? kPurple.withOpacity(0.08)
+                                        ? kPurple
                                         : (isToday
-                                        ? const Color(0xFFE8F0FF)
-                                        : Colors.white),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? kPurple
-                                          : (isToday
-                                          ? kPurple.withOpacity(0.25)
-                                          : const Color(0xFFDDDDDD)),
-                                      width: isSelected ? 2 : 1,
-                                    ),
+                                              ? kPurple.withOpacity(0.25)
+                                              : const Color(0xFFDDDDDD)),
+                                    width: isSelected ? 2 : 1,
                                   ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    day.toString(),
-                                    style: const TextStyle(
-                                      fontFamily: 'segeo',
-                                      fontSize: 12,
-                                    ),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  day.toString(),
+                                  style: const TextStyle(
+                                    fontFamily: 'segeo',
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        }
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -344,46 +357,140 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Recent Added",
+                  "Slots",
                   style: TextStyle(
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
-                TextButton.icon(
-                  onPressed: _showAddSlotDialog,
-                  icon: const Icon(Icons.add, color: Colors.white, size: 18),
-                  label: const Text(
-                    "Add Slot",
-                    style: TextStyle(
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                Row(
+                  spacing: 5,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(1.5),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xffA258F7),
+                            Color(0xff726CF7),
+                            Color(0xff4280F6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffF5F5F5),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: PopupMenuButton<String>(
+                          onSelected: (value) {
+                            setState(
+                              () => _weekFilter = value == 'This Week'
+                                  ? 'this_week'
+                                  : 'next_week',
+                            );
+                            context
+                                .read<AvailableSlotsCubit>()
+                                .getAvailableSlots(
+                                  _weekFilter,
+                                ); // Send correct server value
+                          },
+                          itemBuilder: (context) => const [
+                            PopupMenuItem<String>(
+                              value: 'This Week',
+                              child: Text('This Week'),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'Next Week',
+                              child: Text('Next Week'),
+                            ),
+                          ],
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ShaderMask(
+                                shaderCallback: (b) =>
+                                    const LinearGradient(
+                                      colors: [
+                                        Color(0xffA258F7),
+                                        Color(0xff726CF7),
+                                        Color(0xff4280F6),
+                                      ],
+                                    ).createShader(
+                                      Rect.fromLTWH(0, 0, b.width, b.height),
+                                    ),
+                                child: Text(
+                                  _weekFilter == 'this_week'
+                                      ? 'This Week'
+                                      : 'Next Week', // Display human-readable text
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              ShaderMask(
+                                shaderCallback: (b) =>
+                                    const LinearGradient(
+                                      colors: [
+                                        Color(0xffA258F7),
+                                        Color(0xff726CF7),
+                                        Color(0xff4280F6),
+                                      ],
+                                    ).createShader(
+                                      Rect.fromLTWH(0, 0, b.width, b.height),
+                                    ),
+                                child: const Icon(Icons.arrow_drop_down),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xff9333EA),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
+                    TextButton.icon(
+                      onPressed: _showAddSlotDialog,
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      label: const Text(
+                        "Add Slot",
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        backgroundColor: const Color(0xff9333EA),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
             BlocBuilder<AvailableSlotsCubit, AvailableSlotsStates>(
               builder: (context, state) {
                 if (state is AvailableSlotsLoading) {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 24),
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: DottedProgressWithLogo(),
                     ),
                   );
                 }
@@ -400,8 +507,10 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                   );
                 }
                 if (state is AvailableSlotsLoaded) {
-                  final data = state.availableSlotsModel.recentSlots ?? [];
-                  if (data.isEmpty) {
+                  final recentSlots = state.availableSlotsModel.recentSlots;
+
+                  if (recentSlots == null ||
+                      recentSlots.days?.isEmpty == true) {
                     return const Padding(
                       padding: EdgeInsets.symmetric(vertical: 24),
                       child: Text(
@@ -411,16 +520,28 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     );
                   }
 
-                  final groups = _groupRecent(data);
-
                   return Column(
                     children: [
-                      for (final g in groups) ...[
+                      // Show week range and unique slots
+                      _weekSlotsWidget(
+                        recentSlots.range,
+                        recentSlots.uniqueTimeSlots,
+                      ),
+                      const SizedBox(height: 20),
+                      // Loop through the days and show slots
+                      for (final day in recentSlots.days!) ...[
                         _recentGroupCard(
-                          title: g.title,
-                          badge: g.badge,
-                          slots: g.chips,
-                          count: g.count, // NEW
+                          title: day.date ?? '',
+                          slots:
+                              day.slots
+                                  ?.map((slot) => _rangeTime(slot.time!))
+                                  .toList() ??
+                              [],
+                          count:
+                              day.slots?.length ??
+                              0, // Number of slots for the day
+                          statusCounts: day
+                              .statusCounts, // To check if it's booked or active
                         ),
                         const SizedBox(height: 12),
                       ],
@@ -492,11 +613,63 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     );
   }
 
+  // Widget to show week-wide slots
+  Widget _weekSlotsWidget(
+    String? range,
+    List<UniqueTimeSlot>? uniqueTimeSlots,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (range != null) ...[
+            Text(
+              "$range",
+              style: const TextStyle(
+                fontFamily: 'segeo',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+          Text(
+            "Available Weekly Slots: ${uniqueTimeSlots?.length}",
+            style: const TextStyle(
+              fontFamily: 'segeo',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF7C8596),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Show unique time slots for the week
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children:
+                uniqueTimeSlots?.map((slot) {
+                  bool isBooked = slot.status?.toLowerCase() == 'booked';
+                  return _slotChip(slot.time!, isBooked);
+                }).toList() ??
+                [],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _recentGroupCard({
     required String title,
-    String? badge,
     required List<String> slots,
-    required int count, // NEW
+    required int count, // Count of slots for the day
+    required StatusCounts? statusCounts,
   }) {
     String countLabel = "$count slot${count == 1 ? '' : 's'}";
     return Container(
@@ -529,18 +702,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                if (badge != null) ...[
-                  const SizedBox(width: 6),
-                  Text(
-                    badge!,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontSize: 12,
-                      color: Color(0xFF7C8596),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
               ],
             ),
             const SizedBox(height: 8),
@@ -557,12 +718,38 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
             Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: slots.map(_slotChip).toList(),
+              children: slots.map((slot) {
+                bool isBooked =
+                    (statusCounts?.booked ?? 0) >
+                    0; // Check if any slots are booked
+                return _slotChip(slot, isBooked);
+              }).toList(),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _slotChip(String slotTime, bool isBooked) {
+    return Opacity(
+      opacity: isBooked ? 0.5 : 1.0, // Reduce opacity if booked
+      child: Chip(
+        label: Text(slotTime),
+        side: BorderSide(
+          color: isBooked ? Colors.grey.shade300 : Colors.blue.shade100,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(36),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        backgroundColor: isBooked ? Colors.grey.shade300 : Colors.blue.shade100,
+      ),
+    );
+  }
+
+  String _rangeTime(String startTime) {
+    return "$startTime";
   }
 
   Future<TimeOfDay?> _pickTime(BuildContext context, TimeOfDay initial) async {
@@ -611,16 +798,13 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     return DateFormat('h:mm').format(t); // 9:00
   }
 
-  String _rangeTime(String start, String end) =>
-      "${_fmtTime(start)} - ${_fmtTime(end)}";
-
   // week starts on Sunday (to match your calendar header Su–Sa)
   DateTime _weekStartSunday(DateTime d) {
     final dow = d.weekday % 7; // Sun=0, Mon=1,... Sat=6
     return d.subtract(Duration(days: dow));
   }
 
-// Helper: keep first occurrence per key (stable order)
+  // Helper: keep first occurrence per key (stable order)
   List<T> uniqueBy<T, K>(Iterable<T> list, K Function(T) key) {
     final seen = <K>{};
     final out = <T>[];
@@ -631,59 +815,58 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     return out;
   }
 
-  List<_Grouped> _groupRecent(List<RecentSlots> raw) {
-    final weekly = <RecentSlots>[];
-    final singles = <RecentSlots>[];
-    for (final r in raw) (r.repeatWeekly == 1 ? weekly : singles).add(r);
-
-    final out = <_Grouped>[];
-
-    // Weekly groups (Sun–Sat)
-    final Map<DateTime, List<RecentSlots>> byWeek = {};
-    for (final r in weekly) {
-      final d = _parseYmd(r.date!);
-      final ws = _weekStartSunday(d);
-      final key = DateTime(ws.year, ws.month, ws.day);
-      byWeek.putIfAbsent(key, () => []).add(r);
-    }
-
-    byWeek.forEach((start, items) {
-      // ✅ Dedupe by time range within the same week
-      final uniq = uniqueBy<RecentSlots, String>(
-        items,
-            (e) => "${e.startTime}-${e.endTime}",
-      );
-
-      final end = start.add(const Duration(days: 6));
-      final title =
-          "${DateFormat('d MMM').format(start)} - ${DateFormat('d MMM yy').format(end)}";
-
-      final chips = uniq
-          .map((e) => _rangeTime(e.startTime!, e.endTime!))
-          .toList();
-
-      out.add(_Grouped(start, title, "1 week", chips, uniq.length)); // count = unique
-    });
-
-    // Single-day groups (leave as-is)
-    final Map<DateTime, List<RecentSlots>> byDate = {};
-    for (final r in singles) {
-      final d = _parseYmd(r.date!);
-      final key = DateTime(d.year, d.month, d.day);
-      byDate.putIfAbsent(key, () => []).add(r);
-    }
-    byDate.forEach((day, items) {
-      final title = _fmtDay(day);
-      final chips = items
-          .map((e) => _rangeTime(e.startTime!, e.endTime!))
-          .toList();
-      out.add(_Grouped(day, title, null, chips, items.length));
-    });
-
-    out.sort((a, b) => b.sortKey.compareTo(a.sortKey));
-    return out;
-  }
-
+  // List<_Grouped> _groupRecent(List<RecentSlots> raw) {
+  //   final weekly = <RecentSlots>[];
+  //   final singles = <RecentSlots>[];
+  //   for (final r in raw) (r.repeatWeekly == 1 ? weekly : singles).add(r);
+  //
+  //   final out = <_Grouped>[];
+  //
+  //   // Weekly groups (Sun–Sat)
+  //   final Map<DateTime, List<RecentSlots>> byWeek = {};
+  //   for (final r in weekly) {
+  //     final d = _parseYmd(r.date!);
+  //     final ws = _weekStartSunday(d);
+  //     final key = DateTime(ws.year, ws.month, ws.day);
+  //     byWeek.putIfAbsent(key, () => []).add(r);
+  //   }
+  //
+  //   byWeek.forEach((start, items) {
+  //     // ✅ Dedupe by time range within the same week
+  //     final uniq = uniqueBy<RecentSlots, String>(
+  //       items,
+  //           (e) => "${e.startTime}-${e.endTime}",
+  //     );
+  //
+  //     final end = start.add(const Duration(days: 6));
+  //     final title =
+  //         "${DateFormat('d MMM').format(start)} - ${DateFormat('d MMM yy').format(end)}";
+  //
+  //     final chips = uniq
+  //         .map((e) => _rangeTime(e.startTime!, e.endTime!))
+  //         .toList();
+  //
+  //     out.add(_Grouped(start, title, "1 week", chips, uniq.length)); // count = unique
+  //   });
+  //
+  //   // Single-day groups (leave as-is)
+  //   final Map<DateTime, List<RecentSlots>> byDate = {};
+  //   for (final r in singles) {
+  //     final d = _parseYmd(r.date!);
+  //     final key = DateTime(d.year, d.month, d.day);
+  //     byDate.putIfAbsent(key, () => []).add(r);
+  //   }
+  //   byDate.forEach((day, items) {
+  //     final title = _fmtDay(day);
+  //     final chips = items
+  //         .map((e) => _rangeTime(e.startTime!, e.endTime!))
+  //         .toList();
+  //     out.add(_Grouped(day, title, null, chips, items.length));
+  //   });
+  //
+  //   out.sort((a, b) => b.sortKey.compareTo(a.sortKey));
+  //   return out;
+  // }
 
   Future<void> _showAddSlotDialog() async {
     TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
@@ -940,7 +1123,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                                 _showSuccessDialog();
                                 context
                                     .read<AvailableSlotsCubit>()
-                                    .getAvailableSlots();
+                                    .getAvailableSlots("this_week");
                               } else if (state is MentorAvailabilityFailure) {
                                 CustomSnackBar1.show(context, state.error);
                               }

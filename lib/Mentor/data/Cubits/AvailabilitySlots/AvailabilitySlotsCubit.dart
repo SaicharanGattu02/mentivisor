@@ -9,10 +9,10 @@ class AvailableSlotsCubit extends Cubit<AvailableSlotsStates> {
   AvailableSlotsCubit(this.mentorAvailabilityRepo)
     : super(AvailableSlotsInitially());
 
-  Future<AvailableSlotsModel?> getAvailableSlots() async {
+  Future<AvailableSlotsModel?> getAvailableSlots(String status) async {
     emit(AvailableSlotsLoading());
     try {
-      final response = await mentorAvailabilityRepo.getMentorAvailability();
+      final response = await mentorAvailabilityRepo.getMentorAvailability(status);
       if (response != null && response.status == true) {
         emit(AvailableSlotsLoaded(response));
         return response;

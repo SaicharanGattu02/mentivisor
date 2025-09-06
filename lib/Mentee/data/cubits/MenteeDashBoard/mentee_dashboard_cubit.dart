@@ -28,9 +28,9 @@ class MenteeDashboardCubit extends Cubit<MenteeDashboardState> {
   }) : super(MenteeDashboardInitial());
 
   Future<void> fetchDashboard(String scope) async {
-    final scopeIsEmpty = scope.trim().isEmpty;
-
-    if (scopeIsEmpty) {
+    // final scopeIsEmpty = scope.trim().isEmpty;
+    //
+    // if (scopeIsEmpty) {
       // Full dashboard load
       emit(MenteeDashboardLoading());
 
@@ -66,7 +66,7 @@ class MenteeDashboardCubit extends Cubit<MenteeDashboardState> {
             guestMentorsModel = guestState.guestMentorsModel;
           }
         } else {
-          await campusMentorCubit.fetchCampusMentorList("", "");
+          await campusMentorCubit.fetchCampusMentorList(scope, "");
           final campusState = campusMentorCubit.state;
           if (campusState is CampusMentorListStateLoaded) {
             campusMentorsModel = campusState.campusMentorListModel;
@@ -84,42 +84,42 @@ class MenteeDashboardCubit extends Cubit<MenteeDashboardState> {
       } catch (e) {
         emit(MenteeDashboardFailure("Dashboard error: ${e.toString()}"));
       }
-    } else {
-      // Only update campus mentors for the given scope
-      try {
-        await campusMentorCubit.fetchCampusMentorList(scope, "");
-        final campusState = campusMentorCubit.state;
-
-        CompusMentorListModel? campusMentorsModel;
-        if (campusState is CampusMentorListStateLoaded) {
-          campusMentorsModel = campusState.campusMentorListModel;
-        }
-
-        // Preserve previously loaded data if present
-        final current = state;
-        if (current is MenteeDashboardLoaded) {
-          emit(
-            current.copyWith(
-              campusMentorListModel:
-              campusMentorsModel ?? current.campusMentorListModel,
-            ),
-          );
-        } else {
-          // Fallback if nothing loaded yet
-          emit(
-            MenteeDashboardLoaded(
-              getbannerModel: GetBannersRespModel(),
-              menteeProfileModel: MenteeProfileModel(),
-              guestMentorsModel: GuestMentorsModel(),
-              campusMentorListModel:
-              campusMentorsModel ?? CompusMentorListModel(),
-            ),
-          );
-        }
-      } catch (e) {
-        emit(MenteeDashboardFailure("Campus mentors error: ${e.toString()}"));
-      }
-    }
+    // } else {
+    //   // Only update campus mentors for the given scope
+    //   try {
+    //     await campusMentorCubit.fetchCampusMentorList(scope, "");
+    //     final campusState = campusMentorCubit.state;
+    //
+    //     CompusMentorListModel? campusMentorsModel;
+    //     if (campusState is CampusMentorListStateLoaded) {
+    //       campusMentorsModel = campusState.campusMentorListModel;
+    //     }
+    //
+    //     // Preserve previously loaded data if present
+    //     final current = state;
+    //     if (current is MenteeDashboardLoaded) {
+    //       emit(
+    //         current.copyWith(
+    //           campusMentorListModel:
+    //           campusMentorsModel ?? current.campusMentorListModel,
+    //         ),
+    //       );
+    //     } else {
+    //       // Fallback if nothing loaded yet
+    //       emit(
+    //         MenteeDashboardLoaded(
+    //           getbannerModel: GetBannersRespModel(),
+    //           menteeProfileModel: MenteeProfileModel(),
+    //           guestMentorsModel: GuestMentorsModel(),
+    //           campusMentorListModel:
+    //           campusMentorsModel ?? CompusMentorListModel(),
+    //         ),
+    //       );
+    //     }
+    //   } catch (e) {
+    //     emit(MenteeDashboardFailure("Campus mentors error: ${e.toString()}"));
+    //   }
+    // }
   }
 
 }

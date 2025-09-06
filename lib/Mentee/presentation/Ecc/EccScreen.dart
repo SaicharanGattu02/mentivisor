@@ -298,7 +298,7 @@ class _EccScreenState extends State<EccScreen> {
                                     "",
                                   );
                                 } else {
-                                  context.read<ECCCubit>().getECC(
+                                  context.read<ECCCubit>().fetchMoreECC(
                                     "beyond",
                                     selectedUpdate,
                                     "",

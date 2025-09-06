@@ -146,8 +146,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            // Performance Metrics Card
                             _CardContainer(
                               child: Column(
                                 spacing: 8,
@@ -186,11 +184,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
                             GestureDetector(
-                              onTap:  reviews.isEmpty?null:() {
-                                showFilterOptions(context);
-                              },
+                              onTap: reviews.isEmpty
+                                  ? null
+                                  : () {
+                                      showFilterOptions(context);
+                                    },
                               child: Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.fromLTRB(
@@ -231,47 +230,49 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     // List of Reviews
                     reviews.isEmpty
                         ? SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset("assets/images/nodata.png"),
-                            SizedBox(height: 8),
-                            Text(
-                              "No reviews yet!",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff666666),
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/images/nodata.png"),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "No reviews yet!",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff666666),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Be the first to share your feedback.",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff444444),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Be the first to share your feedback.",
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff444444),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
+                          )
                         : SliverList.separated(
-                      itemCount: reviews.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
-                      itemBuilder: (context, i) {
-                        final item = reviews[i];
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: _ReviewCard(reviews: item),
-                        );
-                      },
-                    ),
+                            itemCount: reviews.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 0),
+                            itemBuilder: (context, i) {
+                              final item = reviews[i];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: _ReviewCard(reviews: item),
+                              );
+                            },
+                          ),
                     // Pagination Loader at the end of the list
                     if (reviewsState is ReviewsLoadingMore)
                       SliverToBoxAdapter(
@@ -1022,7 +1023,7 @@ class _CardContainer extends StatelessWidget {
           ),
           child: child,
         ),
-        SizedBox(height: 20,)
+        SizedBox(height: 20),
       ],
     );
   }
