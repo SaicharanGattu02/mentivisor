@@ -466,7 +466,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         );
       } else {
         res = await ApiClient.get(
-          "${APIEndpointUrls.guest_list_ecc}?page=${page}&filter=${updates}&search=${search}",
+          "${APIEndpointUrls.guest_list_ecc}?page=${page}",
         );
       }
       debugPrint('getEcc::$res');

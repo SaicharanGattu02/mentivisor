@@ -104,6 +104,7 @@ class Downloads {
   List<String>? tag;
   String? title;
   String? filePath;
+  String? image;
   String? downloadedAt;
 
   Downloads(
@@ -112,6 +113,7 @@ class Downloads {
         this.tag,
         this.title,
         this.filePath,
+        this.image,
         this.downloadedAt});
 
   Downloads.fromJson(Map<String, dynamic> json) {
@@ -120,6 +122,7 @@ class Downloads {
     tag = json['tag'].cast<String>();
     title = json['title'];
     filePath = json['file_path'];
+    image = json['image'];
     downloadedAt = json['downloaded_at'];
   }
 
@@ -130,6 +133,7 @@ class Downloads {
     data['tag'] = this.tag;
     data['title'] = this.title;
     data['file_path'] = this.filePath;
+    data['image'] = this.image;
     data['downloaded_at'] = this.downloadedAt;
     return data;
   }

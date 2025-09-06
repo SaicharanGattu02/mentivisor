@@ -51,6 +51,7 @@ abstract class MentorRemoteDataSource {
     String status,
   );
   Future<CommentsModel?> getComments(int entityId);
+  Future<SuccessModel?> sessionCompleted(int sessionId);
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -320,6 +321,19 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       );
       AppLogger.log('getMentorAvailability: ${res.data}');
       return AvailableSlotsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getMentorAvailability:${e}');
+      return null;
+    }
+  }
+  @override
+  Future<SuccessModel?> sessionCompleted(int sessionId) async {
+    try {
+      Response res = await ApiClient.post(
+        "${MentorEndpointsUrls.session_complete}/${sessionId}",
+      );
+      AppLogger.log('getMentorAvailability: ${res.data}');
+      return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('getMentorAvailability:${e}');
       return null;

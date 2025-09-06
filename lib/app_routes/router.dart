@@ -505,8 +505,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final sessionIdParam = state.uri.queryParameters['sessionId'];
         final sessionId = int.tryParse(sessionIdParam ?? "0") ?? 0;
+        final pastParam = state.uri.queryParameters['past'] ?? "false";
+        final past = pastParam.toLowerCase() == "true";
+
         return buildSlideTransitionPage(
-          SessionDetailScreen(sessionId: sessionId),
+          SessionDetailScreen(sessionId: sessionId,past: past,),
           state,
         );
       },

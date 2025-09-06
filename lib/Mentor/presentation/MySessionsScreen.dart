@@ -183,6 +183,8 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               menteeId: session?.mentee?.id ?? 0,
                               sessionId: session?.id ?? 0,
                               status: selectedFilter,
+                              sessionStartTime: '${session?.startTime ?? ""}',
+                              sessionEndTime: '${session?.endTime ?? ""}',
                               sessionDate: formatDate(session?.date ?? ""),
                               sessionTime: '${duration} to go',
                               sessionName:

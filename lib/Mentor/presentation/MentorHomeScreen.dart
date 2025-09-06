@@ -215,11 +215,14 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.endTime ?? "",
                                   );
                                   return SessionCard(
+                                    sessionLink: session?.zoomLink??"",
                                     sessionId: session?.id ?? 0,
                                     status: 'Upcoming',
                                     sessionDate: formatDate(
                                       session?.date ?? "",
                                     ),
+                                    sessionStartTime: '${session?.startTime ?? ""}',
+                                    sessionEndTime: '${session?.endTime ?? ""}',
                                     sessionTime: '${duration} Minutes to go',
                                     sessionName:
                                         'Zoom Meet with ${session?.mentee?.name}',

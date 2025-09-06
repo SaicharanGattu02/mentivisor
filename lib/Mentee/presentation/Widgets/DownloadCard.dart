@@ -31,7 +31,7 @@ class DownloadCard extends StatelessWidget {
                 width: SizeConfig.screenWidth * 0.3,
                 height: 144,
                 imageUrl:
-                downloads.filePath ?? "",
+                downloads.image ?? "",
                 fit: BoxFit.cover,
                 placeholder:
                     (

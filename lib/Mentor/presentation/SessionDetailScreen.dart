@@ -8,11 +8,17 @@ import 'package:mentivisor/Mentor/data/Cubits/SessionDetails/SessionsDetailsStat
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Components/CustomAppButton.dart';
+import '../../Components/CustomSnackBar.dart';
 import '../../utils/spinkittsLoader.dart';
+import '../data/Cubits/SessionComplete/session_complete_cubit.dart';
+import '../data/Cubits/SessionComplete/session_complete_states.dart';
+import '../data/Cubits/Sessions/SessionsCubit.dart';
 
 class SessionDetailScreen extends StatefulWidget {
   final int sessionId;
-  const SessionDetailScreen({Key? key, required this.sessionId})
+  final bool? past;
+
+  const SessionDetailScreen({Key? key, required this.sessionId, this.past})
     : super(key: key);
 
   @override
@@ -29,6 +35,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       ]);
     });
   }
+
+  ValueNotifier<String> status = ValueNotifier<String>("");
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +56,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 return Scaffold(body: Center(child: DottedProgressWithLogo()));
               } else if (state is SessionDetailsLoaded) {
                 final sessionDetails = state.sessionDetailsModel.session;
+                status.value =
+                    state.sessionDetailsModel.status?.toString() ?? "";
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -211,12 +221,36 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: CustomAppButton1(
-            text: "Okay",
-            onPlusTap: () {
-              context.pop();
-            },
-          ),
+          child: (widget.past == true) && (status.value == "upcoming")
+              ? BlocConsumer<SessionCompleteCubit, SessionCompleteStates>(
+                  listener: (context, state) {
+                    if (state is SessionCompletdSuccess) {
+                      CustomSnackBar1.show(
+                        context,
+                        "Session has been completed.",
+                      );
+                      context.read<SessionCubit>().getSessions("");
+                    } else if (state is SessionCompletdFailure) {
+                      CustomSnackBar1.show(context, state.error);
+                    }
+                  },
+                  builder: (context, state) {
+                    return CustomAppButton1(
+                      text: "Mark Session as Completed",
+                      onPlusTap: () {
+                        context.read<SessionCompleteCubit>().sessionComplete(
+                          widget.sessionId,
+                        );
+                      },
+                    );
+                  },
+                )
+              : CustomAppButton1(
+                  text: "Okay",
+                  onPlusTap: () {
+                    context.pop();
+                  },
+                ),
         ),
       ),
     );

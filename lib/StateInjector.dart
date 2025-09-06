@@ -118,6 +118,8 @@ import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancel_repo.dart';
 import 'Mentor/data/Cubits/PendingSubExpertise/PendingSubExpertiseCubit.dart';
 import 'Mentor/data/Cubits/ReportMentor/report_mentor_cubit.dart';
 import 'Mentor/data/Cubits/ReportMentor/report_repository.dart';
+import 'Mentor/data/Cubits/SessionComplete/session_complete_cubit.dart';
+import 'Mentor/data/Cubits/SessionComplete/session_complete_repo.dart';
 import 'Mentor/data/Cubits/SessionDetails/SessionsDetailsCubit.dart';
 import 'Mentor/data/Cubits/SessionDetails/SessionsDetailsRepository.dart';
 import 'Mentor/data/Cubits/NonAttachedExpertiseDetails/NonAttachedExpertiseDetailsCubit.dart';
@@ -304,6 +306,11 @@ class StateInjector {
     ),
     RepositoryProvider<FeedBackRepository>(
       create: (context) => FeedBackRepositoryImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<SessionCompleteRepo>(
+      create: (context) => SessionCompleteImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
@@ -650,6 +657,10 @@ class StateInjector {
 
     BlocProvider<FetchCommentsCubit>(
       create: (context) => FetchCommentsCubit(context.read<CommentsRepo>()),
+    ),
+
+BlocProvider<SessionCompleteCubit>(
+      create: (context) => SessionCompleteCubit(context.read<SessionCompleteRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

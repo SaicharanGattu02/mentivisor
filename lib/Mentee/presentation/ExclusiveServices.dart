@@ -174,7 +174,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                                   exclusiveServiceImageUrl:
                                       serviceList.exclusiveService ?? '',
                                   imageUrl: serviceList.imageUrl ?? '',
-                                  authorName: serviceList.name ?? '',
+                                  // authorName: serviceList.name ?? '',
                                   title: serviceList.name ?? '',
                                   description: serviceList.description ?? '',
                                   onTap: () {
@@ -213,7 +213,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
 class _ServiceCard extends StatelessWidget {
   final String exclusiveServiceImageUrl;
   final String imageUrl;
-  final String authorName;
+  // final String authorName;
   final String title;
   final String description;
   final VoidCallback onTap;
@@ -221,7 +221,7 @@ class _ServiceCard extends StatelessWidget {
   const _ServiceCard({
     required this.exclusiveServiceImageUrl,
     required this.imageUrl,
-    required this.authorName,
+    // required this.authorName,
     required this.title,
     required this.description,
     required this.onTap,
@@ -275,42 +275,42 @@ class _ServiceCard extends StatelessWidget {
                   ),
                 ),
               ),
+              // const SizedBox(height: 12),
+              // Row(
+              //   children: [
+              //     CachedNetworkImage(
+              //       imageUrl: imageUrl,
+              //       imageBuilder: (context, imageProvider) => CircleAvatar(
+              //         radius: 12,
+              //         backgroundImage: imageProvider,
+              //       ),
+              //       placeholder: (context, url) => CircleAvatar(
+              //         radius: 12,
+              //         backgroundColor: Colors.grey,
+              //         child: SizedBox(
+              //           width: 12,
+              //           height: 12,
+              //           child: Center(child: spinkits.getSpinningLinespinkit()),
+              //         ),
+              //       ),
+              //       errorWidget: (context, url, error) => const CircleAvatar(
+              //         radius: 12,
+              //         backgroundImage: AssetImage("assets/images/profile.png"),
+              //       ),
+              //     ),
+              //     const SizedBox(width: 8),
+              //     Text(
+              //       authorName,
+              //       style: const TextStyle(
+              //         fontFamily: 'segeo',
+              //         fontSize: 12,
+              //         color: Color(0xFF222222),
+              //         fontWeight: FontWeight.w400,
+              //       ),
+              //     ),
+              //   ],
+              // ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: imageUrl,
-                    imageBuilder: (context, imageProvider) => CircleAvatar(
-                      radius: 12,
-                      backgroundImage: imageProvider,
-                    ),
-                    placeholder: (context, url) => CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.grey,
-                      child: SizedBox(
-                        width: 12,
-                        height: 12,
-                        child: Center(child: spinkits.getSpinningLinespinkit()),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => const CircleAvatar(
-                      radius: 12,
-                      backgroundImage: AssetImage("assets/images/profile.png"),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    authorName,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontSize: 12,
-                      color: Color(0xFF222222),
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
               Text(
                 title,
                 maxLines: 1,
@@ -332,7 +332,6 @@ class _ServiceCard extends StatelessWidget {
                   fontSize: 12,
                   color: Color(0xFF666666),
                   fontWeight: FontWeight.w400,
-                  height: 1.35,
                 ),
               ),
             ],

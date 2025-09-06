@@ -81,7 +81,8 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                   final d = state.exclusiveservicedetailsModel.data;
                   final name = (d?.name ?? '').trim();
                   final desc = (d?.description ?? '').trim();
-                  final exclusiveServiceImge = (d?.exclusiveService ?? '').trim();
+                  final exclusiveServiceImge = (d?.exclusiveService ?? '')
+                      .trim();
                   final image = (d?.imageUrl ?? '').trim();
                   final link = (d?.link ?? '').trim();
 
@@ -89,12 +90,11 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                     alignment: Alignment.center,
                     children: [
                       ListView(
-                        padding:  EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 16,
                         ),
                         children: [
-                          // Banner Card (rounded light container with inner image)
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
@@ -153,23 +153,29 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                             children: [
                               CachedNetworkImage(
                                 imageUrl: image,
-                                imageBuilder: (context, imageProvider) => CircleAvatar(
-                                  radius: 12,
-                                  backgroundImage: imageProvider,
-                                ),
+                                imageBuilder: (context, imageProvider) =>
+                                    CircleAvatar(
+                                      radius: 12,
+                                      backgroundImage: imageProvider,
+                                    ),
                                 placeholder: (context, url) => CircleAvatar(
                                   radius: 12,
                                   backgroundColor: Colors.grey,
                                   child: SizedBox(
                                     width: 12,
                                     height: 12,
-                                    child: Center(child: spinkits.getSpinningLinespinkit()),
+                                    child: Center(
+                                      child: spinkits.getSpinningLinespinkit(),
+                                    ),
                                   ),
                                 ),
-                                errorWidget: (context, url, error) => const CircleAvatar(
-                                  radius: 12,
-                                  backgroundImage: AssetImage("assets/images/profile.png"),
-                                ),
+                                errorWidget: (context, url, error) =>
+                                    const CircleAvatar(
+                                      radius: 12,
+                                      backgroundImage: AssetImage(
+                                        "assets/images/profile.png",
+                                      ),
+                                    ),
                               ),
                               const SizedBox(width: 8),
                               Text(

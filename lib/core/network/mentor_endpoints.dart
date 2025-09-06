@@ -27,4 +27,5 @@ class MentorEndpointsUrls {
   static const String mentor_reports = "${userUrl}/mentor-reports";
   static const String new_expertise_request = "${userUrl}/mentor/new-expertise-request";
   static const String comments = "${userUrl}/communities/comments";
+  static const String session_complete = "${userUrl}/sessions/complete";
 }

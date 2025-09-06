@@ -77,7 +77,7 @@ class APIEndpointUrls {
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
   static const String guest_mentors = "${apiUrl}top-mentors";
   static const String guest_study_zone = "${apiUrl}study-zone/top-downloads";
-  static const String guest_list_ecc = "${apiUrl}guest-list-ecc?upcoming=true";
+  static const String guest_list_ecc = "${apiUrl}guest-list-ecc";
   static const String guest_community_post =
       "${apiUrl}community-zone-post-without-login";
   static const String get_banners = "${apiUrl}banners";

@@ -2,12 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mentivisor/utils/media_query_helper.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../utils/color_constants.dart';
+import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
-import '../../data/Cubits/ReportMentee/report_mentee_cubit.dart';
 import '../../data/Cubits/ReportMentor/report_mentor_cubit.dart';
 import '../../data/Cubits/ReportMentor/report_mentor_states.dart';
 
@@ -22,6 +23,9 @@ class SessionCard extends StatelessWidget {
   final String buttonText;
   final String buttonIcon;
   final String remainingTime;
+  final String? sessionStartTime;
+  final String? sessionEndTime;
+  final String? sessionLink;
   final int sessionId;
   final int? menteeId;
 
@@ -36,6 +40,9 @@ class SessionCard extends StatelessWidget {
     required this.reason,
     required this.buttonText,
     required this.buttonIcon,
+    this.sessionStartTime,
+    this.sessionLink,
+    this.sessionEndTime,
     required this.sessionId,
     this.remainingTime = '',
     this.menteeId,
@@ -59,10 +66,16 @@ class SessionCard extends StatelessWidget {
       statusTextColor = primarycolor1;
       statusText = remainingTime.isEmpty ? 'upcoming' : remainingTime;
     }
+    DateTime now = DateTime.now();
+    DateTime sessionStart = DateFormat(
+      "dd MMM yyyy h:mm a",
+    ).parse("${sessionDate} ${sessionStartTime}");
+
+    bool isPast = now.isAfter(sessionStart);
 
     return InkWell(
       onTap: () {
-        context.push("/session_details?sessionId=${sessionId}");
+        context.push("/session_details?sessionId=${sessionId}&past=${isPast}");
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -74,11 +87,9 @@ class SessionCard extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: SizeConfig.screenWidth * 0.575,
+                  Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -98,28 +109,71 @@ class SessionCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontFamily: 'segeo',
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            statusText,
-                            style: TextStyle(
-                              color: statusTextColor,
-                              fontSize: 12,
-                              fontFamily: 'segeo',
-                            ),
-                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
-
+                        if (isPast &&
+                            status != 'cancelled' &&
+                            status != 'completed') ...[
+                          CustomAppButton1(
+                            height: 35,
+                            width: SizeConfig.screenWidth * 0.33,
+                            text: "Join Session",
+                            onPlusTap: () async {
+                              final url = sessionLink;
+                              if (url != null &&
+                                  await canLaunchUrl(Uri.parse(url))) {
+                                await launchUrl(Uri.parse(url));
+                              } else {
+                                CustomSnackBar1.show(
+                                  context,
+                                  "Unable to open Zoom link",
+                                );
+                              }
+                            },
+                          ),
+                        ] else ...[
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (status == "upcoming") ...[
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xff4076ED),
+                                    ),
+                                  ),
+                                ],
+                                SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    statusText,
+                                    style: TextStyle(
+                                      color: statusTextColor,
+                                      fontSize: 12,
+                                      fontFamily: 'segeo',
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 8),
                         if (sessionTopics.trim().isNotEmpty) ...[
                           const Text(
                             'Session Topics',
@@ -133,7 +187,7 @@ class SessionCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             sessionTopics,
-                            maxLines: 2,
+                            maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 14,
@@ -143,6 +197,43 @@ class SessionCard extends StatelessWidget {
                           ),
                         ],
                         const SizedBox(height: 16),
+                        if (status == "completed") ...[
+                          InkWell(
+                            onTap: () {
+                              _showReportSheet(
+                                context,
+                                sessionId ?? 0,
+                                0,
+                                // mentee.menteeId ?? 0,
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xffF5F5F5),
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/ReportmenteImg.png",
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Report mentee',
+                                    style: TextStyle(color: Color(0xff222222)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -180,132 +271,6 @@ class SessionCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (status == 'upcoming') ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFFF4E9FF),
-                              Color(0xFFE1E4FF),
-                              Color(0xFFE2EEFF),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: Image.asset(buttonIcon, width: 18, height: 18),
-                          label: Text(
-                            buttonText,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'segeo',
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    SizedBox(
-                      height: 48,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          context.push(
-                            "/cancel_session?sessionId=${sessionId}",
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.shade400),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          backgroundColor: Color(0xFFF5F5F5),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF333333),
-                            fontFamily: 'segeo',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              if (status == "completed") ...[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: InkWell(
-                    onTap: () {
-                      _showReportSheet(context, sessionId, menteeId ?? 0);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Color(0xffF5F5F5),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            "assets/images/ReportmenteImg.png",
-                            height: 20,
-                            width: 20,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'Report mentee',
-                            style: TextStyle(color: Color(0xff222222)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              if (status == 'cancelled') ...[
-                Column(
-                  children: [
-                    Text(
-                      'Reason',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'segeo',
-                        fontSize: 14,
-                        color: Color(0xff444444),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      reason,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontFamily: 'segeo',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
             ],
           ),
         ),
@@ -410,6 +375,7 @@ class SessionCard extends StatelessWidget {
                       ),
                     ],
                     const SizedBox(height: 24),
+
                     BlocConsumer<ReportMentorCubit, ReportMentorStates>(
                       listener: (context, state) {
                         if (state is ReportMentorSuccess) {
