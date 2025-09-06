@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentor/data/Cubits/SessionDetails/SessionsDetailsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/SessionDetails/SessionsDetailsStates.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Components/CustomAppButton.dart';
@@ -28,6 +29,7 @@ class SessionDetailScreen extends StatefulWidget {
 class _SessionDetailScreenState extends State<SessionDetailScreen> {
   @override
   void initState() {
+    debugPrint("time123434:${widget.past}");
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.wait([
@@ -58,6 +60,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 final sessionDetails = state.sessionDetailsModel.session;
                 status.value =
                     state.sessionDetailsModel.status?.toString() ?? "";
+                AppLogger.info("session Status:${status.value}");
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -221,36 +224,43 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: (widget.past == true) && (status.value == "upcoming")
-              ? BlocConsumer<SessionCompleteCubit, SessionCompleteStates>(
-                  listener: (context, state) {
-                    if (state is SessionCompletdSuccess) {
-                      CustomSnackBar1.show(
-                        context,
-                        "Session has been completed.",
-                      );
-                      context.read<SessionCubit>().getSessions("");
-                    } else if (state is SessionCompletdFailure) {
-                      CustomSnackBar1.show(context, state.error);
-                    }
-                  },
-                  builder: (context, state) {
-                    return CustomAppButton1(
-                      text: "Mark Session as Completed",
-                      onPlusTap: () {
-                        context.read<SessionCompleteCubit>().sessionComplete(
-                          widget.sessionId,
+          child: ValueListenableBuilder<String>(
+            valueListenable: status,
+            builder: (context, currentStatus, _) {
+
+return(widget.past==true)
+    ? BlocConsumer<SessionCompleteCubit, SessionCompleteStates>(
+                      listener: (context, state) {
+                        if (state is SessionCompletdSuccess) {
+                          CustomSnackBar1.show(
+                            context,
+                            "Session has been completed.",
+                          );
+                          context.read<SessionCubit>().getSessions("");
+                          context.pop();
+                        } else if (state is SessionCompletdFailure) {
+                          CustomSnackBar1.show(context, state.error);
+                        }
+                      },
+                      builder: (context, state) {
+                        return CustomAppButton1(
+                          text: "Mark Session as Completed",
+                          onPlusTap: () {
+                            context
+                                .read<SessionCompleteCubit>()
+                                .sessionComplete(widget.sessionId);
+                          },
                         );
                       },
+                    )
+                  : CustomAppButton1(
+                      text: "Okay",
+                      onPlusTap: () {
+                        context.pop();
+                      },
                     );
-                  },
-                )
-              : CustomAppButton1(
-                  text: "Okay",
-                  onPlusTap: () {
-                    context.pop();
-                  },
-                ),
+            },
+          ),
         ),
       ),
     );

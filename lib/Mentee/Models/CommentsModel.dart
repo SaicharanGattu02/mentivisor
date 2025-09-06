@@ -128,6 +128,7 @@ class Replies {
   String? createdAt;
   String? updatedAt;
   String? deletedAt;
+  String? replyTo;
   int? likesCount;
   bool? isLiked;
   User? user;
@@ -142,6 +143,7 @@ class Replies {
         this.updatedAt,
         this.deletedAt,
         this.likesCount,
+        this.replyTo,
         this.isLiked,
         this.user});
 
@@ -155,6 +157,7 @@ class Replies {
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
     likesCount = json['likes_count'];
+    replyTo = json['reply_to'];
     isLiked = json['is_liked'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
   }
@@ -170,6 +173,7 @@ class Replies {
     data['updated_at'] = this.updatedAt;
     data['deleted_at'] = this.deletedAt;
     data['likes_count'] = this.likesCount;
+    data['reply_to'] = this.replyTo;
     data['is_liked'] = this.isLiked;
     if (this.user != null) {
       data['user'] = this.user!.toJson();

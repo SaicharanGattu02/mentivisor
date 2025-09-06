@@ -28,8 +28,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFEFF6FF), Color(0xFFF5F6FF),Color(0xffFAF5FF )],
+          colors: [Color(0xFFEFF6FF), Color(0xFFF5F6FF), Color(0xffFAF5FF)],
         ),
       ),
       child: Scaffold(
@@ -40,7 +39,10 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFFEFF6FF), Color(0xFFF5F6FF),Color(0xffFAF5FF )],
+                  Color(0xFFEFF6FF),
+                  Color(0xFFF5F6FF),
+                  Color(0xffFAF5FF),
+                ],
               ),
             ),
             child: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
@@ -124,20 +126,31 @@ class _ProfileBody extends StatelessWidget {
             ],
           ),
 
-           SizedBox(height: 10),
+          SizedBox(height: 10),
           Text(
             capitalize(name),
             textAlign: TextAlign.center,
-            style:  TextStyle(
+            style: TextStyle(
               fontFamily: 'segeo',
               fontWeight: FontWeight.w700,
               fontSize: 18,
               color: Color(0xFF111827),
             ),
           ),
+          // SizedBox(height: 3),
+          // Text(
+          //   "$college $year $stream".trim(),
+          //   textAlign: TextAlign.center,
+          //   style: const TextStyle(
+          //     fontFamily: 'segeo',
+          //     fontWeight: FontWeight.w600,
+          //     fontSize: 16,
+          //     color: Color(0xFF6B7280),
+          //   ),
+          // ),
           SizedBox(height: 3),
           Text(
-            "$college $year $stream".trim(),
+            data.email ?? "",
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontFamily: 'segeo',
@@ -254,10 +267,13 @@ class _ProfileBody extends StatelessWidget {
                             children: ex.subExpertises!
                                 .map(
                                   (s) => Chip(
-                                    labelPadding: EdgeInsets.symmetric(horizontal: 16),
+                                    labelPadding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       side: BorderSide(color: Colors.white),
-                                      borderRadius: BorderRadiusGeometry.circular(36),
+                                      borderRadius:
+                                          BorderRadiusGeometry.circular(36),
                                     ),
                                     label: Text(
                                       s.name ?? '',

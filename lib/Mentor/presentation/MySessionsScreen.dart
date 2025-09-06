@@ -180,6 +180,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               session?.endTime ?? "",
                             );
                             return SessionCard(
+                              attachment: session?.attachment ?? "",
                               menteeId: session?.mentee?.id ?? 0,
                               sessionId: session?.id ?? 0,
                               status: selectedFilter,
@@ -198,7 +199,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                                   'Message from ${session?.mentee?.name ?? ""}',
                               buttonIcon: 'assets/icons/chaticon.png',
                               remainingTime:
-                                  '${duration} Minutes to go', // Time remaining for upcoming session
+                                  '${duration} Minutes to go',
                             );
                           }, childCount: Sessions?.length),
                         ),

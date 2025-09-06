@@ -156,7 +156,9 @@ class CommunityPosts {
     isLiked = json['is_liked'];
     commentsCount = json['comments_count'];
     imgUrl = json['img_url'];
-    uploader = json['uploader'] != null ? Uploader.fromJson(json['uploader']) : null;
+    uploader = json['uploader'] != null
+        ? Uploader.fromJson(json['uploader'])
+        : null;
 
     if (json['comments'] != null) {
       comments = [];
@@ -188,7 +190,8 @@ class CommunityPosts {
     data['comments_count'] = commentsCount;
     data['img_url'] = imgUrl;
     if (uploader != null) data['uploader'] = uploader!.toJson();
-    if (comments != null) data['comments'] = comments!.map((v) => v.toJson()).toList();
+    if (comments != null)
+      data['comments'] = comments!.map((v) => v.toJson()).toList();
     return data;
   }
 }
@@ -205,6 +208,7 @@ class Comments {
   int? likesCount;
   bool? isLiked;
   Uploader? user;
+  String? replyTo;
   List<Comments>? replies;
 
   Comments({
@@ -219,6 +223,7 @@ class Comments {
     this.likesCount,
     this.isLiked,
     this.user,
+    this.replyTo,
     this.replies,
   });
 
@@ -233,13 +238,13 @@ class Comments {
       updatedAt: json['updated_at'],
       deletedAt: json['deleted_at'],
       likesCount: json['likes_count'],
+      replyTo: json['reply_to'],
       isLiked: json['is_liked'],
-      user: json['user'] != null
-          ? Uploader.fromJson(json['user'])
-          : null,
-      replies: (json['replies'] as List?)
-          ?.map((e) => Comments.fromJson(e))
-          .toList() ??
+      user: json['user'] != null ? Uploader.fromJson(json['user']) : null,
+      replies:
+          (json['replies'] as List?)
+              ?.map((e) => Comments.fromJson(e))
+              .toList() ??
           [],
     );
   }
@@ -256,13 +261,12 @@ class Comments {
       'deleted_at': deletedAt,
       'likes_count': likesCount,
       'is_liked': isLiked,
+      'reply_to': replyTo,
       'user': user?.toJson(),
       'replies': replies?.map((e) => e.toJson()).toList(),
     };
   }
 }
-
-
 
 class User {
   int? id;

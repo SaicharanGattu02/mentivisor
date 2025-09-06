@@ -65,10 +65,10 @@ class Data {
 
 class Overall {
   dynamic average;
-  int? totalReviews;
+  dynamic totalReviews;
   Histogram? histogram;
   HistogramPct? histogramPct;
-  int? avgDeltaThisMonth;
+  double? avgDeltaThisMonth;
 
   Overall({
     this.average,
@@ -82,35 +82,36 @@ class Overall {
     average = json['average'];
     totalReviews = json['total_reviews'];
     histogram = json['histogram'] != null
-        ? new Histogram.fromJson(json['histogram'])
+        ? Histogram.fromJson(json['histogram'])
         : null;
     histogramPct = json['histogram_pct'] != null
-        ? new HistogramPct.fromJson(json['histogram_pct'])
+        ? HistogramPct.fromJson(json['histogram_pct'])
         : null;
-    avgDeltaThisMonth = json['avg_delta_this_month'];
+    avgDeltaThisMonth = (json['avg_delta_this_month'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['average'] = this.average;
-    data['total_reviews'] = this.totalReviews;
-    if (this.histogram != null) {
-      data['histogram'] = this.histogram!.toJson();
+    final Map<String, dynamic> data = {};
+    data['average'] = average;
+    data['total_reviews'] = totalReviews;
+    if (histogram != null) {
+      data['histogram'] = histogram!.toJson();
     }
-    if (this.histogramPct != null) {
-      data['histogram_pct'] = this.histogramPct!.toJson();
+    if (histogramPct != null) {
+      data['histogram_pct'] = histogramPct!.toJson();
     }
-    data['avg_delta_this_month'] = this.avgDeltaThisMonth;
+    data['avg_delta_this_month'] = avgDeltaThisMonth;
     return data;
   }
 }
 
+
 class Histogram {
-  int? i1;
-  int? i2;
-  int? i3;
-  int? i4;
-  int? i5;
+  dynamic i1;
+  dynamic i2;
+  dynamic i3;
+  dynamic i4;
+  dynamic i5;
 
   Histogram({this.i1, this.i2, this.i3, this.i4, this.i5});
 
@@ -134,28 +135,28 @@ class Histogram {
 }
 
 class HistogramPct {
-  dynamic d1;
-  dynamic d2;
-  int? i3;
-  int? i4;
-  dynamic d5;
+  double? d1;
+  double? d2;
+  double? d3; // Changed from i3 to d3 for consistency
+  double? d4; // Changed from i4 to d4 for consistency
+  double? d5;
 
-  HistogramPct({this.d1, this.d2, this.i3, this.i4, this.d5});
+  HistogramPct({this.d1, this.d2, this.d3, this.d4, this.d5});
 
   HistogramPct.fromJson(Map<String, dynamic> json) {
-    d1 = json['1'];
-    d2 = json['2'];
-    i3 = json['3'];
-    i4 = json['4'];
-    d5 = json['5'];
+    d1 = (json['1'] as num?)?.toDouble();
+    d2 = (json['2'] as num?)?.toDouble();
+    d3 = (json['3'] as num?)?.toDouble();
+    d4 = (json['4'] as num?)?.toDouble();
+    d5 = (json['5'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['1'] = this.d1;
     data['2'] = this.d2;
-    data['3'] = this.i3;
-    data['4'] = this.i4;
+    data['3'] = this.d3;
+    data['4'] = this.d4;
     data['5'] = this.d5;
     return data;
   }
@@ -163,7 +164,7 @@ class HistogramPct {
 
 class FilteredOverall {
   dynamic average;
-  int? totalReviews;
+  dynamic totalReviews;
   Histogram? histogram;
   HistogramPct? histogramPct;
   dynamic fiveStarShare;

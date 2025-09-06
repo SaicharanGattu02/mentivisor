@@ -165,7 +165,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                           feedbackData
                                               .overall
                                               ?.avgDeltaThisMonth ??
-                                          0,
+                                          0.0,
                                     ),
                                   ),
                                   _MetricRow(
@@ -188,7 +188,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             ),
                             const SizedBox(height: 16),
                             GestureDetector(
-                              onTap: () {
+                              onTap:  reviews.isEmpty?null:() {
                                 showFilterOptions(context);
                               },
                               child: Container(
@@ -207,7 +207,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   children: const [
                                     Expanded(
                                       child: Text(
-                                        'Filter by Performance Metrics',
+                                        'Filter by',
                                         style: TextStyle(
                                           fontFamily: 'segeo',
                                           fontSize: 18,
@@ -218,7 +218,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                     ),
                                     Icon(
                                       Icons.tune_rounded,
-                                      color: Color(0xFF6B7280),
+                                      color: Color(0xFF4076Ed),
                                     ),
                                   ],
                                 ),
@@ -229,11 +229,43 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       ),
                     ),
                     // List of Reviews
-                    SliverList.separated(
+                    reviews.isEmpty
+                        ? SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset("assets/images/nodata.png"),
+                            SizedBox(height: 8),
+                            Text(
+                              "No reviews yet!",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff666666),
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Be the first to share your feedback.",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff444444),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                        : SliverList.separated(
                       itemCount: reviews.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 10),
                       itemBuilder: (context, i) {
                         final item = reviews[i];
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: _ReviewCard(reviews: item),
@@ -420,7 +452,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   String mapTime(String time) {
     switch (time) {
       case "All Time":
-        return "all_time";
+        return "all";
       case "This Week":
         return "week";
       case "This Month":
@@ -972,21 +1004,26 @@ class _CardContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF111827).withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF111827).withOpacity(0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: child,
+          child: child,
+        ),
+        SizedBox(height: 20,)
+      ],
     );
   }
 }
@@ -1031,19 +1068,19 @@ class _StarRow extends StatelessWidget {
           return const Icon(
             Icons.star_rounded,
             color: Color(0xFFFFC107),
-            size: 20,
+            size: 17,
           );
         } else if (i == full && hasHalf) {
           return const Icon(
             Icons.star_half_rounded,
             color: Color(0xFFFFC107),
-            size: 20,
+            size: 17,
           );
         } else {
           return const Icon(
             Icons.star_border_rounded,
             color: Color(0xFFFFC107),
-            size: 20,
+            size: 17,
           );
         }
       }),
@@ -1184,7 +1221,7 @@ class _MetricRow extends StatelessWidget {
 }
 
 class _DeltaChip extends StatelessWidget {
-  final int delta;
+  final double delta;
   const _DeltaChip({required this.delta});
 
   @override

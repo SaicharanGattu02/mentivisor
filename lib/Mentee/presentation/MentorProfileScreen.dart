@@ -45,12 +45,15 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 setState(() {
                   hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
-                  hasTomorrowSlots = (mentorData?.tomorrowSlots ?? []).isNotEmpty;
+                  hasTomorrowSlots =
+                      (mentorData?.tomorrowSlots ?? []).isNotEmpty;
                   hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
                 });
               });
 
-              AppLogger.info("hasTodaySlots:${hasTodaySlots}, hasTomorrowSlots:${hasTomorrowSlots} ,hasRemainingSlots:${hasRemainingSlots} ");
+              AppLogger.info(
+                "hasTodaySlots:${hasTodaySlots}, hasTomorrowSlots:${hasTomorrowSlots} ,hasRemainingSlots:${hasRemainingSlots} ",
+              );
               return Container(
                 padding: EdgeInsets.all(16),
                 decoration: const BoxDecoration(
@@ -121,6 +124,15 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               ),
                               Text(
                                 "${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff444444),
+                                  fontFamily: "segeo",
+                                ),
+                              ),
+                              Text(
+                                "${mentorData?.user?.email ?? ''}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -288,35 +300,34 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       ),
       bottomNavigationBar:
           (hasTodaySlots || hasTomorrowSlots || hasRemainingSlots)
-          ?
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-              child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
-                builder: (context, state) {
-                  final mentorData = (state is MentorProfileLoaded)
-                      ? state.mentorProfileModel.data
-                      : null;
-                  return SizedBox(
-                    width: double.infinity,
-                    child: CustomAppButton1(
-                      text: 'Book Session',
-                      onPlusTap: mentorData == null
-                          ? null // disable until loaded
-                          : () {
-                              context.push(
-                                '/book_sessions_screen',
-                                extra:
-                                    mentorData, // << pass the exact object you have
-                              );
-                            },
-                    ),
-                  );
-                },
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
+                  builder: (context, state) {
+                    final mentorData = (state is MentorProfileLoaded)
+                        ? state.mentorProfileModel.data
+                        : null;
+                    return SizedBox(
+                      width: double.infinity,
+                      child: CustomAppButton1(
+                        text: 'Book Session',
+                        onPlusTap: mentorData == null
+                            ? null // disable until loaded
+                            : () {
+                                context.push(
+                                  '/book_sessions_screen',
+                                  extra:
+                                      mentorData, // << pass the exact object you have
+                                );
+                              },
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          )
-      : SizedBox.shrink(),
+            )
+          : SizedBox.shrink(),
     );
   }
 

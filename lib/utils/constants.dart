@@ -209,3 +209,7 @@ String _parseAndFormatTime(String raw) {
     return raw; // fallback to raw string
   }
 }
+
+String _fmt(DateTime time) {
+  return DateFormat('h:mm a').format(time); // e.g., "2:30 PM"
+}

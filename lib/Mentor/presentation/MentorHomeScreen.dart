@@ -214,7 +214,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.startTime ?? "",
                                     session?.endTime ?? "",
                                   );
-                                  return SessionCard(
+                                  return SessionCard(attachment: session?.attachment??"",
                                     sessionLink: session?.zoomLink??"",
                                     sessionId: session?.id ?? 0,
                                     status: 'Upcoming',
@@ -223,7 +223,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     ),
                                     sessionStartTime: '${session?.startTime ?? ""}',
                                     sessionEndTime: '${session?.endTime ?? ""}',
-                                    sessionTime: '${duration} Minutes to go',
+                                    sessionTime: '${duration}  to go',
                                     sessionName:
                                         'Zoom Meet with ${session?.mentee?.name}',
                                     sessionImage:
@@ -233,7 +233,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     buttonText:
                                         'Message from ${session?.mentee?.name ?? ""}',
                                     buttonIcon: 'assets/icons/chaticon.png',
-                                    remainingTime: '${duration} Minutes to go',
+                                    remainingTime: '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
                                   );
                                 }, childCount: session_data?.data?.length),
                               ),

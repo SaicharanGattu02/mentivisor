@@ -28,6 +28,7 @@ class SessionCard extends StatelessWidget {
   final String? sessionLink;
   final int sessionId;
   final int? menteeId;
+  final String attachment;
 
   const SessionCard({
     Key? key,
@@ -46,6 +47,7 @@ class SessionCard extends StatelessWidget {
     required this.sessionId,
     this.remainingTime = '',
     this.menteeId,
+    required this.attachment,
   }) : super(key: key);
 
   @override
@@ -159,7 +161,9 @@ class SessionCard extends StatelessWidget {
                                 SizedBox(width: 6),
                                 Flexible(
                                   child: Text(
-                                    statusText,
+                                    (status == "upcoming")
+                                        ? "${sessionStartTime}-${sessionEndTime}"
+                                        : statusText,
                                     style: TextStyle(
                                       color: statusTextColor,
                                       fontSize: 12,
@@ -232,6 +236,29 @@ class SessionCard extends StatelessWidget {
                                 ],
                               ),
                             ),
+                          ),
+                        ],
+                        if (attachment != null) ...[
+                          Row(
+                            spacing: 6,
+                            children: [
+                              Image.asset(
+                                "assets/icons/attchment.png",
+                                width: 14,
+                                height: 14,
+                              ),
+                              Text(
+                                "View attachment",
+                                style: TextStyle(
+                                  color: Color(0xffA158F7),
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  fontFamily: 'segeo',
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Color(0xffA158F7),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ],

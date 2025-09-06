@@ -39,6 +39,7 @@ class Data {
   String? status;
   String? zoomLink;
   String? cancelledReason;
+  String? attachment;
 
   Data({
     this.id,
@@ -52,6 +53,7 @@ class Data {
     this.status,
     this.cancelledReason,
     this.zoomLink,
+    this.attachment,
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,7 @@ class Data {
     status = json['status'];
     cancelledReason = json['cancelled_reason'];
     zoomLink = json['zoom_link'];
+    attachment = json['attachment'];
   }
 
   Map<String, dynamic> toJson() {
@@ -89,6 +92,7 @@ class Data {
     data['status'] = this.status;
     data['cancelled_reason'] = this.cancelledReason;
     data['zoom_link'] = this.zoomLink;
+    data['attachment'] = this.attachment;
     return data;
   }
 }

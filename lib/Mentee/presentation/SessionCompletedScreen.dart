@@ -815,7 +815,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
           builder: (context, state) {
             if (state is SessionCompletedLoading) {
               return Scaffold(body: Center(child: DottedProgressWithLogo()));
-
             } else if (state is SessionCompletedLoaded) {
               final sessions = state.completedSessionModel.data ?? [];
 
@@ -867,7 +866,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(12),
                           child: Column(
                             children: [
                               Row(
@@ -929,53 +928,18 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                   SizedBox(
                                     width: SizeConfig.screenWidth * 0.25,
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        ClipOval(
-                                          child: CachedNetworkImage(
-                                            width: 56,
-                                            height: 56,
-                                            imageUrl:
-                                                completeSessions
-                                                    .mentor
-                                                    ?.mentorProfile ??
-                                                "",
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) => Container(
-                                              width: 56,
-                                              height: 56,
-                                              color: Colors.grey.shade200,
-                                              child: const Center(
-                                                child: CircularProgressIndicator(
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                        Color
-                                                      >(Colors.blue),
-                                                ),
-                                              ),
+                                        Center(
+                                          child: CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor: Colors.white,
+                                            child: Icon(
+                                              Icons.check_circle_outline,
+                                              color: Colors.green,
+                                              size: 30,
                                             ),
-                                            errorWidget:
-                                                (
-                                                  context,
-                                                  url,
-                                                  error,
-                                                ) => Container(
-                                                  width: 56,
-                                                  height: 56,
-                                                  color: Colors.grey.shade200,
-                                                  child: Image.asset(
-                                                    "assets/images/profile.png",
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                          ),
-                                        ),
-                                        const CircleAvatar(
-                                          radius: 20,
-                                          backgroundColor: Colors.white,
-                                          child: Icon(
-                                            Icons.check_circle_outline,
-                                            color: Colors.green,
-                                            size: 30,
                                           ),
                                         ),
                                         const SizedBox(height: 12),
@@ -998,7 +962,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                 spacing: 10,
                                 children: [
                                   SizedBox(
-                                    height: 48,
+                                    height: 32,
                                     child: OutlinedButton.icon(
                                       onPressed: () {
                                         _showReportSheet(
@@ -1006,39 +970,41 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                           completeSessions.id ?? 0,
                                         );
                                       },
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.flag,
-                                        color: Color(0xFF8B5CF6),
+                                        color: Color(0xFFA6A6A6),
                                         size: 16,
                                       ),
-                                      label: const Text(
+                                      label: Text(
                                         "Report Session",
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontFamily: "segeo",
-                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xff000000),
                                         ),
                                       ),
                                       style: OutlinedButton.styleFrom(
+                                        backgroundColor: Color(0xffF5F5F5),
                                         visualDensity: VisualDensity.compact,
                                         side: BorderSide(
-                                          color: Colors.grey.shade300,
+                                          color: Colors.transparent,
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                           vertical: 8,
-                                          horizontal: 12,
+                                          horizontal: 8,
                                         ),
                                       ),
                                     ),
                                   ),
                                   if (completeSessions.hasRating == false) ...[
                                     SizedBox(
-                                      height: 48,
+                                      height: 32,
                                       child: OutlinedButton(
                                         onPressed: () {
                                           showReviewBottomSheet(
@@ -1137,129 +1103,134 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 16,
-                right: 16,
-                top: 16,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade200,
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 12),
-                          const Text(
-                            "Rate your Experience",
-                            style: TextStyle(
-                              color: Color(0xff666666),
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
+        return SafeArea(
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade200,
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: List.generate(5, (i) {
-                              final starIndex = i + 1;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedRating = starIndex;
-                                  });
-                                },
-                                child: Icon(
-                                  selectedRating >= starIndex
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  size: 42,
-                                  color: Colors.amber,
-                                ),
-                              );
-                            }),
-                          ),
-                          const SizedBox(height: 12),
-                          TextField(
-                            controller: feedbackController,
-                            maxLines: 3,
-                            decoration: InputDecoration(
-                              hintText: 'Explain here (optional)',
-                              filled: true,
-                              fillColor: const Color(0xFFF5F5F5),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(24),
-                                borderSide: BorderSide.none,
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 12),
+                            const Text(
+                              "Rate your Experience",
+                              style: TextStyle(
+                                color: Color(0xff666666),
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          BlocConsumer<SubmitReviewCubit, SubmitReviewStates>(
-                            listener: (context, reviewSubmit) {
-                              if (reviewSubmit is SubmitReviewSuccess) {
-                                feedbackController.clear();
-                                selectedRating = 0;
-                                Navigator.pop(context);
-                                context
-                                    .read<SessionCompletedCubit>()
-                                    .sessionComplete();
-                              } else if (reviewSubmit is SubmitReviewFailure) {
-                                CustomSnackBar1.show(
-                                  context,
-                                  reviewSubmit.error,
+                            const SizedBox(height: 12),
+                            Row(
+                              children: List.generate(5, (i) {
+                                final starIndex = i + 1;
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedRating = starIndex;
+                                    });
+                                  },
+                                  child: Icon(
+                                    selectedRating >= starIndex
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    size: 42,
+                                    color: Colors.amber,
+                                  ),
                                 );
-                              }
-                            },
-                            builder: (context, reviewSubmit) {
-                              return CustomAppButton1(
-                                isLoading: reviewSubmit is SubmitReviewLoading,
-                                text: "Submit",
-                                onPlusTap: () {
-                                  if (selectedRating == 0) {
-                                    CustomSnackBar1.show(
-                                      context,
-                                      "Please select a rating",
-                                    );
-                                    return;
-                                  }
-
-                                  final Map<String, dynamic> data = {
-                                    "rating": selectedRating,
-                                    "feedback": feedbackController.text.trim(),
-                                  };
-
+                              }),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: feedbackController,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                hintText: 'Explain here (optional)',
+                                filled: true,
+                                fillColor: const Color(0xFFF5F5F5),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            BlocConsumer<SubmitReviewCubit, SubmitReviewStates>(
+                              listener: (context, reviewSubmit) {
+                                if (reviewSubmit is SubmitReviewSuccess) {
+                                  feedbackController.clear();
+                                  selectedRating = 0;
+                                  Navigator.pop(context);
                                   context
-                                      .read<SubmitReviewCubit>()
-                                      .submitReview(data, sessionId);
-                                },
-                              );
-                            },
-                          ),
-                        ],
+                                      .read<SessionCompletedCubit>()
+                                      .sessionComplete();
+                                } else if (reviewSubmit
+                                    is SubmitReviewFailure) {
+                                  CustomSnackBar1.show(
+                                    context,
+                                    reviewSubmit.error,
+                                  );
+                                }
+                              },
+                              builder: (context, reviewSubmit) {
+                                return CustomAppButton1(
+                                  isLoading:
+                                      reviewSubmit is SubmitReviewLoading,
+                                  text: "Submit",
+                                  onPlusTap: () {
+                                    if (selectedRating == 0) {
+                                      CustomSnackBar1.show(
+                                        context,
+                                        "Please select a rating",
+                                      );
+                                      return;
+                                    }
+
+                                    final Map<String, dynamic> data = {
+                                      "rating": selectedRating,
+                                      "feedback": feedbackController.text
+                                          .trim(),
+                                    };
+
+                                    context
+                                        .read<SubmitReviewCubit>()
+                                        .submitReview(data, sessionId);
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );

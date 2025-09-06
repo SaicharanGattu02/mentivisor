@@ -21,7 +21,8 @@ class CommentCard extends StatelessWidget {
 
   // for replies
   final void Function(int replyId) onReplyLike;
-  final void Function(String replyUserName, String replyMsg,int replyUserId) onReplyReply;
+  final void Function(String replyUserName, String replyMsg, int replyUserId)
+  onReplyReply;
 
   const CommentCard({
     super.key,
@@ -174,7 +175,7 @@ class CommentCard extends StatelessWidget {
                     onReply: () => onReplyReply(
                       r.user?.name ?? 'Unknown',
                       r.content ?? '',
-                      r.user?.id??0
+                      r.user?.id ?? 0,
                     ),
                   );
                 }).toList(),
@@ -255,14 +256,27 @@ class _ReplyTile extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    reply.content ?? '',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'segeo',
-                      color: Color(0xff333333),
+                  RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFamily: 'segeo',
+                        color: Color(0xff333333),
+                      ),
+                      children: [
+                        if (reply.replyTo != null && reply.replyTo!.isNotEmpty)
+                          TextSpan(
+                            text: "${reply.replyTo} ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff2563EC),
+                            ),
+                          ),
+                        TextSpan(text: reply.content ?? ''),
+                      ],
                     ),
                   ),
+
                   const SizedBox(height: 6),
 
                   /// reply actions
