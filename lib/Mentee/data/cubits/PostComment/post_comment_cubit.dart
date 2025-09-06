@@ -63,38 +63,61 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
     }
   }
 
+  // in PostCommentCubit
 
-  Future<void> postOnCommentLike(
-      int id,
-   CommunityOnComments comments,
-  ) async {
-    final wasLiked = comments.isLiked ?? false;
-    comments.isLiked = !wasLiked;
-    //
-    if (comments.likesCount == null) comments.likesCount = 0;
-    comments.likesCount = wasLiked
-        ? (comments.likesCount! - 1)
-        : (comments.likesCount! + 1);
+  Future<void> likeParentComment(CommunityOnComments comment) async {
+    final prevLiked = comment.isLiked ?? false;
+    final prevCount = comment.likesCount ?? 0;
 
+    // optimistic update
+    comment.isLiked = !prevLiked;
+    comment.likesCount = prevLiked ? (prevCount - 1) : (prevCount + 1);
     emit(PostCommentOnLikeLoading());
 
     try {
-      final response = await postCommentRepository.commentLike(id);
+      final response = await postCommentRepository.commentLike(comment.id!);
       if (response != null && response.status == true) {
         emit(PostCommentOnLikeSuccess(response));
       } else {
-        comments.isLiked = wasLiked;
-        comments.likesCount = wasLiked
-            ? (comments.likesCount! + 1)
-            : (comments.likesCount! - 1);
-        emit(PostCommentFailure(response?.message ?? ""));
+        // rollback
+        comment.isLiked = prevLiked;
+        comment.likesCount = prevCount;
+        emit(PostCommentFailure(response?.message ?? "Failed to like comment"));
       }
     } catch (e) {
+      // rollback
+      comment.isLiked = prevLiked;
+      comment.likesCount = prevCount;
+      emit(PostCommentFailure(e.toString()));
+    }
+  }
 
-      comments.isLiked = wasLiked;
-      comments.likesCount = wasLiked
-          ? (comments.likesCount! + 1)
-          : (comments.likesCount! - 1);
+  Future<void> likeReply({
+    required CommunityOnComments parent,
+    required Replies reply,
+  }) async {
+    final prevLiked = reply.isLiked ?? false;
+    final prevCount = reply.likesCount ?? 0;
+
+    // optimistic update for the REPLY object (not the parent)
+    reply.isLiked = !prevLiked;
+    reply.likesCount = prevLiked ? (prevCount - 1) : (prevCount + 1);
+    emit(PostCommentOnLikeLoading());
+
+    try {
+      final response = await postCommentRepository.commentLike(reply.id!);
+      if (response != null && response.status == true) {
+        emit(PostCommentOnLikeSuccess(response));
+      } else {
+        // rollback
+        reply.isLiked = prevLiked;
+        reply.likesCount = prevCount;
+        emit(PostCommentFailure(response?.message ?? "Failed to like reply"));
+      }
+    } catch (e) {
+      // rollback
+      reply.isLiked = prevLiked;
+      reply.likesCount = prevCount;
       emit(PostCommentFailure(e.toString()));
     }
   }

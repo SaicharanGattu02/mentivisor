@@ -67,7 +67,10 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
     final payload = {
       "community_id": widget.communityPost.id,
       "comments": text,
-      if (_replyParentId != null) "parent_id": _replyParentId,
+      if (_replyParentId != null) ...{
+        "parent_id": _replyParentId,
+        "is_reply": 1,
+      },
     };
 
     context.read<PostCommentCubit>().postComment(payload, widget.communityPost);
@@ -94,47 +97,46 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                 fontSize: 18,
               ),
             ),
-             SizedBox(height: 12),
+            SizedBox(height: 12),
             Expanded(
               child: BlocBuilder<FetchCommentsCubit, FetchCommentsStates>(
-                builder: (context, state) {
-                  if (state is FetchCommentsLoading) {
-                    return const Center(child: DottedProgressWithLogo());
-                  }
-                  if (state is FetchCommentsFailure) {
-                    return Center(
-                      child: Text(
-                        state.error ?? "Failed to load comments",
-                        style: const TextStyle(fontFamily: 'segeo'),
-                      ),
-                    );
-                  }
-                  if (state is FetchCommentsLoaded) {
-                    final list =
-                        state.commentsModel.data ?? <CommunityOnComments>[];
-                    if (list.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          "No comments yet",
-                          style: TextStyle(fontFamily: 'segeo'),
-                        ),
-                      );
-                    }
-
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        await context.read<FetchCommentsCubit>().getComments(
-                          widget.communityPost.id ?? 0,
+                builder: (context, fetchState) {
+                  // 👇 Add this wrapper so likes trigger rebuilds
+                  return BlocBuilder<PostCommentCubit, PostCommentStates>(
+                    // keep rebuilds focused
+                    buildWhen: (prev, curr) =>
+                    curr is PostCommentOnLikeLoading ||
+                        curr is PostCommentOnLikeSuccess ||
+                        curr is PostCommentFailure,
+                    builder: (context, postState) {
+                      if (fetchState is FetchCommentsLoading) {
+                        return const Center(child: DottedProgressWithLogo());
+                      }
+                      if (fetchState is FetchCommentsFailure) {
+                        return Center(
+                          child: Text(fetchState.error ?? "Failed to load comments",
+                              style: const TextStyle(fontFamily: 'segeo')),
                         );
-                      },
-                      child: ListView.builder(
-                        controller: widget.scrollController,
-                        itemCount: list.length,
-                        itemBuilder: (ctx, i) {
-                          final c = list[i];
-                          return StatefulBuilder(
-                            builder: (context, setState) {
+                      }
+                      if (fetchState is FetchCommentsLoaded) {
+                        final list = fetchState.commentsModel.data ?? <CommunityOnComments>[];
+                        if (list.isEmpty) {
+                          return const Center(
+                            child: Text("No comments yet", style: TextStyle(fontFamily: 'segeo')),
+                          );
+                        }
+
+                        return RefreshIndicator(
+                          onRefresh: () => context
+                              .read<FetchCommentsCubit>()
+                              .getComments(widget.communityPost.id ?? 0),
+                          child: ListView.builder(
+                            controller: widget.scrollController,
+                            itemCount: list.length,
+                            itemBuilder: (ctx, i) {
+                              final c = list[i];
                               return CommentCard(
+                                key: ValueKey(c.id), // helps widget diff
                                 id: c.id!,
                                 name: c.user?.name ?? 'Unknown',
                                 profileUrl: c.user?.profilePicUrl ?? '',
@@ -142,83 +144,33 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                                 createdAt: c.createdAt ?? '',
                                 isLiked: c.isLiked,
                                 likesCount: c.likesCount,
-                                onLike: () {
-                                  final wasLiked = c.isLiked ?? false;
-                                  setState(() {
-                                    c.isLiked = !wasLiked;
-                                    c.likesCount = wasLiked
-                                        ? (c.likesCount ?? 0) - 1
-                                        : (c.likesCount ?? 0) + 1;
-                                  });
-
-                                  context
-                                      .read<PostCommentCubit>()
-                                      .postOnCommentLike(c.id!, c);
-                                },
-
-                                replies: c.replies ?? [],
+                                onLike: () => context.read<PostCommentCubit>().likeParentComment(c),
+                                replies: c.replies ?? const [],
                                 onReplyLike: (replyId) {
-                                  final reply = c.replies?.firstWhere(
-                                    (r) => r.id == replyId,
-                                  );
-                                  if (reply != null) {
-                                    final wasLiked = reply.isLiked ?? false;
-                                    setState(() {
-                                      reply.isLiked = !wasLiked;
-                                      reply.likesCount = wasLiked
-                                          ? (reply.likesCount ?? 0) - 1
-                                          : (reply.likesCount ?? 0) + 1;
-                                    });
+                                  Replies? reply;
+                                  for (final r in (c.replies ?? const <Replies>[])) {
+                                    if (r.id == replyId) { reply = r; break; }
                                   }
-                                  context
-                                      .read<PostCommentCubit>()
-                                      .postOnCommentLike(replyId, c);
+                                  if (reply != null) {
+                                    context.read<PostCommentCubit>().likeReply(parent: c, reply: reply);
+                                  }
                                 },
                                 onReplyReply: (replyUserName, replyMsg) =>
                                     _startReply(c.id!, replyUserName, replyMsg),
                                 onReply: () => _startReply(
-                                  c.id!,
-                                  c.user?.name ?? 'Unknown',
-                                  c.content ?? "",
+                                  c.id!, c.user?.name ?? 'Unknown', c.content ?? "",
                                 ),
                               );
                             },
-                          );
-
-                          // return CommentCard(
-                          //   likesCount: c.likesCount,
-                          //   isLiked: c.isLiked,
-                          //   id: c.id!,
-                          //   name: c.user?.name ?? 'Unknown',
-                          //   profileUrl: c.user?.profilePicUrl ?? '',
-                          //   content: c.content ?? '',
-                          //   createdAt: c.createdAt ?? '',
-                          //   onLike: () => context
-                          //       .read<PostCommentCubit>()
-                          //       .postOnCommentLike(c.id ?? 0, c),
-                          //   onReply: () =>
-                          //       _startReply(c.id!, c.user?.name ?? 'Unknown'),
-                          //   replies: (c.replies ?? []),
-                          //   onReplyLike: (replyId) {
-                          //     context
-                          //         .read<PostCommentCubit>()
-                          //         .postOnCommentLike(replyId, c);
-                          //   },
-                          //   onReplyReply: (replyUserName) {
-                          //     // IMPORTANT: keep parentId = top-level comment id (c.id!)
-                          //     _startReply(c.id!, replyUserName);
-                          //   },
-                          // );
-                        },
-                      ),
-                    );
-                  }
-                  // initial/unknown
-                  return const SizedBox.shrink();
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  );
                 },
               ),
             ),
-
             BlocConsumer<PostCommentCubit, PostCommentStates>(
               listener: (context, state) async {
                 if (state is PostCommentLoaded) {
