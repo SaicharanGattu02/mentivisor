@@ -204,7 +204,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               buttonText:
                                   'Message from ${session?.mentee?.name ?? ""}',
                               buttonIcon: 'assets/icons/chaticon.png',
-                              remainingTime: '${duration} Minutes to go',
+                              remainingTime: '${duration} Minutes to go',cancelreason: session?.cancelledReason??"",
                             );
                           }, childCount: Sessions?.length),
                         ),

@@ -98,25 +98,25 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                                     fontSize: 14,
                                   ),
                                 ),
-                                SizedBox(height: 8),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff4076ED).withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    sessionDetails?.minutesLeft ?? "",
-                                    style: TextStyle(
-                                      color: Color(0xff4076ED),
-                                      fontSize: 12,
-                                      fontFamily: 'segeo',
-                                    ),
-                                  ),
-                                ),
+                                // SizedBox(height: 8),
+                                // Container(
+                                //   padding: EdgeInsets.symmetric(
+                                //     horizontal: 8,
+                                //     vertical: 4,
+                                //   ),
+                                //   decoration: BoxDecoration(
+                                //     color: Color(0xff4076ED).withOpacity(0.1),
+                                //     borderRadius: BorderRadius.circular(12),
+                                //   ),
+                                //   child: Text(
+                                //     sessionDetails?.minutesLeft ?? "",
+                                //     style: TextStyle(
+                                //       color: Color(0xff4076ED),
+                                //       fontSize: 12,
+                                //       fontFamily: 'segeo',
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -234,7 +234,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                             context,
                             "Session has been completed.",
                           );
-                          context.read<SessionCubit>().getSessions("");
+                          context.read<SessionCubit>().getSessions("upcoming");
                           context.pop();
                         } else if (state is SessionCompletdFailure) {
                           CustomSnackBar1.show(context, state.error);
@@ -242,6 +242,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                       },
                       builder: (context, state) {
                         return CustomAppButton1(
+                          isLoading: state is SessionCompletdLoading,
                           text: "Mark Session as Completed",
                           onPlusTap: () {
                             context

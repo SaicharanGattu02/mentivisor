@@ -99,27 +99,27 @@ class _CancelSessionScreenState extends State<CancelSessionScreen> {
                                     fontSize: 14,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(
-                                      0xff4076ED,
-                                    ).withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    sessionDetails?.minutesLeft ?? "",
-                                    style: const TextStyle(
-                                      color: Color(0xff4076ED),
-                                      fontSize: 12,
-                                      fontFamily: 'segeo',
-                                    ),
-                                  ),
-                                ),
+                                // const SizedBox(height: 8),
+                                // Container(
+                                //   padding: const EdgeInsets.symmetric(
+                                //     horizontal: 8,
+                                //     vertical: 4,
+                                //   ),
+                                //   decoration: BoxDecoration(
+                                //     color: const Color(
+                                //       0xff4076ED,
+                                //     ).withOpacity(0.1),
+                                //     borderRadius: BorderRadius.circular(12),
+                                //   ),
+                                //   child: Text(
+                                //     sessionDetails?.minutesLeft ?? "",
+                                //     style: const TextStyle(
+                                //       color: Color(0xff4076ED),
+                                //       fontSize: 12,
+                                //       fontFamily: 'segeo',
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),

@@ -154,7 +154,7 @@ class CouponDetailsScreen extends StatelessWidget {
                 ),
 
                 Expanded(
-                  child: CustomAppButton1(text: "Buy Now", onPlusTap: (){
+                  child: CustomAppButton1(height: 32,text: "Buy Now", onPlusTap: (){
 
                   }),
                 ),

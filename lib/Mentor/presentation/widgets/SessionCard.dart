@@ -29,6 +29,7 @@ class SessionCard extends StatelessWidget {
   final int sessionId;
   final int? menteeId;
   final String attachment;
+  final String? cancelreason;
 
   const SessionCard({
     Key? key,
@@ -47,6 +48,7 @@ class SessionCard extends StatelessWidget {
     required this.sessionId,
     this.remainingTime = '',
     this.menteeId,
+    this.cancelreason,
     required this.attachment,
   }) : super(key: key);
 
@@ -258,6 +260,28 @@ class SessionCard extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if(status=="cancelled")...[
+                    Text(
+                      'Reason',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'segeo',
+                        fontSize: 14,
+                        color: Color(0xff444444),
+                      ),
+                    ),
+                    Text(
+                      cancelreason??"",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontFamily: 'segeo',
+                      ),
+                    ),
+
+                  ],
                   const SizedBox(height: 16),
                   if (status == "completed") ...[
                     InkWell(
@@ -265,8 +289,8 @@ class SessionCard extends StatelessWidget {
                         _showReportSheet(
                           context,
                           sessionId ?? 0,
-                          0,
-                          // mentee.menteeId ?? 0,
+                          menteeId??0,
+
                         );
                       },
                       child: Container(
@@ -390,6 +414,7 @@ class SessionCard extends StatelessWidget {
                   ],
                 ),
               ],
+
             ],
           ),
         ),
