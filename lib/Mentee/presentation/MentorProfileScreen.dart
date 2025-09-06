@@ -71,11 +71,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         Center(
                           child: CachedNetworkImage(
                             imageUrl: mentorData?.user?.profilePicUrl ?? "",
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
-                                  radius: 60,
-                                  backgroundImage: imageProvider,
-                                ),
                             placeholder: (context, url) => CircleAvatar(
                               radius: 20,
                               backgroundColor: Colors.grey,

@@ -303,7 +303,13 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       valueListenable: isPost,
                       builder: (context, value, _) {
                         if (value) {
-                          if(state.menteeProfileModel.data?.user?.communityPost?.length==0){
+                          if (state
+                                  .menteeProfileModel
+                                  .data
+                                  ?.user
+                                  ?.communityPost
+                                  ?.length ==
+                              0) {
                             return Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -333,7 +339,11 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                     (context, index) {
-                                      final menteePosts = state.menteeProfileModel.data?.user?.communityPost?[index];
+                                      final menteePosts = state
+                                          .menteeProfileModel
+                                          .data
+                                          ?.user
+                                          ?.communityPost?[index];
                                       return Container(
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -386,66 +396,66 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      CachedNetworkImage(
-                                                        imageUrl:
-                                                            menteePosts
-                                                                ?.image ??
-                                                            "",
-                                                        imageBuilder:
-                                                            (
-                                                              context,
-                                                              imageProvider,
-                                                            ) => CircleAvatar(
-                                                              radius: 12,
-                                                              backgroundImage:
-                                                                  imageProvider,
-                                                            ),
-                                                        placeholder:
-                                                            (
-                                                              context,
-                                                              url,
-                                                            ) => CircleAvatar(
-                                                              radius: 12,
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .grey
-                                                                      .shade200,
-                                                              child: Center(
-                                                                child: spinkits
-                                                                    .getSpinningLinespinkit(),
-                                                              ),
-                                                            ),
-                                                        errorWidget:
-                                                            (
-                                                              context,
-                                                              url,
-                                                              error,
-                                                            ) => const CircleAvatar(
-                                                              radius: 12,
-                                                              backgroundImage:
-                                                                  AssetImage(
-                                                                    "assets/images/profile.png",
-                                                                  ),
-                                                            ),
-                                                      ),
-
-                                                      SizedBox(width: 8),
-                                                      // Text(
-                                                      //   menteePosts?. ?? "",
-                                                      //   style: TextStyle(
-                                                      //     fontFamily: 'segeo',
-                                                      //     fontWeight:
-                                                      //         FontWeight.w600,
-                                                      //     fontSize: 14,
-                                                      //   ),
-                                                      // ),
-                                                    ],
-                                                  ),
+                                                  // Row(
+                                                  //   children: [
+                                                  //     CachedNetworkImage(
+                                                  //       imageUrl:
+                                                  //           menteePosts
+                                                  //               ?.image ??
+                                                  //           "",
+                                                  //       imageBuilder:
+                                                  //           (
+                                                  //             context,
+                                                  //             imageProvider,
+                                                  //           ) => CircleAvatar(
+                                                  //             radius: 12,
+                                                  //             backgroundImage:
+                                                  //                 imageProvider,
+                                                  //           ),
+                                                  //       placeholder:
+                                                  //           (
+                                                  //             context,
+                                                  //             url,
+                                                  //           ) => CircleAvatar(
+                                                  //             radius: 12,
+                                                  //             backgroundColor:
+                                                  //                 Colors
+                                                  //                     .grey
+                                                  //                     .shade200,
+                                                  //             child: Center(
+                                                  //               child: spinkits
+                                                  //                   .getSpinningLinespinkit(),
+                                                  //             ),
+                                                  //           ),
+                                                  //       errorWidget:
+                                                  //           (
+                                                  //             context,
+                                                  //             url,
+                                                  //             error,
+                                                  //           ) => const CircleAvatar(
+                                                  //             radius: 12,
+                                                  //             backgroundImage:
+                                                  //                 AssetImage(
+                                                  //                   "assets/images/profile.png",
+                                                  //                 ),
+                                                  //           ),
+                                                  //     ),
+                                                  //
+                                                  //     SizedBox(width: 8),
+                                                  //     // Text(
+                                                  //     //   menteePosts?. ?? "",
+                                                  //     //   style: TextStyle(
+                                                  //     //     fontFamily: 'segeo',
+                                                  //     //     fontWeight:
+                                                  //     //         FontWeight.w600,
+                                                  //     //     fontSize: 14,
+                                                  //     //   ),
+                                                  //     // ),
+                                                  //   ],
+                                                  // ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    menteePosts?.heading ?? "",
+                                                    menteePosts?.title ?? "",
                                                     style: TextStyle(
                                                       fontFamily: 'segeo',
                                                       fontWeight:
@@ -456,8 +466,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                   ),
                                                   SizedBox(height: 4),
                                                   Text(
-                                                    menteePosts?.description ??
-                                                        "",
+                                                    menteePosts?.content ?? "",
                                                     maxLines: 2,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -479,7 +488,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       ),
                                                       SizedBox(width: 6),
                                                       Text(
-                                                        menteePosts?.likeCount
+                                                        menteePosts?.likesCount
                                                                 .toString() ??
                                                             "0",
                                                         style: TextStyle(
@@ -545,8 +554,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                             communityPost: CommunityPosts(
                                                                               // 👈 construct UI object from model
                                                                               id: menteePosts?.id,
-                                                                              heading: menteePosts?.heading,
-                                                                              description: menteePosts?.description,
+                                                                              heading: menteePosts?.title,
+                                                                              description: menteePosts?.content,
                                                                             ),
                                                                             scrollController:
                                                                                 scrollController,
@@ -565,7 +574,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           SizedBox(width: 6),
                                                           Text(
                                                             menteePosts
-                                                                    ?.messageCount
+                                                                    ?.commentsCount
                                                                     .toString() ??
                                                                 "0",
                                                             style: TextStyle(
@@ -599,7 +608,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                             ],
                           );
                         } else {
-                          if(menteeProfile?.user?.studyZoneBooks?.length==0){
+                          if (menteeProfile?.user?.studyZoneBooks?.length ==
+                              0) {
                             return Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -708,7 +718,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      campusList?.name ?? "",
+                                                      campusList?.title ?? "",
                                                       style: TextStyle(
                                                         fontFamily: 'segeo',
                                                         fontWeight:
@@ -732,13 +742,13 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                     ),
                                                     SizedBox(height: 12),
                                                     if (campusList
-                                                            ?.tag
+                                                            ?.tags
                                                             ?.isNotEmpty ??
                                                         false)
                                                       Wrap(
                                                         spacing: 8,
                                                         runSpacing: 8,
-                                                        children: campusList!.tag!.map((
+                                                        children: campusList!.tags!.map((
                                                           tag,
                                                         ) {
                                                           return Container(
