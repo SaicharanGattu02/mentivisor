@@ -135,13 +135,15 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                           children: [
                             CircleAvatar(
                               radius: 50,
-                              backgroundColor: Colors.grey[200], // optional background color during loading
+                              backgroundColor: Colors
+                                  .grey[200], // optional background color during loading
                               child: CachedNetworkImage(
                                 imageUrl: imagePath ?? "",
-                                imageBuilder: (context, imageProvider) => CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: imageProvider,
-                                ),
+                                imageBuilder: (context, imageProvider) =>
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: imageProvider,
+                                    ),
                                 placeholder: (context, url) => CircleAvatar(
                                   radius: 50,
                                   backgroundColor: Colors.grey[200],
@@ -149,14 +151,19 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                                     width: 24,
                                     height: 24,
                                     child: Center(
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
                                     ),
                                   ),
                                 ),
-                                errorWidget: (context, url, error) => CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: const AssetImage('assets/images/profile.png'),
-                                ),
+                                errorWidget: (context, url, error) =>
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: const AssetImage(
+                                        'assets/images/profile.png',
+                                      ),
+                                    ),
                               ),
                             ),
 
@@ -195,12 +202,34 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                         validator: (v) =>
                             v == null || v.isEmpty ? "Name required" : null,
                       ),
-                      _buildField(
+
+                      Text(
                         "Stream",
-                        _streamController,
+                        style: const TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff374151),
+                        ),
+                      ),
+                      SizedBox(height: 8,),
+                      TextFormField(
+                        readOnly: true,
+                        controller: _streamController,
                         validator: (v) =>
                             v == null || v.isEmpty ? "Stream required" : null,
+                        keyboardType: TextInputType.text,
+
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
                       ),
+                      SizedBox(height: 16,),
                       Text(
                         "Year",
                         textAlign: TextAlign.left,
@@ -561,7 +590,7 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
               color: Color(0xff374151),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           TextFormField(
             controller: controller,
             validator: validator,

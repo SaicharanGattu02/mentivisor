@@ -217,7 +217,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                   return SessionCard(attachment: session?.attachment??"",
                                     sessionLink: session?.zoomLink??"",
                                     sessionId: session?.id ?? 0,
-                                    status: 'Upcoming',
+                                    status: 'upcoming',
                                     sessionDate: formatDate(
                                       session?.date ?? "",
                                     ),

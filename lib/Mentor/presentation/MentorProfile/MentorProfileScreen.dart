@@ -164,6 +164,8 @@ class _ProfileBody extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Text(
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
                 bio,
                 textAlign: TextAlign.center,
                 style: const TextStyle(

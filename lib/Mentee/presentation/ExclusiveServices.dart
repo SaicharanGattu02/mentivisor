@@ -88,7 +88,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                     borderSide: BorderSide.none,
                   ),
                   hoverColor: Colors.white,
-                  hintText: "Search by Name",
+                  hintText: "Search by Service Name",
                   hintStyle: const TextStyle(color: Colors.grey),
                   prefixIcon: const Icon(
                     Icons.search,
@@ -148,7 +148,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                                     ),
                                     Text(
                                       textAlign: TextAlign.center,
-                                      'No Data Found!',
+                                      'No Exclusive Service Found!',
                                       style: TextStyle(
                                         color: primarycolor,
                                         fontSize: 18,

@@ -45,7 +45,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
   @override
   void initState() {
     super.initState();
-    selectedFilter = widget.selectedFilter ?? 'all';
+    selectedFilter = widget.selectedFilter ?? 'upcoming';
     context.read<SessionCubit>().getSessions(selectedFilter);
   }
 
@@ -95,19 +95,6 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   children: [
-                    FilterButton(
-                      text: 'All',
-                      isSelected: selectedFilter == 'all',
-                      onPressed: () {
-                        setState(() {
-                          selectedFilter = 'all';
-                          context.read<SessionCubit>().getSessions(
-                            selectedFilter,
-                          );
-                        });
-                      },
-                    ),
-
                     FilterButton(
                       text: 'Upcoming',
                       isSelected: selectedFilter == 'upcoming',
@@ -208,7 +195,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               sessionDate: formatDate(session?.date ?? ""),
                               sessionTime: '${duration} to go',
                               sessionName:
-                                  'G-Meet with ${session?.mentee?.name}',
+                                  'Zoom Meet with ${session?.mentee?.name}',
                               sessionImage:
                                   session?.mentee?.menteeProfile ??
                                   "", // Image for upcoming sessions
