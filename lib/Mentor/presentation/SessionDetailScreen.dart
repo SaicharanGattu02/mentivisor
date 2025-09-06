@@ -59,7 +59,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               } else if (state is SessionDetailsLoaded) {
                 final sessionDetails = state.sessionDetailsModel.session;
                 status.value =
-                    state.sessionDetailsModel.status?.toString() ?? "";
+                    state.sessionDetailsModel.session?.status??"";
                 AppLogger.info("session Status:${status.value}");
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,42 +227,42 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
           child: ValueListenableBuilder<String>(
             valueListenable: status,
             builder: (context, currentStatus, _) {
-
-return(widget.past==true)
-    ? BlocConsumer<SessionCompleteCubit, SessionCompleteStates>(
-                      listener: (context, state) {
-                        if (state is SessionCompletdSuccess) {
-                          CustomSnackBar1.show(
-                            context,
-                            "Session has been completed.",
-                          );
-                          context.read<SessionCubit>().getSessions("");
-                          context.pop();
-                        } else if (state is SessionCompletdFailure) {
-                          CustomSnackBar1.show(context, state.error);
-                        }
-                      },
-                      builder: (context, state) {
-                        return CustomAppButton1(
-                          text: "Mark Session as Completed",
-                          onPlusTap: () {
-                            context
-                                .read<SessionCompleteCubit>()
-                                .sessionComplete(widget.sessionId);
-                          },
-                        );
-                      },
-                    )
-                  : CustomAppButton1(
-                      text: "Okay",
-                      onPlusTap: () {
-                        context.pop();
-                      },
+              return (widget.past == true) && (currentStatus == "pending")
+                  ? BlocConsumer<SessionCompleteCubit, SessionCompleteStates>(
+                listener: (context, state) {
+                  if (state is SessionCompletdSuccess) {
+                    CustomSnackBar1.show(
+                      context,
+                      "Session has been completed.",
                     );
+                    context.read<SessionCubit>().getSessions("");
+                    context.pop();
+                  } else if (state is SessionCompletdFailure) {
+                    CustomSnackBar1.show(context, state.error);
+                  }
+                },
+                builder: (context, state) {
+                  return CustomAppButton1(
+                    text: "Mark Session as Completed",
+                    onPlusTap: () {
+                      context
+                          .read<SessionCompleteCubit>()
+                          .sessionComplete(widget.sessionId);
+                    },
+                  );
+                },
+              )
+                  : CustomAppButton1(
+                text: "Okay",
+                onPlusTap: () {
+                  context.pop();
+                },
+              );
             },
           ),
         ),
       ),
+
     );
   }
 }

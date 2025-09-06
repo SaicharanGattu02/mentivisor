@@ -132,7 +132,7 @@ class CouponDetailsScreen extends StatelessWidget {
                     bgColor: Color(0xFFFFF6CF),
                     borderColor: Color(0xFF999999),
                     textColor: Color(0xFF333333),
-                    text: 'Worth of ₹ 500',
+                    text: 'Worth of ₹ 500',textStyle: TextStyle(fontSize: 12),
                     onTap: () {
                       // your tap handler
                     },
@@ -146,7 +146,7 @@ class CouponDetailsScreen extends StatelessWidget {
                     bgColor: const Color(0xFFF5F5F5),
                     borderColor: const Color(0xFF999999),
                     textColor: const Color(0xFF333333),
-                    text: 'For 1000 Coins',
+                    text: 'For 1000 Coins',textStyle: TextStyle(fontSize: 12),
                     onTap: () {
                       // your tap handler
                     },
@@ -154,20 +154,12 @@ class CouponDetailsScreen extends StatelessWidget {
                 ),
 
                 Expanded(
-                  child: CustomOutlinedButton1(
-                    height: 32,
-                    radius: 24,
-                    bgColor: const Color(0xFF9333EA), // filled CTA
-                    borderColor: const Color(0xFF9333EA),
-                    textColor: const Color(0xFFFFFFFF),
-                    text: 'Buy Now',
-                    onTap: () {
-                      _showConfirmDialog(context);
-                    },
-                  ),
+                  child: CustomAppButton1(text: "Buy Now", onPlusTap: (){
+
+                  }),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),

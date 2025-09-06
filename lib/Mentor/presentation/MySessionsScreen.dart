@@ -45,7 +45,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
   @override
   void initState() {
     super.initState();
-    selectedFilter = widget.selectedFilter ?? 'upcoming';
+    selectedFilter = widget.selectedFilter ?? 'all';
     context.read<SessionCubit>().getSessions(selectedFilter);
   }
 
@@ -85,53 +85,72 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
           children: [
             Container(
               height: 53,
-              // padding: EdgeInsets.only(10),
               decoration: BoxDecoration(
                 color: Color(0xffDBE5FB),
                 borderRadius: BorderRadius.circular(36),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  FilterButton(
-                    text: 'Upcoming',
-                    isSelected: selectedFilter == 'upcoming',
-                    onPressed: () {
-                      setState(() {
-                        selectedFilter = 'upcoming';
-                        context.read<SessionCubit>().getSessions(
-                          selectedFilter,
-                        );
-                      });
-                    },
-                  ),
-                  FilterButton(
-                    text: 'Completed',
-                    isSelected: selectedFilter == 'completed',
-                    onPressed: () {
-                      setState(() {
-                        selectedFilter = 'completed';
-                        context.read<SessionCubit>().getSessions(
-                          selectedFilter,
-                        );
-                      });
-                    },
-                  ),
-                  FilterButton(
-                    text: 'Cancelled',
-                    isSelected: selectedFilter == 'cancelled',
-                    onPressed: () {
-                      setState(() {
-                        selectedFilter = 'cancelled';
-                        context.read<SessionCubit>().getSessions(
-                          selectedFilter,
-                        );
-                      });
-                    },
-                  ),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    FilterButton(
+                      text: 'All',
+                      isSelected: selectedFilter == 'all',
+                      onPressed: () {
+                        setState(() {
+                          selectedFilter = 'all';
+                          context.read<SessionCubit>().getSessions(
+                            selectedFilter,
+                          );
+                        });
+                      },
+                    ),
+
+                    FilterButton(
+                      text: 'Upcoming',
+                      isSelected: selectedFilter == 'upcoming',
+                      onPressed: () {
+                        setState(() {
+                          selectedFilter = 'upcoming';
+                          context.read<SessionCubit>().getSessions(
+                            selectedFilter,
+                          );
+                        });
+                      },
+                    ),
+
+                    FilterButton(
+                      text: 'Completed',
+                      isSelected: selectedFilter == 'completed',
+                      onPressed: () {
+                        setState(() {
+                          selectedFilter = 'completed';
+                          context.read<SessionCubit>().getSessions(
+                            selectedFilter,
+                          );
+                        });
+                      },
+                    ),
+
+                    FilterButton(
+                      text: 'Cancelled',
+                      isSelected: selectedFilter == 'cancelled',
+                      onPressed: () {
+                        setState(() {
+                          selectedFilter = 'cancelled';
+                          context.read<SessionCubit>().getSessions(
+                            selectedFilter,
+                          );
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
+
             Expanded(
               child: BlocBuilder<SessionCubit, SessionStates>(
                 builder: (context, state) {
@@ -198,8 +217,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               buttonText:
                                   'Message from ${session?.mentee?.name ?? ""}',
                               buttonIcon: 'assets/icons/chaticon.png',
-                              remainingTime:
-                                  '${duration} Minutes to go',
+                              remainingTime: '${duration} Minutes to go',
                             );
                           }, childCount: Sessions?.length),
                         ),
