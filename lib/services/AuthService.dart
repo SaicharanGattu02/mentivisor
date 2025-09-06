@@ -54,6 +54,10 @@ class AuthService {
     await _storage.write(key: _coins, value: coins.toString());
   }
 
+  static Future<void> saveRole(String role) async {
+    await _storage.write(key: _role, value: role.toString());
+  }
+
   static Future<String?> getCoins() async {
     return await _storage.read(key: _coins);
   }

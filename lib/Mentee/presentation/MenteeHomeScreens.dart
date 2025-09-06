@@ -41,7 +41,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     getData();
   }
 
-  Future<void> getData() async{
+  Future<void> getData() async {
     role = await AuthService.getRole();
   }
 
@@ -109,6 +109,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               _mentorProfileName.value = menteeProfile?.user?.name ?? "";
               final coins = menteeProfile?.user?.availabilityCoins ?? 0;
               AuthService.saveCoins(coins);
+              AuthService.saveRole(menteeProfile?.user?.role ?? "");
               AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
               return Scaffold(
                 drawerEnableOpenDragGesture: !isGuest,
@@ -600,7 +601,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                     .read<
                                                       MenteeDashboardCubit
                                                     >()
-                                                    .fetchDashboard("On Campus");
+                                                    .fetchDashboard(
+                                                      "On Campus",
+                                                    );
                                               });
                                             },
                                           ),
@@ -635,8 +638,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                             Text(
-                              isGuest?'Top Mentors':'Mentors',
+                            Text(
+                              isGuest ? 'Top Mentors' : 'Mentors',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -718,10 +721,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               );
             } else if (state is MenteeDashboardFailure) {
               return Center(child: Text(state.message));
-            }else{
+            } else {
               return Center(child: Text("No Data"));
             }
-
           },
         );
       },

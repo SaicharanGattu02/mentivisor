@@ -141,33 +141,32 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: visibleMonth.isAfter(DateTime(2025, 9))
-                              ? prevMonth
-                              : null,
-                          icon: Icon(
-                            Icons.chevron_left,
-                            color: visibleMonth.isAfter(DateTime(2025, 9))
-                                ? Colors.black
-                                : Colors.grey.withOpacity(0.5), // make it visually disabled
-                          ),
-                        ),
-
-                        IconButton(
-                          onPressed: nextMonth,
-                          icon: const Icon(Icons.chevron_right),
-                        ),
+                        // const Spacer(),
+                        // IconButton(
+                        //   onPressed: visibleMonth.isAfter(DateTime(2025, 9))
+                        //       ? prevMonth
+                        //       : null,
+                        //   icon: Icon(
+                        //     Icons.chevron_left,
+                        //     color: visibleMonth.isAfter(DateTime(2025, 9))
+                        //         ? Colors.black
+                        //         : Colors.grey.withOpacity(0.5), // make it visually disabled
+                        //   ),
+                        // ),
+                        //
+                        // IconButton(
+                        //   onPressed: nextMonth,
+                        //   icon: const Icon(Icons.chevron_right),
+                        // ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     Container(
                       height: 42,
                       decoration: BoxDecoration(
                         color: kLightLav,
                         borderRadius: BorderRadius.circular(22),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
                         children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
                             .map(
@@ -183,8 +182,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                                   ),
                                 ),
                               ),
-                            )
-                            .toList(),
+                            ).toList(),
                       ),
                     ),
                     const SizedBox(height: 12),
