@@ -90,25 +90,28 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                   Column(
                     children: [
                       CarouselSlider.builder(
-                        itemCount: banners_data?.data?.length,
+                        itemCount: banners_data?.data?.length ?? 0,
                         itemBuilder: (ctx, i, _) {
                           final b = banners_data?.data?[i];
                           return GestureDetector(
                             onTap: () {
                               if (b?.link != null) _launchUrl(b?.link ?? "");
                             },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.network(
-                                b?.imgUrl ?? '',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (_, __, ___) => Container(
-                                  color: Colors.grey[200],
-                                  alignment: Alignment.center,
-                                  child: const Icon(
-                                    Icons.broken_image,
-                                    color: Colors.grey,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric( horizontal: 2.5),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.network(
+                                  b?.imgUrl ?? '',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    color: Colors.grey[200],
+                                    alignment: Alignment.center,
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -120,6 +123,9 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                           autoPlay: true,
                           autoPlayInterval: const Duration(seconds: 4),
                           viewportFraction: 1.0,
+                          onPageChanged: (index, reason) {
+                            _currentIndex.value = index;
+                          },
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -130,22 +136,10 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: List.generate(
                               banners_data?.data?.length ?? 0,
-                              (index) {
-                                final isFirst = index == 0;
-                                final isLast =
-                                    index ==
-                                    (banners_data?.data?.length ?? 0) - 1;
-                                final isNear =
-                                    (index - currentIndex).abs() <= 1;
-
-                                if (!isFirst && !isLast && !isNear) {
-                                  return const SizedBox.shrink();
-                                }
+                                  (index) {
                                 return AnimatedContainer(
                                   duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 3,
-                                  ),
+                                  margin: const EdgeInsets.symmetric(horizontal: 3),
                                   height: SizeConfig.screenHeight * 0.008,
                                   width: currentIndex == index
                                       ? SizeConfig.screenWidth * 0.05
@@ -164,6 +158,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 24),
                   Text(
                     'Upcoming Session',
