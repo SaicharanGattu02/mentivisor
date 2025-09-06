@@ -73,7 +73,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
       if (_replyParentId != null) ...{
         "parent_id": _replyParentId,
         "is_reply": 1,
-        "hashUser": _replyingToUserId, // Pass the user ID of the person being replied to
+        "hashuser": _replyingToUserId, // Pass the user ID of the person being replied to
       },
     };
 

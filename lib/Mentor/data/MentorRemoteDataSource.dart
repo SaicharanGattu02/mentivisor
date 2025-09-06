@@ -64,11 +64,11 @@ abstract class MentorRemoteDataSource {
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   @override
   Future<ReviewsModel?> getReviews(
-      int page,
-      String userId,
-      List<int> stars,
-      String time,
-      ) async {
+    int page,
+    String userId,
+    List<int> stars,
+    String time,
+  ) async {
     try {
       AppLogger.log('getReviews : $stars');
       final queryParams = <String, dynamic>{};
@@ -100,7 +100,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<PendingSubExpertisesModel?> getPendingSubExpertises(
@@ -292,6 +291,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> sessionCompleted(int sessionId) async {
     try {
@@ -363,12 +363,10 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<FeedbackModel?> getFeedback(
-      String userId
-      ) async {
+  Future<FeedbackModel?> getFeedback(String userId) async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.feedback}/$userId"
+        "${MentorEndpointsUrls.feedback}/$userId",
       );
       AppLogger.log('getFeedback: ${res.realUri}');
       AppLogger.log('getFeedback: ${res.data}');
@@ -378,8 +376,6 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return null;
     }
   }
-
-
 
   @override
   Future<SuccessModel?> updateMentorProfile(Map<String, dynamic> data) async {
