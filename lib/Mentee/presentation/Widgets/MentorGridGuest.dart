@@ -31,7 +31,7 @@ class MentorGridGuest extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.name ?? '',
-            designation: m?.bio ?? '',
+            designation: m?.bio ?? '',collegeName:  m?.college?.name?? '',
             image: url ?? "",
             rating: (m?.ratingsReceivedCount ?? 0).toDouble(),
             ratingCount: m?.ratingsReceivedCount ?? 0,
@@ -61,7 +61,7 @@ class MentorGridCampus extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.88,
+        childAspectRatio: 0.75,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
@@ -70,7 +70,7 @@ class MentorGridCampus extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.user?.name ?? '',
-            designation: m?.user?.bio ?? '',
+            designation: m?.user?.bio ?? '',collegeName:  m?.user?.college?.name ?? '',
             image: url ?? "",
             rating: double.tryParse(m?.averageRating?.toString() ?? "0") ?? 0.0,
             ratingCount: m?.totalReviews ?? 0,
@@ -89,6 +89,7 @@ class _MentorCard extends StatelessWidget {
   final double rating;
   final int ratingCount;
   final String coinsPerMinute;
+  final String collegeName;
 
   const _MentorCard({
     required this.name,
@@ -97,6 +98,7 @@ class _MentorCard extends StatelessWidget {
     required this.rating,
     required this.ratingCount,
     required this.coinsPerMinute,
+    required this.collegeName,
   });
 
   @override
@@ -130,6 +132,18 @@ class _MentorCard extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             capitalize(name),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Color(0xff333333),
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            collegeName,
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

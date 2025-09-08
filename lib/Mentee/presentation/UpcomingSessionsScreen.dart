@@ -105,8 +105,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       capitalize(
-                                        upComingSessions.mentor?.name ??
-                                            "Unknown Mentor",
+                                        " with${upComingSessions.mentor?.name ??  "Unknown Mentor" }"
+
                                       ),
                                       style: TextStyle(
                                         fontSize: 14,

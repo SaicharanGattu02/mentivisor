@@ -53,6 +53,7 @@ class User {
   String? year;
   int? yearId;
   String? yearName;
+  String?college_name;
   String? stream;
   String? status;
   String? profilePic;
@@ -75,6 +76,7 @@ class User {
         this.exp,
         this.bio,
         this.collegeId,
+        this.college_name,
         this.year,
         this.yearId,
         this.yearName,
@@ -100,6 +102,7 @@ class User {
     exp = json['exp'];
     bio = json['bio'];
     collegeId = json['college_id'];
+    college_name=  json['college_name'];
     year = json['year'];
     yearId = json['year_id'];
     yearName = json['year_name'];
@@ -137,6 +140,7 @@ class User {
     data['exp'] = this.exp;
     data['bio'] = this.bio;
     data['college_id'] = this.collegeId;
+    data['college_name'] = this.college_name;
     data['year'] = this.year;
     data['year_id'] = this.yearId;
     data['year_name'] = this.yearName;

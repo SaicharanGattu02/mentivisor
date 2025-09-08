@@ -132,7 +132,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'SVR College NZB ${menteeProfile?.user?.yearName ?? ""} year\n${menteeProfile?.user?.stream ?? ""}',
+                    '${menteeProfile?.user?.college_name ?? ""} ${menteeProfile?.user?.yearName ?? ""} year\n${menteeProfile?.user?.stream ?? ""}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xff666666),

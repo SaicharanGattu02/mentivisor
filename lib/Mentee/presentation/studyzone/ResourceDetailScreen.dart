@@ -228,14 +228,14 @@ class ResourceDetailScreen extends StatelessWidget {
                                 color: Colors.black54,
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'segeo',
-                                  color: Colors.black54,
-                                ),
-                              ),
+                              // Text(
+                              //   'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
+                              //   style: const TextStyle(
+                              //     fontSize: 12,
+                              //     fontFamily: 'segeo',
+                              //     color: Colors.black54,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],

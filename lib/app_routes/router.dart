@@ -323,6 +323,7 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(ProductivityScreen(), state);
       },
     ),
+
     GoRoute(
       path: '/notifications',
       pageBuilder: (context, state) {
@@ -450,6 +451,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildSlideTransitionPage(WalletScreen(), state),
     ),
+
     GoRoute(
       path: '/buy_coins_screens',
       pageBuilder: (context, state) {

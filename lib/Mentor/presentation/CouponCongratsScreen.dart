@@ -38,9 +38,11 @@ class CouponCongratsScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
+
               Color(0xFFEFF6FF), // #EFF6FF
               Color(0xFFF5F6FF), // #F5F6FF
               Color(0xFFFAF5FF), // #FAF5FF
+
             ],
           ),
         ),
@@ -50,9 +52,6 @@ class CouponCongratsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Replace with your asset
-              // Image.asset('assets/images/coins_big.png', height: 140),
-              // placeholder if you haven't added the asset yet:
               Image.asset(
                 'images/groupcoins.png', // put your big coins image here
                 height: 140,
@@ -71,8 +70,7 @@ class CouponCongratsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-
-              const Text(
+               Text(
                 'Myntra coupon worth of 500 is your',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -84,8 +82,8 @@ class CouponCongratsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              const Text(
-                'Get your coupon within 24hrs in coupon\nsession',
+             Text(
+                'Get your coupon within 24 hrs in coupon\nsession',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'segeo',
@@ -93,7 +91,7 @@ class CouponCongratsScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF333333),
                   height: 1.35,
-                ),
+                )
               ),
             ],
           ),

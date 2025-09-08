@@ -188,7 +188,7 @@ class _ProfileBody extends StatelessWidget {
                   fontFamily: 'segeo',
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
-                  color: Color(0xFF7C3AED),
+                  color: Color(0xFF9C5BF7),
                 ),
               ),
               const SizedBox(width: 8),
@@ -229,71 +229,71 @@ class _ProfileBody extends StatelessWidget {
           const SizedBox(height: 30),
 
           // Expertise (extra section if needed)
-          if ((data.expertise ?? []).isNotEmpty) ...[
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Expertise',
-                style: const TextStyle(
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                  color: Color(0xFF111827),
-                ),
-              ),
-            ),
-            const SizedBox(height: 14),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: data.expertise!.map((ex) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Column(
-                      spacing: 10,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ex.name ?? '',
-                          style: const TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                        if ((ex.subExpertises ?? []).isNotEmpty)
-                          Wrap(
-                            spacing: 8,
-                            children: ex.subExpertises!
-                                .map(
-                                  (s) => Chip(
-                                    labelPadding: EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(color: Colors.white),
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(36),
-                                    ),
-                                    label: Text(
-                                      s.name ?? '',
-                                      style: const TextStyle(
-                                        fontFamily: 'segeo',
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
+          // if ((data.expertise ?? []).isNotEmpty) ...[
+          //   Align(
+          //     alignment: Alignment.centerLeft,
+          //     child: Text(
+          //       'Expertise',
+          //       style: const TextStyle(
+          //         fontFamily: 'segeo',
+          //         fontWeight: FontWeight.w700,
+          //         fontSize: 18,
+          //         color: Color(0xFF111827),
+          //       ),
+          //     ),
+          //   ),
+          //   const SizedBox(height: 14),
+          //   Align(
+          //     alignment: Alignment.centerLeft,
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: data.expertise!.map((ex) {
+          //         return Padding(
+          //           padding: const EdgeInsets.only(bottom: 8.0),
+          //           child: Column(
+          //             spacing: 10,
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               Text(
+          //                 ex.name ?? '',
+          //                 style: const TextStyle(
+          //                   fontFamily: 'segeo',
+          //                   fontSize: 18,
+          //                   fontWeight: FontWeight.w700,
+          //                   color: Color(0xFF6B7280),
+          //                 ),
+          //               ),
+          //               if ((ex.subExpertises ?? []).isNotEmpty)
+          //                 Wrap(
+          //                   spacing: 8,
+          //                   children: ex.subExpertises!
+          //                       .map(
+          //                         (s) => Chip(
+          //                           labelPadding: EdgeInsets.symmetric(
+          //                             horizontal: 16,
+          //                           ),
+          //                           shape: RoundedRectangleBorder(
+          //                             side: BorderSide(color: Colors.white),
+          //                             borderRadius:
+          //                                 BorderRadiusGeometry.circular(36),
+          //                           ),
+          //                           label: Text(
+          //                             s.name ?? '',
+          //                             style: const TextStyle(
+          //                               fontFamily: 'segeo',
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       )
+          //                       .toList(),
+          //                 ),
+          //             ],
+          //           ),
+          //         );
+          //       }).toList(),
+          //     ),
+          //   ),
+          // ],
         ],
       ),
     );

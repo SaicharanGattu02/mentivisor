@@ -223,6 +223,7 @@ class User {
   String? lastLoginAt;
   String? mentorStatus;
   String? profilePicUrl;
+  College? college;
 
   User(
       {this.id,
@@ -255,7 +256,9 @@ class User {
         this.activeStatus,
         this.lastLoginAt,
         this.mentorStatus,
-        this.profilePicUrl});
+        this.profilePicUrl,
+        this.college
+      });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -289,6 +292,9 @@ class User {
     lastLoginAt = json['last_login_at'];
     mentorStatus = json['mentor_status'];
     profilePicUrl = json['profile_pic_url'];
+    college =
+    json['college'] != null ? new College.fromJson(json['college']) : null;
+
   }
 
   Map<String, dynamic> toJson() {
@@ -324,6 +330,62 @@ class User {
     data['last_login_at'] = this.lastLoginAt;
     data['mentor_status'] = this.mentorStatus;
     data['profile_pic_url'] = this.profilePicUrl;
+    if (this.college != null) {
+      data['college'] = this.college!.toJson();
+    }
+    return data;
+  }
+}
+
+class College {
+  int? id;
+  String? name;
+  String? state;
+  String? city;
+  String? dist;
+  String? pincode;
+  String? createdAt;
+  String? updatedAt;
+  Null? deletedAt;
+  int? activeStatus;
+
+  College(
+      {this.id,
+        this.name,
+        this.state,
+        this.city,
+        this.dist,
+        this.pincode,
+        this.createdAt,
+        this.updatedAt,
+        this.deletedAt,
+        this.activeStatus});
+
+  College.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['Name'];
+    state = json['State'];
+    city = json['City'];
+    dist = json['Dist'];
+    pincode = json['pincode'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
+    activeStatus = json['active_status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['Name'] = this.name;
+    data['State'] = this.state;
+    data['City'] = this.city;
+    data['Dist'] = this.dist;
+    data['pincode'] = this.pincode;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['deleted_at'] = this.deletedAt;
+    data['active_status'] = this.activeStatus;
     return data;
   }
 }
