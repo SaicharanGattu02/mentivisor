@@ -8,15 +8,14 @@ class SocketService {
   static IO.Socket connect(String userId) {
     if (_socket == null) {
       _socket = IO.io(ApiConfig.socket_url, <String, dynamic>{
-        // 'transports': ['websocket', 'polling'],
+        'transports': ['websocket', 'polling'],
         'autoConnect': true,
-        // 'query': {'userId': userId},
       });
 
       _socket!.connect();
 
       _socket!
-        ..onConnect((_) => AppLogger.info('Socket connected as $userId'))
+        ..onConnect((_) => AppLogger.info('Socket connected'))
         ..onDisconnect((_) => AppLogger.info('Socket disconnected'))
         ..onError((err) => AppLogger.info('Socket error: $err'));
     }

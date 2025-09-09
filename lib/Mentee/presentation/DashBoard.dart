@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:app_links/app_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,13 +10,11 @@ import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../bloc/internet_status/internet_status_bloc.dart';
 import '../../services/SocketService.dart';
+import '../../utils/DeepLinkMapper.dart';
 import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
 import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 
 class Dashboard extends StatefulWidget {
@@ -28,7 +28,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   late PageController _pageController;
   int _selectedIndex = 0;
-
+  StreamSubscription<Uri>? _linkSubscription;
   // Controls the bottom bar visibility
   final ValueNotifier<bool> _showBottomBar = ValueNotifier<bool>(true);
 
@@ -38,6 +38,45 @@ class _DashboardState extends State<Dashboard> {
     _selectedIndex = widget.selectedIndex ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
     getUserId();
+  }
+
+  Future<void> initDeepLinks() async {
+    final appLinks = AppLinks();
+    debugPrint('DeepLink: initDeepLinks started');
+    try {
+      final initialUri = await appLinks.getInitialLink();
+      debugPrint('DeepLink: getInitialLink -> $initialUri');
+      final loc = DeepLinkMapper.toLocation(initialUri);
+      if (loc != null) {
+        debugPrint('DeepLink: navigating to $loc');
+        context.push(loc);
+      } else {
+        debugPrint('DeepLink: no mapped location for $initialUri');
+      }
+    } catch (e) {
+      debugPrint('DeepLink: Initial app link error: $e');
+    }
+
+    // 2) Handle links while the app is running
+    // _linkSubscription = appLinks.uriLinkStream.listen((uri) {
+    //   debugPrint('DeepLink: uriLinkStream -> $uri');
+    //   final loc = DeepLinkMapper.toLocation(uri);
+    //   if (loc != null) {
+    //     debugPrint('DeepLink: navigating to $loc');
+    //     context.push(loc);
+    //   } else {
+    //     debugPrint('DeepLink: no mapped location for $uri');
+    //   }
+    // }, onError: (e) => debugPrint('DeepLink: Link stream error: $e'));
+  }
+
+  @override
+  void dispose() {
+    debugPrint('DeepLink: dispose, cancelling subscription');
+    _linkSubscription?.cancel();
+    _pageController.dispose();
+    _showBottomBar.dispose();
+    super.dispose();
   }
 
   Future<void> getUserId() async {
@@ -183,13 +222,6 @@ class _DashboardState extends State<Dashboard> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _showBottomBar.dispose();
-    super.dispose();
   }
 }
 
