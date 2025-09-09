@@ -28,6 +28,7 @@ import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/presentation/CommingSoon.dart';
+import '../Mentee/presentation/Community/CommunityDetails.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
 import '../Mentee/presentation/InfoScreen.dart';
@@ -109,6 +110,12 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(ResetPassword(num: num), state);
       },
     ),
+    // GoRoute(
+    //   path: '/community_details',
+    //   pageBuilder: (context, state) {
+    //     return buildSlideTransitionPage(CommunityDetails(communityPosts: ,), state);
+    //   },
+    // ),
 
     GoRoute(
       path: '/coupons',

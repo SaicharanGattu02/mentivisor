@@ -15,7 +15,7 @@ import 'StateInjector.dart';
 import 'app_routes/router.dart';
 import 'package:provider/provider.dart';
 
-import 'firebase_options.dart';
+// import 'firebase_options.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -35,7 +35,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     print("Firebase initialized");
   } catch (e) {
     print("Error initializing Firebase: $e");

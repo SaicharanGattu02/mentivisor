@@ -369,9 +369,13 @@ class _CommunityScreenState extends State<Communityscreen> {
                                   const SizedBox(height: 16), // The separator
                               itemBuilder: (context, index) {
                                 final communitypost = communityposts?[index];
-                                return PostCard(
-                                  communityPosts:
-                                      communitypost ?? CommunityPosts(),
+                                return GestureDetector(onTap: () {
+                                  context.push("/community_details");
+                                },
+                                  child: PostCard(
+                                    communityPosts:
+                                        communitypost ?? CommunityPosts(),
+                                  ),
                                 );
                               },
                             ),
