@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Mentee/presentation/Community/CommunityDetails.dart';
 import 'package:mentivisor/GroupChatScreen.dart';
 import 'package:mentivisor/Mentee/data/cubits/Chat/GroupRoomCubit.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
@@ -29,11 +30,9 @@ import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
 import '../ChatScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
-import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/data/cubits/Chat/private_chat_cubit.dart';
 import '../Mentee/presentation/CommingSoon.dart';
-import '../Mentee/presentation/Community/CommunityDetails.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
 import '../Mentee/presentation/InfoScreen.dart';
@@ -178,12 +177,16 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-    // GoRoute(
-    //   path: '/community_details',
-    //   pageBuilder: (context, state) {
-    //     return buildSlideTransitionPage(CommunityDetails(communityPosts: ,), state);
-    //   },
-    // ),
+    GoRoute(
+      path: '/community_details/:communityId',
+      pageBuilder: (context, state) {
+        final id = int.parse(state.pathParameters['communityId']!);
+        return buildSlideTransitionPage(
+          CommunityDetails(communityId: id),
+          state,
+        );
+      },
+    ),
     GoRoute(
       path: '/coupons',
       pageBuilder: (context, state) =>
@@ -324,11 +327,11 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/resource_details_screen',
+      path: '/resource_details_screen/:resourceId',
       pageBuilder: (context, state) {
-        final studyZoneData = state.extra as StudyZoneCampusData;
+        final id = int.parse(state.pathParameters['resourceId']!);  // Extract as int
         return buildSlideTransitionPage(
-          ResourceDetailScreen(studyZoneCampusData: studyZoneData),
+          ResourceDetailScreen(resourceId: id),
           state,
         );
       },

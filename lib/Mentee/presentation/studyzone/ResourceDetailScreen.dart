@@ -1,3 +1,5 @@
+import 'dart:developer' as AppLogger;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,19 +8,30 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportState.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
-import '../../../utils/color_constants.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
-import '../../Models/StudyZoneCampusModel.dart';
 import '../../data/cubits/AddResource/add_resource_cubit.dart';
 import '../../data/cubits/AddResource/add_resource_states.dart';
+import '../../data/cubits/ResourceDetails/ResourceDetailsCubit.dart';
+import '../../data/cubits/ResourceDetails/ResourceDetailsState.dart';
 
-class ResourceDetailScreen extends StatelessWidget {
-  final StudyZoneCampusData studyZoneCampusData;
+class ResourceDetailScreen extends StatefulWidget {
+  final int resourceId;
+  const ResourceDetailScreen({super.key, required this.resourceId});
 
-  const ResourceDetailScreen({super.key, required this.studyZoneCampusData});
+  @override
+  State<ResourceDetailScreen> createState() => _ResourceDetailScreenState();
+}
+
+class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<Resourcedetailscubit>().resourceDetails(widget.resourceId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +48,7 @@ class ResourceDetailScreen extends StatelessWidget {
               height: 18,
             ),
             onPressed: () async {
-              final study_zone_Id = studyZoneCampusData.id;
+              final study_zone_Id = widget.resourceId;
               final shareUrl =
                   "https://mentivisor.com/study_zone/$study_zone_Id";
               Share.share(
@@ -55,260 +68,278 @@ class ResourceDetailScreen extends StatelessWidget {
           ),
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadiusGeometry.circular(4),
-              child: CachedNetworkImage(
-                width: SizeConfig.screenWidth,
-                height: 200,
-                imageUrl: studyZoneCampusData.image ?? "",
-                fit: BoxFit.fill,
-                placeholder: (context, url) => SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: Center(child: spinkits.getSpinningLinespinkit()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  width: 120,
-                  height: 120,
-                  color: const Color(0xffF8FAFE),
-                  child: const Icon(
-                    Icons.broken_image,
-                    size: 40,
-                    color: Colors.grey,
+        child: BlocBuilder<Resourcedetailscubit, ResourceDetailsState>(
+          builder: (context, state) {
+            if (state is ResourceDetailsLoading) {
+              return const Center(child: DottedProgressWithLogo());
+            } else if (state is ResourceDetailsLoaded) {
+              final resourceData = state.resourceDetailsModel.data;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadiusGeometry.circular(4),
+                    child: CachedNetworkImage(
+                      width: SizeConfig.screenWidth,
+                      height: 200,
+                      imageUrl: resourceData?.image ?? "",
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: Center(child: spinkits.getSpinningLinespinkit()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 120,
+                        height: 120,
+                        color: const Color(0xffF8FAFE),
+                        child: const Icon(
+                          Icons.broken_image,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
 
-            const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // About Course
-                    const Text(
-                      'About Course',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xff121212),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      studyZoneCampusData.description ?? "",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xff666666),
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: (studyZoneCampusData.tag ?? []).map((tag) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: Text(
-                            tag,
-                            style: const TextStyle(
-                              fontSize: 12,
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // About Course
+                          const Text(
+                            'About Course',
+                            style: TextStyle(
+                              fontSize: 16,
                               fontFamily: 'segeo',
-                              color: Colors.black87,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xff121212),
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-
-                    const SizedBox(height: 24),
-                    const Text(
-                      'About Author',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xff121212),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
+                          const SizedBox(height: 8),
+                          Text(
+                            resourceData?.description ?? "",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xff666666),
+                              fontFamily: 'segeo',
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.black, // inner bg behind image
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: (resourceData?.tag ?? []).map((tag) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
-                                clipBehavior: Clip.antiAlias,
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      studyZoneCampusData
-                                          .uploader
-                                          ?.profilePic ??
-                                      "",
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                    child: spinkits.getSpinningLinespinkit(),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      const ColoredBox(
-                                        color: Color(0xffF8FAFE),
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.broken_image,
-                                            size: 40,
-                                            color: Colors.grey,
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'segeo',
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+
+                          const SizedBox(height: 24),
+                          const Text(
+                            'About Author',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'segeo',
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xff121212),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 60,
+                                      height: 60,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors
+                                            .black, // inner bg behind image
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            resourceData
+                                                ?.uploader
+                                                ?.profilePic ??
+                                            "",
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Center(
+                                          child: spinkits
+                                              .getSpinningLinespinkit(),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const ColoredBox(
+                                              color: Color(0xffF8FAFE),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.broken_image,
+                                                  size: 40,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                      ),
+                                    ),
+
+                                    SizedBox(width: 12),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          resourceData?.uploader?.name ?? "",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'segeo',
+                                            color: Colors.black87,
                                           ),
                                         ),
-                                      ),
+                                        Text(
+                                          resourceData?.uploader?.email ?? "",
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            fontFamily: 'segeo',
+                                            color: Color(0xff666666),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 24),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.download_rounded,
+                                      size: 16,
+                                      color: Colors.black54,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${resourceData?.downloadsCount ?? 0} + downloads',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: 'segeo',
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_today,
+                                      size: 16,
+                                      color: Colors.black54,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    // Text(
+                                    //   'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
+                                    //   style: const TextStyle(
+                                    //     fontSize: 12,
+                                    //     fontFamily: 'segeo',
+                                    //     color: Colors.black54,
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          GestureDetector(
+                            onTap: () => _showReportSheet(context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 16,
                               ),
-
-                              SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              decoration: BoxDecoration(
+                                color: Color(0xffF5F5F5),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
                                 children: [
+                                  Image.asset(
+                                    "assets/icons/FileX.png",
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  SizedBox(width: 5),
                                   Text(
-                                    studyZoneCampusData.uploader?.name ?? "",
-                                    style: const TextStyle(
+                                    'Report Resource',
+                                    style: TextStyle(
                                       fontSize: 14,
-                                      fontFamily: 'segeo',
                                       color: Colors.black87,
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                  Text(
-                                    studyZoneCampusData.uploader?.email ?? "",
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      fontFamily: 'segeo',
-                                      color: Color(0xff666666),
-                                    ),
+                                  Spacer(),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.black54,
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                          const SizedBox(height: 24),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.download_rounded,
-                                size: 16,
-                                color: Colors.black54,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${studyZoneCampusData.downloadsCount ?? 0} + downloads',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'segeo',
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.calendar_today,
-                                size: 16,
-                                color: Colors.black54,
-                              ),
-                              const SizedBox(width: 4),
-                              // Text(
-                              //   'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
-                              //   style: const TextStyle(
-                              //     fontSize: 12,
-                              //     fontFamily: 'segeo',
-                              //     color: Colors.black54,
-                              //   ),
-                              // ),
-                            ],
-                          ),
+                          const SizedBox(height: 80),
                         ],
                       ),
                     ),
-                    SizedBox(height: 15),
-                    GestureDetector(
-                      onTap: () => _showReportSheet(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xffF5F5F5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              "assets/icons/FileX.png",
-                              width: 24,
-                              height: 24,
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'Report Resource',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.black54,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 80),
-                  ],
-                ),
-              ),
-            ),
-          ],
+                  ),
+                ],
+              );
+            } else if (state is ResourceDetailsFailure) {
+              return Center(child: Text(state.message));
+            } else {
+              return Center(child: Text("No Data"));
+            }
+          },
         ),
       ),
 
@@ -327,16 +358,17 @@ class ResourceDetailScreen extends StatelessWidget {
               }
             },
             builder: (context, state) {
-              final currentId = studyZoneCampusData.id.toString();
-              final isLoading =
-                  state is AddResourceLoading && state.resourceId == currentId;
+              final currentId = widget.resourceId;
+              final isLoading = state is AddResourceLoading;
               return CustomAppButton1(
                 radius: 24,
                 isLoading: isLoading,
                 text: "Download",
                 textSize: 14,
                 onPlusTap: () {
-                  context.read<AddResourceCubit>().resourceDownload(currentId);
+                  context.read<AddResourceCubit>().resourceDownload(
+                    currentId.toString(),
+                  );
                 },
               );
             },
@@ -478,7 +510,7 @@ class ResourceDetailScreen extends StatelessWidget {
                             text: "Submit Report",
                             onPlusTap: () {
                               final Map<String, dynamic> data = {
-                                "content_id": studyZoneCampusData.id,
+                                "content_id": widget.resourceId,
                                 "reason": _selected,
                               };
                               context

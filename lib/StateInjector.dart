@@ -77,6 +77,7 @@ import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
+import 'Mentee/data/cubits/CommunityDetails/CommunityDetailsCubit.dart';
 import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
@@ -101,6 +102,7 @@ import 'Mentee/data/cubits/ProductTools/TaskUpdate/task_update_cubit.dart';
 import 'Mentee/data/cubits/ProductTools/product_tools_repository.dart';
 import 'Mentee/data/cubits/Register/Register_Cubit.dart';
 import 'Mentee/data/cubits/Register/Register_Repository.dart';
+import 'Mentee/data/cubits/ResourceDetails/ResourceDetailsCubit.dart';
 import 'Mentee/data/cubits/SessionCompleted/session_completed_cubit.dart';
 import 'Mentee/data/cubits/SessionCompleted/session_completed_repo.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
@@ -177,11 +179,6 @@ class StateInjector {
     ),
     RepositoryProvider<MentorProfileRepository>(
       create: (context) => MentorProfileRepositoryImpl(
-        remoteDataSource: context.read<RemoteDataSource>(),
-      ),
-    ),
-    RepositoryProvider<StudyZoneCampusRepository>(
-      create: (context) => StudyZoneCampusRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
@@ -323,6 +320,11 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<StudyZoneCampusRepository>(
+      create: (context) => StudyZoneCampusRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
 
     ///Mentor Repositories
     RepositoryProvider<SessionSRepo>(
@@ -457,6 +459,10 @@ class StateInjector {
       create: (context) =>
           StudyZoneCampusCubit(context.read<StudyZoneCampusRepository>()),
     ),
+    BlocProvider<Resourcedetailscubit>(
+      create: (context) =>
+          Resourcedetailscubit(context.read<StudyZoneCampusRepository>()),
+    ),
 
     BlocProvider<CoinsPackCubit>(
       create: (context) => CoinsPackCubit(context.read<CoinsPackRepo>()),
@@ -468,6 +474,10 @@ class StateInjector {
     BlocProvider<CommunityPostsCubit>(
       create: (context) =>
           CommunityPostsCubit(context.read<CommunityPostsRepo>()),
+    ),
+    BlocProvider<CommunityDetailsCubit>(
+      create: (context) =>
+          CommunityDetailsCubit(context.read<CommunityPostsRepo>()),
     ),
     BlocProvider<AddCommunityPostCubit>(
       create: (context) =>

@@ -16,6 +16,7 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusSta
 import 'package:mentivisor/Mentee/data/cubits/Tags/tags_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/tags_states.dart';
 import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../utils/color_constants.dart';
@@ -400,10 +401,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             if (isGuest) {
                                               context.push('/auth_landing');
                                             } else {
-                                              context.push(
-                                                '/resource_details_screen',
-                                                extra: campusList,
-                                              );
+                                              context.push('/resource_details_screen/${campusList?.id}');
                                             }
                                           },
                                           child: Container(

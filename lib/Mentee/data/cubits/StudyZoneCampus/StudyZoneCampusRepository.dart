@@ -1,12 +1,15 @@
+import '../../../Models/ResourceDetailsModel.dart';
 import '../../../Models/StudyZoneCampusModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class StudyZoneCampusRepository {
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
-    String tag,String search,
+    String tag,
+    String search,
     int page,
   );
+  Future<ResourceDetailsModel?> resourceDetails(int resourceId);
 }
 
 class StudyZoneCampusRepositoryImpl implements StudyZoneCampusRepository {
@@ -17,9 +20,15 @@ class StudyZoneCampusRepositoryImpl implements StudyZoneCampusRepository {
   @override
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
-    String tag,String search,
+    String tag,
+    String search,
     int page,
   ) async {
-    return await remoteDataSource.getStudyZoneCampus(scope, tag,search,page);
+    return await remoteDataSource.getStudyZoneCampus(scope, tag, search, page);
+  }
+
+  @override
+  Future<ResourceDetailsModel?> resourceDetails(int resourceId) async {
+    return await remoteDataSource.getResourceDetails(resourceId);
   }
 }

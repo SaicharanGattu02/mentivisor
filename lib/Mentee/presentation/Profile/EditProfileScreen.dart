@@ -12,6 +12,8 @@ import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
+import '../../data/cubits/Campuses/campuses_cubit.dart';
+import '../../data/cubits/Campuses/campuses_states.dart';
 import '../../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../../data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
@@ -31,6 +33,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _collegeController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _streamController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
@@ -39,12 +42,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   File? _image;
   String? imagePath;
   int? _yearId;
-
+  int? _collegeId;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    context.read<CampusesCubit>().getCampuses();
     context.read<YearsCubit>().getYears();
     context.read<MenteeProfileCubit>().fetchMenteeProfile().then((userData) {
       if (userData != null) {
@@ -97,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         color: Color(0xFFF2F4FD),
       ),
       body: isLoading
-          ?    Center(child: DottedProgressWithLogo())
+          ? Center(child: DottedProgressWithLogo())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Form(
@@ -117,7 +121,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ? FileImage(_image!)
                                 : (imagePath?.startsWith('http') ?? false)
                                 ? CachedNetworkImageProvider(imagePath!)
-                                : const AssetImage('assets/images/profile.png') as ImageProvider,
+                                : const AssetImage('assets/images/profile.png')
+                                      as ImageProvider,
                           ),
                           Positioned(
                             bottom: 4,
@@ -155,6 +160,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       validator: (v) =>
                           v == null || v.isEmpty ? "Name required" : null,
                     ),
+                    SizedBox(height: 4),
+                    TextFormField(
+                      controller: _collegeController,
+                      readOnly: true,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      onTap: () {
+                        _openCollegeSelectionBottomSheet(context);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter your college name',
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
+                      ),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Please enter your college' : null,
+                    ),
+                    SizedBox(height: 16),
                     _buildField(
                       "Stream",
                       _streamController,
@@ -257,11 +284,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           final data = {
                             "name": _nameController.text.trim(),
                             "year": _yearId,
+                            "college": _collegeId,
                             "stream": _streamController.text.trim(),
                             "bio": _bioController.text.trim(),
                             "email": _emailController.text.trim(),
                             // "phone": _phoneController.text.trim(),
-                            "college_id": widget.collegeId,
+                            // "college_id": widget.collegeId,
                           };
                           if (_image != null) {
                             data["profile_pic"] = _image!.path;
@@ -278,6 +306,79 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
         ),
       ),
+    );
+  }
+
+  void _openCollegeSelectionBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: BlocBuilder<CampusesCubit, CampusesStates>(
+              builder: (context, state) {
+                if (state is CampusesLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is CampusesLoaded) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Select College",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: state.campusesModel.data!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                state.campusesModel.data![index].name!,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              onTap: () {
+                                _collegeController.text =
+                                    state.campusesModel.data![index].name!;
+                                _collegeId =
+                                    state.campusesModel.data![index].id;
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                } else if (state is CampusesFailure) {
+                  return Center(
+                    child: Text(
+                      state.error,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

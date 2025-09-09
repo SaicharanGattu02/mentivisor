@@ -147,16 +147,35 @@ class _ProfileScreen1State extends State<ProfileScreen> {
 
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      menteeProfile?.user?.bio ?? "",
+                    child:
+                    // Text(
+                    //   menteeProfile?.user?.bio ?? "",
+                    //   textAlign: TextAlign.center,
+                    //   maxLines: 3,                // ✅ limit to 3 lines
+                    //   overflow: TextOverflow.ellipsis, // ✅ show "..." if longer
+                    //   style: const TextStyle(
+                    //     color: Color(0xff666666),
+                    //     fontSize: 12,
+                    //     fontFamily: 'segeo',
+                    //     fontWeight: FontWeight.w400,
+                    //   ),
+                    // ),
+
+                    Text(
+                      (menteeProfile?.user?.bio?.length ?? 0) > 100
+                          ? "${menteeProfile?.user?.bio?.substring(0, 100)}..."
+                          : (menteeProfile?.user?.bio ?? ""),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xff666666),
                         fontSize: 12,
                         fontFamily: 'segeo',
                         fontWeight: FontWeight.w400,
                       ),
                     ),
+
+
+
                   ),
 
                   const SizedBox(height: 12),
@@ -465,7 +484,11 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                   const SizedBox(height: 4),
                                                   Text(
                                                     menteePosts?.title ?? "",
+                                                    maxLines: 2,
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
                                                     style: TextStyle(
+
                                                       fontFamily: 'segeo',
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -663,10 +686,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                           ),
                                           color: Colors.white,
                                         ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
+
+                                      child: Row(
+                                      mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
                                             Padding(
@@ -726,8 +748,10 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
+
                                                     Text(
                                                       campusList?.title ?? "",
+                                                      overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
                                                         fontFamily: 'segeo',
                                                         fontWeight:
@@ -741,6 +765,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                     Text(
                                                       campusList?.description ??
                                                           "",
+                                                      maxLines: 3,
                                                       style: const TextStyle(
                                                         fontFamily: 'segeo',
                                                         fontWeight:

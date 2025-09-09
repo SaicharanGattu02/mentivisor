@@ -15,6 +15,7 @@ import '../Models/BecomeMentorSuccessModel.dart';
 import '../Models/CampusesModel.dart';
 import '../Models/ChatMessagesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
+import '../Models/CommunityDetailsModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
 import '../Models/CompletedSessionModel.dart';
@@ -27,6 +28,7 @@ import '../Models/HighlatedCoinsModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/NotificationModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
+import '../Models/ResourceDetailsModel.dart';
 import '../Models/ReviewSubmitModel.dart';
 import '../Models/SelectSlotModel.dart';
 import '../Models/SessionBookingModel.dart';
@@ -126,6 +128,8 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
   Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
+  Future<ResourceDetailsModel?> getResourceDetails(int resourceId);
+  Future<CommunityDetailsModel?> communityPostsDetails(int communityId);
   Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
@@ -503,6 +507,21 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<CommunityDetailsModel?> communityPostsDetails(int communityId) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.community_zone_post_details}/${communityId}",
+      );
+
+      debugPrint('Community Details::$res');
+      return CommunityDetailsModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getCommunity Details::$e');
+      return null;
+    }
+  }
+
+  @override
   Future<ECCModel?> getEcc(
     String scope,
     String updates,
@@ -691,6 +710,21 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return StudyZoneCampusModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('StudyZoneCampus::${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<ResourceDetailsModel?> getResourceDetails(int resourceId) async {
+    AppLogger.log('resourceId::${resourceId}');
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.study_zone_details}/${resourceId}",
+      );
+      AppLogger.log('get StudyZoneDetails::${res.data}');
+      return ResourceDetailsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('StudyZoneDetails::${e}');
       return null;
     }
   }

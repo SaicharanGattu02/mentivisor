@@ -3,6 +3,8 @@ import 'package:mentivisor/Mentee/Models/CommunityZoneTagsModel.dart';
 import 'package:mentivisor/Mentee/Models/SuccessModel.dart';
 import 'package:mentivisor/Mentee/data/remote_data_source.dart';
 
+import '../../../Models/CommunityDetailsModel.dart';
+
 abstract class CommunityPostsRepo {
   Future<CommunityPostsModel?> getCommunityPosts(
     String scope,
@@ -12,6 +14,7 @@ abstract class CommunityPostsRepo {
   Future<CommunityZoneTagsModel?> getCommunityZoneTags();
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
+  Future<CommunityDetailsModel?> communityDetails(int communityId);
 }
 
 class CommunityPostsRepoImpl implements CommunityPostsRepo {
@@ -38,6 +41,10 @@ class CommunityPostsRepoImpl implements CommunityPostsRepo {
   @override
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data) async {
     return await remoteDataSource.communityZoneReport(data);
+  }
+  @override
+  Future<CommunityDetailsModel?> communityDetails(int communityId) async {
+    return await remoteDataSource.communityPostsDetails(communityId);
   }
 
 }

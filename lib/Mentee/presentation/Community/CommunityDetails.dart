@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/CommunityDetails/CommunityDetailsCubit.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../services/AuthService.dart';
@@ -11,6 +14,7 @@ import '../../../utils/constants.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
+import '../../data/cubits/CommunityDetails/CommunityDetailsState.dart';
 import '../../data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import '../../data/cubits/CommunityPostReport/CommunityZoneReportState.dart';
 import '../../data/cubits/PostComment/post_comment_cubit.dart';
@@ -18,8 +22,8 @@ import '../../data/cubits/PostComment/post_comment_states.dart';
 import '../Widgets/CommentBottomSheet.dart';
 
 class CommunityDetails extends StatefulWidget {
-  final CommunityPosts communityPosts;
-  const CommunityDetails({super.key,required this.communityPosts});
+  final int communityId;
+  const CommunityDetails({super.key, required this.communityId});
 
   @override
   State<CommunityDetails> createState() => _CommunityDetailsState();
@@ -27,312 +31,340 @@ class CommunityDetails extends StatefulWidget {
 
 class _CommunityDetailsState extends State<CommunityDetails> {
   @override
+  void initState() {
+    super.initState();
+    context.read<CommunityDetailsCubit>().communityDetails(widget.communityId);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:CustomAppBar1(title: "PostDetails", actions: []),
-      body: Container(color: Color(0xffF4F8FD),child: Column(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 10,
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  GestureDetector(
-                    onDoubleTap: () async {
-
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        height: 160,
-                        imageUrl: "widget.communityPosts.imgUrl ?? """,
-                        fit: BoxFit.cover,
-                        width: SizeConfig.screenWidth,
-                        placeholder: (context, url) =>
-                            Center(child: spinkits.getSpinningLinespinkit()),
-                        errorWidget: (context, url, error) => Container(
-                          height: 160,
-                          color: Colors.grey.shade100,
-                          child: const Icon(
-                            Icons.broken_image,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
+      appBar: CustomAppBar1(title: "Post Details", actions: []),
+      body: Container(
+        color: Color(0xffF4F8FD),
+        child: BlocBuilder<CommunityDetailsCubit, CommunityDetailsState>(
+          builder: (context, state) {
+            if (state is CommunityDetailsLoading) {
+              return const Center(child: DottedProgressWithLogo());
+            } else if (state is CommunityDetailsLoaded) {
+              final communityDetails =
+                  state.communityDetailsModel.communityposts;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: "",
-                        imageBuilder: (context, imageProvider) =>
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundImage: imageProvider,
-                            ),
-                        placeholder: (context, url) => CircleAvatar(
-                          radius: 16,
-                          backgroundColor: Colors.grey,
-                          child: SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: Center(
-                              child: spinkits.getSpinningLinespinkit(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 10,
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        GestureDetector(
+                          onDoubleTap: () async {},
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              height: 160,
+                              imageUrl: communityDetails?.imgUrl ?? "",
+                              fit: BoxFit.cover,
+                              width: SizeConfig.screenWidth,
+                              placeholder: (context, url) => Center(
+                                child: spinkits.getSpinningLinespinkit(),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                height: 160,
+                                color: Colors.grey.shade100,
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                        errorWidget: (context, url, error) =>
-                        const CircleAvatar(
-                          radius: 16,
-                          backgroundImage: AssetImage(
-                            "assets/images/profile.png",
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: "",
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: imageProvider,
+                                  ),
+                              placeholder: (context, url) => CircleAvatar(
+                                radius: 16,
+                                backgroundColor: Colors.grey,
+                                child: SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: Center(
+                                    child: spinkits.getSpinningLinespinkit(),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: AssetImage(
+                                      "assets/images/profile.png",
+                                    ),
+                                  ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              capitalize(
+                                communityDetails?.uploader?.name ?? "",
+                              ),
+                              style: TextStyle(
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                color: Color(0xff222222),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          communityDetails?.heading ?? "",
+                          style: const TextStyle(
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Color(0xFF222222),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        capitalize(
-                          "widget.communityPosts.uploader?.name ?? """,
+
+                        const SizedBox(height: 4),
+                        Text(
+                          communityDetails?.description ?? "",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xFF666666),
+                          ),
                         ),
-                        style: const TextStyle(
-                          fontFamily: 'segeo',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          color: Color(0xff222222),
+
+                        const SizedBox(height: 8),
+                        FutureBuilder(
+                          future: AuthService.isGuest,
+                          builder: (context, snapshot) {
+                            final isGuest = snapshot.data ?? false;
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return Row(
+                                  children: [
+                                    // Likes
+                                    BlocBuilder<
+                                      PostCommentCubit,
+                                      PostCommentStates
+                                    >(
+                                      builder: (context, state) {
+                                        final post = communityDetails;
+                                        return Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                if (isGuest) {
+                                                  context.push('/auth_landing');
+                                                } else {
+                                                  final data = {
+                                                    "community_id": post?.id,
+                                                  };
+                                                  context
+                                                      .read<PostCommentCubit>()
+                                                      .postLike(
+                                                        data,
+                                                        CommunityPosts(),
+                                                      );
+                                                }
+                                              },
+                                              child: Icon(
+                                                (post?.isLiked ?? false)
+                                                    ? Icons.favorite
+                                                    : Icons.favorite_border,
+                                                size: 16,
+                                                color: (post?.isLiked ?? false)
+                                                    ? Colors.red
+                                                    : Colors.black26,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              "${post?.likesCount ?? 0}",
+                                              style: const TextStyle(
+                                                color: Color(0xff666666),
+                                                fontSize: 14,
+                                                fontFamily: 'segeo',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(width: 12),
+
+                                    // Comments
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (isGuest) {
+                                          context.push('/auth_landing');
+                                        } else {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            useRootNavigator: true,
+                                            backgroundColor: Colors.transparent,
+                                            builder: (context) {
+                                              return DraggableScrollableSheet(
+                                                initialChildSize: 0.8,
+                                                minChildSize: 0.4,
+                                                maxChildSize: 0.95,
+                                                expand: false,
+                                                builder:
+                                                    (
+                                                      _,
+                                                      scrollController,
+                                                    ) => Container(
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(
+                                                          0xffF4F8FD,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius.vertical(
+                                                              top:
+                                                                  Radius.circular(
+                                                                    16,
+                                                                  ),
+                                                            ),
+                                                      ),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal: 16,
+                                                            vertical: 12,
+                                                          ),
+                                                      child: CommentBottomSheet(
+                                                        communityPost:
+                                                            communityDetails ??
+                                                            CommunityPosts(),
+                                                        scrollController:
+                                                            scrollController,
+                                                      ),
+                                                    ),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            "assets/icons/Chat.png",
+                                            width: 16,
+                                            height: 16,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          BlocBuilder<
+                                            PostCommentCubit,
+                                            PostCommentStates
+                                          >(
+                                            builder: (context, state) {
+                                              return Text(
+                                                communityDetails?.commentsCount
+                                                        ?.toString() ??
+                                                    "0",
+                                                style: TextStyle(
+                                                  fontFamily: 'segeo',
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Share
+                                    IconButton(
+                                      padding: EdgeInsets
+                                          .zero, // remove default extra padding
+                                      visualDensity: VisualDensity.compact,
+                                      icon: Image.asset(
+                                        'assets/icons/share.png',
+                                        width: 16,
+                                        height: 16,
+                                      ),
+                                      onPressed: () async {
+                                        final postId = communityDetails?.id;
+                                        final shareUrl =
+                                            "https://mentivisor.com/community_post/$postId";
+                                        Share.share(
+                                          "Check out this Community Post on Mentivisor:\n$shareUrl",
+                                          subject: "Mentivisor Community Post",
+                                        );
+                                      },
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: () => _showReportSheet(
+                                        context,
+                                        communityDetails,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            "assets/images/ReportmenteImg.png",
+                                            width: 16,
+                                            height: 16,
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            'Report',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                              fontFamily: 'segeo',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "widget.communityPosts.heading ?? """,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Color(0xFF222222),
+                      ],
                     ),
                   ),
-
-                  const SizedBox(height: 4),
-                  Text(
-                    "widget.communityPosts.description ?? """,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: 'segeo',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: Color(0xFF666666),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  /// Likes, Comments & Share
-                  // FutureBuilder(
-                  //   future: AuthService.isGuest,
-                  //   builder: (context, snapshot) {
-                  //     final isGuest = snapshot.data ?? false;
-                  //     return StatefulBuilder(
-                  //       builder: (context, setState) {
-                  //         return Row(
-                  //           children: [
-                  //
-                  //             BlocBuilder<
-                  //                 PostCommentCubit,
-                  //                 PostCommentStates
-                  //             >(
-                  //               builder: (context, state) {
-                  //                 final post = widget.communityPosts;
-                  //                 return Row(
-                  //                   children: [
-                  //                     GestureDetector(
-                  //                       onTap: () {
-                  //                         if (isGuest) {
-                  //                           context.push('/auth_landing');
-                  //                         } else {
-                  //                           final data = {
-                  //                             "community_id": post.id,
-                  //                           };
-                  //                           context
-                  //                               .read<PostCommentCubit>()
-                  //                               .postLike(data, post);
-                  //                         }
-                  //                       },
-                  //                       child: Icon(
-                  //                         (post.isLiked ?? false)
-                  //                             ? Icons.favorite
-                  //                             : Icons.favorite_border,
-                  //                         size: 16,
-                  //                         color: (post.isLiked ?? false)
-                  //                             ? Colors.red
-                  //                             : Colors.black26,
-                  //                       ),
-                  //                     ),
-                  //                     const SizedBox(width: 4),
-                  //                     Text(
-                  //                       "${post.likesCount ?? 0}",
-                  //                       style: const TextStyle(
-                  //                         color: Color(0xff666666),
-                  //                         fontSize: 14,
-                  //                         fontFamily: 'segeo',
-                  //                         fontWeight: FontWeight.w400,
-                  //                       ),
-                  //                     ),
-                  //                   ],
-                  //                 );
-                  //               },
-                  //             ),
-                  //
-                  //             const SizedBox(width: 12),
-                  //
-                  //             // Comments
-                  //             GestureDetector(
-                  //               onTap: () {
-                  //
-                  //                   showModalBottomSheet(
-                  //                     context: context,
-                  //                     isScrollControlled: true,
-                  //                     useRootNavigator: true,
-                  //                     backgroundColor: Colors.transparent,
-                  //                     builder: (context) {
-                  //                       return DraggableScrollableSheet(
-                  //                         initialChildSize: 0.8,
-                  //                         minChildSize: 0.4,
-                  //                         maxChildSize: 0.95,
-                  //                         expand: false,
-                  //                         builder: (_, scrollController) =>
-                  //                             Container(
-                  //                               decoration: const BoxDecoration(
-                  //                                 color: Color(0xffF4F8FD),
-                  //                                 borderRadius:
-                  //                                 BorderRadius.vertical(
-                  //                                   top: Radius.circular(
-                  //                                     16,
-                  //                                   ),
-                  //                                 ),
-                  //                               ),
-                  //                               padding:
-                  //                               const EdgeInsets.symmetric(
-                  //                                 horizontal: 16,
-                  //                                 vertical: 12,
-                  //                               ),
-                  //                               child: CommentBottomSheet(
-                  //                                 communityPost:
-                  //                                "widget.communityPosts",
-                  //                                 scrollController:
-                  //                                 scrollController,
-                  //                               ),
-                  //                             ),
-                  //                       );
-                  //                     }
-                  //                   );
-                  //               },
-                  //               child: Row(
-                  //                 children: [
-                  //                   Image.asset(
-                  //                     "assets/icons/Chat.png",
-                  //                     width: 16,
-                  //                     height: 16,
-                  //                   ),
-                  //                   const SizedBox(width: 6),
-                  //                   BlocBuilder<
-                  //                       PostCommentCubit,
-                  //                       PostCommentStates
-                  //                   >(
-                  //                     builder: (context, state) {
-                  //                       return Text(
-                  //                         widget.communityPosts.commentsCount
-                  //                             .toString(),
-                  //                         style: const TextStyle(
-                  //                           fontFamily: 'segeo',
-                  //                         ),
-                  //                       );
-                  //                     },
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //
-                  //             const SizedBox(width: 12),
-                  //
-                  //             // Share
-                  //             // GestureDetector(
-                  //             //   onTap: () async {
-                  //             //     final post = widget.communityPosts;
-                  //             //     final shareText =
-                  //             //     """
-                  //             //         ${post.heading ?? "Check this out!"}
-                  //             //
-                  //             //         ${post.description ?? ""}
-                  //             //
-                  //             //         ${post.imgUrl ?? ""}
-                  //             //         """;
-                  //             //     await Share.share(shareText.trim());
-                  //             //   },
-                  //             //   child: Image.asset(
-                  //             //     'assets/icons/share.png',
-                  //             //     width: 16,
-                  //             //     height: 16,
-                  //             //   ),
-                  //             // ),
-                  //             // Spacer(),
-                  //             GestureDetector(
-                  //               onTap: () => _showReportSheet(
-                  //                 context,
-                  //                " widget.communityPosts",
-                  //               ),
-                  //               child: Row(
-                  //                 children: [
-                  //                   Image.asset(
-                  //                     "assets/images/ReportmenteImg.png",
-                  //                     width: 16,
-                  //                     height: 16,
-                  //                   ),
-                  //                   SizedBox(width: 5),
-                  //                   Text(
-                  //                     'Report',
-                  //                     style: TextStyle(
-                  //                       fontSize: 14,
-                  //                       color: Colors.black87,
-                  //                       fontFamily: 'segeo',
-                  //                       fontWeight: FontWeight.w400,
-                  //                     ),
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         );
-                  //       },
-                  //     );
-                  //   },
-                  // ),
                 ],
-              ),
-            ),
-          ],
+              );
+            } else if (state is CommunityDetailsFailure) {
+              return Center(child: Text(state.message));
+            } else {
+              return Center(child: Text("No Data"));
+            }
+          },
         ),
-      ],),),
-
+      ),
     );
   }
+
   void _showReportSheet(BuildContext context, communityPosts) {
     String _selected = 'False Information';
     final TextEditingController _otherController = TextEditingController();
@@ -429,8 +461,8 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                     ],
                     const SizedBox(height: 24),
                     BlocConsumer<
-                        CommunityZoneReportCubit,
-                        CommunityZoneReportState
+                      CommunityZoneReportCubit,
+                      CommunityZoneReportState
                     >(
                       listener: (context, state) {
                         if (state is CommunityZoneReportSuccess) {
