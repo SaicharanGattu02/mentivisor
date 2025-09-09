@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,7 @@ import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../services/AuthService.dart';
 import '../../../services/SecureStorageService.dart';
+import '../../../utils/AppLogger.dart';
 import '../../../utils/color_constants.dart';
 import '../../data/cubits/Login/LoginCubit.dart';
 import '../../data/cubits/Login/LoginState.dart';
@@ -35,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  void validateAndSubmit() {
+  Future<void> validateAndSubmit() async {
     setState(() {
       showEmailError = false;
       showPasswordError = false;
@@ -60,11 +62,19 @@ class _LoginScreenState extends State<LoginScreen> {
       isValid = false;
     }
 
+    // Get the FCM token first
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    AppLogger.log("FCM Token: $fcmToken");
+
+    if (fcmToken != null) {
+      await SecureStorageService.instance.setString("fb_token", fcmToken);
+    }
+
     if (isValid) {
       final Map<String, dynamic> data = {
         "username": emailController.text,
         "password": passwordController.text,
-        "fcm_token": "dasfjgj",
+        "fcm_token": fcmToken ?? "",
       };
       context.read<LoginCubit>().logInApi(data);
     }
@@ -118,7 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 12),
-
                   // Gradient app icon
                   Container(
                     width: 64,
@@ -133,9 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       size: 28,
                     ),
                   ),
-
                   const SizedBox(height: 18),
-
                   const Text(
                     'Welcome Back!',
                     textAlign: TextAlign.center,

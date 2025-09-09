@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,8 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/ShakeWidget.dart';
+import '../../../services/SecureStorageService.dart';
+import '../../../utils/AppLogger.dart';
 import '../../data/cubits/Register/Register_Cubit.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -239,16 +242,26 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 text: 'Verify OTP',
                 onPlusTap: isLoading
                     ? null
-                    : () {
-                        if (_validateFields()) {
-                          Map<String, dynamic> data = {
-                            "contact": widget.data["contact"],
-                            "otp": otpController.text,
-                            "fcm_token": "sjnsdsdhd",
-                          };
-                          context.read<VerifyOtpCubit>().VerifyotpApi(data);
-                        }
-                      },
+                    : () async {
+                  if (_validateFields()) {
+                    // Get the FCM token first
+                    String? fcmToken = await FirebaseMessaging.instance.getToken();
+                    AppLogger.log("FCM Token: $fcmToken");
+
+                    if (fcmToken != null) {
+                      await SecureStorageService.instance.setString("fb_token", fcmToken);
+                    }
+
+                    Map<String, dynamic> data = {
+                      "contact": widget.data["contact"],
+                      "otp": otpController.text,
+                      "fcm_token": fcmToken ?? "", // send empty string if null
+                    };
+
+                    // Call Verify OTP API
+                    context.read<VerifyOtpCubit>().VerifyotpApi(data);
+                  }
+                },
               );
             },
           ),
