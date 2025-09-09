@@ -13,6 +13,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Mentor/Models/FeedbackModel.dart';
 import '../Models/BecomeMentorSuccessModel.dart';
 import '../Models/CampusesModel.dart';
+import '../Models/ChatMessagesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
@@ -20,6 +21,7 @@ import '../Models/CompletedSessionModel.dart';
 import '../Models/CreatePaymentModel.dart';
 import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
+import '../Models/GroupChatMessagesModel.dart';
 import '../Models/GuestMentorsModel.dart';
 import '../Models/HighlatedCoinsModel.dart';
 import '../Models/MenteeProfileModel.dart';
@@ -41,6 +43,7 @@ import '../../services/ApiClient.dart';
 import '../Models/TagsModel.dart';
 import '../Models/TaskStatesModel.dart';
 import '../Models/UpComingSessionModel.dart';
+import '../Models/UploadFileInChatModel.dart';
 import '../Models/WeeklySlotsModel.dart';
 
 abstract class RemoteDataSource {
@@ -123,6 +126,9 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
   Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
+  Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
+  Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
+  Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -161,6 +167,52 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<UploadFileInChatModel?> uploadFileInChat(
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final formdata = await buildFormData(data);
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.upload_file}",
+        data: formdata,
+      );
+      AppLogger.log('uploadFileInChat: ${res.data}');
+      return UploadFileInChatModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('uploadFileInChat:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<GroupChatMessagesModel?> getGroupChatMessages(int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_group_messages}",
+      );
+      AppLogger.log('getGroupChatMessages: ${res.data}');
+      return GroupChatMessagesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getGroupChatMessages:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<ChatMessagesModel?> getChatMessages(String user_id, int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_messages}/$user_id",
+      );
+      AppLogger.log('getChatMessages: ${res.data}');
+      return ChatMessagesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getChatMessages:${e}');
+      return null;
+    }
   }
 
   @override

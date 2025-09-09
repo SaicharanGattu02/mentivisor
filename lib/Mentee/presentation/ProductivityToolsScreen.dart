@@ -28,19 +28,16 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final formattedDate = DateFormat(
-        'yyyy-MM-dd',
-      ).format(_selectedDateNotifier.value);
-      await Future.wait([
-        context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate),
-        context.read<TaskByStatusCubit>().fetchTasksByStatus(),
-      ]);
-      _generateDayList(
-        _selectedDateNotifier.value.year,
-        _selectedDateNotifier.value.month,
-      );
-    });
+    final formattedDate = DateFormat(
+      'yyyy-MM-dd',
+    ).format(_selectedDateNotifier.value);
+    context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
+    context.read<TaskByStatusCubit>().fetchTasksByStatus();
+
+    _generateDayList(
+      _selectedDateNotifier.value.year,
+      _selectedDateNotifier.value.month,
+    );
   }
 
   void _generateDayList(int year, int month) {
@@ -70,10 +67,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(
-        title: 'Productivity Tools',
-        actions: [],
-      ),
+      appBar: CustomAppBar1(title: 'Productivity Tools', actions: []),
       body: SafeArea(
         child: Container(
           decoration: const BoxDecoration(
@@ -90,42 +84,44 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                 const SizedBox(height: 20),
                 BlocBuilder<TaskByStatusCubit, TaskByStatusStates>(
                   builder: (context, state) {
-                    final data =  state is TaskByStatusLoaded? state.taskStatesModel: null;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            height: 110,
-                            child: _buildStatCard(
-                              'Current Streak',
-                              data?.currentStreak?.toString() ?? "0",
-                              Colors.orange[100]!,
-                              "assets/images/Vector1.png",
-                            ),
+                    final data = state is TaskByStatusLoaded
+                        ? state.taskStatesModel
+                        : null;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          height: 110,
+                          child: _buildStatCard(
+                            'Current Streak',
+                            data?.currentStreak?.toString() ?? "0",
+                            Colors.orange[100]!,
+                            "assets/images/Vector1.png",
                           ),
-                          SizedBox(
-                            width: 100,
-                            height: 110,
-                            child: _buildStatCard(
-                              'Completed Task',
-                              data?.completedTask?.toString() ?? "0",
-                              Colors.green[100]!,
-                              "assets/images/vector2.png", // your image 2
-                            ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          height: 110,
+                          child: _buildStatCard(
+                            'Completed Task',
+                            data?.completedTask?.toString() ?? "0",
+                            Colors.green[100]!,
+                            "assets/images/vector2.png", // your image 2
                           ),
-                          SizedBox(
-                            width: 100,
-                            height: 110,
-                            child: _buildStatCard(
-                              'Today  \n Task',
-                              data?.todayTask?.toString() ?? "0",
-                              Colors.blue[100]!,
-                              "assets/images/vector3.png",
-                            ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          height: 110,
+                          child: _buildStatCard(
+                            'Today  \n Task',
+                            data?.todayTask?.toString() ?? "0",
+                            Colors.blue[100]!,
+                            "assets/images/vector3.png",
                           ),
-                        ],
-                      );
+                        ),
+                      ],
+                    );
                   },
                 ),
                 const SizedBox(height: 20),

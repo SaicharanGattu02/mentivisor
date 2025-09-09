@@ -50,10 +50,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CoinsPackCubit>().fetchCoinsPack();
-    });
+    context.read<CoinsPackCubit>().fetchCoinsPack();
   }
 
   Future<void> getUserDetails() async {

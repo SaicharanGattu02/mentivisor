@@ -796,9 +796,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SessionCompletedCubit>().sessionComplete();
-    });
+    context.read<SessionCompletedCubit>().sessionComplete();
   }
 
   @override
@@ -929,7 +927,9 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                     width: SizeConfig.screenWidth * 0.25,
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,mainAxisAlignment: MainAxisAlignment.center,
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Center(
                                           child: CircleAvatar(

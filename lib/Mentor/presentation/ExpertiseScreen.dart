@@ -24,12 +24,7 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
   void initState() {
     super.initState();
     _tab = TabController(length: 3, vsync: this);
-
-    // Fetch APPROVED only on start (post-frame so BlocProviders exist)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ApprovedExpertiseCubit>().fetch();
-    });
-
+    context.read<ApprovedExpertiseCubit>().fetch();
     _tab.addListener(_onTabChanged);
   }
 

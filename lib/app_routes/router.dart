@@ -2,7 +2,10 @@ import 'dart:ui';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/GroupChatScreen.dart';
+import 'package:mentivisor/Mentee/data/cubits/Chat/GroupRoomCubit.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
 import 'package:mentivisor/Mentee/presentation/MenteeHomeScreens.dart';
 import 'package:mentivisor/Mentee/presentation/PdfViewerPage.dart';
@@ -23,10 +26,12 @@ import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/Mentor/presentation/MentorInfoScreen.dart';
 import 'package:mentivisor/Mentor/presentation/PendingSubExpertiseScreen.dart';
 import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
+import '../ChatScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
 import '../Mentee/Models/StudyZoneCampusModel.dart';
 import '../Mentee/Models/ECCModel.dart';
+import '../Mentee/data/cubits/Chat/private_chat_cubit.dart';
 import '../Mentee/presentation/CommingSoon.dart';
 import '../Mentee/presentation/Community/CommunityDetails.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
@@ -76,14 +81,76 @@ import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dar
 import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
+import '../services/AuthService.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
+  debugLogDiagnostics: true,
+  overridePlatformDefaultLocation: false,
   routes: [
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/chat',
+      builder: (context, state) {
+        final receiverId = state.uri.queryParameters['receiverId']!;
+        return FutureBuilder<String?>(
+          future: AuthService.getUSerId(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+            final currentUserId = snapshot.data ?? "";
+            return BlocProvider(
+              create: (_) => PrivateChatCubit(currentUserId, receiverId),
+              child: ChatScreen(
+                currentUserId: currentUserId,
+                receiverId: receiverId,
+              ),
+            );
+          },
+        );
+      },
+    ),
+    GoRoute(
+      path: '/group_chat',
+      builder: (context, state) {
+        return FutureBuilder<List<dynamic>>(
+          future: Future.wait([
+            AuthService.getCollegeID(),
+            AuthService.getUSerId(),
+            AuthService.getCollegeName(),
+          ]),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+            // snapshot.data is a List<dynamic> from Future.wait
+            final collegeID = snapshot.data?[0] as String? ?? "";
+            final currentUserId = snapshot.data?[1] as String? ?? "";
+            final college_name = snapshot.data?[2] as String? ?? "";
+
+            return BlocProvider(
+              create: (_) => GroupRoomCubit(
+                currentUserId: currentUserId,
+                collegeId: collegeID,
+              ),
+              child: GroupChatScreen(
+                currentUserId: currentUserId,
+                groupName: college_name,
+                collegeId: collegeID,
+              ),
+            );
+          },
+        );
       },
     ),
     GoRoute(
@@ -246,11 +313,11 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(Campusmentorlist(scope: scope), state);
       },
     ),
-    // your existing routes ...
+
     GoRoute(
       path: '/study_zone/:id',
       redirect: (ctx, st) {
-        final id = st.pathParameters['id']; // 132
+        final id = st.pathParameters['id'];
         if (id == null) return '/'; // fallback
         // Redirect to your internal route
         return '/resource_details_screen';

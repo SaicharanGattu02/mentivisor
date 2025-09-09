@@ -369,9 +369,10 @@ class _CommunityScreenState extends State<Communityscreen> {
                                   const SizedBox(height: 16), // The separator
                               itemBuilder: (context, index) {
                                 final communitypost = communityposts?[index];
-                                return GestureDetector(onTap: () {
-                                  context.push("/community_details");
-                                },
+                                return GestureDetector(
+                                  onTap: () {
+                                    context.push("/community_details");
+                                  },
                                   child: PostCard(
                                     communityPosts:
                                         communitypost ?? CommunityPosts(),
@@ -415,7 +416,9 @@ class _CommunityScreenState extends State<Communityscreen> {
             builder: (context, isVisible, child) {
               // If the user is not a guest, show the FAB based on scroll
               return Visibility(
-                visible: isVisible && !isGuest, // Hide FAB if guest, else use scroll logic
+                visible:
+                    isVisible &&
+                    !isGuest, // Hide FAB if guest, else use scroll logic
                 child: Container(
                   height: 64,
                   width: 64,
@@ -437,10 +440,11 @@ class _CommunityScreenState extends State<Communityscreen> {
                       if (isGuest) {
                         // Do guest action
                       } else {
-                        CustomSnackBar1.show(
-                          context,
-                          "Unable to Running Test Server",
-                        );
+                        // CustomSnackBar1.show(
+                        //   context,
+                        //   "Unable to Running Test Server",
+                        // );
+                        context.push('/group_chat');
                       }
                     },
                     backgroundColor: Colors.transparent, // Keep transparent

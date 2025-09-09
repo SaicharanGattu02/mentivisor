@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -24,9 +25,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UpComingSessionCubit>().upComingSessions();
-    });
+    context.read<UpComingSessionCubit>().upComingSessions();
   }
 
   @override
@@ -105,8 +104,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       capitalize(
-                                        " with${upComingSessions.mentor?.name ??  "Unknown Mentor" }"
-
+                                        " with${upComingSessions.mentor?.name ?? "Unknown Mentor"}",
                                       ),
                                       style: TextStyle(
                                         fontSize: 14,
@@ -147,7 +145,11 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     ),
                                     const SizedBox(height: 12),
                                     OutlinedButton.icon(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        context.push(
+                                          '/chat?receiverId=${upComingSessions.mentor?.id}',
+                                        );
+                                      },
                                       icon: const Icon(
                                         Icons.chat_bubble_outline,
                                         size: 16,

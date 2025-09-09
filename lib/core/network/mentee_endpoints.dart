@@ -81,5 +81,8 @@ class APIEndpointUrls {
   static const String guest_community_post =
       "${apiUrl}community-zone-post-without-login";
   static const String get_banners = "${apiUrl}banners";
-  static const String getmenteecustomersupport = "${apiUrl}users/support";
+  static const String getmenteecustomersupport = "${userUrl}support";
+  static const String get_messages = "${userUrl}get-messages";
+  static const String get_group_messages = "${userUrl}get-group-messages";
+  static const String upload_file = "${apiUrl}upload-file";
 }

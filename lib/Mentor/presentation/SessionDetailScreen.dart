@@ -49,16 +49,20 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               colors: [Color(0xffFAF5FF), Color(0xffF5F6FF), Color(0xffEFF6FF)],
             ),
           ),
-          child: BlocBuilder<SessionDetailsCubit, SessionDetailsStates>(
+          child: BlocConsumer<SessionDetailsCubit, SessionDetailsStates>(
+            listener: (context, state) {
+              if (state is SessionDetailsLoaded) {
+                setState(() {
+                  status.value =
+                      state.sessionDetailsModel.session?.status ?? "";
+                });
+              }
+            },
             builder: (context, state) {
               if (state is SessionDetailsLoading) {
                 return Scaffold(body: Center(child: DottedProgressWithLogo()));
               } else if (state is SessionDetailsLoaded) {
                 final sessionDetails = state.sessionDetailsModel.session;
-                WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  status.value =
-                      state.sessionDetailsModel.session?.status ?? "";
-                });
                 AppLogger.info("session Status:${status.value}");
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

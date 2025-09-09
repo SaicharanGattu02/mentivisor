@@ -57,12 +57,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     super.initState();
     searchController.clear();
     context.read<TagsSearchCubit>().reset();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.wait([
-        context.read<HighlightedCoinsCubit>().highlitedCoins("community"),
-        // context.read<CommunityTagsCubit>().getCommunityTags(),
-      ]);
-    });
+    context.read<HighlightedCoinsCubit>().highlitedCoins("community");
   }
 
   @override
@@ -240,7 +235,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     });
                   },
                   style: TextStyle(fontFamily: "segeo", fontSize: 15),
-                  decoration: InputDecoration(prefixIcon: Icon(Icons.search,color: Colors.grey),
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search, color: Colors.grey),
                     hoverColor: Colors.white,
                     hintText: "Search Tags here",
                     hintStyle: const TextStyle(color: Colors.grey),
@@ -665,7 +661,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
             valueListenable: enoughBalance,
             builder: (context, enough_coins, _) {
               AppLogger.info("enough_coins:$enough_coins");
-              return BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
+              return BlocConsumer<
+                AddCommunityPostCubit,
+                AddCommunityPostStates
+              >(
                 listener: (context, state) async {
                   if (state is AddCommunityPostSuccess) {
                     if (_isHighlighted.value) {
@@ -743,8 +742,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         return;
                       }
                       FocusScope.of(context).unfocus();
-                      if (!(_formKey.currentState?.validate() ?? false))
-                        return;
+                      if (!(_formKey.currentState?.validate() ?? false)) return;
 
                       final isHighlighted = _isHighlighted.value;
                       final anonymous = _anonymousNotifier.value;

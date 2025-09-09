@@ -110,6 +110,10 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
               final coins = menteeProfile?.user?.availabilityCoins ?? 0;
               AuthService.saveCoins(coins);
               AuthService.saveRole(menteeProfile?.user?.role ?? "");
+              AuthService.saveCollegeID(menteeProfile?.user?.collegeId ?? 0);
+              AuthService.saveCollegeName(
+                menteeProfile?.user?.college_name ?? "",
+              );
               AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
               return Scaffold(
                 drawerEnableOpenDragGesture: !isGuest,

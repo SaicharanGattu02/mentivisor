@@ -13,6 +13,8 @@ class AuthService {
   static const String _email = "email";
   static const String _mobile = "mobile";
   static const String _coins = "_coins";
+  static const String _collegeID = "_collegeID";
+  static const String _collegeName = "_collegeName";
 
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
@@ -37,6 +39,14 @@ class AuthService {
     return await _storage.read(key: _userId);
   }
 
+  static Future<String?> getCollegeID() async {
+    return await _storage.read(key: _collegeID);
+  }
+
+  static Future<String?> getCollegeName() async {
+    return await _storage.read(key: _collegeName);
+  }
+
   /// get Name
   static Future<String?> getName() async {
     return await _storage.read(key: _userName);
@@ -56,6 +66,14 @@ class AuthService {
 
   static Future<void> saveRole(String role) async {
     await _storage.write(key: _role, value: role.toString());
+  }
+
+  static Future<void> saveCollegeID(int CollegeID) async {
+    await _storage.write(key: _collegeID, value: CollegeID.toString());
+  }
+
+  static Future<void> saveCollegeName(String CollegeName) async {
+    await _storage.write(key: _collegeName, value: CollegeName.toString());
   }
 
   static Future<String?> getCoins() async {

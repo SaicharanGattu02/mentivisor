@@ -43,10 +43,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TagsCubit>().getTags();
-      context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
-    });
+    context.read<TagsCubit>().getTags();
+    context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
   }
 
   @override
@@ -716,7 +714,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   colors: [
                                     Color(0xFF9B40EF), // #9B40EF at 0%
                                     Color(0xFF5B4BEB), // #5B4BEB at 50%
-                                    Color(0xFF315DEA)
+                                    Color(0xFF315DEA),
                                   ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,

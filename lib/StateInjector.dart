@@ -8,6 +8,8 @@ import 'package:mentivisor/Mentee/data/cubits/BookSession/book_session_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/BookSession/session_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/ChatMessages/ChatMessagesCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/ChatMessages/ChatMessagesRepository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/Comments/CommentsRepo.dart';
@@ -26,6 +28,8 @@ import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveSer
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/ForgotPassword/forgot_passsword_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ForgotPassword/forgot_passsword_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/GroupChatMessages/GroupChatMessagesCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/GroupChatMessages/GroupMessagesRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
@@ -38,6 +42,8 @@ import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repositor
 import 'package:mentivisor/Mentee/data/cubits/SelectSlot/select_slot_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
@@ -296,6 +302,24 @@ class StateInjector {
 
     RepositoryProvider<ForgotPassswordRepository>(
       create: (context) => ForgotPassswordImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+
+    RepositoryProvider<ChatMessagesRepository>(
+      create: (context) => ChatMessagesRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+
+    RepositoryProvider<GroupMessagesRepository>(
+      create: (context) => GroupMessagesRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+
+    RepositoryProvider<UploadFileInChatRepo>(
+      create: (context) => UploadFileInChatRepoImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
@@ -667,12 +691,26 @@ class StateInjector {
       create: (context) => FetchCommentsCubit(context.read<CommentsRepo>()),
     ),
 
-BlocProvider<SessionCompleteCubit>(
-      create: (context) => SessionCompleteCubit(context.read<SessionCompleteRepo>()),
+    BlocProvider<SessionCompleteCubit>(
+      create: (context) =>
+          SessionCompleteCubit(context.read<SessionCompleteRepo>()),
     ),
 
     BlocProvider<ReviewsCubit>(
       create: (context) => ReviewsCubit(context.read<ReviewsRepo>()),
+    ),
+    BlocProvider<ChatMessagesCubit>(
+      create: (context) =>
+          ChatMessagesCubit(context.read<ChatMessagesRepository>()),
+    ),
+    BlocProvider<GroupChatMessagesCubit>(
+      create: (context) =>
+          GroupChatMessagesCubit(context.read<GroupMessagesRepository>()),
+    ),
+
+    BlocProvider<UploadFileInChatCubit>(
+      create: (context) =>
+          UploadFileInChatCubit(context.read<UploadFileInChatRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

@@ -32,11 +32,7 @@ class _CancelSessionScreenState extends State<CancelSessionScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<SessionDetailsCubit>().getSessionDetails(
-        widget.sessionId,
-      );
-    });
+    context.read<SessionDetailsCubit>().getSessionDetails(widget.sessionId);
   }
 
   @override
