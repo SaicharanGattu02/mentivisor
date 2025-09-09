@@ -150,11 +150,15 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
                       Expanded(
                         child: CustomOutlinedButton(
                           text: "Share Event",
-                          onTap: () {
-                            final url = widget.eccList.link ?? "";
-                            if (url.isNotEmpty) {
-                              Share.share("Check out this event: $url");
-                            }
+                          onTap: () async {
+                            final eccID = widget.eccList.id;
+                            final shareUrl =
+                                "https://mentivisor.com/ecc/$eccID";
+                            Share.share(
+                              "Check out this ECC on Mentivisor:\n$shareUrl",
+                              subject:
+                                  "Mentivisor Event, Competitions & Challenges",
+                            );
                           },
                           radius: 24,
                         ),

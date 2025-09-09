@@ -8,6 +8,7 @@ import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/Men
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
@@ -197,7 +198,15 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                       ),
                       const SizedBox(width: 16),
                       OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          final profileId = menteeProfile?.user?.id;
+                          final shareUrl =
+                              "https://mentivisor.com/profile/$profileId";
+                          Share.share(
+                            "Check out this profile on Mentivisor:\n$shareUrl",
+                            subject: "Mentivisor Profile",
+                          );
+                        },
                         icon: const Icon(
                           Icons.share_rounded,
                           size: 16,

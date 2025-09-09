@@ -34,7 +34,22 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     return Scaffold(
       appBar: CustomAppBar1(title: 'Mentor profile', actions: []),
       body: Background(
-        child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
+        child: BlocConsumer<MentorProfileCubit, MentorProfileState>(
+          listener: (context, state) {
+            if (state is MentorProfileLoaded) {
+              final d  = state.mentorProfileModel.data;
+              final t1 = (d?.todaySlots ?? []).isNotEmpty;
+              final t2 = (d?.tomorrowSlots ?? []).isNotEmpty;
+              final t3 = (d?.remainingSlots ?? 0) > 0;
+              if (t1 != hasTodaySlots || t2 != hasTomorrowSlots || t3 != hasRemainingSlots) {
+                setState(() {
+                  hasTodaySlots = t1;
+                  hasTomorrowSlots = t2;
+                  hasRemainingSlots = t3;
+                });
+              }
+            }
+          },
           builder: (context, state) {
             if (state is MentorProfileLoading) {
               return const Center(child: DottedProgressWithLogo());
@@ -42,17 +57,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               return Center(child: Text(state.message));
             } else if (state is MentorProfileLoaded) {
               final mentorData = state.mentorProfileModel.data;
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-                  hasTodaySlots = (mentorData?.todaySlots ?? []).isNotEmpty;
-                  hasTomorrowSlots =
-                      (mentorData?.tomorrowSlots ?? []).isNotEmpty;
-                  hasRemainingSlots = (mentorData?.remainingSlots ?? 0) > 0;
-                });
-              });
-
               AppLogger.info(
-                "hasTodaySlots:${hasTodaySlots}, hasTomorrowSlots:${hasTomorrowSlots} ,hasRemainingSlots:${hasRemainingSlots} ",
+                "hasTodaySlots:$hasTodaySlots, hasTomorrowSlots:$hasTomorrowSlots, hasRemainingSlots:$hasRemainingSlots",
               );
               return Container(
                 padding: EdgeInsets.all(16),

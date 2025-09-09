@@ -212,9 +212,6 @@ class _PostCardState extends State<PostCard>
                         color: Color(0xFF666666),
                       ),
                     ),
-
-                    const SizedBox(height: 8),
-
                     /// Likes, Comments & Share
                     FutureBuilder(
                       future: AuthService.isGuest,
@@ -343,28 +340,24 @@ class _PostCardState extends State<PostCard>
                                     ],
                                   ),
                                 ),
-
-                                const SizedBox(width: 12),
-
                                 // Share
-                                GestureDetector(
-                                  onTap: () async {
-                                    final post = widget.communityPosts;
-                                    final shareText =
-                                        """
-                                      ${post.heading ?? "Check this out!"}
-                                      
-                                      ${post.description ?? ""}
-                                      
-                                      ${post.imgUrl ?? ""}
-                                      """;
-                                    await Share.share(shareText.trim());
-                                  },
-                                  child: Image.asset(
+                                IconButton(
+                                  padding: EdgeInsets.zero, // remove default extra padding
+                                  visualDensity: VisualDensity.compact,
+                                  icon: Image.asset(
                                     'assets/icons/share.png',
                                     width: 16,
                                     height: 16,
                                   ),
+                                  onPressed: () async {
+                                    final postId = widget.communityPosts.id;
+                                    final shareUrl = "https://mentivisor.com/community_post/$postId";
+
+                                    Share.share(
+                                      "Check out this Community Post on Mentivisor:\n$shareUrl",
+                                      subject: "Mentivisor Community Post",
+                                    );
+                                  },
                                 ),
                                 Spacer(),
                                 GestureDetector(

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportState.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../utils/color_constants.dart';
@@ -22,7 +23,29 @@ class ResourceDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: "Resource Detail", actions: []),
+      appBar: CustomAppBar1(
+        title: "Resource Detail",
+        actions: [
+          IconButton(
+            padding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
+            icon: Image.asset(
+              'assets/icons/ShareNetwork.png',
+              width: 18,
+              height: 18,
+            ),
+            onPressed: () async {
+              final study_zone_Id = studyZoneCampusData.id;
+              final shareUrl =
+                  "https://mentivisor.com/study_zone/$study_zone_Id";
+              Share.share(
+                "Check out this Study Zone on Mentivisor:\n$shareUrl",
+                subject: "Mentivisor Study Zone",
+              );
+            },
+          ),
+        ],
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

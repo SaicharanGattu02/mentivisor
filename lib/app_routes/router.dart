@@ -110,13 +110,13 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(ResetPassword(num: num), state);
       },
     ),
+
     // GoRoute(
     //   path: '/community_details',
     //   pageBuilder: (context, state) {
     //     return buildSlideTransitionPage(CommunityDetails(communityPosts: ,), state);
     //   },
     // ),
-
     GoRoute(
       path: '/coupons',
       pageBuilder: (context, state) =>
@@ -244,6 +244,16 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final scope = state.uri.queryParameters['scope'] ?? "";
         return buildSlideTransitionPage(Campusmentorlist(scope: scope), state);
+      },
+    ),
+    // your existing routes ...
+    GoRoute(
+      path: '/study_zone/:id',
+      redirect: (ctx, st) {
+        final id = st.pathParameters['id']; // 132
+        if (id == null) return '/'; // fallback
+        // Redirect to your internal route
+        return '/resource_details_screen';
       },
     ),
     GoRoute(
@@ -392,10 +402,7 @@ final GoRouter appRouter = GoRouter(
       path: '/subtopicselect_screen',
       pageBuilder: (context, state) {
         final data = state.extra as Map<String, dynamic>? ?? {};
-        return buildSlideTransitionPage(
-          SubTopicSelection(data: data),
-          state,
-        );
+        return buildSlideTransitionPage(SubTopicSelection(data: data), state);
       },
     ),
 
@@ -518,7 +525,7 @@ final GoRouter appRouter = GoRouter(
         final past = pastParam.toLowerCase() == "true";
 
         return buildSlideTransitionPage(
-          SessionDetailScreen(sessionId: sessionId,past: past,),
+          SessionDetailScreen(sessionId: sessionId, past: past),
           state,
         );
       },
