@@ -103,6 +103,7 @@ class Messages {
   int? id;
   int? senderId;
   int? receiverId;
+  int? sessionId;
   String? message;
   String? url;
   String? createdAt;
@@ -127,6 +128,7 @@ class Messages {
     id = json['id'];
     senderId = json['sender_id'];
     receiverId = json['receiver_id'];
+    sessionId = json['sessionId'];
     message = json['message'];
     url = json['url'];
     createdAt = json['created_at'];
@@ -143,6 +145,7 @@ class Messages {
     data['id'] = this.id;
     data['sender_id'] = this.senderId;
     data['receiver_id'] = this.receiverId;
+    data['sessionId'] = this.sessionId;
     data['message'] = this.message;
     data['url'] = this.url;
     data['created_at'] = this.createdAt;

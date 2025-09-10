@@ -147,7 +147,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     OutlinedButton.icon(
                                       onPressed: () {
                                         context.push(
-                                          '/chat?receiverId=${upComingSessions.mentor?.id}',
+                                          '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
                                         );
                                       },
                                       icon: const Icon(

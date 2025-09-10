@@ -1,13 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatStates.dart';
+import 'package:mentivisor/utils/ImageUtils.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'Mentee/Models/ChatMessagesModel.dart';
 import 'Mentee/data/cubits/Chat/private_chat_cubit.dart';
 import 'Mentee/data/cubits/ChatMessages/ChatMessagesCubit.dart';
 import 'Mentee/data/cubits/ChatMessages/ChatMessagesStates.dart';
+import 'Mentee/data/cubits/UploadFileInChat/UploadFileInChatCubit.dart';
+import 'Mentee/presentation/Widgets/UserAvatar.dart';
 
 // ====== EXTENSIONS ======
 extension ChatScreenMessagesX on Messages {
@@ -37,11 +46,13 @@ class _ListItem {
 class ChatScreen extends StatefulWidget {
   final String currentUserId;
   final String receiverId;
+  final String sessionId;
 
   const ChatScreen({
     super.key,
     required this.currentUserId,
     required this.receiverId,
+    required this.sessionId,
   });
 
   @override
@@ -143,6 +154,66 @@ class _ChatScreenState extends State<ChatScreen> {
         context.read<ChatMessagesCubit>().getMoreMessages(widget.receiverId);
       }
     });
+  }
+
+  File? _file;
+  final ImagePicker _picker = ImagePicker();
+  Future<void> _pickImageFromCamera() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
+    if (pickedFile != null) {
+      File? compressedFile = await ImageUtils.compressImage(
+        File(pickedFile.path),
+      );
+      if (compressedFile != null) {
+        setState(() {
+          _file = compressedFile;
+        });
+      }
+    }
+  }
+
+  Future<void> _pickAnyFile(BuildContext context) async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp', 'pdf', 'doc', 'docx'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      final path = result.files.single.path!;
+      final file = File(path);
+
+      // ✅ Check file size (must be ≤ 500 KB)
+      final bytes = await file.length();
+      final sizeInKb = bytes / 1024;
+
+      if (sizeInKb > 500) {
+        // File is too large
+        CustomSnackBar1.show(context, "File size must not exceed 500 KB");
+        return;
+      }
+
+      // If it's an image, compress
+      final isImage = [
+        '.jpg',
+        '.jpeg',
+        '.png',
+        '.webp',
+      ].any((ext) => path.toLowerCase().endsWith(ext));
+
+      File toSend = file;
+      if (isImage) {
+        final compressed = await ImageUtils.compressImage(file);
+        if (compressed != null) toSend = compressed;
+      }
+
+      // ✅ Assign to state for sending
+      setState(() {
+        _file = toSend; // or keep a generic File variable for non-image
+      });
+    }
   }
 
   @override
@@ -536,91 +607,335 @@ class _ChatScreenState extends State<ChatScreen> {
     final bodyStyle = TextStyle(color: _text, fontSize: 15);
     final timeStyle = TextStyle(color: _muted, fontSize: 11);
 
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 320),
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: bubbleColor,
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(16),
-              topRight: const Radius.circular(16),
-              bottomLeft: Radius.circular(isMe ? 16 : 4),
-              bottomRight: Radius.circular(isMe ? 4 : 16),
+    // You may need to adapt these getters to your model
+    final senderName = msg.sender?.name ?? 'User';
+    final senderPhoto = msg.sender?.profilePicUrl ?? "";
+    final isImage = () {
+      final u = (msg.url ?? '').toLowerCase();
+      return u.endsWith('.jpg') ||
+          u.endsWith('.jpeg') ||
+          u.endsWith('.png') ||
+          u.endsWith('.gif') ||
+          u.endsWith('.webp');
+    }();
+
+    Widget content;
+    if (msg.type == 'text') {
+      content = Text(msg.message ?? '', style: bodyStyle);
+    } else if (msg.type == 'file') {
+      final url = msg.url ?? '';
+      if (isImage && url.isNotEmpty) {
+        content = ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            url,
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              padding: const EdgeInsets.all(8),
+              child: Text('Image unavailable', style: bodyStyle),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: isMe
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
+        );
+      } else {
+        final fileName = url.split('/').isNotEmpty
+            ? url.split('/').last
+            : (msg.message ?? 'file');
+        content = Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              if (msg.isText) Text((msg.message ?? ''), style: bodyStyle),
-              if (msg.isImage && (msg.url ?? '').isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    msg.url!,
-                    height: 220,
-                    width: 220,
-                    fit: BoxFit.cover,
-                  ),
+              const Icon(
+                Icons.insert_drive_file,
+                color: Colors.white,
+                size: 28,
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  fileName,
+                  style: bodyStyle.copyWith(fontSize: 14),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              const SizedBox(height: 4),
-              Text(msg.formattedTime, style: timeStyle),
+              ),
             ],
           ),
+        );
+      }
+    } else {
+      content = Text("Unsupported message", style: bodyStyle);
+    }
+
+    final bubble = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 300),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: bubbleColor,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: Radius.circular(isMe ? 16 : 4),
+            bottomRight: Radius.circular(isMe ? 4 : 16),
+          ),
         ),
+        child: Column(
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Show sender name (subtle) for others above the content
+            if (!isMe) ...[
+              Text(
+                senderName,
+                style: TextStyle(
+                  color: _muted,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
+            content,
+            const SizedBox(height: 6),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(msg.formattedTime, style: timeStyle),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // For me → no avatar, right aligned
+    if (isMe) {
+      return Align(alignment: Alignment.centerRight, child: bubble);
+    }
+
+    // For others → avatar + bubble row
+    return Padding(
+      padding: const EdgeInsets.only(
+        right: 56,
+      ), // keeps it visually balanced vs my bubbles
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const SizedBox(width: 4),
+          UserAvatar(imageUrl: senderPhoto, name: senderName, size: 32),
+          const SizedBox(width: 6),
+          Flexible(child: bubble),
+          const SizedBox(width: 8),
+        ],
       ),
     );
   }
 
-  Widget _buildInputArea(BuildContext context) {
-    final fill = const Color(0xFFF3F4F6);
+  bool _isImageFile(String path) {
+    final lower = path.toLowerCase();
+    return lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp');
+  }
 
+  Widget _buildInputArea(BuildContext context) {
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-        color: _bg,
-        child: Row(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(36)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                style: TextStyle(color: _text, fontSize: 15),
-                decoration: InputDecoration(
-                  hintText: 'Type a message…',
-                  hintStyle: TextStyle(color: _muted),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: fill,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
+            // === Preview when user has selected an image ===
+            if (_file != null) ...[
+              Container(
+                margin: const EdgeInsets.fromLTRB(6, 4, 6, 10),
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F7FA),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE3E8EF)),
+                ),
+                child: Row(
+                  children: [
+                    // check file extension
+                    if (_isImageFile(_file!.path))
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          _file!,
+                          width: 64,
+                          height: 64,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    else
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.insert_drive_file,
+                          color: Colors.blueGrey,
+                          size: 32,
+                        ),
+                      ),
+
+                    const SizedBox(width: 10),
+
+                    // filename
+                    Expanded(
+                      child: Text(
+                        _file!.path.split('/').last,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+
+                    // remove button
+                    IconButton(
+                      tooltip: 'Remove',
+                      onPressed: () => setState(() => _file = null),
+                      icon: const Icon(Icons.close, size: 20),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            // === Controls row ===
+            Row(
+              children: [
+                // Text Field
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    style: const TextStyle(color: Colors.black, fontSize: 15),
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      hintText: 'Say your Words...',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 14,
+                      ),
+                    ),
+                    onSubmitted: (_) => _sendText(context, type: "text"),
                   ),
                 ),
-                onChanged: (text) {
-                  try {
-                    final cubit = context.read<PrivateChatCubit>();
-                    if (text.isNotEmpty) {
-                      cubit.startTyping();
-                    } else {
-                      cubit.stopTyping();
-                    }
-                  } catch (_) {}
-                },
-                onSubmitted: (_) => _sendText(context),
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.send, color: _text),
-              onPressed: () => _sendText(context),
+
+                const SizedBox(width: 8),
+
+                // Attachment Button
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF3F4F6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.attach_file, color: Colors.black54),
+                    onPressed: () {
+                      _showAttachmentSheet(
+                        context,
+                      ); // your bottom sheet (camera/gallery/docs)
+                    },
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+
+                // Send Button (gradient) — unchanged logic, just kept intact
+                Container(
+                  height: 40,
+                  width: 40,
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child:
+                      BlocConsumer<
+                        UploadFileInChatCubit,
+                        UploadFileInChatStates
+                      >(
+                        listener: (context, state) {
+                          if (state is UploadFileInChatSuccess) {
+                            _sendText(
+                              context,
+                              type: "file",
+                              url: state.result.url,
+                            );
+                            setState(
+                              () => _file = null,
+                            ); // clear preview after sent
+                          } else if (state is UploadFileInChatFailure) {
+                            CustomSnackBar1.show(context, state.error);
+                          }
+                        },
+                        builder: (context, state) {
+                          final isLoading = state is UploadFileInChatLoading;
+                          if (isLoading) {
+                            return const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 1,
+                            );
+                          }
+                          return IconButton(
+                            icon: Image.asset("assets/icons/Vector.png"),
+                            onPressed: _file != null
+                                ? () {
+                                    final Map<String, dynamic> data = {
+                                      "file": _file,
+                                    };
+                                    context
+                                        .read<UploadFileInChatCubit>()
+                                        .uploadFileInChat(data);
+                                  }
+                                : () => _sendText(context),
+                          );
+                        },
+                      ),
+                ),
+              ],
             ),
           ],
         ),
@@ -628,61 +943,176 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _sendText(BuildContext context) {
+  void _sendText(BuildContext context, {String type = 'text', String? url}) {
     final text = _controller.text.trim();
-    if (text.isEmpty) return;
+
+    // if it's text message, ensure text is not empty
+    if (type == 'text' && text.isEmpty) return;
+
+    // if it's file/image/video message, ensure url is present
+    if (type != 'text' && (url == null || url.isEmpty)) return;
+
     try {
-      context.read<PrivateChatCubit>().sendMessage(text);
+      context.read<PrivateChatCubit>().sendMessage(text, type: type, url: url);
       _controller.clear();
       context.read<PrivateChatCubit>().stopTyping();
     } catch (_) {}
   }
+
+  Future<void> _showAttachmentSheet(BuildContext context) async {
+    final bg = const Color(0xFFF3F4F6);
+    final heading = const Color(0xFF111827);
+    final muted = const Color(0xFF6B7280);
+    final accentRed = const Color(0xFFD92E2E);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: false,
+      builder: (_) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Grab handle (optional)
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: bg,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Title
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Send your attachment',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF111827),
+                    height: 1.2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // Options row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Upload (any file)
+                  _AttachmentOption(
+                    label: 'Upload',
+                    icon: Icons.upload_file, // doc with up-arrow look
+                    bg: bg,
+                    iconColor: muted,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await _pickAnyFile(context);
+                    },
+                  ),
+
+                  // Camera (take photo)
+                  _AttachmentOption(
+                    label: 'Camera',
+                    icon: Icons.photo_camera_outlined,
+                    bg: bg,
+                    iconColor: muted,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await _pickImageFromCamera(); // your function
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 22),
+
+              // Note
+              Align(
+                alignment: Alignment.centerLeft,
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF6B7280),
+                      height: 1.4,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: '***',
+                        style: TextStyle(
+                          color: accentRed,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const TextSpan(
+                        text:
+                            ' Please note that you can send the attachment only once, '
+                            'so review it carefully before sending.',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-// ====== SIMPLE SAFETY BANNER ======
-class _SafetyBanner extends StatelessWidget {
-  final Color textColor;
-  final Color bgColor;
-  final VoidCallback onClose;
+/// Option tile used in the row
+class _AttachmentOption extends StatelessWidget {
+  const _AttachmentOption({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    required this.bg,
+    required this.iconColor,
+  });
 
-  const _SafetyBanner({
-    Key? key,
-    required this.textColor,
-    required this.bgColor,
-    required this.onClose,
-  }) : super(key: key);
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color bg;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: SizedBox(
+        width:
+            (MediaQuery.of(context).size.width - 24 - 24 - 16) /
+            2, // paddings + spacing
+        child: Column(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.orange),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                "Please do not share personal details like bank info, OTPs, or passwords in chat. Deal safely.",
-                style: TextStyle(color: textColor, fontSize: 13, height: 1.3),
-              ),
+            Container(
+              height: 72,
+              width: 72,
+              decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+              child: Icon(icon, size: 30, color: iconColor),
             ),
-            IconButton(
-              icon: const Icon(Icons.close, size: 18),
-              color: textColor.withOpacity(0.7),
-              onPressed: onClose,
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF6B7280),
+              ),
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
@@ -8,6 +10,7 @@ import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 import 'package:mentivisor/Mentee/Models/MenteeCustmor_supportModel.dart';
 import 'package:mentivisor/Mentee/Models/WalletModel.dart';
 import 'package:mentivisor/Mentee/Models/YearsModel.dart';
+import 'package:mentivisor/core/network/api_config.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Mentor/Models/FeedbackModel.dart';
@@ -136,6 +139,7 @@ abstract class RemoteDataSource {
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
+  final Dio dio = Dio();
   Future<FormData> buildFormData(Map<String, dynamic> data) async {
     final formMap = <String, dynamic>{};
     for (final entry in data.entries) {
@@ -174,22 +178,49 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<UploadFileInChatModel?> uploadFileInChat(
-    Map<String, dynamic> data,
-  ) async {
+  Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data) async {
     try {
-      final formdata = await buildFormData(data);
-      Response res = await ApiClient.post(
-        "${APIEndpointUrls.upload_file}",
-        data: formdata,
+      final url = "${ApiConfig.socket_url}/api/upload-file";
+      MultipartFile? filePart;
+      final fileVal = data['file'];
+      if (fileVal != null) {
+        if (fileVal is String) {
+          filePart = await MultipartFile.fromFile(
+            fileVal,
+            filename: fileVal.split('/').last,
+          );
+        } else if (fileVal is File) {
+          filePart = await MultipartFile.fromFile(
+            fileVal.path,
+            filename: fileVal.path.split('/').last,
+          );
+        }
+      }
+
+      // Build a new map for FormData (don’t mutate the original)
+      final Map<String, dynamic> payload = {
+        ...data, // copies other fields
+        if (filePart != null) 'file': filePart,
+      };
+
+      final formData = FormData.fromMap(payload);
+
+      final response = await dio.post(
+        url,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
       );
-      AppLogger.log('uploadFileInChat: ${res.data}');
-      return UploadFileInChatModel.fromJson(res.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return UploadFileInChatModel.fromJson(response.data);
+      }
+      return null;
     } catch (e) {
-      AppLogger.error('uploadFileInChat:${e}');
+      print("Upload error: $e");
       return null;
     }
   }
+
 
   @override
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page) async {

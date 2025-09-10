@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -81,10 +82,12 @@ import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 import '../services/AuthService.dart';
+import '../utils/CrashlyticsNavObserver.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
-  debugLogDiagnostics: true,
+  debugLogDiagnostics: false,
+  observers: [CrashlyticsNavObserver()],
   overridePlatformDefaultLocation: false,
   routes: [
     GoRoute(
@@ -97,6 +100,7 @@ final GoRouter appRouter = GoRouter(
       path: '/chat',
       builder: (context, state) {
         final receiverId = state.uri.queryParameters['receiverId']!;
+        final sessionId = state.uri.queryParameters['sessionId']!;
         return FutureBuilder<String?>(
           future: AuthService.getUSerId(),
           builder: (context, snapshot) {
@@ -107,10 +111,12 @@ final GoRouter appRouter = GoRouter(
             }
             final currentUserId = snapshot.data ?? "";
             return BlocProvider(
-              create: (_) => PrivateChatCubit(currentUserId, receiverId),
+              create: (_) =>
+                  PrivateChatCubit(currentUserId, receiverId, sessionId),
               child: ChatScreen(
                 currentUserId: currentUserId,
                 receiverId: receiverId,
+                sessionId: sessionId,
               ),
             );
           },
@@ -737,6 +743,23 @@ final GoRouter appRouter = GoRouter(
       },
     ),
   ],
+  errorBuilder: (context, state) {
+    final err = state.error ?? 'Unknown router error';
+    FirebaseCrashlytics.instance.recordError(
+      err,
+      // GoRouterState has no stackTrace; use current as best-effort
+      StackTrace.current,
+      fatal: false,
+      information: [
+        DiagnosticsNode.message('matchedLocation: ${state.matchedLocation}'),
+        DiagnosticsNode.message('uri: ${state.uri}'),
+        DiagnosticsNode.message('pathParams: ${state.pathParameters}'),
+        DiagnosticsNode.message('queryParams: ${state.uri.queryParameters}'),
+      ],
+    );
+
+    return const Scaffold(body: Center(child: Text('Something went wrong')));
+  },
 );
 
 Page<dynamic> buildSlideTransitionPage(Widget child, GoRouterState state) {

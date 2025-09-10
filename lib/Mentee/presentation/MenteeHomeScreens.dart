@@ -208,18 +208,18 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         padding: EdgeInsets.only(right: 16.0),
                         child: Row(
                           children: [
-                            // if (role == "Both") ...[
-                            //   IconButton(
-                            //     icon: Image.asset(
-                            //       "assets/images/mentor.png",
-                            //       height: 21,
-                            //       width: 26,
-                            //     ),
-                            //     onPressed: () {
-                            //       context.push('/mentor_dashboard');
-                            //     },
-                            //   ),
-                            // ],
+                            if (role == "Both") ...[
+                              IconButton(
+                                icon: Image.asset(
+                                  "assets/images/mentor.png",
+                                  height: 21,
+                                  width: 26,
+                                ),
+                                onPressed: () {
+                                  context.push('/mentor_dashboard');
+                                },
+                              ),
+                            ],
                             IconButton(
                               icon: Image.asset(
                                 "assets/images/crownonly.png",

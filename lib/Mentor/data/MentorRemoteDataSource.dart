@@ -44,7 +44,6 @@ abstract class MentorRemoteDataSource {
   Future<NonAttachedExpertisesModel?> getNonAttachedExpertises();
   Future<NonAttachedExpertiseDetailsModel?> getNonAttachedExpertiseDetails(
     int id,
-
   );
   Future<SuccessModel?> mentorReport(Map<String, dynamic> data);
   Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);

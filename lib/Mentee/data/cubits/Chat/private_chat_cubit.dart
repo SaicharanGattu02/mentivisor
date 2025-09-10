@@ -22,14 +22,15 @@ class PrivateChatState {
 class PrivateChatCubit extends Cubit<PrivateChatState> {
   final String currentUserId;
   final String receiverId;
+  final String sessionId;
 
   late final IO.Socket _socket;
   late final String _room;
   Timer? _peerTypingClearTimer;
   Timer? _myTypingThrottle;
 
-  PrivateChatCubit(this.currentUserId, this.receiverId)
-      : super(const PrivateChatState()) {
+  PrivateChatCubit(this.currentUserId, this.receiverId, this.sessionId)
+    : super(const PrivateChatState()) {
     _socket = SocketService.connect(currentUserId);
     _room = _getPrivateRoomName(currentUserId, receiverId);
     _init();
@@ -77,7 +78,8 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
       type: _s(map['type']),
       message: _s(map['message']),
       url: _s(map['url'] ?? map['image_url']), // accept either key
-      createdAt: _s(map['createdAt'] ?? map['created_at']) ??
+      createdAt:
+          _s(map['createdAt'] ?? map['created_at']) ??
           DateTime.now().toIso8601String(),
       updatedAt: _s(map['updatedAt'] ?? map['updated_at']),
       sender: null,
@@ -118,12 +120,17 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
         aReceiver == bReceiver;
   }
 
-  bool _closeInTime(DateTime a, DateTime b, {Duration tolerance = const Duration(seconds: 5)}) {
+  bool _closeInTime(
+    DateTime a,
+    DateTime b, {
+    Duration tolerance = const Duration(seconds: 5),
+  }) {
     return (a.difference(b).abs() <= tolerance);
   }
 
   void _replaceTempWithServer(Messages serverMsg) {
-    final serverCreated = DateTime.tryParse(serverMsg.createdAt ?? '') ?? DateTime.now();
+    final serverCreated =
+        DateTime.tryParse(serverMsg.createdAt ?? '') ?? DateTime.now();
     final idx = state.messages.indexWhere((m) {
       if ((m.id ?? 0) >= 0) return false; // only temp messages (id < 0)
       if (!_sameContent(m, serverMsg)) return false;
@@ -137,7 +144,9 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
       emit(state.copyWith(messages: updated));
     } else {
       // Append if not already present by id
-      final existsById = state.messages.any((m) => m.id != null && m.id == serverMsg.id);
+      final existsById = state.messages.any(
+        (m) => m.id != null && m.id == serverMsg.id,
+      );
       if (!existsById) {
         emit(state.copyWith(messages: [...state.messages, serverMsg]));
       }
@@ -173,7 +182,9 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
       _peerTypingClearTimer = Timer(const Duration(seconds: 3), () {
         if (!isClosed) emit(state.copyWith(isPeerTyping: false));
       });
-    } catch (_) {/* ignore */}
+    } catch (_) {
+      /* ignore */
+    }
   }
 
   String _getPrivateRoomName(String id1, String id2) {
@@ -204,6 +215,7 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
     final payload = {
       'room': _room,
       'senderId': currentUserId,
+      's_id': int.parse(sessionId),
       'receiverId': receiverId,
       'message': message,
       'type': type,
@@ -246,4 +258,3 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
     return super.close();
   }
 }
-
