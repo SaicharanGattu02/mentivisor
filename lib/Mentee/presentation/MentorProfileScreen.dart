@@ -37,11 +37,13 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         child: BlocConsumer<MentorProfileCubit, MentorProfileState>(
           listener: (context, state) {
             if (state is MentorProfileLoaded) {
-              final d  = state.mentorProfileModel.data;
+              final d = state.mentorProfileModel.data;
               final t1 = (d?.todaySlots ?? []).isNotEmpty;
               final t2 = (d?.tomorrowSlots ?? []).isNotEmpty;
               final t3 = (d?.remainingSlots ?? 0) > 0;
-              if (t1 != hasTodaySlots || t2 != hasTomorrowSlots || t3 != hasRemainingSlots) {
+              if (t1 != hasTodaySlots ||
+                  t2 != hasTomorrowSlots ||
+                  t3 != hasRemainingSlots) {
                 setState(() {
                   hasTodaySlots = t1;
                   hasTomorrowSlots = t2;

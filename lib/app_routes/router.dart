@@ -41,6 +41,7 @@ import '../Mentee/presentation/Notifications.dart';
 import '../Mentee/presentation/PaymentSuccessfully.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
+import '../Mentee/presentation/Profile/ProfileDetails.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
@@ -350,6 +351,14 @@ final GoRouter appRouter = GoRouter(
         final id = int.tryParse(idString ?? '') ?? 0;
 
         return buildSlideTransitionPage(MentorProfileScreen(id: id), state);
+      },
+    ),
+    GoRoute(
+      path: '/profile',
+      pageBuilder: (context, state) {
+        final idString = state.uri.queryParameters['id'];
+        final id = int.tryParse(idString ?? '') ?? 0;
+        return buildSlideTransitionPage(ProfileDetails(id: id), state);
       },
     ),
 

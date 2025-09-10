@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states
 import '../../Components/CommonLoader.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
+import 'Widgets/CommonChoiceChip.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({super.key});
@@ -22,6 +23,15 @@ class _NotificationsState extends State<Notifications> {
     context.read<NotificationsCubit>().notifiactions();
   }
 
+  int _selectedFilter = 0;
+  final List<String> _filters = [
+    "All",
+    "Sessions",
+    "Reminders",
+    "Rewards",
+    "Mentions",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,123 +39,151 @@ class _NotificationsState extends State<Notifications> {
       appBar: CustomAppBar1(
         title: 'Notification',
         actions: [],
-        color: const Color(0xffF2F4FD),
+        color: Color(0xffF2F4FD),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: BlocBuilder<NotificationsCubit, NotificationsStates>(
-          builder: (context, state) {
-            if (state is NotificationsLoading) {
-              return Center(
-                child: SizedBox(
-                  height: SizeConfig.screenWidth * 1,
-                  child: const DottedProgressWithLogo(),
-                ),
-              );
-            } else if (state is NotificationsLoaded) {
-              final data = state.notificationModel.data;
-
-              return CustomScrollView(
-                slivers: [
-                  // Session Section
-                  if (data?.session != null && data!.session!.isNotEmpty) ...[
-                    _buildHeader("Session"),
-                    // _buildList(
-                    //   itemCount: data.session!.length,
-                    //   itemBuilder: (context, index) {
-                    //     final session = data.session![index];
-                    //     return _buildCard(
-                    //       icon: "assets/icons/meet.png",
-                    //       title: session.title ?? "",
-                    //       subtitle: session.message ?? "",
-                    //     );
-                    //   },
-                    // ),
-                  ],
-
-                  // Reminder Section
-                  if (data?.reminder != null && data!.reminder!.isNotEmpty) ...[
-                    _buildHeader("Reminder"),
-                    // _buildList(
-                    //   itemCount: data.reminder!.length,
-                    //   itemBuilder: (context, index) {
-                    //     final reminder = data.reminder![index];
-                    // return _buildCard(
-                    //   icon: "assets/icons/calendar.png",
-                    //   title: reminder.title ?? "",
-                    //   subtitle: reminder.message ?? "",
-                    // );
-                    //   },
-                    // ),
-                  ],
-
-                  // Rewards Section
-                  if (data?.rewards != null && data!.rewards!.isNotEmpty) ...[
-                    _buildHeader("Rewards"),
-                    // _buildList(
-                    //   itemCount: data.rewards!.length,
-                    //   itemBuilder: (context, index) {
-                    //     final reward = data.rewards![index];
-                    // return _buildCard(
-                    //   icon: "assets/icons/coin.png",
-                    //   title: reward.title ?? "",
-                    //   subtitle: reward.message ?? "",
-                    // );
-                    //   },
-                    // ),
-                  ],
-
-                  if (data?.rejections != null) ...[
-                    if (data!.rejections!.isEmpty)
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: SizeConfig.screenHeight*0.55,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 200,
-                                  width: 200,
-                                  child: Image.asset("assets/nodata/no_data.png"),
-                                ),
-                                Text(
-                                  'No Notifications Found!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: primarycolor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    else //
-                      _buildHeader("Rejections"), // 👉 Show List if not empty
-                    _buildList(
-                      itemCount: data.rejections!.length,
-                      itemBuilder: (context, index) {
-                        final rejection = data.rejections![index];
-                        return _buildCard(
-                          icon: "assets/icons/meet.png",
-                          title: rejection.message ?? "",
-                          subtitle: rejection.date ?? "",
-                        );
-                      },
+        child: Column(
+          children: [
+            SizedBox(
+              height: 32,
+              child: ListView.separated(
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: _filters.length,
+                separatorBuilder: (_, __) => SizedBox(width: 8),
+                itemBuilder: (context, i) {
+                  final selected = i == _selectedFilter;
+                  return CustomChoiceChip(
+                    label: _filters[i],
+                    selected: selected,
+                    onSelected: (_) {
+                      setState(() => _selectedFilter = i);
+                    },
+                  );
+                },
+              ),
+            ),
+            BlocBuilder<NotificationsCubit, NotificationsStates>(
+              builder: (context, state) {
+                if (state is NotificationsLoading) {
+                  return Center(
+                    child: SizedBox(
+                      height: SizeConfig.screenWidth * 1,
+                      child: const DottedProgressWithLogo(),
                     ),
-                  ],
-                ],
-              );
-            } else if (state is NotificationsFailure) {
-              return Center(child: Text(state.msg));
-            }
-            return const Center(child: Text("No Data"));
-          },
+                  );
+                } else if (state is NotificationsLoaded) {
+                  final data = state.notificationModel.data;
+                  return CustomScrollView(
+                    slivers: [
+                      if (data?.session != null &&
+                          data!.session!.isNotEmpty) ...[
+                        _buildHeader("Session"),
+                        // _buildList(
+                        //   itemCount: data.session!.length,
+                        //   itemBuilder: (context, index) {
+                        //     final session = data.session![index];
+                        //     return _buildCard(
+                        //       icon: "assets/icons/meet.png",
+                        //       title: session.title ?? "",
+                        //       subtitle: session.message ?? "",
+                        //     );
+                        //   },
+                        // ),
+                      ],
+
+                      // Reminder Section
+                      if (data?.reminder != null &&
+                          data!.reminder!.isNotEmpty) ...[
+                        _buildHeader("Reminder"),
+                        // _buildList(
+                        //   itemCount: data.reminder!.length,
+                        //   itemBuilder: (context, index) {
+                        //     final reminder = data.reminder![index];
+                        // return _buildCard(
+                        //   icon: "assets/icons/calendar.png",
+                        //   title: reminder.title ?? "",
+                        //   subtitle: reminder.message ?? "",
+                        // );
+                        //   },
+                        // ),
+                      ],
+
+                      // Rewards Section
+                      if (data?.rewards != null &&
+                          data!.rewards!.isNotEmpty) ...[
+                        _buildHeader("Rewards"),
+                        // _buildList(
+                        //   itemCount: data.rewards!.length,
+                        //   itemBuilder: (context, index) {
+                        //     final reward = data.rewards![index];
+                        // return _buildCard(
+                        //   icon: "assets/icons/coin.png",
+                        //   title: reward.title ?? "",
+                        //   subtitle: reward.message ?? "",
+                        // );
+                        //   },
+                        // ),
+                      ],
+
+                      if (data?.rejections != null) ...[
+                        if (data!.rejections!.isEmpty)
+                          SliverToBoxAdapter(
+                            child: SizedBox(
+                              height: SizeConfig.screenHeight * 0.55,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 200,
+                                      width: 200,
+                                      child: Image.asset(
+                                        "assets/nodata/no_data.png",
+                                      ),
+                                    ),
+                                    Text(
+                                      'No Notifications Found!',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: primarycolor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        else //
+                          _buildHeader(
+                            "Rejections",
+                          ),
+                        _buildList(
+                          itemCount: data.rejections!.length,
+                          itemBuilder: (context, index) {
+                            final rejection = data.rejections![index];
+                            return _buildCard(
+                              icon: "assets/icons/meet.png",
+                              title: rejection.message ?? "",
+                              subtitle: rejection.date ?? "",
+                            );
+                          },
+                        ),
+                      ],
+                    ],
+                  );
+                } else if (state is NotificationsFailure) {
+                  return Center(child: Text(state.msg));
+                }
+                return const Center(child: Text("No Data"));
+              },
+            ),
+          ],
         ),
       ),
     );

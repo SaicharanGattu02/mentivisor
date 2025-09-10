@@ -281,13 +281,13 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               }
                               return ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                physics: const BouncingScrollPhysics(),
-                                padding: const EdgeInsets.symmetric(
+                                physics:  BouncingScrollPhysics(),
+                                padding:  EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
                                 itemCount: tags.length,
                                 separatorBuilder: (_, __) =>
-                                    const SizedBox(width: 8),
+                                     SizedBox(width: 8),
                                 itemBuilder: (context, index) {
                                   final tagItem = tags[index];
                                   final isSelected = index == selectedIndex;

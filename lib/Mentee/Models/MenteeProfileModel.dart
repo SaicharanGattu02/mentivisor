@@ -53,7 +53,7 @@ class User {
   String? year;
   int? yearId;
   String? yearName;
-  String?college_name;
+  String? college_name;
   String? stream;
   String? status;
   String? profilePic;
@@ -66,31 +66,32 @@ class User {
   List<StudyZoneBooks>? studyZoneBooks;
   List<CommunityPost>? communityPost;
 
-  User(
-      {this.id,
-        this.name,
-        this.email,
-        this.contact,
-        this.role,
-        this.designation,
-        this.exp,
-        this.bio,
-        this.collegeId,
-        this.college_name,
-        this.year,
-        this.yearId,
-        this.yearName,
-        this.stream,
-        this.status,
-        this.profilePic,
-        this.saasId,
-        this.activeStatus,
-        this.lastLoginAt,
-        this.mentorStatus,
-        this.profilePicUrl,
-        this.availabilityCoins,
-        this.studyZoneBooks,
-        this.communityPost});
+  User({
+    this.id,
+    this.name,
+    this.email,
+    this.contact,
+    this.role,
+    this.designation,
+    this.exp,
+    this.bio,
+    this.collegeId,
+    this.college_name,
+    this.year,
+    this.yearId,
+    this.yearName,
+    this.stream,
+    this.status,
+    this.profilePic,
+    this.saasId,
+    this.activeStatus,
+    this.lastLoginAt,
+    this.mentorStatus,
+    this.profilePicUrl,
+    this.availabilityCoins,
+    this.studyZoneBooks,
+    this.communityPost,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -102,7 +103,7 @@ class User {
     exp = json['exp'];
     bio = json['bio'];
     collegeId = json['college_id'];
-    college_name=  json['college_name'];
+    college_name = json['college_name'];
     year = json['year'];
     yearId = json['year_id'];
     yearName = json['year_name'];
@@ -154,12 +155,14 @@ class User {
     data['profile_pic_url'] = this.profilePicUrl;
     data['availability_coins'] = this.availabilityCoins;
     if (this.studyZoneBooks != null) {
-      data['study_zone_books'] =
-          this.studyZoneBooks!.map((v) => v.toJson()).toList();
+      data['study_zone_books'] = this.studyZoneBooks!
+          .map((v) => v.toJson())
+          .toList();
     }
     if (this.communityPost != null) {
-      data['community_post'] =
-          this.communityPost!.map((v) => v.toJson()).toList();
+      data['community_post'] = this.communityPost!
+          .map((v) => v.toJson())
+          .toList();
     }
     return data;
   }
@@ -175,15 +178,16 @@ class StudyZoneBooks {
   int? downloads;
   String? createdAt;
 
-  StudyZoneBooks(
-      {this.id,
-        this.title,
-        this.tags,
-        this.image,
-        this.description,
-        this.filePdf,
-        this.downloads,
-        this.createdAt});
+  StudyZoneBooks({
+    this.id,
+    this.title,
+    this.tags,
+    this.image,
+    this.description,
+    this.filePdf,
+    this.downloads,
+    this.createdAt,
+  });
 
   StudyZoneBooks.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -218,6 +222,7 @@ class CommunityPost {
   int? likesCount;
   int? commentsCount;
   String? createdAt;
+  bool? isLike;
 
   CommunityPost(
       {this.id,
@@ -226,7 +231,8 @@ class CommunityPost {
         this.image,
         this.likesCount,
         this.commentsCount,
-        this.createdAt});
+        this.createdAt,
+        this.isLike});
 
   CommunityPost.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -236,6 +242,7 @@ class CommunityPost {
     likesCount = json['likes_count'];
     commentsCount = json['comments_count'];
     createdAt = json['created_at'];
+    isLike = json['is_like'];
   }
 
   Map<String, dynamic> toJson() {
@@ -247,6 +254,7 @@ class CommunityPost {
     data['likes_count'] = this.likesCount;
     data['comments_count'] = this.commentsCount;
     data['created_at'] = this.createdAt;
+    data['is_like'] = this.isLike;
     return data;
   }
 }

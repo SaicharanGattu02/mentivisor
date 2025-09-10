@@ -149,31 +149,35 @@ class _PostCardState extends State<PostCard>
                   children: [
                     Row(
                       children: [
-                        CachedNetworkImage(
-                          imageUrl: widget.communityPosts.image ?? "",
-                          imageBuilder: (context, imageProvider) =>
-                              CircleAvatar(
-                                radius: 16,
-                                backgroundImage: imageProvider,
-                              ),
-                          placeholder: (context, url) => CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Colors.grey,
-                            child: SizedBox(
-                              width: 14,
-                              height: 14,
-                              child: Center(
-                                child: spinkits.getSpinningLinespinkit(),
-                              ),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) =>
-                              const CircleAvatar(
-                                radius: 16,
-                                backgroundImage: AssetImage(
-                                  "assets/images/profile.png",
+                        GestureDetector(onTap: () {
+                          context.push("/profile?id=${widget.communityPosts.id}");
+                        },
+                          child: CachedNetworkImage(
+                            imageUrl: widget.communityPosts.image ?? "",
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
+                                  radius: 16,
+                                  backgroundImage: imageProvider,
+                                ),
+                            placeholder: (context, url) => CircleAvatar(
+                              radius: 16,
+                              backgroundColor: Colors.grey,
+                              child: SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: Center(
+                                  child: spinkits.getSpinningLinespinkit(),
                                 ),
                               ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const CircleAvatar(
+                                  radius: 16,
+                                  backgroundImage: AssetImage(
+                                    "assets/images/profile.png",
+                                  ),
+                                ),
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Text(
