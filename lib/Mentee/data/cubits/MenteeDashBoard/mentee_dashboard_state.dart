@@ -11,26 +11,22 @@ class MenteeDashboardLoading extends MenteeDashboardState {}
 
 class MenteeDashboardLoaded extends MenteeDashboardState {
   final GetBannersRespModel getbannerModel;
-  final MenteeProfileModel menteeProfileModel;
   final GuestMentorsModel guestMentorsModel;
   final CompusMentorListModel campusMentorListModel;
 
   MenteeDashboardLoaded({
     required this.getbannerModel,
-    required this.menteeProfileModel,
     required this.guestMentorsModel,
     required this.campusMentorListModel,
   });
 
   MenteeDashboardLoaded copyWith({
     GetBannersRespModel? getbannerModel,
-    MenteeProfileModel? menteeProfileModel,
     GuestMentorsModel? guestMentorsModel,
     CompusMentorListModel? campusMentorListModel,
   }) {
     return MenteeDashboardLoaded(
       getbannerModel: getbannerModel ?? this.getbannerModel,
-      menteeProfileModel: menteeProfileModel ?? this.menteeProfileModel,
       guestMentorsModel: guestMentorsModel ?? this.guestMentorsModel,
       campusMentorListModel:
       campusMentorListModel ?? this.campusMentorListModel,

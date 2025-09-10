@@ -212,6 +212,7 @@ class _PostCardState extends State<PostCard>
                         color: Color(0xFF666666),
                       ),
                     ),
+
                     /// Likes, Comments & Share
                     FutureBuilder(
                       future: AuthService.isGuest,
@@ -229,9 +230,12 @@ class _PostCardState extends State<PostCard>
                                   builder: (context, state) {
                                     final post = widget.communityPosts;
                                     return Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
+                                        IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () {
                                             if (isGuest) {
                                               context.push('/auth_landing');
                                             } else {
@@ -243,7 +247,7 @@ class _PostCardState extends State<PostCard>
                                                   .postLike(data, post);
                                             }
                                           },
-                                          child: Icon(
+                                          icon: Icon(
                                             (post.isLiked ?? false)
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
@@ -253,7 +257,6 @@ class _PostCardState extends State<PostCard>
                                                 : Colors.black26,
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
                                         Text(
                                           "${post.likesCount ?? 0}",
                                           style: const TextStyle(
@@ -268,79 +271,71 @@ class _PostCardState extends State<PostCard>
                                   },
                                 ),
 
-                                const SizedBox(width: 12),
-
-                                // Comments
-                                GestureDetector(
-                                  onTap: () {
-                                    if (isGuest) {
-                                      context.push('/auth_landing');
-                                    } else {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        useRootNavigator: true,
-                                        backgroundColor: Colors.transparent,
-                                        builder: (context) {
-                                          return DraggableScrollableSheet(
-                                            initialChildSize: 0.8,
-                                            minChildSize: 0.4,
-                                            maxChildSize: 0.95,
-                                            expand: false,
-                                            builder: (_, scrollController) =>
-                                                Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Color(0xffF4F8FD),
-                                                    borderRadius:
-                                                        BorderRadius.vertical(
-                                                          top: Radius.circular(
-                                                            16,
-                                                          ),
-                                                        ),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 12,
-                                                      ),
-                                                  child: CommentBottomSheet(
-                                                    communityPost:
-                                                        widget.communityPosts,
-                                                    scrollController:
-                                                        scrollController,
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      if (isGuest) {
+                                        context.push('/auth_landing');
+                                      } else {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          useRootNavigator: true,
+                                          backgroundColor: Colors.transparent,
+                                          builder: (context) {
+                                            return DraggableScrollableSheet(
+                                              initialChildSize: 0.8,
+                                              minChildSize: 0.4,
+                                              maxChildSize: 0.95,
+                                              expand: false,
+                                              builder: (_, scrollController) => Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Color(0xffF4F8FD),
+                                                  borderRadius: BorderRadius.vertical(
+                                                    top: Radius.circular(16),
                                                   ),
                                                 ),
-                                          );
-                                        },
-                                      );
-                                    }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/ChatCircle.png",width: 20,height: 20,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      BlocBuilder<
-                                        PostCommentCubit,
-                                        PostCommentStates
-                                      >(
-                                        builder: (context, state) {
-                                          return Text(
-                                            widget.communityPosts.commentsCount
-                                                .toString(),
-                                            style: const TextStyle(
-                                              fontFamily: 'segeo',
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ],
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 12,
+                                                ),
+                                                child: CommentBottomSheet(
+                                                  communityPost: widget.communityPosts,
+                                                  scrollController: scrollController,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    icon: Image.asset(
+                                      "assets/icons/Chat.png",
+                                      width: 18,
+                                      height: 18,
+                                    ),
                                   ),
-                                ),
-                                // Share
+                                  BlocBuilder<PostCommentCubit, PostCommentStates>(
+                                    builder: (context, state) {
+                                      return Text(
+                                        widget.communityPosts.commentsCount.toString(),
+                                        style: const TextStyle(
+                                          fontFamily: 'segeo',
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+
+                              // Share
                                 IconButton(
-                                  padding: EdgeInsets.zero, // remove default extra padding
+                                  padding: EdgeInsets
+                                      .zero, // remove default extra padding
                                   visualDensity: VisualDensity.compact,
                                   icon: Image.asset(
                                     'assets/icons/share.png',
@@ -349,7 +344,8 @@ class _PostCardState extends State<PostCard>
                                   ),
                                   onPressed: () async {
                                     final postId = widget.communityPosts.id;
-                                    final shareUrl = "https://mentivisor.com/community_post/$postId";
+                                    final shareUrl =
+                                        "https://mentivisor.com/community_post/$postId";
 
                                     Share.share(
                                       "Check out this Community Post on Mentivisor:\n$shareUrl",

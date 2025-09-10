@@ -31,7 +31,6 @@ import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
 import '../ChatScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
-import '../Mentee/Models/ECCModel.dart';
 import '../Mentee/data/cubits/Chat/private_chat_cubit.dart';
 import '../Mentee/presentation/CommingSoon.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
@@ -335,7 +334,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/resource_details_screen/:resourceId',
       pageBuilder: (context, state) {
-        final id = int.parse(state.pathParameters['resourceId']!);  // Extract as int
+        final id = int.parse(
+          state.pathParameters['resourceId']!,
+        ); // Extract as int
         return buildSlideTransitionPage(
           ResourceDetailScreen(resourceId: id),
           state,
@@ -402,10 +403,7 @@ final GoRouter appRouter = GoRouter(
       path: '/view_event/:eventId',
       pageBuilder: (context, state) {
         final id = int.parse(state.pathParameters['eventId']!);
-        return buildSlideTransitionPage(
-          ViewEventScreen(eventId: id),
-          state,
-        );
+        return buildSlideTransitionPage(ViewEventScreen(eventId: id), state);
       },
     ),
 

@@ -518,25 +518,18 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 12),
-                            const Text(
+                             SizedBox(height: 12),
+                             Text(
                               "Rate your Experience",
                               style: TextStyle(
                                 color: Color(0xff666666),
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
                               ),
                             ),
                             const SizedBox(height: 12),

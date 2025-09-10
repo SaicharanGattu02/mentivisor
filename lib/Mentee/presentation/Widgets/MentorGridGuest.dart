@@ -125,7 +125,7 @@ class _MentorCard extends StatelessWidget {
               ),
             ),
             errorWidget: (context, url, error) => const CircleAvatar(
-              radius: 20,
+              radius: 40,
               backgroundImage: AssetImage("assets/images/profile.png"),
             ),
           ),

@@ -166,15 +166,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           v == null || v.isEmpty ? "Name required" : null,
                     ),
                     Text(
-                      "College",
-                      style: const TextStyle(
-                        fontFamily: 'segeo',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff374151),
-                      ),
-                    ),
-                    Text(
                       "College Name",
                       style: const TextStyle(
                         fontFamily: 'segeo',

@@ -12,9 +12,10 @@ import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
-import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_state.dart';
+import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'Widgets/FilterButton.dart';
 import 'Widgets/MentorGridGuest.dart';
 
@@ -37,8 +38,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<MenteeDashboardCubit>().fetchDashboard("");
-    getData();
+    Future.microtask(() async {
+      await Future.wait([
+        context.read<MenteeDashboardCubit>().fetchDashboard(""),
+        context.read<MenteeProfileCubit>().fetchMenteeProfile(),
+        getData(),
+      ]);
+    });
   }
 
   Future<void> getData() async {
@@ -97,24 +103,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
             if (state is MenteeDashboardLoading) {
               return Scaffold(body: Center(child: DottedProgressWithLogo()));
             } else if (state is MenteeDashboardLoaded) {
-              final menteeProfile = state.menteeProfileModel.data;
               final banners = state.getbannerModel.data ?? [];
               final guestMentorlist =
                   state.guestMentorsModel.data?.mentors ?? [];
               final campusMentorlist =
                   state.campusMentorListModel.data?.mentors_list ?? [];
-              _mentorStatus.value = menteeProfile?.user?.mentorStatus ?? "none";
-              _mentorProfileUrl.value =
-                  menteeProfile?.user?.profilePicUrl ?? "";
-              _mentorProfileName.value = menteeProfile?.user?.name ?? "";
-              final coins = menteeProfile?.user?.availabilityCoins ?? 0;
-              AuthService.saveCoins(coins);
-              AuthService.saveRole(menteeProfile?.user?.role ?? "");
-              AuthService.saveCollegeID(menteeProfile?.user?.collegeId ?? 0);
-              AuthService.saveCollegeName(
-                menteeProfile?.user?.college_name ?? "",
-              );
-              AppState.updateCoins(menteeProfile?.user?.availabilityCoins ?? 0);
+
               return Scaffold(
                 drawerEnableOpenDragGesture: !isGuest,
                 key: _scaffoldKey,
@@ -165,28 +159,63 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               onPressed: () =>
                                   _scaffoldKey.currentState?.openDrawer(),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hello!',
-                                  style: TextStyle(
-                                    color: Color(0xff666666),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  capitalize(
-                                    menteeProfile?.user?.name ?? "User",
-                                  ),
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                            BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
+                              builder: (context, menteeProfilestate) {
+                                if (menteeProfilestate is MenteeProfileLoaded) {
+                                  final menteeProfile = menteeProfilestate
+                                      .menteeProfileModel
+                                      .data;
+
+                                  _mentorStatus.value =
+                                      menteeProfile?.user?.mentorStatus ??
+                                      "none";
+                                  _mentorProfileUrl.value =
+                                      menteeProfile?.user?.profilePicUrl ?? "";
+                                  _mentorProfileName.value =
+                                      menteeProfile?.user?.name ?? "";
+                                  final coins =
+                                      menteeProfile?.user?.availabilityCoins ??
+                                      0;
+                                  AuthService.saveCoins(coins);
+                                  AuthService.saveRole(
+                                    menteeProfile?.user?.role ?? "",
+                                  );
+                                  AuthService.saveCollegeID(
+                                    menteeProfile?.user?.collegeId ?? 0,
+                                  );
+                                  AuthService.saveCollegeName(
+                                    menteeProfile?.user?.college_name ?? "",
+                                  );
+                                  AppState.updateCoins(
+                                    menteeProfile?.user?.availabilityCoins ?? 0,
+                                  );
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Hello!',
+                                        style: TextStyle(
+                                          color: Color(0xff666666),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        capitalize(
+                                          menteeProfile?.user?.name ?? "User",
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                return SizedBox.shrink();
+                              },
                             ),
                           ],
                         ),
@@ -600,7 +629,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                             onPressed: () {
                                               setState(() {
                                                 selectedFilter = 'On Campus';
-                                                _onCampus = true; // ✅ FIX
+                                                _onCampus = true;
                                                 context
                                                     .read<
                                                       MenteeDashboardCubit

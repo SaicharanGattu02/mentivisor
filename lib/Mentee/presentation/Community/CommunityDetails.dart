@@ -167,44 +167,49 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                               builder: (context, setState) {
                                 return Row(
                                   children: [
-                                    // Likes
                                     BlocBuilder<
                                       PostCommentCubit,
                                       PostCommentStates
                                     >(
-                                      builder: (context, state) {
-                                        final post = communityDetails;
+                                      builder: (context, commentState) {
                                         return Row(
                                           children: [
-                                            GestureDetector(
-                                              onTap: () {
+                                            IconButton(
+                                              visualDensity:
+                                                  VisualDensity.compact,
+                                              padding: EdgeInsets.zero,
+                                              onPressed: () {
                                                 if (isGuest) {
                                                   context.push('/auth_landing');
                                                 } else {
                                                   final data = {
-                                                    "community_id": post?.id,
+                                                    "community_id":
+                                                        communityDetails?.id,
                                                   };
                                                   context
                                                       .read<PostCommentCubit>()
                                                       .postLike(
                                                         data,
-                                                        CommunityPosts(),
+                                                        communityDetails!,
                                                       );
                                                 }
                                               },
-                                              child: Icon(
-                                                (post?.isLiked ?? false)
+                                              icon: Icon(
+                                                (communityDetails?.isLiked ??
+                                                        false)
                                                     ? Icons.favorite
                                                     : Icons.favorite_border,
                                                 size: 16,
-                                                color: (post?.isLiked ?? false)
+                                                color:
+                                                    (communityDetails
+                                                            ?.isLiked ??
+                                                        false)
                                                     ? Colors.red
                                                     : Colors.black26,
                                               ),
                                             ),
-                                            const SizedBox(width: 4),
                                             Text(
-                                              "${post?.likesCount ?? 0}",
+                                              "${communityDetails?.likesCount ?? 0}",
                                               style: const TextStyle(
                                                 color: Color(0xff666666),
                                                 fontSize: 14,
@@ -216,31 +221,29 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                         );
                                       },
                                     ),
-
-                                    const SizedBox(width: 12),
-
-                                    // Comments
-                                    GestureDetector(
-                                      onTap: () {
-                                        if (isGuest) {
-                                          context.push('/auth_landing');
-                                        } else {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            useRootNavigator: true,
-                                            backgroundColor: Colors.transparent,
-                                            builder: (context) {
-                                              return DraggableScrollableSheet(
-                                                initialChildSize: 0.8,
-                                                minChildSize: 0.4,
-                                                maxChildSize: 0.95,
-                                                expand: false,
-                                                builder:
-                                                    (
-                                                      _,
-                                                      scrollController,
-                                                    ) => Container(
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () {
+                                            if (isGuest) {
+                                              context.push('/auth_landing');
+                                            } else {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                useRootNavigator: true,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                builder: (context) {
+                                                  return DraggableScrollableSheet(
+                                                    initialChildSize: 0.8,
+                                                    minChildSize: 0.4,
+                                                    maxChildSize: 0.95,
+                                                    expand: false,
+                                                    builder: (_, scrollController) => Container(
                                                       decoration: const BoxDecoration(
                                                         color: Color(
                                                           0xffF4F8FD,
@@ -254,7 +257,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                             ),
                                                       ),
                                                       padding:
-                                                          EdgeInsets.symmetric(
+                                                          const EdgeInsets.symmetric(
                                                             horizontal: 16,
                                                             vertical: 12,
                                                           ),
@@ -266,36 +269,34 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                             scrollController,
                                                       ),
                                                     ),
+                                                  );
+                                                },
                                               );
-                                            },
-                                          );
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            "assets/icons/ChatCircle.png",width: 20,height: 20,
+                                            }
+                                          },
+                                          icon: Image.asset(
+                                            "assets/icons/Chat.png",
+                                            width: 18,
+                                            height: 18,
                                           ),
-                                          const SizedBox(width: 6),
-                                          BlocBuilder<
-                                            PostCommentCubit,
-                                            PostCommentStates
-                                          >(
-                                            builder: (context, state) {
-                                              return Text(
-                                                communityDetails?.commentsCount
-                                                        ?.toString() ??
-                                                    "0",
-                                                style: TextStyle(
-                                                  fontFamily: 'segeo',
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        BlocBuilder<
+                                          PostCommentCubit,
+                                          PostCommentStates
+                                        >(
+                                          builder: (context, state) {
+                                            return Text(
+                                              communityDetails?.commentsCount
+                                                      ?.toString() ??
+                                                  "0",
+                                              style: const TextStyle(
+                                                fontFamily: 'segeo',
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    // Share
                                     IconButton(
                                       padding: EdgeInsets
                                           .zero, // remove default extra padding
