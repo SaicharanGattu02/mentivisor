@@ -114,7 +114,7 @@ class EventCard extends StatelessWidget {
                         if (isGuest) {
                           context.push('/auth_landing');
                         } else {
-                          context.push('/view_event', extra: eccList);
+                          context.push('/view_event/${eccList.id}',);
                         }
                       },
                     );

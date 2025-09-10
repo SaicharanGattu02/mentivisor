@@ -103,9 +103,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     Text(
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      capitalize(
-                                        " with${upComingSessions.mentor?.name ?? "Unknown Mentor"}",
-                                      ),
+                                        "With ${capitalize(upComingSessions.mentor?.name ?? "Unknown Mentor")}",
+                                      
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: "segeo",
@@ -119,7 +118,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       children: [
                                         _buildInfoChip(
                                           icon: Icons.calendar_today,
-                                          label: upComingSessions.date ?? "N/A",
+                                          label: formatDate(upComingSessions.date ?? "N/A"),
                                           color: Colors.blue.shade50,
                                           textColor: Colors.blue.shade700,
                                         ),
@@ -150,29 +149,25 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                           '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
                                         );
                                       },
-                                      icon: const Icon(
-                                        Icons.chat_bubble_outline,
-                                        size: 16,
-                                        color: Colors.black87,
-                                      ),
+                                      icon:Image.asset("assets/icons/ChatCircle.png",width: 20,height: 20,),
                                       label: Text(
                                         "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 14,fontWeight: FontWeight.w600,
                                           fontFamily: "segeo",
-                                          color: Colors.black87,
+                                          color: Color(0xff666666),
                                         ),
                                       ),
                                       style: OutlinedButton.styleFrom(
                                         side: BorderSide(
-                                          color: Colors.grey.shade300,
+                                          color: Color(0xffCCCCCC),width: 1
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                           vertical: 8,
                                           horizontal: 12,
                                         ),

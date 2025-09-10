@@ -60,6 +60,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _streamController.text = data?.user?.stream ?? "";
           _bioController.text = data?.user?.bio ?? "";
           imagePath = data?.user?.profilePicUrl ?? "";
+          if (data?.user?.collegeId != null) {
+            _collegeId = int.tryParse(data?.user?.collegeId.toString() ?? "");
+            _collegeController.text = data?.user?.college_name ?? "";
+          }
+
           if (data?.user?.yearId != null) {
             _yearId = int.tryParse(data?.user?.yearId.toString() ?? "");
             _yearController.text = data?.user?.yearName.toString() ?? "";
@@ -159,6 +164,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _nameController,
                       validator: (v) =>
                           v == null || v.isEmpty ? "Name required" : null,
+                    ),
+                    Text(
+                      "College",
+                      style: const TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff374151),
+                      ),
                     ),
                     SizedBox(height: 4),
                     TextFormField(
@@ -284,7 +298,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           final data = {
                             "name": _nameController.text.trim(),
                             "year": _yearId,
-                            "college": _collegeId,
+                            "college_id": _collegeId,
                             "stream": _streamController.text.trim(),
                             "bio": _bioController.text.trim(),
                             "email": _emailController.text.trim(),

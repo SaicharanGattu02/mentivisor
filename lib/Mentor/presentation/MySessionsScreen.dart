@@ -203,7 +203,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                               reason: session?.cancelledReason ?? "",
                               buttonText:
                                   'Message from ${session?.mentee?.name ?? ""}',
-                              buttonIcon: 'assets/icons/chaticon.png',
+                              buttonIcon:  "assets/icons/ChatCircle.png",
                               remainingTime: '${duration} Minutes to go',cancelreason: session?.cancelledReason??"",
                             );
                           }, childCount: Sessions?.length),

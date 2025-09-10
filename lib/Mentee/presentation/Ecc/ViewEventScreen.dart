@@ -1,184 +1,222 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/Models/ECCModel.dart';
 import 'package:mentivisor/utils/AppLauncher.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../Components/CommonLoader.dart';
 import '../../../utils/constants.dart';
+import '../../data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
+import '../../data/cubits/ViewEccEventDetails/ViewEventDetailsState.dart';
 
 class ViewEventScreen extends StatefulWidget {
-  final ECCList eccList;
+  final int eventId;
 
-  const ViewEventScreen({super.key, required this.eccList});
+  const ViewEventScreen({super.key, required this.eventId});
 
   @override
   State<ViewEventScreen> createState() => _ViewEventScreenState();
 }
 
 class _ViewEventScreenState extends State<ViewEventScreen> {
+  ValueNotifier<String> eventLink = ValueNotifier<String>("");
+  @override
+  void initState() {
+    super.initState();
+    context.read<ViewEventDetailsCubit>().eventDetails(widget.eventId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar1(title: 'View Event', actions: []),
-      body: Column(
-        children: [
-          SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
-                        ),
-                      ),
+      // extendBodyBehindAppBar: true,
+      appBar: CustomAppBar1(title: 'View Event', actions: [],color: Color(0xffF5F6FF),),
+      body: BlocBuilder<ViewEventDetailsCubit, ViewEventDetailsState>(
+        builder: (context, state) {
+          if (state is ViewEventDetailsLoading) {
+            return const Center(child: DottedProgressWithLogo());
+          } else if (state is ViewEventDetailsLoaded) {
+            final eventDetails = state.viewEccDetailsModel.data;
+            eventLink.value = eventDetails?.link ?? "";
+            return Column(
+              children: [
+                // SizedBox(
+                //   height: MediaQuery.of(context).padding.top + kToolbarHeight,
+                // ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                    child: Card(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 12,
                         children: [
-                          Text(
-                            widget.eccList.name ?? "",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                topRight: Radius.circular(8),
+                              ),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 12,
+                              children: [
+                                Text(
+                                  eventDetails?.name ?? "",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'segeo',
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  eventDetails?.description ?? "",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'segeo',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Text(
-                            widget.eccList.description ?? "",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0,left: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _InfoRow(
+                                  icon: Icons.calendar_today_outlined,
+                                  iconBg: const Color(0xFFE8F1FF),
+                                  iconColor: const Color(0xFF4A90E2),
+                                  label: 'Date & Time',
+                                  value:
+                                      '${formatDate(eventDetails?.dateofevent)}\n${formatTimeRange(eventDetails?.time)}',
+                                ),
+                                _InfoRow(
+                                  icon: Icons.location_on_outlined,
+                                  iconBg: const Color(0xFFE8FFEE),
+                                  iconColor: const Color(0xFF2ECC71),
+                                  label: 'Location',
+                                  value: eventDetails?.location ?? "",
+                                ),
+                                _InfoRow(
+                                  icon: Icons.apartment_rounded,
+                                  iconBg: const Color(0xFFF4E8FF),
+                                  iconColor: const Color(0xFF9013FE),
+                                  label: 'Organizing Institution',
+                                  value: eventDetails?.college ?? "",
+                                ),
+                              ],
+                            ),
+                          ),
+                          // — Details box
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            margin: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Color(0xffBEBEB).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Event Details',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,fontFamily: 'segeo',color: Color(0xff333333)
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  eventDetails?.description ?? "",
+                                  style: TextStyle(
+                                    color: Color(0xff666666),
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'segeo',
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _InfoRow(
-                            icon: Icons.calendar_today,
-                            iconBg: const Color(0xFFE8F1FF),
-                            iconColor: const Color(0xFF4A90E2),
-                            label: 'Date & Time',
-                            value:
-                                '${formatDate(widget.eccList.dateofevent)}\n${formatTimeRange(widget.eccList.time)}',
-                          ),
-                          _InfoRow(
-                            icon: Icons.location_on,
-                            iconBg: const Color(0xFFE8FFEE),
-                            iconColor: const Color(0xFF2ECC71),
-                            label: 'Location',
-                            value: widget.eccList.location ?? "",
-                          ),
-                          _InfoRow(
-                            icon: Icons.apartment,
-                            iconBg: const Color(0xFFF4E8FF),
-                            iconColor: const Color(0xFF9013FE),
-                            label: 'Organizing Institution',
-                            value: widget.eccList.college ?? "",
-                          ),
-                        ],
-                      ),
-                    ),
-                    // — Details box
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      margin: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Color(0xffBEBEB).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Event Details',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            widget.eccList.description ?? "",
-                            style: const TextStyle(
-                              color: Colors.black54,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      // — Bottom buttons
-      bottomNavigationBar: ((widget.eccList.link ?? "").isNotEmpty)
-          ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: SizedBox(
-                  height: 52,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CustomOutlinedButton(
-                          text: "Share Event",
-                          onTap: () async {
-                            final eccID = widget.eccList.id;
-                            final shareUrl =
-                                "https://mentivisor.com/ecc/$eccID";
-                            Share.share(
-                              "Check out this ECC on Mentivisor:\n$shareUrl",
-                              subject:
-                                  "Mentivisor Event, Competitions & Challenges",
-                            );
-                          },
-                          radius: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CustomAppButton1(
-                          text: "Register for Event",
-                          radius: 24,
-                          onPlusTap: () {
-                            AppLauncher.openWebsite(widget.eccList.link ?? "");
-                          },
-                        ),
-                      ),
-                    ],
                   ),
                 ),
-              ),
-            )
-          : SizedBox.shrink(),
+              ],
+            );
+          } else if (state is ViewEventDetailsFailure) {
+            return Center(child: Text(state.message));
+          } else {
+            return Text("No Data");
+          }
+        },
+      ),
+      // — Bottom buttons
+      bottomNavigationBar: ValueListenableBuilder<String>(
+        valueListenable: eventLink,
+        builder: (context, link, child) {
+          return (link.isNotEmpty)
+              ? SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    child: SizedBox(
+                      height: 52,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CustomOutlinedButton(
+                              text: "Share Event",
+                              onTap: () async {
+                                final eccID = widget.eventId;
+                                final shareUrl =
+                                    "https://mentivisor.com/ecc/$eccID";
+                                Share.share(
+                                  "Check out this ECC on Mentivisor:\n$shareUrl",
+                                  subject:
+                                      "Mentivisor Event, Competitions & Challenges",
+                                );
+                              },
+                              radius: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomAppButton1(
+                              text: "Register for Event",
+                              radius: 24,
+                              onPlusTap: () {
+                                AppLauncher.openWebsite(link);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox.shrink();
+        },
+      ),
     );
   }
 }
@@ -201,7 +239,7 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,

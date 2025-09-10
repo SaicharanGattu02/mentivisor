@@ -274,9 +274,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                       child: Row(
                                         children: [
                                           Image.asset(
-                                            "assets/icons/Chat.png",
-                                            width: 16,
-                                            height: 16,
+                                            "assets/icons/ChatCircle.png",width: 20,height: 20,
                                           ),
                                           const SizedBox(width: 6),
                                           BlocBuilder<

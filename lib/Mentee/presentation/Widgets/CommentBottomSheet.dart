@@ -152,10 +152,8 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                             itemBuilder: (ctx, i) {
                               final c = list[i];
                               return CommentCard(
-                                key: ValueKey(
-                                  c.id ,
-                                ),
-                                id: c.id??0,
+                                key: ValueKey(c.id),
+                                id: c.id ?? 0,
                                 name: c.user?.name ?? 'Unknown',
                                 profileUrl: c.user?.profilePicUrl ?? '',
                                 content: c.content ?? '',
@@ -213,7 +211,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                   _controller.clear();
                   _cancelReply();
                   await context.read<FetchCommentsCubit>().getComments(
-                    widget.communityPost.id?? 0,
+                    widget.communityPost.id ?? 0,
                   );
                 } else if (state is PostCommentFailure) {
                   CustomSnackBar1.show(

@@ -398,13 +398,12 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(AddEventScreen(type: type), state);
       },
     ),
-
     GoRoute(
-      path: '/view_event',
+      path: '/view_event/:eventId',
       pageBuilder: (context, state) {
-        final eccList = state.extra as ECCList; // Cast the extra data
+        final id = int.parse(state.pathParameters['eventId']!);
         return buildSlideTransitionPage(
-          ViewEventScreen(eccList: eccList),
+          ViewEventScreen(eventId: id),
           state,
         );
       },

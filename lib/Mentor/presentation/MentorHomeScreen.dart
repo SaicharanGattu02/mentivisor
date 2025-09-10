@@ -233,7 +233,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     reason: '',
                                     buttonText:
                                         'Message from ${session?.mentee?.name ?? ""}',
-                                    buttonIcon: 'assets/icons/chaticon.png',
+                                    buttonIcon:  "assets/icons/ChatCircle.png",
                                     remainingTime:
                                         '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
                                   );

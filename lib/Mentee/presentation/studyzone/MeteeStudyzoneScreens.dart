@@ -120,11 +120,30 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       onPressed: () {
                                         searchController.clear();
                                         onCampusNotifier.value = true;
+
+                                        // get selected tag from index
+                                        final tagsState = context
+                                            .read<TagsCubit>()
+                                            .state;
+                                        String tag = "";
+                                        if (tagsState is TagsLoaded &&
+                                            _selectedTagIndex.value >= 0 &&
+                                            _selectedTagIndex.value <
+                                                (tagsState
+                                                        .tagsModel
+                                                        .data
+                                                        ?.length ??
+                                                    0)) {
+                                          tag = tagsState
+                                              .tagsModel
+                                              .data![_selectedTagIndex.value];
+                                        }
+
                                         context
                                             .read<StudyZoneCampusCubit>()
                                             .fetchStudyZoneCampus(
                                               "",
-                                              selectedTag ?? "",
+                                              tag,
                                               searchController.text,
                                             );
                                       },
@@ -137,12 +156,30 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       onPressed: () {
                                         searchController.clear();
                                         onCampusNotifier.value = false;
+
+                                        final tagsState = context
+                                            .read<TagsCubit>()
+                                            .state;
+                                        String tag = "";
+                                        if (tagsState is TagsLoaded &&
+                                            _selectedTagIndex.value >= 0 &&
+                                            _selectedTagIndex.value <
+                                                (tagsState
+                                                        .tagsModel
+                                                        .data
+                                                        ?.length ??
+                                                    0)) {
+                                          tag = tagsState
+                                              .tagsModel
+                                              .data![_selectedTagIndex.value];
+                                        }
+
                                         context
                                             .read<StudyZoneCampusCubit>()
                                             .fetchStudyZoneCampus(
                                               "beyond",
-                                              selectedTag ?? "",
-                                              "",
+                                              tag,
+                                              searchController.text,
                                             );
                                       },
                                     ),
@@ -229,7 +266,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                             builder: (context, selectedIndex, _) {
                               if (tags == null || tags.isEmpty) {
                                 return Container(
-                                  height: 40, // keep space same as tags list
+                                  height: 40,
                                   alignment: Alignment.center,
                                   child: Text(
                                     "No tags available",
@@ -244,21 +281,22 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               }
                               return ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
+                                physics: const BouncingScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
-                                itemCount: tags.length ?? 0,
+                                itemCount: tags.length,
                                 separatorBuilder: (_, __) =>
                                     const SizedBox(width: 8),
                                 itemBuilder: (context, index) {
-                                  final tagItem = tags![index];
-                                  selectedTag = tagItem;
+                                  final tagItem = tags[index];
                                   final isSelected = index == selectedIndex;
+
                                   return GestureDetector(
                                     onTap: () {
                                       _selectedTagIndex.value = index;
-                                      if (onCampusNotifier.value == true) {
+
+                                      if (onCampusNotifier.value) {
                                         context
                                             .read<StudyZoneCampusCubit>()
                                             .fetchStudyZoneCampus(
@@ -277,7 +315,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       }
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 4,
                                       ),
@@ -308,6 +346,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       return const SizedBox.shrink();
                     },
                   ),
+
                   const SizedBox(height: 12),
                   BlocBuilder<StudyZoneCampusCubit, StudyZoneCampusState>(
                     builder: (context, state) {
@@ -401,7 +440,9 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             if (isGuest) {
                                               context.push('/auth_landing');
                                             } else {
-                                              context.push('/resource_details_screen/${campusList?.id}');
+                                              context.push(
+                                                '/resource_details_screen/${campusList?.id}',
+                                              );
                                             }
                                           },
                                           child: Container(

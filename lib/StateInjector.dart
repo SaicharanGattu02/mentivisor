@@ -80,6 +80,9 @@ import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
 import 'Mentee/data/cubits/CommunityDetails/CommunityDetailsCubit.dart';
 import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
+import 'Mentee/data/cubits/EccTags/TagsSearch/tags_search_cubit.dart';
+import 'Mentee/data/cubits/EccTags/tags_cubit.dart';
+import 'Mentee/data/cubits/EccTags/tags_repository.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Repository.dart';
 import 'Mentee/data/cubits/Expertise/ExpertiseCategory/expertise_category_cubit.dart';
@@ -116,6 +119,7 @@ import 'Mentee/data/cubits/Tags/tags_cubit.dart';
 import 'Mentee/data/cubits/Tags/tags_repository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
+import 'Mentee/data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
@@ -181,6 +185,10 @@ class StateInjector {
       create: (context) => MentorProfileRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
+    ),
+    RepositoryProvider<EccTagsRepository>(
+      create: (context) =>
+          EccTagsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
     RepositoryProvider<ECCRepository>(
       create: (context) =>
@@ -445,12 +453,21 @@ class StateInjector {
       create: (context) =>
           StudyZoneTagsCubit(context.read<StudyZoneTagsRepository>()),
     ),
+    BlocProvider<EccTagsCubit>(
+      create: (context) => EccTagsCubit(context.read<EccTagsRepository>()),
+    ),
+    BlocProvider<EccTagsSearchCubit>(
+      create: (context) => EccTagsSearchCubit(context.read<EccTagsRepository>()),
+    ),
     BlocProvider<MentorProfileCubit>(
       create: (context) =>
           MentorProfileCubit(context.read<MentorProfileRepository>()),
     ),
     BlocProvider<ECCCubit>(
       create: (context) => ECCCubit(context.read<ECCRepository>()),
+    ),
+    BlocProvider<ViewEventDetailsCubit>(
+      create: (context) => ViewEventDetailsCubit(context.read<ECCRepository>()),
     ),
     BlocProvider<AddEccCubit>(
       create: (context) => AddEccCubit(context.read<ECCRepository>()),

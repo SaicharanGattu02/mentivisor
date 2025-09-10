@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileRejected extends StatelessWidget {
   const ProfileRejected({super.key});
@@ -55,11 +56,10 @@ class ProfileRejected extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Navigate to profile update screen
-                  Navigator.pop(context);
+                  context.push('/becomementorscreen');
                 },
-                child: const Text(
-                  "Update Profile",
+                child:  Text(
+                  "RE Submit",
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),

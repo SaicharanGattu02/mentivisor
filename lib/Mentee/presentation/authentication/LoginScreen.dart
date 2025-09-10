@@ -62,7 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
       isValid = false;
     }
 
-    // Get the FCM token first
     String? fcmToken = await FirebaseMessaging.instance.getToken();
     AppLogger.log("FCM Token: $fcmToken");
 

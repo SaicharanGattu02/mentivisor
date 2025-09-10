@@ -4,25 +4,20 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
-import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsState.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_states.dart';
-import 'package:mentivisor/Mentee/data/cubits/Tags/tags_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
-import '../../../utils/ImageUtils.dart';
+import '../../../utils/AppLogger.dart';
 import '../../../utils/color_constants.dart';
-import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
-import '../../data/cubits/CommunityTags/community_tags_states.dart';
+
 import '../../data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
@@ -43,138 +38,12 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   final ValueNotifier<File?> _pickedFile = ValueNotifier<File?>(null);
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _useDefaultImage = ValueNotifier<bool>(false);
+
   final searchController = TextEditingController();
   Timer? _debounce;
   List<String> _selectedTags = [];
   List<String> _customTags = [];
-  //
-  // Future<void> _pickFile() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
-  //   );
-  //
-  //   if (result != null && result.files.single.path != null) {
-  //     _pickedFile.value = File(result.files.single.path!);
-  //   }
-  // }
-  //
-  // void _cancelFile() {
-  //   _pickedFile.value = null;
-  // }
-  //
-  // final ImagePicker _picker = ImagePicker();
-  // Future<void> _pickImage() async {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-  //     ),
-  //     backgroundColor: Colors.white,
-  //     builder: (BuildContext context) {
-  //       return SafeArea(
-  //         child: Padding(
-  //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             crossAxisAlignment: CrossAxisAlignment.stretch,
-  //             children: [
-  //               // Drag handle
-  //               Center(
-  //                 child: Container(
-  //                   width: 40,
-  //                   height: 4,
-  //                   margin: const EdgeInsets.symmetric(vertical: 8),
-  //                   decoration: BoxDecoration(
-  //                     color: primarycolor.withOpacity(0.3),
-  //                     borderRadius: BorderRadius.circular(2),
-  //                   ),
-  //                 ),
-  //               ),
-  //
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.end,
-  //                 children: [
-  //                   IconButton(
-  //                     icon: const Icon(Icons.close, color: Colors.red),
-  //                     onPressed: () => Navigator.pop(context),
-  //                   ),
-  //                 ],
-  //               ),
-  //               ListTile(
-  //                 leading: Icon(Icons.photo_library, color: primarycolor),
-  //                 title: const Text(
-  //                   'Choose from Gallery',
-  //                   style: TextStyle(
-  //                     fontFamily: 'Poppins',
-  //                     fontSize: 16,
-  //                     color: Colors.black87,
-  //                     fontWeight: FontWeight.w400,
-  //                   ),
-  //                 ),
-  //                 onTap: () {
-  //                   Navigator.pop(context);
-  //                   _pickImageFromGallery();
-  //                 },
-  //               ),
-  //
-  //               // Camera Option
-  //               ListTile(
-  //                 leading: Icon(Icons.camera_alt, color: primarycolor),
-  //                 title: const Text(
-  //                   'Take a Photo',
-  //                   style: TextStyle(
-  //                     fontFamily: 'Poppins',
-  //                     fontSize: 16,
-  //                     color: Colors.black87,
-  //                     fontWeight: FontWeight.w400,
-  //                   ),
-  //                 ),
-  //                 onTap: () {
-  //                   Navigator.pop(context);
-  //                   _pickImageFromCamera();
-  //                 },
-  //               ),
-  //               const SizedBox(height: 8),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  // Future<void> _pickImageFromGallery() async {
-  //   final XFile? pickedFile = await _picker.pickImage(
-  //     source: ImageSource.gallery,
-  //   );
-  //   if (pickedFile != null) {
-  //     File? compressedFile = await ImageUtils.compressImage(
-  //       File(pickedFile.path),
-  //     );
-  //     if (compressedFile != null) {
-  //       _imageFile.value = compressedFile;
-  //     }
-  //   }
-  // }
-  //
-  // Future<void> _pickImageFromCamera() async {
-  //   final XFile? pickedFile = await _picker.pickImage(
-  //     source: ImageSource.camera,
-  //   );
-  //   if (pickedFile != null) {
-  //     File? compressedFile = await ImageUtils.compressImage(
-  //       File(pickedFile.path),
-  //     );
-  //     if (compressedFile != null) {
-  //       _imageFile.value = compressedFile;
-  //     }
-  //   }
-  // }
-  //
-  // void _cancelImage() {
-  //   _imageFile.value = null;
-  // }
 
   Future<void> _selectFile() async {
     final file = await FileImagePicker.pickFile();
@@ -186,22 +55,16 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   Future<void> _selectImage() async {
     final image = await FileImagePicker.pickImageBottomSheet(context);
     if (image != null) {
-      // Resize the image before uploading
       final resizedImage = await _resizeImage(image);
       setState(() => _imageFile.value = resizedImage);
-      // Upload resizedImage to your server and get the URL
     }
   }
 
   Future<File> _resizeImage(File imageFile) async {
-    // Read the image
     final image = img.decodeImage(await imageFile.readAsBytes());
     if (image == null) return imageFile;
-
-    // Resize to a maximum width (e.g., 800 pixels) while maintaining aspect ratio
     final resized = img.copyResize(image, width: 800);
 
-    // Save the resized image to a temporary file
     final tempDir = await getTemporaryDirectory();
     final tempFile = File('${tempDir.path}/resized_image.jpg');
     await tempFile.writeAsBytes(img.encodeJpg(resized));
@@ -222,6 +85,14 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     searchController.clear();
     context.read<TagsSearchCubit>().reset();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _imageFile.dispose();
+    _isHighlighted.dispose();
+    _useDefaultImage.dispose();
+    super.dispose();
   }
 
   @override
@@ -252,81 +123,143 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              ValueListenableBuilder<File?>(
-                valueListenable: _imageFile,
-                builder: (context, file, _) {
-                  return GestureDetector(
-                    onTap: file == null ? _selectImage : null,
-                    child: DottedBorder(
-                      borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
-                      color: Color(0xff4B5462),
-                      strokeWidth: 1,
-                      dashPattern: [6, 3],
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        child: Container(
-                          width: double.infinity,
-                          color: Colors.white,
-                          child: file == null
-                              ? Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 14,
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/upload.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        "Upload your Banner here ",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff9CA3AF),
-                                          fontWeight: FontWeight.w600,
+              ValueListenableBuilder<bool>(
+                valueListenable: _useDefaultImage,
+                builder: (context, value, child) {
+                  return ValueListenableBuilder<File?>(
+                    valueListenable: _imageFile,
+                    builder: (context, file, _) {
+                      final isDisabled = _useDefaultImage.value;
+                      AppLogger.info("isDisabled:${isDisabled}");
+
+                      return GestureDetector(
+                        onTap: (!isDisabled && file == null)
+                            ? _selectImage
+                            : null,
+                        child: Opacity(
+                          opacity: isDisabled ? 0.5 : 1.0,
+                          child: DottedBorder(
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(36),
+                            color: isDisabled ? Colors.grey : primarycolor,
+                            strokeWidth: 1.5,
+                            dashPattern: [6, 3],
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(36),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                color: Color(0xffF5F5F5),
+                                child: file == null
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 14,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Stack(
-                                  children: [
-                                    Image.file(
-                                      file,
-                                      width: double.infinity,
-                                      height: 180,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: GestureDetector(
-                                        onTap: _cancelImage,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.black54,
-                                          radius: 16,
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 18,
-                                            color: Colors.white,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Upload your Banner here",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Color(0xff9CA3AF),
+                                                fontWeight: FontWeight.w400,
+                                                fontFamily: "segeo",
+                                              ),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Icon(
+                                              Icons.upload_rounded,
+                                              color: labeltextColor,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Stack(
+                                        children: [
+                                          Image.file(
+                                            file,
+                                            width: double.infinity,
+                                            height: 180,
+                                            fit: BoxFit.cover,
                                           ),
-                                        ),
+                                          Positioned(
+                                            top: 8,
+                                            right: 8,
+                                            child: GestureDetector(
+                                              onTap: _cancelImage,
+                                              child: CircleAvatar(
+                                                backgroundColor: Colors.black54,
+                                                radius: 16,
+                                                child: Icon(
+                                                  Icons.close,
+                                                  size: 18,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
-              const SizedBox(height: 18),
+
+              SizedBox(height: 8),
+              ValueListenableBuilder<bool>(
+                valueListenable: _useDefaultImage,
+                builder: (context, value, _) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+
+                    children: [
+                      Text(
+                        'Use Default Images',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'segeo',
+                          color: Color(0xff666666),
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: 0.5,
+                        child: Switch(
+                          padding: EdgeInsets.zero,
+                          value: value,
+                          onChanged: (val) {
+                            _useDefaultImage.value = val;
+                          },
+                          activeTrackColor: const Color(0xff2563EB),
+                          inactiveTrackColor: Colors.grey.shade300,
+                          inactiveThumbColor: const Color(
+                            0xff2563EB,
+                          ), // inactive thumb
+                          thumbColor: MaterialStateProperty.resolveWith<Color>((
+                            states,
+                          ) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Colors.white;
+                            }
+                            return const Color(0xff2563EB);
+                          }),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+
               buildCustomLabel('Resource Name'),
               buildCustomTextField(
                 controller: _resourceNameController,
@@ -635,9 +568,13 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                       "name": _resourceNameController.text,
                       "description": _aboutController.text,
                       "tag[]": _selectedTags,
-                      "image": imagefile!.path,
-                      "file_pdf": file!.path,
                     };
+                    if (imagefile != null) {
+                      data["image"] = imagefile.path;
+                    }
+                    if (file != null) {
+                      data["file_pdf"] = file.path;
+                    }
                     context.read<AddResourceCubit>().addResource(data, "");
                   }
                 },

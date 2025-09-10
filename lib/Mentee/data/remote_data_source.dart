@@ -49,6 +49,7 @@ import '../Models/TagsModel.dart';
 import '../Models/TaskStatesModel.dart';
 import '../Models/UpComingSessionModel.dart';
 import '../Models/UploadFileInChatModel.dart';
+import '../Models/ViewEccDetailsModel.dart';
 import '../Models/WeeklySlotsModel.dart';
 
 abstract class RemoteDataSource {
@@ -136,6 +137,9 @@ abstract class RemoteDataSource {
   Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
+  Future<ViewEccDetailsModel?> viewEccDetails(int eventId);
+  Future<TagsModel?> getEccTagsSearch(String query);
+  Future<TagsModel?> getEccTags();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -573,6 +577,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       }
       debugPrint('getEcc::$res');
       return ECCModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error getEcc::$e');
+      return null;
+    }
+  }
+
+  @override
+  Future<ViewEccDetailsModel?> viewEccDetails(int eventId) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.view_ecc_details}/${eventId}",
+      );
+      debugPrint('getEcc::$res');
+      return ViewEccDetailsModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getEcc::$e');
       return null;
@@ -1170,17 +1188,46 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+  @override
+  Future<TagsModel?> getEccTags() async {
+    try {
+      final isGuest = await AuthService.isGuest;
+      final endpoint = isGuest
+          ? APIEndpointUrls.guestTags
+          : APIEndpointUrls.ecc_tags;
+
+      Response res = await ApiClient.get(endpoint);
+      AppLogger.log('get Ecc Tags :: ${res.data}');
+      return TagsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Ecc Tags :: $e');
+      return null;
+    }
+  }
 
   @override
   Future<TagsModel?> getTagSearch(String query) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.tagSearch}?keyword=${query}",
+        "${APIEndpointUrls.tag_search}?keyword=${query}",
       );
       AppLogger.log('get Tags Search ::${res.data}');
       return TagsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Tags Search::${e}');
+      return null;
+    }
+  }
+  @override
+  Future<TagsModel?> getEccTagsSearch(String query) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.ecc_tag_Search}?keyword=${query}",
+      );
+      AppLogger.log('get Ecc Tags Search ::${res.data}');
+      return TagsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Ecc Tags Search::${e}');
       return null;
     }
   }

@@ -1,11 +1,10 @@
+import 'dart:async';
 import 'dart:io';
-
+import 'package:image/image.dart' as img;
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -14,14 +13,15 @@ import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../Components/CommonLoader.dart';
-import '../../../services/AuthService.dart';
-import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/constants.dart';
-import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import '../../data/cubits/ECC/ecc_cubit.dart';
+import '../../data/cubits/EccTags/TagsSearch/tags_search_cubit.dart';
+import '../../data/cubits/EccTags/TagsSearch/tags_search_states.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddEventScreen extends StatefulWidget {
@@ -33,13 +33,12 @@ class AddEventScreen extends StatefulWidget {
 
 class _AddEventScreenState extends State<AddEventScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _collegeNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _eventLinkController = TextEditingController();
-
+  final ValueNotifier<File?> _pickedFile = ValueNotifier<File?>(null);
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _useDefaultImage = ValueNotifier<bool>(false);
   final ValueNotifier<String> selectedDateStr = ValueNotifier<String>('');
@@ -48,6 +47,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
   final ValueNotifier<String> selectedTabIndex = ValueNotifier<String>('event');
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
+
+  final searchController = TextEditingController();
+  Timer? _debounce;
+  List<String> _selectedTags = [];
+  List<String> _customTags = [];
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
@@ -84,113 +88,24 @@ class _AddEventScreenState extends State<AddEventScreen> {
     }
   }
 
-  final ImagePicker _picker = ImagePicker();
-  Future<void> _pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Drag handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: primarycolor.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                ListTile(
-                  leading: Icon(Icons.photo_library, color: primarycolor),
-                  title: const Text(
-                    'Choose from Gallery',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageFromGallery();
-                  },
-                ),
-
-                // Camera Option
-                ListTile(
-                  leading: Icon(Icons.camera_alt, color: primarycolor),
-                  title: const Text(
-                    'Take a Photo',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageFromCamera();
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        _imageFile.value = compressedFile;
-      }
+  Future<void> _selectImage() async {
+    final image = await FileImagePicker.pickImageBottomSheet(context);
+    if (image != null) {
+      final resizedImage = await _resizeImage(image);
+      setState(() => _imageFile.value = resizedImage);
     }
   }
 
-  Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.camera,
-    );
-    if (pickedFile != null) {
-      File? compressedFile = await ImageUtils.compressImage(
-        File(pickedFile.path),
-      );
-      if (compressedFile != null) {
-        _imageFile.value = compressedFile;
-      }
-    }
+  Future<File> _resizeImage(File imageFile) async {
+    final image = img.decodeImage(await imageFile.readAsBytes());
+    if (image == null) return imageFile;
+    final resized = img.copyResize(image, width: 800);
+
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File('${tempDir.path}/resized_image.jpg');
+    await tempFile.writeAsBytes(img.encodeJpg(resized));
+
+    return tempFile;
   }
 
   void _cancelImage() {
@@ -199,6 +114,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   @override
   void initState() {
+    searchController.clear();
+    context.read<EccTagsSearchCubit>().reset();
     context.read<HighlightedCoinsCubit>().highlitedCoins("ecc");
     super.initState();
   }
@@ -211,20 +128,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
     _useDefaultImage.dispose();
     super.dispose();
   }
-
-  // void spendCoins(int spentAmount) {
-  //   final newCoins = AppState.coinsNotifier.value - spentAmount;
-  //   AppState.updateCoins(newCoins);
-  //   _fetchUpdatedCoins();
-  // }
-  //
-  // Future<void> _fetchUpdatedCoins() async {
-  //   final coinsString = await AuthService.getCoins();
-  //   final newCoins = int.tryParse(coinsString ?? "0") ?? 0;
-  //   if (newCoins != AppState.coinsNotifier.value) {
-  //     AppState.updateCoins(newCoins);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -327,6 +230,163 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   return null;
                 },
               ),
+              buildCustomLabel('Ecc Tags'),
+              const SizedBox(height: 8),
+
+              SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: searchController,
+                  cursorColor: primarycolor,
+                  onChanged: (query) {
+                    if (_debounce?.isActive ?? false) _debounce!.cancel();
+                    _debounce = Timer(const Duration(milliseconds: 300), () {
+                      context.read<EccTagsSearchCubit>().getEccTagsSearch(
+                        query,
+                      );
+                    });
+                  },
+                  style: TextStyle(fontFamily: "segeo", fontSize: 15),
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search, color: Colors.grey),
+                    hoverColor: Colors.white,
+                    hintText: "Search Ecc Tags here",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.only(right: 33, left: 20),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              BlocBuilder<EccTagsSearchCubit, EccTagsSearchState>(
+                builder: (context, state) {
+                  if (state is EccTagsSearchLoading) {
+                    return const Center(child: DottedProgressWithLogo());
+                  } else if (state is EccTagsSearchLoaded) {
+                    final allTags = [...state.tagsModel.data!, ..._customTags];
+                    if (allTags.isEmpty) {
+                      return Center(child: Text("No Ecc Tags Found!"));
+                    }
+                    return Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Select Ecc Tags",
+                            style: TextStyle(
+                              color: Color(0xff374151),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'segeo',
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Wrap(
+                            spacing: 5,
+                            runSpacing: 0,
+                            children: allTags.map((tag) {
+                              final isSelected = _selectedTags.contains(tag);
+                              return ChoiceChip(
+                                label: Text(
+                                  tag,
+                                  style: TextStyle(
+                                    color: Color(0xff333333),
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      _selectedTags.add(tag);
+                                    } else {
+                                      _selectedTags.remove(tag);
+                                    }
+                                  });
+                                },
+                                selectedColor: Colors.blue.shade100,
+                                backgroundColor: Colors.white,
+                                side: BorderSide(
+                                  color: isSelected
+                                      ? Colors.blue.shade100
+                                      : Colors.grey,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (state is EccTagsSearchFailure) {
+                    return Center(child: Text("No Data"));
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+              const SizedBox(height: 8),
+              if (_selectedTags.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Selected Ecc Tags",
+                        style: TextStyle(
+                          color: Color(0xff374151),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'segeo',
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 0,
+                        children: _selectedTags.map((tag) {
+                          return Chip(
+                            label: Text(
+                              tag,
+                              style: const TextStyle(
+                                color: Color(0xff333333),
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                            side: BorderSide(color: Colors.blue.shade50),
+                            backgroundColor: Colors.blue.shade50,
+                            deleteIcon: const Icon(Icons.close, size: 16),
+                            onDeleted: () {
+                              setState(() {
+                                _selectedTags.remove(tag);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                SizedBox.shrink(),
+              ],
+
               buildCustomLabel('Description'),
               buildCustomTextField(
                 controller: _descriptionController,
@@ -356,7 +416,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
                       return GestureDetector(
                         onTap: (!isDisabled && file == null)
-                            ? _pickImage
+                            ? _selectImage
                             : null,
                         child: Opacity(
                           opacity: isDisabled ? 0.5 : 1.0,
@@ -452,162 +512,324 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         ),
                       ),
                       Transform.scale(
-                        scale: 0.8, // ✅ makes the switch smaller
+                        scale: 0.5,
                         child: Switch(
+                          padding: EdgeInsets.zero,
                           value: value,
-                          activeColor: Theme.of(
-                            context,
-                          ).primaryColor, // ✅ primary color
                           onChanged: (val) {
                             _useDefaultImage.value = val;
                           },
+                          activeTrackColor: const Color(0xff2563EB),
+                          inactiveTrackColor: Colors.grey.shade300,
+                          inactiveThumbColor: const Color(
+                            0xff2563EB,
+                          ), // inactive thumb
+                          thumbColor: MaterialStateProperty.resolveWith<Color>((
+                            states,
+                          ) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Colors.white;
+                            }
+                            return const Color(0xff2563EB);
+                          }),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                         ),
                       ),
                     ],
                   );
                 },
               ),
-              ValueListenableBuilder<bool>(
-                valueListenable: _isHighlighted,
-                builder: (context, value, _) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: value,
-                        onChanged: (val) {
-                          if (val != null) _isHighlighted.value = val;
-                        },
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Highlight Post',
-                              style: TextStyle(
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff333333),
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            BlocBuilder<
-                              HighlightedCoinsCubit,
-                              HighlightedCoinsState
-                            >(
-                              builder: (context, state) {
-                                if (state is GetHighlightedCoinsLoading) {
-                                  return Center(
-                                    child: DottedProgressWithLogo(),
-                                  );
-                                } else if (state is GetHighlightedCoinsLoaded) {
-                                  final coins =
-                                      (state.highlightedCoinsModel.data !=
-                                              null &&
-                                          state
-                                              .highlightedCoinsModel
-                                              .data!
-                                              .isNotEmpty)
-                                      ? state
-                                            .highlightedCoinsModel
-                                            .data!
-                                            .first
-                                            .coins
-                                      : "0";
-                                  highlitedCoinValue.value = coins ?? "";
-                                  final requiredCoins =
-                                      int.tryParse(coins.toString()) ?? 0;
-                                  final availableCoins =
-                                      AppState.coinsNotifier.value;
-                                  AppLogger.info(
-                                    "availableCoins:${availableCoins}",
-                                  );
-                                  AppLogger.info("requiredCoins:${coins}");
-                                  if (_isHighlighted.value) {
-                                    final bool coinsValue =
-                                        availableCoins >= requiredCoins;
-                                    if (coinsValue == true) {
-                                      AppLogger.info(
-                                        "coinsValue:${coinsValue}",
-                                      );
-                                      enoughBalance.value = true;
-                                    } else {
-                                      enoughBalance.value = false;
-                                    }
-                                    AppLogger.info(
-                                      "enoughBalance:${enoughBalance.value}",
-                                    );
-                                  } else {
-                                    enoughBalance.value = true;
-                                    AppLogger.info(
-                                      "enoughBalance:${enoughBalance.value}",
-                                    );
-                                  }
-                                  return Text(
-                                    'Make your post Highlight with $coins coins for 1 day',
-                                    style: TextStyle(
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff666666),
-                                      fontSize: 14,
-                                    ),
-                                  );
-                                } else if (state
-                                    is GetHighlightedCoinsFailure) {
-                                  return Text(state.msg);
-                                }
-                                return const Text("No Data");
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      // const SizedBox(width: 8),
-                      Image.asset(
-                        'assets/images/GoldCoins.png',
-                        width: 16,
-                        height: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      ValueListenableBuilder<int>(
-                        valueListenable: AppState.coinsNotifier,
-                        builder: (context, coins, child) {
-                          return RichText(
-                            text: TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: "Available coins ",
-                                  style: TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                    color: Color(0xff333333),
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: coins.toString(),
-                                  style: const TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Color(0xff333333),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
+
+              // ValueListenableBuilder<bool>(
+              //   valueListenable: _isHighlighted,
+              //   builder: (context, value, _) {
+              //     return Row(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Checkbox(
+              //           value: value,
+              //           onChanged: (val) {
+              //             if (val != null) _isHighlighted.value = val;
+              //           },
+              //         ),
+              //         Expanded(
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text(
+              //                 'Highlight Post',
+              //                 style: TextStyle(
+              //                   fontFamily: 'segeo',
+              //                   fontWeight: FontWeight.w600,
+              //                   color: Color(0xff333333),
+              //                   fontSize: 14,
+              //                 ),
+              //               ),
+              //               const SizedBox(height: 8),
+              //               BlocBuilder<
+              //                 HighlightedCoinsCubit,
+              //                 HighlightedCoinsState
+              //               >(
+              //                 builder: (context, state) {
+              //                   if (state is GetHighlightedCoinsLoading) {
+              //                     return Center(
+              //                       child: DottedProgressWithLogo(),
+              //                     );
+              //                   } else if (state is GetHighlightedCoinsLoaded) {
+              //                     final coins =
+              //                         (state.highlightedCoinsModel.data !=
+              //                                 null &&
+              //                             state
+              //                                 .highlightedCoinsModel
+              //                                 .data!
+              //                                 .isNotEmpty)
+              //                         ? state
+              //                               .highlightedCoinsModel
+              //                               .data!
+              //                               .first
+              //                               .coins
+              //                         : "0";
+              //                     highlitedCoinValue.value = coins ?? "";
+              //                     final requiredCoins =
+              //                         int.tryParse(coins.toString()) ?? 0;
+              //                     final availableCoins =
+              //                         AppState.coinsNotifier.value;
+              //                     AppLogger.info(
+              //                       "availableCoins:${availableCoins}",
+              //                     );
+              //                     AppLogger.info("requiredCoins:${coins}");
+              //                     if (_isHighlighted.value) {
+              //                       final bool coinsValue =
+              //                           availableCoins >= requiredCoins;
+              //                       if (coinsValue == true) {
+              //                         AppLogger.info(
+              //                           "coinsValue:${coinsValue}",
+              //                         );
+              //                         enoughBalance.value = true;
+              //                       } else {
+              //                         enoughBalance.value = false;
+              //                       }
+              //                       AppLogger.info(
+              //                         "enoughBalance:${enoughBalance.value}",
+              //                       );
+              //                     } else {
+              //                       enoughBalance.value = true;
+              //                       AppLogger.info(
+              //                         "enoughBalance:${enoughBalance.value}",
+              //                       );
+              //                     }
+              //                     return Text(
+              //                       'Make your post Highlight with $coins coins for 1 day',
+              //                       style: TextStyle(
+              //                         fontFamily: 'segeo',
+              //                         fontWeight: FontWeight.w400,
+              //                         color: Color(0xff666666),
+              //                         fontSize: 14,
+              //                       ),
+              //                     );
+              //                   } else if (state
+              //                       is GetHighlightedCoinsFailure) {
+              //                     return Text(state.msg);
+              //                   }
+              //                   return const Text("No Data");
+              //                 },
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //         // const SizedBox(width: 8),
+              //         Image.asset(
+              //           'assets/images/GoldCoins.png',
+              //           width: 16,
+              //           height: 16,
+              //         ),
+              //         const SizedBox(width: 4),
+              //         ValueListenableBuilder<int>(
+              //           valueListenable: AppState.coinsNotifier,
+              //           builder: (context, coins, child) {
+              //             return RichText(
+              //               text: TextSpan(
+              //                 children: [
+              //                   const TextSpan(
+              //                     text: "Available coins ",
+              //                     style: TextStyle(
+              //                       fontFamily: 'segeo',
+              //                       fontWeight: FontWeight.w400,
+              //                       fontSize: 12,
+              //                       color: Color(0xff333333),
+              //                     ),
+              //                   ),
+              //                   TextSpan(
+              //                     text: coins.toString(),
+              //                     style: const TextStyle(
+              //                       fontFamily: 'segeo',
+              //                       fontWeight: FontWeight.w600,
+              //                       fontSize: 16,
+              //                       color: Color(0xff333333),
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             );
+              //           },
+              //         ),
+              //       ],
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),
       ),
+      // bottomNavigationBar: SafeArea(
+      //   child: Padding(
+      //     padding: EdgeInsetsGeometry.fromLTRB(16, 20, 16, 16),
+      //     child: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         Row(
+      //           mainAxisSize: MainAxisSize.min,
+      //           spacing: 10,
+      //           children: [
+      //             Expanded(
+      //               child: CustomOutlinedButton(
+      //                 text: "Cancel",
+      //                 radius: 24,
+      //                 onTap: () {
+      //                   context.pop();
+      //                 },
+      //               ),
+      //             ),
+      //             ValueListenableBuilder<bool>(
+      //               valueListenable: enoughBalance,
+      //               builder: (context, value, child) {
+      //                 final enough_coins = value;
+      //                 AppLogger.info("enough_coins:${enough_coins}");
+      //                 return Expanded(
+      //                   child: BlocConsumer<AddEccCubit, AddEccStates>(
+      //                     listener: (context, state) async {
+      //                       if (state is AddEccSuccess) {
+      //                         if (_isHighlighted.value) {
+      //                           final requiredCoins =
+      //                               int.tryParse(highlitedCoinValue.value) ?? 0;
+      //                           await context.read<MenteeProfileCubit>().fetchMenteeProfile();
+      //                           enoughBalance.value =
+      //                               AppState.coinsNotifier.value >=
+      //                               requiredCoins;
+      //                         }
+      //                         context.read<ECCCubit>().getECC(
+      //                           "",
+      //                           "${widget.type}",
+      //                           "",
+      //                         );
+      //                         Future.microtask(() => context.pop());
+      //                       } else if (state is AddEccFailure) {
+      //                         CustomSnackBar1.show(context, state.error);
+      //                       }
+      //                     },
+      //
+      //                     builder: (context, state) {
+      //                       final isLoading = state is AddEccLoading;
+      //                       return CustomAppButton1(
+      //                         text: "Submit",
+      //                         isLoading: isLoading,
+      //                         onPlusTap: () {
+      //                           if (enough_coins == false) {
+      //                             showDialog(
+      //                               context: context,
+      //                               builder: (context) => AlertDialog(
+      //                                 shape: RoundedRectangleBorder(
+      //                                   borderRadius: BorderRadius.circular(16),
+      //                                 ),
+      //                                 title: const Text(
+      //                                   "Insufficient Coins",
+      //                                   style: TextStyle(
+      //                                     fontWeight: FontWeight.bold,
+      //                                     fontSize: 18,
+      //                                     color: Colors.redAccent,
+      //                                   ),
+      //                                 ),
+      //                                 content: const Text(
+      //                                   "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
+      //                                   style: TextStyle(
+      //                                     fontSize: 14,
+      //                                     color: Colors.black87,
+      //                                   ),
+      //                                 ),
+      //                                 actions: [
+      //                                   TextButton(
+      //                                     onPressed: () =>
+      //                                         Navigator.pop(context),
+      //                                     child: const Text(
+      //                                       "Cancel",
+      //                                       style: TextStyle(
+      //                                         color: Colors.grey,
+      //                                       ),
+      //                                     ),
+      //                                   ),
+      //                                   ElevatedButton(
+      //                                     onPressed: () {
+      //                                       context.push("/buy_coins_screens");
+      //                                       Navigator.pop(context);
+      //                                     },
+      //                                     style: ElevatedButton.styleFrom(
+      //                                       backgroundColor: Colors.orange,
+      //                                       shape: RoundedRectangleBorder(
+      //                                         borderRadius:
+      //                                             BorderRadius.circular(8),
+      //                                       ),
+      //                                     ),
+      //                                     child: const Text("Purchase Coins"),
+      //                                   ),
+      //                                 ],
+      //                               ),
+      //                             );
+      //                             return;
+      //                           } else {
+      //                             if (_formKey.currentState!.validate()) {
+      //                               final file = _imageFile.value;
+      //                               final isHighlighted = _isHighlighted.value;
+      //
+      //                               final Map<String, dynamic> data = {
+      //                                 "name": _eventNameController.text,
+      //                                 "location": _locationController.text,
+      //                                 "type": selectedTabIndex.value,
+      //                                 "time": selectedTimeStr.value,
+      //                                 "college": _collegeNameController.text,
+      //                                 "description": _descriptionController.text,
+      //                                 "dateofevent": selectedDateStr.value,
+      //                                 // "popular": isHighlighted ? 1 : 0,
+      //                                 "link": _eventLinkController.text,
+      //                               };
+      //
+      //                               if (file != null) {
+      //                                 data["image"] = file.path;
+      //                               }
+      //                               if (isHighlighted == true) {
+      //                                 data["coins"] =
+      //                                     double.tryParse(
+      //                                       highlitedCoinValue.value,
+      //                                     )?.toInt() ??
+      //                                     0;
+      //                               }
+      //
+      //                               context.read<AddEccCubit>().addEcc(data);
+      //                             }
+      //                           }
+      //                         },
+      //                       );
+      //                     },
+      //                   ),
+      //                 );
+      //               },
+      //             ),
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(16, 20, 16, 16),
@@ -627,122 +849,50 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       },
                     ),
                   ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: enoughBalance,
-                    builder: (context, value, child) {
-                      final enough_coins = value;
-                      AppLogger.info("enough_coins:${enough_coins}");
-                      return Expanded(
-                        child: BlocConsumer<AddEccCubit, AddEccStates>(
-                          listener: (context, state) async {
-                            if (state is AddEccSuccess) {
-                              if (_isHighlighted.value) {
-                                final requiredCoins = int.tryParse(highlitedCoinValue.value) ?? 0;
-                                await context.read<MenteeProfileCubit>().fetchMenteeProfile();
-                                enoughBalance.value = AppState.coinsNotifier.value >= requiredCoins;
+                  Expanded(
+                    child: BlocConsumer<AddEccCubit, AddEccStates>(
+                      listener: (context, state) async {
+                        if (state is AddEccSuccess) {
+                          context.read<ECCCubit>().getECC(
+                            "",
+                            "${widget.type}",
+                            "",
+                          );
+                          Future.microtask(() => context.pop());
+                        } else if (state is AddEccFailure) {
+                          CustomSnackBar1.show(context, state.error);
+                        }
+                      },
+
+                      builder: (context, state) {
+                        final isLoading = state is AddEccLoading;
+                        return CustomAppButton1(
+                          text: "Submit",
+                          isLoading: isLoading,
+                          onPlusTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              final file = _imageFile.value;
+                              final Map<String, dynamic> data = {
+                                "name": _eventNameController.text,
+                                "location": _locationController.text,
+                                "type": selectedTabIndex.value,
+                                "time": selectedTimeStr.value,
+                                "college": _collegeNameController.text,
+                                "description": _descriptionController.text,
+                                "dateofevent": selectedDateStr.value,
+                                // "popular": isHighlighted ? 1 : 0,
+                                "link": _eventLinkController.text,
+                              };
+
+                              if (file != null) {
+                                data["image"] = file.path;
                               }
-                              context.read<ECCCubit>().getECC("", "${widget.type}", "");
-                              Future.microtask(() => context.pop());
-                            } else if (state is AddEccFailure) {
-                              CustomSnackBar1.show(context, state.error);
+                              context.read<AddEccCubit>().addEcc(data);
                             }
                           },
-
-                          builder: (context, state) {
-                            final isLoading = state is AddEccLoading;
-                            return CustomAppButton1(
-                              text: "Add Event",
-                              isLoading: isLoading,
-                              onPlusTap: () {
-                                if (enough_coins == false) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      title: const Text(
-                                        "Insufficient Coins",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.redAccent,
-                                        ),
-                                      ),
-                                      content: const Text(
-                                        "You don’t have enough coins to book this session.\n\nPlease purchase more coins to continue.",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            context.push("/buy_coins_screens");
-                                            Navigator.pop(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.orange,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text("Purchase Coins"),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  return;
-                                } else {
-                                  if (_formKey.currentState!.validate()) {
-                                    final file = _imageFile.value;
-                                    final isHighlighted = _isHighlighted.value;
-
-                                    final Map<String, dynamic> data = {
-                                      "name": _eventNameController.text,
-                                      "location": _locationController.text,
-                                      "type": selectedTabIndex.value,
-                                      "time": selectedTimeStr.value,
-                                      "college": _collegeNameController.text,
-                                      "description":
-                                          _descriptionController.text,
-                                      "dateofevent": selectedDateStr.value,
-                                      "popular": isHighlighted ? 1 : 0,
-                                      "link": _eventLinkController.text,
-                                    };
-
-                                    if (file != null) {
-                                      data["image"] = file.path;
-                                    }
-                                    if (isHighlighted == true) {
-                                      data["coins"] =
-                                          double.tryParse(
-                                            highlitedCoinValue.value,
-                                          )?.toInt() ??
-                                          0;
-                                    }
-
-                                    context.read<AddEccCubit>().addEcc(data);
-                                  }
-                                }
-                              },
-                            );
-                          },
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
