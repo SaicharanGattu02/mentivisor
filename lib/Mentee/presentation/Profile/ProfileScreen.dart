@@ -103,21 +103,50 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                           ),
                         ),
 
-                        if (menteeProfile?.user?.mentorStatus ==
-                            "approval") ...[
-                          Positioned(
-                            right: -0,
-                            bottom: 0,
-                            child: Image.asset(
-                              'assets/images/become_mentor_medol.png',
-                              width: 32,
-                              height: 32,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                          if (menteeProfile?.user?.mentorStatus == "approval") ...[
+            Positioned(
+            right: 0,
+            bottom: 0,
+            child: GestureDetector(
+            onTap: () {
+            showDialog(
+            context: context,
+            builder: (BuildContext context) {
+            return AlertDialog(
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            ),
+            title: Text("🎉 Hi! Great 🎉\nYou Achieved Mentor Badge 🏅",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xffA258F7),
+                fontFamily: 'segeo',
+                height: 1.3,
+              ),),
+
+            actions: [
+            TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("OK"),
+            ),
+            ],
+            );
+            },
+            );
+            },
+            child: Image.asset(
+            'assets/images/become_mentor_medol.png',
+            width: 32,
+            height: 32,
+            fit: BoxFit.cover,
+            ),
+            ),
+            ),
+            ],
+            ]
+            ),
                   ),
 
                   SizedBox(height: 8),

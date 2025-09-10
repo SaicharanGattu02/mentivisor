@@ -174,7 +174,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         color: Color(0xff374151),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    Text(
+                      "College Name",
+                      style: const TextStyle(
+                        fontFamily: 'segeo',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff374151),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     TextFormField(
                       controller: _collegeController,
                       readOnly: true,
