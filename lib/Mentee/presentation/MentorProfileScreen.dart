@@ -399,7 +399,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       ),
       side: BorderSide(color: Color(0xFFf3e8ff)),
       backgroundColor: Color(0xFFf3e8ff),
-      labelStyle: TextStyle(color: Color(0xFF7e22ce), fontFamily: "Inter"),
+      labelStyle: TextStyle(color: Color(0xFFA351EE), fontFamily: "Inter",fontWeight: FontWeight.bold),
       padding: EdgeInsets.symmetric(horizontal: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(36), // change 12 to your need

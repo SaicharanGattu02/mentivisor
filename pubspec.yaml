@@ -71,16 +71,9 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   image_cropper: ^8.0.2
   permission_handler: ^11.3.1
-
-
-
+  flutter_screenutil: ^5.9.0
   firebase_crashlytics: ^5.0.1
   file_picker: ^10.3.2
-
-
-
-
-
 
 dev_dependencies:
   flutter_test:

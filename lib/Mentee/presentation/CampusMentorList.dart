@@ -76,7 +76,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     },
                     style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
                     decoration: InputDecoration(
-                      hintText: 'Search by Employee name',
+                      hintText: 'Search your mentor /Collage',
                       prefixIcon: const Icon(Icons.search),
                     ),
                   ),
