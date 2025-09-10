@@ -9,37 +9,39 @@ import '../../../utils/spinkittsLoader.dart';
 import '../../Models/ECCModel.dart';
 import 'DetailRow.dart';
 
-class EventCard extends StatelessWidget {
+class EventCard extends StatefulWidget {
   final ECCList eccList;
+  final String scope;
+  const EventCard({Key? key, required this.eccList, required this.scope})
+    : super(key: key);
 
-  const EventCard({Key? key, required this.eccList}) : super(key: key);
+  @override
+  State<EventCard> createState() => _EventCardState();
+}
 
+class _EventCardState extends State<EventCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0),
+      margin: EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
-        color: eccList.popular == 1 ? const Color(0xffFFF7CE) : Colors.white,
+        color: widget.eccList.popular == 1 ? const Color(0xffFFF7CE) : Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Stack(
         children: [
-          // 🔹 Main Content (put in a Column)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                 child: SizedBox(
                   width: double.infinity,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
                       height: 160,
-                      imageUrl: eccList.imgUrl ?? "",
+                      imageUrl: widget.eccList.imgUrl ?? "",
                       fit: BoxFit.cover,
                       width: double.infinity,
                       placeholder: (context, url) =>
@@ -60,9 +62,9 @@ class EventCard extends StatelessWidget {
 
               // Title
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  eccList.name ?? "",
+                  widget.eccList.name ?? "",
                   style: const TextStyle(
                     fontFamily: 'segeo',
                     fontWeight: FontWeight.w700,
@@ -82,28 +84,27 @@ class EventCard extends StatelessWidget {
                       asset: "assets/icons/calender.png",
                       bgColor: const Color(0xFF3F51B5),
                       text:
-                          '${formatDate(eccList.dateofevent ?? "")} at ${formatTimeRange(eccList.time)}',
+                          '${formatDate(widget.eccList.dateofevent ?? "")} at ${formatTimeRange(widget.eccList.time)}',
                     ),
                     const SizedBox(height: 8),
                     DetailRow(
                       asset: "assets/icons/location.png",
                       bgColor: const Color(0xFF4CAF50),
-                      text: eccList.location ?? "",
+                      text: widget.eccList.location ?? "",
                     ),
                     const SizedBox(height: 8),
                     DetailRow(
                       asset: "assets/icons/institution.png",
                       bgColor: const Color(0xFF000000),
-                      text: eccList.college ?? "",
+                      text: widget.eccList.college ?? "",
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: 15),
 
-              // View Details button
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: FutureBuilder(
                   future: AuthService.isGuest,
                   builder: (context, snapshot) {
@@ -114,19 +115,20 @@ class EventCard extends StatelessWidget {
                         if (isGuest) {
                           context.push('/auth_landing');
                         } else {
-                          context.push('/view_event/${eccList.id}',);
+                          context.push(
+                            '/view_event/${widget.eccList.id}?scope=${widget.scope}',
+                          );
                         }
                       },
                     );
                   },
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
             ],
           ),
 
-          // 🔹 Highlight Ribbon
-          if (eccList.popular == 1)
+          if (widget.eccList.popular == 1)
             Positioned(
               top: 0,
               right: 0,

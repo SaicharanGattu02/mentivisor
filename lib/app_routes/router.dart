@@ -412,7 +412,8 @@ final GoRouter appRouter = GoRouter(
       path: '/view_event/:eventId',
       pageBuilder: (context, state) {
         final id = int.parse(state.pathParameters['eventId']!);
-        return buildSlideTransitionPage(ViewEventScreen(eventId: id), state);
+        final scope = state.uri.queryParameters['scope'] ?? "";
+        return buildSlideTransitionPage(ViewEventScreen(eventId: id,scope: scope,), state);
       },
     ),
 

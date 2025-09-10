@@ -7,7 +7,7 @@ import '../../../Models/ViewEccDetailsModel.dart';
 abstract class ECCRepository {
   Future<ECCModel?> getEcc(String scope,String updates,String search,int page);
   Future<SuccessModel?> addEcc(Map<String, dynamic> data);
-  Future<ViewEccDetailsModel?> viewEccDetails( int eventId);
+  Future<ViewEccDetailsModel?> viewEccDetails( int eventId,String scope);
 }
 
 class ECCRepositoryImpl implements ECCRepository {
@@ -19,8 +19,8 @@ class ECCRepositoryImpl implements ECCRepository {
     return await remoteDataSource.getEcc( scope, updates,search,page);
   }
   @override
-  Future<ViewEccDetailsModel?> viewEccDetails( int eventId) async {
-    return await remoteDataSource.viewEccDetails(eventId);
+  Future<ViewEccDetailsModel?> viewEccDetails( int eventId,String scope) async {
+    return await remoteDataSource.viewEccDetails(eventId,scope);
   }
 
   @override

@@ -14,8 +14,9 @@ import '../../data/cubits/ViewEccEventDetails/ViewEventDetailsState.dart';
 
 class ViewEventScreen extends StatefulWidget {
   final int eventId;
+  final String scope;
 
-  const ViewEventScreen({super.key, required this.eventId});
+  const ViewEventScreen({super.key, required this.eventId, required this.scope});
 
   @override
   State<ViewEventScreen> createState() => _ViewEventScreenState();
@@ -26,7 +27,7 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ViewEventDetailsCubit>().eventDetails(widget.eventId);
+    context.read<ViewEventDetailsCubit>().eventDetails(widget.eventId,widget.scope);
   }
 
   @override

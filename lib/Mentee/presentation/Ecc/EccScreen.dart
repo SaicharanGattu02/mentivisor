@@ -335,7 +335,7 @@ class _EccScreenState extends State<EccScreen> {
                                   separatorBuilder: (_, __) =>
                                       const SizedBox(height: 16),
                                   itemBuilder: (context, index) =>
-                                      EventCard(eccList: ecclist![index]),
+                                      EventCard(eccList: ecclist![index],scope:onCampusNotifier.value?"":"beyond",),
                                 ),
                                 if (state is ECCLoadingMore)
                                   SliverToBoxAdapter(

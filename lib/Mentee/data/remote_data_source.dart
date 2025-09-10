@@ -137,7 +137,7 @@ abstract class RemoteDataSource {
   Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
-  Future<ViewEccDetailsModel?> viewEccDetails(int eventId);
+  Future<ViewEccDetailsModel?> viewEccDetails(int eventId,String scope);
   Future<TagsModel?> getEccTagsSearch(String query);
   Future<TagsModel?> getEccTags();
 }
@@ -584,10 +584,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ViewEccDetailsModel?> viewEccDetails(int eventId) async {
+  Future<ViewEccDetailsModel?> viewEccDetails(int eventId,String scope) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.view_ecc_details}/${eventId}",
+        "${APIEndpointUrls.view_ecc_details}/${eventId}?scope=${scope}",
       );
       debugPrint('getEcc::$res');
       return ViewEccDetailsModel.fromJson(res.data);

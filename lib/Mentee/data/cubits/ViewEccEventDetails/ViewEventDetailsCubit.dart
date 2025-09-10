@@ -11,10 +11,10 @@ class ViewEventDetailsCubit extends Cubit<ViewEventDetailsState> {
   ViewEventDetailsCubit(this.eccRepository)
     : super(ViewEventDetailsInitially());
 
-  Future<void> eventDetails(int eventId) async {
+  Future<void> eventDetails(int eventId,String scope) async {
     emit(ViewEventDetailsLoading());
     try {
-      final res = await eccRepository.viewEccDetails(eventId);
+      final res = await eccRepository.viewEccDetails(eventId,scope);
       if (res != null && res.status == true) {
         emit(ViewEventDetailsLoaded(viewEccDetailsModel: res));
       } else {
