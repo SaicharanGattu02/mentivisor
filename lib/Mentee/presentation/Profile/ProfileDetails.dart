@@ -18,9 +18,6 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  // bool hasTodaySlots = false;
-  // bool hasTomorrowSlots = false;
-  // bool hasRemainingSlots = false;
   @override
   void initState() {
     super.initState();
@@ -35,7 +32,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         child: BlocConsumer<MentorProfileCubit, MentorProfileState>(
           listener: (context, state) {
             if (state is MentorProfileLoaded) {
-              final d  = state.mentorProfileModel.data;
+              final d = state.mentorProfileModel.data;
               final t1 = (d?.todaySlots ?? []).isNotEmpty;
               final t2 = (d?.tomorrowSlots ?? []).isNotEmpty;
               final t3 = (d?.remainingSlots ?? 0) > 0;
@@ -76,7 +73,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               imageUrl: mentorData?.user?.profilePicUrl ?? "",
                               width: 150, // Set a fixed width for the image
                               height:
-                              150, // Set a fixed height to maintain the circle shape
+                                  150, // Set a fixed height to maintain the circle shape
                               fit: BoxFit
                                   .cover, // Ensures the image scales correctly to fit within the circle
                               placeholder: (context, url) => CircleAvatar(
@@ -91,12 +88,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                 ),
                               ),
                               errorWidget: (context, url, error) =>
-                              const CircleAvatar(
-                                radius: 20,
-                                backgroundImage: AssetImage(
-                                  "assets/images/profile.png",
-                                ),
-                              ),
+                                  const CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: AssetImage(
+                                      "assets/images/profile.png",
+                                    ),
+                                  ),
                             ),
                           ),
                         ),
@@ -199,12 +196,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             children: (mentorData?.expertises ?? [])
                                 .expand<Widget>(
                                   (e) => [
-                                _buildChip(e.name ?? ""),
-                                ...(e.subExpertises ?? []).map(
+                                    _buildChip(e.name ?? ""),
+                                    ...(e.subExpertises ?? []).map(
                                       (sub) => _buildChip(sub.name ?? ""),
-                                ),
-                              ],
-                            )
+                                    ),
+                                  ],
+                                )
                                 .toList(),
                           ),
                         ),
@@ -274,14 +271,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         //       ],
                         //     ),
                         //   ),
-
                         if ((mentorData?.ratings ?? []).isNotEmpty)
                           _buildSection(
                             title: 'Recent Reviews',
                             child: Column(
                               children: (mentorData!.ratings!).map<Widget>((
-                                  review,
-                                  ) {
+                                review,
+                              ) {
                                 return ReviewCard(
                                   name: review.user?.name ?? "",
                                   rating: review.rating ?? 0,
@@ -302,7 +298,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           },
         ),
       ),
-
     );
   }
 

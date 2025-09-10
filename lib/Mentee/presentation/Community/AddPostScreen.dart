@@ -145,29 +145,65 @@ class _AddPostScreenState extends State<AddPostScreen> {
     );
   }
 
-  Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
+  Future<File?> _pickValidateAndResize(
+      BuildContext context, {
+        required ImageSource source,
+        int targetWidth = 384,
+        double tolerancePct = 0.10, // 10% around 16:9
+        int? minSourceWidth,        // e.g. 800 to avoid tiny images
+      }) async {
+    final XFile? picked = await _picker.pickImage(source: source);
+    if (picked == null) return null;
+
+    final raw = File(picked.path);
+
+    final ok = await ImageUtils1.isAcceptable16by9(
+      raw,
+      tolerancePct: tolerancePct,
+      minWidth: minSourceWidth,
     );
-    if (pickedFile != null) {
-      final File raw = File(pickedFile.path);
-      final File? compressed = await ImageUtils.compressImage(raw);
-      if (!mounted) return;
-      if (compressed != null) _imageFile.value = compressed;
+
+    if (!ok) {
+      // Clear message explaining the constraint
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please pick a landscape photo close to 16:9. '
+              'Portrait (9:16) images are not allowed.'),
+        ),
+      );
+      return null;
     }
+
+    // Safe to resize to true 16:9
+    final resized = await ImageUtils1.resizeTo16by9(raw, targetWidth: targetWidth);
+    return resized;
+  }
+
+
+  Future<void> _pickImageFromGallery() async {
+    final exact = await _pickValidateAndResize(
+      context,
+      source: ImageSource.gallery,
+      targetWidth: 384,       // outputs 384×216
+      tolerancePct: 0.10,     // allow ±10% around 16:9
+      minSourceWidth: 800,    // optional: block very small images
+    );
+    if (!mounted) return;
+    if (exact != null) _imageFile.value = exact;
   }
 
   Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(
+    final exact = await _pickValidateAndResize(
+      context,
       source: ImageSource.camera,
+      targetWidth: 384,
+      tolerancePct: 0.10,
+      minSourceWidth: 800,
     );
-    if (pickedFile != null) {
-      final File raw = File(pickedFile.path);
-      final File? compressed = await ImageUtils.compressImage(raw);
-      if (!mounted) return;
-      if (compressed != null) _imageFile.value = compressed;
-    }
+    if (!mounted) return;
+    if (exact != null) _imageFile.value = exact;
   }
+
 
   void _cancelImage() {
     _imageFile.value = null;
@@ -391,13 +427,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     onTap: file == null ? _pickImage : null,
                     child: DottedBorder(
                       borderType: BorderType.RRect,
-                      radius: const Radius.circular(36),
+                      radius: const Radius.circular(12),
                       color: Colors.grey,
                       strokeWidth: 1.5,
                       dashPattern: const [6, 3],
                       child: ClipRRect(
                         borderRadius: const BorderRadius.all(
-                          Radius.circular(36),
+                          Radius.circular(12),
                         ),
                         child: Container(
                           width: double.infinity,
@@ -411,7 +447,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: const [
                                       Text(
-                                        "Upload image in 16:9 or 4:3",
+                                        "Upload image in 16:9",
                                         style: TextStyle(
                                           fontSize: 15,
                                           color: Color(0xff6D6D6D),
@@ -431,7 +467,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                     Image.file(
                                       file,
                                       width: double.infinity,
-                                      height: 180,
+                                      height: 214,
                                       fit: BoxFit.cover,
                                     ),
                                     Positioned(

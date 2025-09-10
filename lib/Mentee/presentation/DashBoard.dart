@@ -13,7 +13,7 @@ import '../../services/SocketService.dart';
 import '../../utils/DeepLinkMapper.dart';
 import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
-import 'Ecc/EccScreen.dart';
+  import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';
 import 'package:flutter/rendering.dart';
 
@@ -111,9 +111,7 @@ class _DashboardState extends State<Dashboard> {
           listener: (context, state) {
             if (state is InternetStatusLostState) {
               context.push('/no_internet');
-            } else if (state is InternetStatusBackState) {
-              context.pop();
-            }
+            } else if (state is InternetStatusBackState) {}
           },
           // Wrap the PageView with our scroll listener wrapper
           // child: _HideNavbarOnScroll(

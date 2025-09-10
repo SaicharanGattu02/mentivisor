@@ -408,7 +408,6 @@ class _CommunityScreenState extends State<Communityscreen> {
         future: AuthService.isGuest, // Check if the user is a guest
         builder: (context, snapshot) {
           final isGuest = snapshot.data ?? false; // If the user is a guest
-
           // Check if the FAB should be visible
           return ValueListenableBuilder<bool>(
             valueListenable: _fabVisible, // Listen to FAB visibility

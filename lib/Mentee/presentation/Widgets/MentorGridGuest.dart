@@ -14,15 +14,25 @@ class MentorGridGuest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final crossAxisCount = 2;
+    final spacing = 16.0;
+
+    // total width available for each card
+    final itemWidth =
+        (size.width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+    // decide your desired height, e.g. 1.2x of width
+    final itemHeight = itemWidth * 1.1;
+    final aspectRatio = itemWidth / itemHeight;
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: AlwaysScrollableScrollPhysics(),
       itemCount: mentors?.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.75,
+        childAspectRatio: aspectRatio,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
@@ -31,11 +41,12 @@ class MentorGridGuest extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.name ?? '',
-            designation: m?.bio ?? '',collegeName:  m?.college?.name?? '',
+            designation: m?.bio ?? '',
+            collegeName: m?.college?.name ?? '',
             image: url ?? "",
             rating: (m?.ratingsReceivedCount ?? 0).toDouble(),
             ratingCount: m?.ratingsReceivedCount ?? 0,
-            coinsPerMinute:m?.costPerMinute??"",
+            coinsPerMinute: m?.costPerMinute ?? "",
           ),
         );
       },
@@ -53,15 +64,26 @@ class MentorGridCampus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final crossAxisCount = 2;
+    final spacing = 16.0;
+
+    // total width available for each card
+    final itemWidth =
+        (size.width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+    // decide your desired height, e.g. 1.2x of width
+    final itemHeight = itemWidth * 1.1;
+    final aspectRatio = itemWidth / itemHeight;
+
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: mentors_list?.length,
-      gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.75,
+      physics: AlwaysScrollableScrollPhysics(),
+      itemCount: mentors_list?.length ?? 0,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: spacing,
+        mainAxisSpacing: spacing,
+        childAspectRatio: aspectRatio,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
@@ -70,7 +92,8 @@ class MentorGridCampus extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.user?.name ?? '',
-            designation: m?.user?.bio ?? '',collegeName:  m?.user?.college?.name ?? '',
+            designation: m?.user?.bio ?? '',
+            collegeName: m?.user?.college?.name ?? '',
             image: url ?? "",
             rating: double.tryParse(m?.averageRating?.toString() ?? "0") ?? 0.0,
             ratingCount: m?.totalReviews ?? 0,
@@ -114,9 +137,9 @@ class _MentorCard extends StatelessWidget {
           CachedNetworkImage(
             imageUrl: image,
             imageBuilder: (context, imageProvider) =>
-                CircleAvatar(radius: 40, backgroundImage: imageProvider),
+                CircleAvatar(radius: 36, backgroundImage: imageProvider),
             placeholder: (context, url) => CircleAvatar(
-              radius: 20,
+              radius: 36,
               backgroundColor: Colors.grey,
               child: SizedBox(
                 width: 16,
@@ -125,11 +148,11 @@ class _MentorCard extends StatelessWidget {
               ),
             ),
             errorWidget: (context, url, error) => const CircleAvatar(
-              radius: 40,
+              radius: 36,
               backgroundImage: AssetImage("assets/images/profile.png"),
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 3),
           Text(
             capitalize(name),
             textAlign: TextAlign.center,
@@ -141,19 +164,20 @@ class _MentorCard extends StatelessWidget {
               color: Color(0xff333333),
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 3),
           Text(
             collegeName,
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
+              height: 1,
               color: Color(0xff333333),
             ),
           ),
-          SizedBox(height: 5),
+          SizedBox(height: 3),
           SizedBox(
             width: SizeConfig.screenWidth * 0.4,
             child: Center(

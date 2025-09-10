@@ -26,51 +26,43 @@ class MenteeDashboardCubit extends Cubit<MenteeDashboardState> {
   }) : super(MenteeDashboardInitial());
 
   Future<void> fetchDashboard(String scope) async {
+    emit(MenteeDashboardLoading());
+    GetBannersRespModel? bannersModel;
+    GuestMentorsModel? guestMentorsModel;
+    CompusMentorListModel? campusMentorsModel;
 
-      emit(MenteeDashboardLoading());
-      GetBannersRespModel? bannersModel;
-      GuestMentorsModel? guestMentorsModel;
-      CompusMentorListModel? campusMentorsModel;
+    try {
+      await Future.wait([bannersCubit.getbanners()]);
 
-      try {
-        await Future.wait([
-          bannersCubit.getbanners(),
-        ]);
-
-        final bannersState = bannersCubit.state;
-        if (bannersState is GetbannersStateLoaded) {
-          bannersModel = bannersState.getbannerModel;
-        }
-
-
-
-        final isGuest = await AuthService.isGuest;
-        if (isGuest) {
-          await guestMentorsCubit.fetchGuestMentorList();
-          final guestState = guestMentorsCubit.state;
-          if (guestState is GuestMentorsLoaded) {
-            guestMentorsModel = guestState.guestMentorsModel;
-          }
-        } else {
-          await campusMentorCubit.fetchCampusMentorList(scope, "");
-          final campusState = campusMentorCubit.state;
-          if (campusState is CampusMentorListStateLoaded) {
-            campusMentorsModel = campusState.campusMentorListModel;
-          }
-        }
-
-        emit(
-          MenteeDashboardLoaded(
-            getbannerModel: bannersModel ?? GetBannersRespModel(),
-            guestMentorsModel: guestMentorsModel ?? GuestMentorsModel(),
-            campusMentorListModel: campusMentorsModel ?? CompusMentorListModel(),
-          ),
-        );
-      } catch (e) {
-        emit(MenteeDashboardFailure("Dashboard error: ${e.toString()}"));
+      final bannersState = bannersCubit.state;
+      if (bannersState is GetbannersStateLoaded) {
+        bannersModel = bannersState.getbannerModel;
       }
 
+      final isGuest = await AuthService.isGuest;
+      if (isGuest) {
+        await guestMentorsCubit.fetchGuestMentorList();
+        final guestState = guestMentorsCubit.state;
+        if (guestState is GuestMentorsLoaded) {
+          guestMentorsModel = guestState.guestMentorsModel;
+        }
+      } else {
+        await campusMentorCubit.fetchCampusMentorList(scope, "");
+        final campusState = campusMentorCubit.state;
+        if (campusState is CampusMentorListStateLoaded) {
+          campusMentorsModel = campusState.campusMentorListModel;
+        }
+      }
 
+      emit(
+        MenteeDashboardLoaded(
+          getbannerModel: bannersModel ?? GetBannersRespModel(),
+          guestMentorsModel: guestMentorsModel ?? GuestMentorsModel(),
+          campusMentorListModel: campusMentorsModel ?? CompusMentorListModel(),
+        ),
+      );
+    } catch (e) {
+      emit(MenteeDashboardFailure("Dashboard error: ${e.toString()}"));
+    }
   }
-
 }

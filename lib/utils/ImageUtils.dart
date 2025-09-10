@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -58,12 +59,130 @@ class ImageUtils {
   }
 }
 
+class ImageUtils1 {
+  /// Read dimensions quickly using `image` package (no widget needed)
+  static Future<({int width, int height})?> readDimensions(File file) async {
+    try {
+      final Uint8List bytes = await file.readAsBytes();
+      final img.Image? im = img.decodeImage(bytes);
+      if (im == null) return null;
+      return (width: im.width, height: im.height);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Validate if image is ~16:9 landscape.
+  /// `tolerancePct`: how far from 16:9 you allow (e.g. 0.10 = ±10%)
+  static Future<bool> isAcceptable16by9(
+    File file, {
+    double tolerancePct = 0.10,
+    int? minWidth,
+  }) async {
+    final dims = await readDimensions(file);
+    if (dims == null) return false;
+
+    final w = dims.width.toDouble();
+    final h = dims.height.toDouble();
+
+    // Must be landscape
+    if (w <= h) return false;
+
+    // Optional minimum width gate (avoid blurry upscales)
+    if (minWidth != null && w < minWidth) return false;
+
+    final aspect = w / h;
+    const sixteenByNine = 16 / 9; // ≈ 1.7777
+    final lower = sixteenByNine * (1 - tolerancePct);
+    final upper = sixteenByNine * (1 + tolerancePct);
+
+    return aspect >= lower && aspect <= upper;
+  }
+
+  /// Resize and crop an image to a true 16:9 ratio.
+  /// You provide the width (e.g. 1280, 1920, 380, etc.)
+  /// Height is auto-calculated as width * 9/16.
+  static Future<File?> resizeTo16by9(
+    File file, {
+    int targetWidth = 1280,
+  }) async {
+    try {
+      final targetHeight = (targetWidth * 9 / 16).round();
+      final targetAspect = targetWidth / targetHeight;
+
+      final Uint8List bytes = await file.readAsBytes();
+      final img.Image? src = img.decodeImage(bytes);
+      if (src == null) return null;
+
+      // --- Crop to 16:9 aspect ratio (center crop) ---
+      final srcAspect = src.width / src.height;
+      int cropW, cropH, cropX, cropY;
+
+      if (srcAspect > targetAspect) {
+        // Source is wider → crop width
+        cropH = src.height;
+        cropW = (cropH * targetAspect).round();
+        cropX = ((src.width - cropW) / 2).round();
+        cropY = 0;
+      } else {
+        // Source is taller → crop height
+        cropW = src.width;
+        cropH = (cropW / targetAspect).round();
+        cropX = 0;
+        cropY = ((src.height - cropH) / 2).round();
+      }
+
+      final img.Image cropped = img.copyCrop(
+        src,
+        x: cropX,
+        y: cropY,
+        width: cropW,
+        height: cropH,
+      );
+
+      // --- Resize to target 16:9 size ---
+      final img.Image resized = img.copyResize(
+        cropped,
+        width: targetWidth,
+        height: targetHeight,
+        interpolation: img.Interpolation.average,
+      );
+
+      // --- Encode JPEG and keep under 500 KB ---
+      int quality = 90;
+      late List<int> jpg;
+      File? out;
+
+      while (true) {
+        jpg = img.encodeJpg(resized, quality: quality);
+        final String targetPath =
+            '${file.path}_16x9_${targetWidth}w_q$quality.jpg';
+        out = await File(targetPath).writeAsBytes(jpg, flush: true);
+
+        final kb = await out.length() ~/ 1024;
+        if (kb <= 500 || quality <= 40) {
+          print('Final 16:9 image size: ${kb}KB at $targetWidth×$targetHeight');
+          break;
+        }
+        quality -= 10;
+      }
+
+      return out;
+    } catch (e) {
+      print('Error in resizeTo16by9: $e');
+      return null;
+    }
+  }
+}
 
 class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
 
   /// Show bottom sheet for choosing camera or gallery
-  static Future<File?> pickImage(BuildContext context, {Color? iconColor}) async {
+  static Future<File?> pickImage(
+    BuildContext context, {
+    Color? iconColor,
+  }) async {
     return await showModalBottomSheet<File?>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -76,19 +195,23 @@ class ImagePickerHelper {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library, color: iconColor ?? Colors.blue),
+                leading: Icon(
+                  Icons.photo_library,
+                  color: iconColor ?? Colors.blue,
+                ),
                 title: const Text("Choose from Gallery"),
                 onTap: () async {
-                  Navigator.pop(context,
-                      await _pickImageFromGallery());
+                  Navigator.pop(context, await _pickImageFromGallery());
                 },
               ),
               ListTile(
-                leading: Icon(Icons.camera_alt, color: iconColor ?? Colors.blue),
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: iconColor ?? Colors.blue,
+                ),
                 title: const Text("Take a Photo"),
                 onTap: () async {
-                  Navigator.pop(context,
-                      await _pickImageFromCamera());
+                  Navigator.pop(context, await _pickImageFromCamera());
                 },
               ),
             ],
@@ -99,8 +222,9 @@ class ImagePickerHelper {
   }
 
   static Future<File?> _pickImageFromGallery() async {
-    final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       return await ImageUtils.compressImage(File(pickedFile.path));
     }
@@ -108,8 +232,9 @@ class ImagePickerHelper {
   }
 
   static Future<File?> _pickImageFromCamera() async {
-    final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
     if (pickedFile != null) {
       return await ImageUtils.compressImage(File(pickedFile.path));
     }

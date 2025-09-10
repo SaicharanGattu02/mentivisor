@@ -5,13 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
+import 'package:mentivisor/Mentee/data/cubits/CampusMentorList/campus_mentor_list_state.dart';
+import 'package:mentivisor/Mentee/data/cubits/GetBanners/GetBannersState.dart';
+import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_states.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Components/CommonLoader.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
+import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
+import '../data/cubits/GetBanners/GetBannersCubit.dart';
+import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_state.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
@@ -35,16 +42,44 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   bool _onCampus = true;
   String selectedFilter = 'On Campus';
 
+  bool _isLoading = false;
+  bool isGuest = false; // make this a state variable
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
-      await Future.wait([
-        context.read<MenteeDashboardCubit>().fetchDashboard(""),
+    _loadAll();
+    getData();
+  }
+
+  Future<void> _loadAll() async {
+    setState(() => _isLoading = true);
+
+    try {
+      isGuest = await AuthService.isGuest;
+
+      // Kick off all at once
+      final List<Future> futures = [
+        context.read<Getbannerscubit>().getbanners(),
         context.read<MenteeProfileCubit>().fetchMenteeProfile(),
-        getData(),
-      ]);
-    });
+        if (!isGuest)
+          context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
+        if (isGuest) context.read<GuestMentorsCubit>().fetchGuestMentorList(),
+      ];
+
+      await Future.wait(futures);
+    } catch (e, st) {
+      debugPrint("Error while loading dashboard data: $e");
+      debugPrintStack(stackTrace: st);
+      // optionally show a snackbar or toast
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Something went wrong while loading data")),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   Future<void> getData() async {
@@ -98,18 +133,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       future: AuthService.isGuest,
       builder: (context, snapshot) {
         final isGuest = snapshot.data ?? false;
-        return BlocBuilder<MenteeDashboardCubit, MenteeDashboardState>(
-          builder: (context, state) {
-            if (state is MenteeDashboardLoading) {
-              return Scaffold(body: Center(child: DottedProgressWithLogo()));
-            } else if (state is MenteeDashboardLoaded) {
-              final banners = state.getbannerModel.data ?? [];
-              final guestMentorlist =
-                  state.guestMentorsModel.data?.mentors ?? [];
-              final campusMentorlist =
-                  state.campusMentorListModel.data?.mentors_list ?? [];
-
-              return Scaffold(
+        return _isLoading
+            ? Scaffold(body: const Center(child: DottedProgressWithLogo()))
+            : Scaffold(
                 drawerEnableOpenDragGesture: !isGuest,
                 key: _scaffoldKey,
                 appBar: AppBar(
@@ -564,53 +590,64 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                 ),
                 body: SafeArea(
                   child: SingleChildScrollView(
+                    physics: NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CarouselSlider.builder(
-                          itemCount: banners.length,
-                          itemBuilder: (ctx, i, _) {
-                            final b = banners[i];
-                            return GestureDetector(
-                              onTap: () {
-                                if (b.link != null) _launchUrl(b.link!);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 2.5,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Image.network(
-                                    b.imgUrl ?? '',
-                                    fit: BoxFit.fill,
-                                    width: double.infinity,
-                                    errorBuilder: (_, __, ___) => Container(
-                                      color: Colors.grey[200],
-                                      alignment: Alignment.center,
-                                      child: const Icon(
-                                        Icons.broken_image,
-                                        color: Colors.grey,
+                        BlocBuilder<Getbannerscubit, Getbannersstate>(
+                          builder: (context, state) {
+                            if (state is GetbannersStateLoaded) {
+                              final banners = state.getbannerModel.data ?? [];
+                              return CarouselSlider.builder(
+                                itemCount: banners.length,
+                                itemBuilder: (ctx, i, _) {
+                                  final b = banners[i];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (b.link != null) _launchUrl(b.link!);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 2.5,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Image.network(
+                                          b.imgUrl ?? '',
+                                          fit: BoxFit.fill,
+                                          width: double.infinity,
+                                          errorBuilder: (_, __, ___) =>
+                                              Container(
+                                                color: Colors.grey[200],
+                                                alignment: Alignment.center,
+                                                child: const Icon(
+                                                  Icons.broken_image,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  );
+                                },
+                                options: CarouselOptions(
+                                  height: 180,
+                                  autoPlay: true,
+                                  autoPlayInterval: const Duration(seconds: 4),
+                                  viewportFraction: 1.0,
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              return SizedBox.shrink();
+                            }
                           },
-                          options: CarouselOptions(
-                            height: 180,
-                            autoPlay: true,
-                            autoPlayInterval: const Duration(seconds: 4),
-                            viewportFraction: 1.0,
-                          ),
                         ),
                         !isGuest
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: 15),
                                   Container(
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFE8EBF7),
@@ -632,9 +669,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 _onCampus = true;
                                                 context
                                                     .read<
-                                                      MenteeDashboardCubit
+                                                      CampusMentorListCubit
                                                     >()
-                                                    .fetchDashboard("");
+                                                    .fetchCampusMentorList(
+                                                      "",
+                                                      "",
+                                                    );
                                               });
                                             },
                                           ),
@@ -652,9 +692,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 _onCampus = false;
                                                 context
                                                     .read<
-                                                      MenteeDashboardCubit
+                                                      CampusMentorListCubit
                                                     >()
-                                                    .fetchDashboard("beyond");
+                                                    .fetchCampusMentorList(
+                                                      "beyond",
+                                                      "",
+                                                    );
                                               });
                                             },
                                           ),
@@ -665,7 +708,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 ],
                               )
                             : SizedBox.shrink(),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -678,11 +721,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 color: Color(0xff222222),
                               ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                if (isGuest) {
-                                  context.push('/auth_landing');
-                                } else {
+                            if (!isGuest) ...[
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  visualDensity: VisualDensity.compact,
+                                  padding: EdgeInsets.zero,
+                                ),
+                                onPressed: () {
                                   if (_onCampus == true) {
                                     context.push('/campus_mentor_list?scope=');
                                   } else {
@@ -690,73 +735,105 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       '/campus_mentor_list?scope=beyond',
                                     );
                                   }
-                                }
-                              },
-                              child: Text(
-                                'View All',
-                                style: TextStyle(
-                                  color: Color(0xff4076ED),
-                                  fontFamily: 'segeo',
-                                  fontWeight: FontWeight.w600,
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.underline,
-                                  decorationStyle: TextDecorationStyle.solid,
-                                  decorationColor: Color(0xff4076ED),
-                                  decorationThickness: 1,
+                                },
+                                child: Text(
+                                  'View All',
+                                  style: TextStyle(
+                                    color: Color(0xff4076ED),
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w600,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                    decorationStyle: TextDecorationStyle.solid,
+                                    decorationColor: Color(0xff4076ED),
+                                    decorationThickness: 1,
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
+                        SizedBox(height: 10),
                         if (isGuest) ...[
-                          guestMentorlist.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/nodata/nodata_mentor_list.png",
-                                        width: 200,
-                                        height: 200,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : MentorGridGuest(
+                          BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
+                            builder: (context, state) {
+                              if (state is GuestMentorsLoaded) {
+                                final guestMentorlist =
+                                    state.guestMentorsModel.data?.mentors ?? [];
+                                if (guestMentorlist.isEmpty) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/nodata/nodata_mentor_list.png",
+                                          width: 200,
+                                          height: 200,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                return MentorGridGuest(
                                   mentors: guestMentorlist,
                                   onTapMentor: (m) =>
                                       context.push('/auth_landing'),
-                                ),
+                                );
+                              } else {
+                                return SizedBox.shrink();
+                              }
+                            },
+                          ),
                         ],
                         if (!isGuest) ...[
-                          campusMentorlist.isEmpty
-                              ? Center(
-                                  child: Image.asset(
-                                    "assets/nodata/nodata_mentor_list.png",
-                                    width: 200,
-                                    height: 200,
+                          BlocBuilder<
+                            CampusMentorListCubit,
+                            CampusMentorListState
+                          >(
+                            builder: (context, state) {
+                              if (state is CampusMentorListStateLoading) {
+                                return SizedBox(
+                                  height: SizeConfig.screenWidth * 0.6,
+                                  child: Center(
+                                    child: DottedProgressWithLogo(),
                                   ),
-                                )
-                              : MentorGridCampus(
+                                );
+                              } else if (state is CampusMentorListStateLoaded) {
+                                final campusMentorlist =
+                                    state
+                                        .campusMentorListModel
+                                        .data
+                                        ?.mentors_list ??
+                                    [];
+
+                                if (campusMentorlist.isEmpty) {
+                                  return Center(
+                                    child: Image.asset(
+                                      "assets/nodata/nodata_mentor_list.png",
+                                      width: 200,
+                                      height: 200,
+                                    ),
+                                  );
+                                }
+                                return MentorGridCampus(
                                   mentors_list: campusMentorlist,
                                   onTapMentor: (m) => context.push(
                                     '/mentor_profile?id=${m.userId}',
                                   ),
-                                ),
+                                );
+                              } else {
+                                return SizedBox.shrink();
+                              }
+                            },
+                          ),
                         ],
                       ],
                     ),
                   ),
                 ),
               );
-            } else if (state is MenteeDashboardFailure) {
-              return Center(child: Text(state.message));
-            } else {
-              return Center(child: Text("No Data"));
-            }
-          },
-        );
       },
     );
   }

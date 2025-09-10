@@ -150,7 +150,7 @@ class _PostCardState extends State<PostCard>
                     Row(
                       children: [
                         GestureDetector(onTap: () {
-                          context.push("/profile?id=${widget.communityPosts.id}");
+                          context.push("/profile?id=${widget.communityPosts.uploader?.id}");
                         },
                           child: CachedNetworkImage(
                             imageUrl: widget.communityPosts.image ?? "",
