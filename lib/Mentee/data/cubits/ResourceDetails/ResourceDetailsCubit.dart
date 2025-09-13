@@ -10,12 +10,13 @@ class Resourcedetailscubit extends Cubit<ResourceDetailsState> {
   Resourcedetailscubit(this.studyZoneCampusRepository)
     : super(ResourceDetailsInitially());
 
-  Future<void> resourceDetails(int resourceId) async {
+  Future<void> resourceDetails(int resourceId, String scope) async {
     AppLogger.log('resourceId1::${resourceId}');
     emit(ResourceDetailsLoading());
     try {
       final res = await studyZoneCampusRepository.resourceDetails(
         resourceId,
+        scope,
       );
       if (res != null && res.status == true) {
         emit(ResourceDetailsLoaded(resourceDetailsModel: res));

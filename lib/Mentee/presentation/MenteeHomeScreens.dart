@@ -71,7 +71,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     } catch (e, st) {
       debugPrint("Error while loading dashboard data: $e");
       debugPrintStack(stackTrace: st);
-      // optionally show a snackbar or toast
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Something went wrong while loading data")),
       );

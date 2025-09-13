@@ -11,11 +11,11 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
   CommunityDetailsCubit(this.communityPostsRepo)
     : super(CommunityDetailsInitially());
 
-  Future<void> communityDetails(int communityId) async {
+  Future<void> communityDetails(int communityId,String scope) async {
     emit(CommunityDetailsLoading());
     try {
       final res = await communityPostsRepo.communityDetails(
-        communityId,
+        communityId,scope
       );
       if (res != null && res.status == true) {
         emit(CommunityDetailsLoaded(communityDetailsModel: res));

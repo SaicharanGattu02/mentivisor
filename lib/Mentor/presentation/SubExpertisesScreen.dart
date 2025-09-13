@@ -222,7 +222,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
           child: BlocConsumer<UpdateExpertiseCubit, UpdateExpertiseStates>(
             listener: (context, state) {
               if (state is UpdateExpertiseLoaded) {
-                context.push("/cost_per_minute_screen?coins=25");
+                context.push("/cost_per_minute_screen?coins=25&path=${"update_expertise"}");
               } else if (state is UpdateExpertiseFailure) {
                 CustomSnackBar1.show(context, state.error);
               }
@@ -235,7 +235,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
                 onPlusTap: () {
                   final Map<String, dynamic> data = {
                     "mode": "add",
-                    "sub_expertise_ids": _selectedUnattached.toList(),
+                    "sub_expertise_ids":_selectedUnattached.toList(),
                   };
                   context.read<UpdateExpertiseCubit>().updateExpertise(data);
                 },

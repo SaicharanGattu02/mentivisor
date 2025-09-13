@@ -539,7 +539,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               "",
               "",
               "",
-            );
+            );                    CustomSnackBar1.show(context, "Your resource is under review. Once it’s approved, it will be available in the Study Zone.");
+
+
             context.pop();
           } else if (state is AddResourceFailure) {
             CustomSnackBar1.show(context, state.error);

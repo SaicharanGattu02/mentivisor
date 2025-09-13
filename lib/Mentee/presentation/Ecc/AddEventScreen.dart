@@ -902,6 +902,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             "${widget.type}",
                             "",
                           );
+                          CustomSnackBar1.show(context, "Your event is under review. Once it’s approved, it will be visible in the ECC section");
                           Future.microtask(() => context.pop());
                         } else if (state is AddEccFailure) {
                           CustomSnackBar1.show(context, state.error);

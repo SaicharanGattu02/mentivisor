@@ -141,6 +141,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                   fontFamily: "segeo",
                                 ),
                               ),
+
                               Text(
                                 "${mentorData?.user?.email ?? ''}",
                                 style: TextStyle(
@@ -150,6 +151,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                   fontFamily: "segeo",
                                 ),
                               ),
+
                               Row(
                                 children: [
                                   Image.asset(
@@ -187,8 +189,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         _buildSection(
                           title: 'About',
                           child: Text(
-                            mentorData?.user?.bio ??
-                                'No information available', // About text from data
+                            mentorData?.user?.bio ?? 'No information available',
                             style: TextStyle(
                               fontSize: 14,
                               fontFamily: "Inter",
@@ -200,8 +201,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         _buildSection(
                           title: 'Expertise',
                           child: Wrap(
-                            runSpacing: 10,
-                            spacing: 8,
+                            spacing: 4,
                             children: (mentorData?.expertises ?? [])
                                 .expand<Widget>(
                                   (e) => [
@@ -397,9 +397,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           fontFamily: "Inter",
         ),
       ),
+
       side: BorderSide(color: Color(0xFFf3e8ff)),
       backgroundColor: Color(0xFFf3e8ff),
-      labelStyle: TextStyle(color: Color(0xFFA351EE), fontFamily: "Inter",fontWeight: FontWeight.bold),
+      labelStyle: TextStyle(
+        color: Color(0xFFA351EE),
+        fontFamily: "Inter",
+        fontWeight: FontWeight.bold,
+      ),
       padding: EdgeInsets.symmetric(horizontal: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(36), // change 12 to your need

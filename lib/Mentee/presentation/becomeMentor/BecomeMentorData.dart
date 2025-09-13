@@ -29,7 +29,7 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
   Future<void> _pickResumeFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ["pdf", "doc", "docx"],
+      allowedExtensions: ["pdf"],
     );
 
     if (result != null && result.files.single.path != null) {

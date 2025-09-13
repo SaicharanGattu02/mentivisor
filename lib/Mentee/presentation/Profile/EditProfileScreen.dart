@@ -27,6 +27,7 @@ class EditProfileScreen extends StatefulWidget {
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
+
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
@@ -185,7 +186,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onTap: () {
                         _openCollegeSelectionBottomSheet(context);
                       },
-                      decoration: InputDecoration(
+                      decoration: InputDecoration(       suffixIcon: Icon(Icons.arrow_drop_down_sharp),
                         hintText: 'Enter your college name',
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,

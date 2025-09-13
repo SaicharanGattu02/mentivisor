@@ -9,7 +9,7 @@ abstract class StudyZoneCampusRepository {
     String search,
     int page,
   );
-  Future<ResourceDetailsModel?> resourceDetails(int resourceId);
+  Future<ResourceDetailsModel?> resourceDetails(int resourceId,String scope);
 }
 
 class StudyZoneCampusRepositoryImpl implements StudyZoneCampusRepository {
@@ -28,7 +28,7 @@ class StudyZoneCampusRepositoryImpl implements StudyZoneCampusRepository {
   }
 
   @override
-  Future<ResourceDetailsModel?> resourceDetails(int resourceId) async {
-    return await remoteDataSource.getResourceDetails(resourceId);
+  Future<ResourceDetailsModel?> resourceDetails(int resourceId,String scope) async {
+    return await remoteDataSource.getResourceDetails(resourceId,scope);
   }
 }

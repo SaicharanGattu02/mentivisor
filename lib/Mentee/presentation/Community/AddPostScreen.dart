@@ -717,6 +717,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       "",
                       "${widget.type}",
                     );
+                    CustomSnackBar1.show(context, "Your post is under review. Once it’s approved, it will be visible to the community");
                     Future.microtask(() => context.pop());
                   } else if (state is AddCommunityPostFailure) {
                     CustomSnackBar1.show(context, state.error);

@@ -20,16 +20,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:go_router/go_router.dart';
-
-// === Your imports (models/cubits/utils) ===
-// import 'package:mentivisor/.../expertise_category_cubit.dart';
-// import 'package:mentivisor/.../become_mentor_cubit.dart';
-// import 'package:mentivisor/.../models/get_expertise_model.dart';
-// import 'package:mentivisor/.../widgets/custom_app_button_1.dart';
-// import 'package:mentivisor/.../widgets/custom_snackbar_1.dart';
-// import 'package:mentivisor/.../widgets/dotted_progress_with_logo.dart';
-// import 'package:mentivisor/.../utils/app_logger.dart';
-
 class SubTopicSelection extends StatefulWidget {
   final Map<String, dynamic> data; // carry-over from previous step
   const SubTopicSelection({super.key, required this.data});
@@ -135,7 +125,6 @@ class _SubTopicSelectionV2State extends State<SubTopicSelection> {
   }
 
   void _submit() {
-    // Flatten selected
     final expertiseIds = selectedCategoryIds.toList();
     final subIds = <int>[];
     selectedSubIds.forEach((_, s) => subIds.addAll(s));
@@ -169,7 +158,7 @@ class _SubTopicSelectionV2State extends State<SubTopicSelection> {
             listener: (context, state) {
               if (state is BecomeMentorSuccess) {
                 context.go(
-                  '/cost_per_minute_screen?coins=${state.becomeMentorSuccessModel.coinsPerMinute ?? ""}',
+                  '/cost_per_minute_screen?coins=${state.becomeMentorSuccessModel.coinsPerMinute ?? ""}&path=${"mentor_review"}',
                 );
               } else if (state is BecomeMentorFailure) {
                 CustomSnackBar1.show(context, state.error);

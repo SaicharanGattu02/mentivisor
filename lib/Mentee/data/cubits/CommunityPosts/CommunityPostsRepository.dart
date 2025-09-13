@@ -14,7 +14,7 @@ abstract class CommunityPostsRepo {
   Future<CommunityZoneTagsModel?> getCommunityZoneTags();
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
-  Future<CommunityDetailsModel?> communityDetails(int communityId);
+  Future<CommunityDetailsModel?> communityDetails(int communityId,String scope);
 }
 
 class CommunityPostsRepoImpl implements CommunityPostsRepo {
@@ -43,8 +43,8 @@ class CommunityPostsRepoImpl implements CommunityPostsRepo {
     return await remoteDataSource.communityZoneReport(data);
   }
   @override
-  Future<CommunityDetailsModel?> communityDetails(int communityId) async {
-    return await remoteDataSource.communityPostsDetails(communityId);
+  Future<CommunityDetailsModel?> communityDetails(int communityId,String scope) async {
+    return await remoteDataSource.communityPostsDetails(communityId,scope);
   }
 
 }

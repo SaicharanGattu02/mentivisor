@@ -111,7 +111,7 @@ class SessionCard extends StatelessWidget {
                             const SizedBox(height: 8),
                             Text(
                               sessionName,
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'segeo',
@@ -133,10 +133,12 @@ class SessionCard extends StatelessWidget {
                                       await canLaunchUrl(Uri.parse(url))) {
                                     await launchUrl(Uri.parse(url));
                                   } else {
+
                                     CustomSnackBar1.show(
                                       context,
                                       "Unable to open Zoom link",
                                     );
+
                                   }
                                 },
                               ),

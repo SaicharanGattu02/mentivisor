@@ -17,12 +17,9 @@ class MentorGridGuest extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final crossAxisCount = 2;
     final spacing = 16.0;
-
-    // total width available for each card
     final itemWidth =
         (size.width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
-    // decide your desired height, e.g. 1.2x of width
-    final itemHeight = itemWidth * 1.1;
+    final itemHeight = itemWidth * 1.14;
     final aspectRatio = itemWidth / itemHeight;
     return GridView.builder(
       shrinkWrap: true,
@@ -60,6 +57,7 @@ class MentorGridCampus extends StatelessWidget {
   const MentorGridCampus({
     required this.mentors_list,
     required this.onTapMentor,
+
   });
 
   @override
@@ -67,12 +65,9 @@ class MentorGridCampus extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final crossAxisCount = 2;
     final spacing = 16.0;
-
-    // total width available for each card
     final itemWidth =
         (size.width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
-    // decide your desired height, e.g. 1.2x of width
-    final itemHeight = itemWidth * 1.1;
+    final itemHeight = itemWidth * 1.132;
     final aspectRatio = itemWidth / itemHeight;
 
     return GridView.builder(

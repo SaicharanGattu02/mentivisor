@@ -132,8 +132,8 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
   Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
-  Future<ResourceDetailsModel?> getResourceDetails(int resourceId);
-  Future<CommunityDetailsModel?> communityPostsDetails(int communityId);
+  Future<ResourceDetailsModel?> getResourceDetails(int resourceId,String scope);
+  Future<CommunityDetailsModel?> communityPostsDetails(int communityId,String scope);
   Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
@@ -542,10 +542,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<CommunityDetailsModel?> communityPostsDetails(int communityId) async {
+  Future<CommunityDetailsModel?> communityPostsDetails(int communityId,String scope) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.community_zone_post_details}/${communityId}",
+        "${APIEndpointUrls.community_zone_post_details}/${communityId}?scope=${scope}",
       );
 
       debugPrint('Community Details::$res');
@@ -764,11 +764,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ResourceDetailsModel?> getResourceDetails(int resourceId) async {
+  Future<ResourceDetailsModel?> getResourceDetails(int resourceId,String scope) async {
     AppLogger.log('resourceId::${resourceId}');
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.study_zone_details}/${resourceId}",
+        "${APIEndpointUrls.study_zone_details}/${resourceId}?scope=${scope}",
       );
       AppLogger.log('get StudyZoneDetails::${res.data}');
       return ResourceDetailsModel.fromJson(res.data);

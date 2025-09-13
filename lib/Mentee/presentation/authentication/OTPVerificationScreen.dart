@@ -16,6 +16,7 @@ import '../../../Components/ShakeWidget.dart';
 import '../../../services/SecureStorageService.dart';
 import '../../../utils/AppLogger.dart';
 import '../../data/cubits/Register/Register_Cubit.dart';
+import '../../data/cubits/Register/Registor_State.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -32,7 +33,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   bool _showMpinError = false;
   bool _showMobileError = false;
 
-  int _remainingSeconds = 30;
+  final ValueNotifier<int> _remainingSeconds = ValueNotifier<int>(30);
   Timer? _timer;
 
   @override
@@ -44,6 +45,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _remainingSeconds.dispose();
+
     otpController.dispose();
     super.dispose();
   }
@@ -57,23 +60,19 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   void _startResendCountdown() {
-    setState(() {
-      _remainingSeconds = 30;
-    });
+    _remainingSeconds.value = 30;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds == 0) {
+      if (_remainingSeconds.value == 0) {
         timer.cancel();
       } else {
-        setState(() {
-          _remainingSeconds--;
-        });
+        _remainingSeconds.value--; // 👈 only notifier updates
       }
     });
   }
 
   void _resendOtp() {
-    context.read<RegisterCubit>().registerApi(widget.data);
+    context.read<RegisterCubit>().registerApi1(widget.data);
     _startResendCountdown();
   }
 
@@ -81,7 +80,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF4F8FD),
-      body: SingleChildScrollView(physics: NeverScrollableScrollPhysics(),
+      body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 33.0, vertical: 47),
           child: Form(
@@ -132,7 +132,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(spacing: 10,
+                Row(
+                  spacing: 10,
                   children: [
                     Text(
                       'OTP sent to +91 ${widget.data["contact"]}',
@@ -143,11 +144,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    IconButton(visualDensity: VisualDensity.compact,
-                        onPressed: (){
-                      context.pop();
-
-                    }, icon: Icon(Icons.edit,size: 24,color: primarycolor,))
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () {
+                        context.pop();
+                      },
+                      icon: Icon(Icons.edit, size: 24, color: primarycolor),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -203,20 +206,36 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: _remainingSeconds == 0 ? _resendOtp : null,
-                    child: Text(
-                      _remainingSeconds == 0
-                          ? 'Resend OTP'
-                          : 'Resend OTP in ${_remainingSeconds}s',
-                      style: const TextStyle(
-                        color: Color(0xff34495C),
-                        fontFamily: 'segeo',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: _remainingSeconds,
+                    builder: (_, seconds, __) {
+                      return BlocConsumer<RegisterCubit,RegisterState>(listener: (context, state) {
+                        if(state is RegisterSucess1){
+                        return  CustomSnackBar1.show(context, "OTP resent successfully!");
+                        }else if(state is RegisterFailure){
+                          return CustomSnackBar1.show(context, state.message);
+                        }
+
+                      },builder: (context, state) {
+                        return TextButton(
+                          onPressed: seconds == 0 ? _resendOtp : null,
+                          child: Text(
+                            seconds == 0
+                                ? 'Resend OTP'
+                                : 'Resend OTP in ${seconds}s',
+                            style: const TextStyle(
+                              color: Color(0xff34495C),
+                              fontFamily: 'segeo',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        );
+                      },
+
+                      );
+                    },
                   ),
                 ),
               ],
@@ -243,25 +262,30 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 onPlusTap: isLoading
                     ? null
                     : () async {
-                  if (_validateFields()) {
-                    // Get the FCM token first
-                    String? fcmToken = await FirebaseMessaging.instance.getToken();
-                    AppLogger.log("FCM Token: $fcmToken");
+                        if (_validateFields()) {
+                          // Get the FCM token first
+                          String? fcmToken = await FirebaseMessaging.instance
+                              .getToken();
+                          AppLogger.log("FCM Token: $fcmToken");
 
-                    if (fcmToken != null) {
-                      await SecureStorageService.instance.setString("fb_token", fcmToken);
-                    }
+                          if (fcmToken != null) {
+                            await SecureStorageService.instance.setString(
+                              "fb_token",
+                              fcmToken,
+                            );
+                          }
 
-                    Map<String, dynamic> data = {
-                      "contact": widget.data["contact"],
-                      "otp": otpController.text,
-                      "fcm_token": fcmToken ?? "", // send empty string if null
-                    };
+                          Map<String, dynamic> data = {
+                            "contact": widget.data["contact"],
+                            "otp": otpController.text,
+                            "fcm_token":
+                                fcmToken ?? "", // send empty string if null
+                          };
 
-                    // Call Verify OTP API
-                    context.read<VerifyOtpCubit>().VerifyotpApi(data);
-                  }
-                },
+                          // Call Verify OTP API
+                          context.read<VerifyOtpCubit>().VerifyotpApi(data);
+                        }
+                      },
               );
             },
           ),

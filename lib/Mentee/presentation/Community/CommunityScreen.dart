@@ -370,7 +370,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                               itemBuilder: (context, index) {
                                 final communitypost = communityposts?[index];
                                 return GestureDetector(onTap: () {
-                                  context.push("/community_details/${communitypost?.id}");
+                                  context.push("/community_details/${communitypost?.id}?scope=${ _onCampus.value?"":"beyond"}");
                                 },
                                   child: PostCard(
                                     communityPosts:

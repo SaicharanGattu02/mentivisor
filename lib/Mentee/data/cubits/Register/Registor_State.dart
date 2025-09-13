@@ -9,11 +9,17 @@ abstract class RegisterState extends Equatable {
 class RegisterIntially extends RegisterState {}
 
 class RegisterLoading extends RegisterState {}
+class RegisterLoading1 extends RegisterState {}
 
 class RegisterSucess extends RegisterState {
   final RegisterModel registerModel;
   RegisterSucess({required this.registerModel});
 }
+class RegisterSucess1 extends RegisterState {
+  final RegisterModel registerModel;
+  RegisterSucess1({required this.registerModel});
+}
+
 
 class RegisterFailure extends RegisterState {
   final String message;

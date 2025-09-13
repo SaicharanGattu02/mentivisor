@@ -281,13 +281,10 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               }
                               return ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                physics:  BouncingScrollPhysics(),
-                                padding:  EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
+                                physics: BouncingScrollPhysics(),
+                                padding: EdgeInsets.symmetric(horizontal: 16),
                                 itemCount: tags.length,
-                                separatorBuilder: (_, __) =>
-                                     SizedBox(width: 8),
+                                separatorBuilder: (_, __) => SizedBox(width: 8),
                                 itemBuilder: (context, index) {
                                   final tagItem = tags[index];
                                   final isSelected = index == selectedIndex;
@@ -440,8 +437,11 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             if (isGuest) {
                                               context.push('/auth_landing');
                                             } else {
+                                              AppLogger.info(
+                                                "Scopes=${onCampusNotifier.value}",
+                                              );
                                               context.push(
-                                                '/resource_details_screen/${campusList?.id}',
+                                                '/resource_details_screen/${campusList?.id}?scope=${onCampusNotifier.value ? "" : "beyond"}',
                                               );
                                             }
                                           },

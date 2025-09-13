@@ -6,7 +6,8 @@ import '../../../Components/CutomAppBar.dart';
 
 class CostPerMinuteScreen extends StatefulWidget {
   final String coins;
-  CostPerMinuteScreen({super.key, required this.coins});
+  final String path;
+  CostPerMinuteScreen({super.key, required this.coins, required this.path});
   @override
   State<CostPerMinuteScreen> createState() => _CostPerMinuteScreenState();
 }
@@ -62,7 +63,7 @@ class _CostPerMinuteScreenState extends State<CostPerMinuteScreen> {
               CustomAppButton1(
                 text: "Okay",
                 onPlusTap: () {
-                  context.go('/mentor_review');
+                  context.go('/${widget.path}');
                 },
               ),
             ],

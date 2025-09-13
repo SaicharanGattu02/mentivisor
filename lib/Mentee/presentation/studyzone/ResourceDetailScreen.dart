@@ -20,7 +20,8 @@ import '../../data/cubits/ResourceDetails/ResourceDetailsState.dart';
 
 class ResourceDetailScreen extends StatefulWidget {
   final int resourceId;
-  const ResourceDetailScreen({super.key, required this.resourceId});
+  final String scope;
+  const ResourceDetailScreen({super.key, required this.resourceId, required this.scope});
 
   @override
   State<ResourceDetailScreen> createState() => _ResourceDetailScreenState();
@@ -30,7 +31,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<Resourcedetailscubit>().resourceDetails(widget.resourceId);
+    context.read<Resourcedetailscubit>().resourceDetails(widget.resourceId,widget.scope);
   }
 
   @override
@@ -269,12 +270,12 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    const Icon(
-                                      Icons.calendar_today,
-                                      size: 16,
-                                      color: Colors.black54,
-                                    ),
-                                    const SizedBox(width: 4),
+                                    // const Icon(
+                                    //   Icons.calendar_today,
+                                    //   size: 16,
+                                    //   color: Colors.black54,
+                                    // ),
+                                    // const SizedBox(width: 4),
                                     // Text(
                                     //   'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
                                     //   style: const TextStyle(

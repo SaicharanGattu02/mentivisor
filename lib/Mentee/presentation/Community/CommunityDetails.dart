@@ -23,7 +23,9 @@ import '../Widgets/CommentBottomSheet.dart';
 
 class CommunityDetails extends StatefulWidget {
   final int communityId;
-  const CommunityDetails({super.key, required this.communityId});
+  final String scope;
+
+  const CommunityDetails({super.key, required this.communityId, required this.scope});
 
   @override
   State<CommunityDetails> createState() => _CommunityDetailsState();
@@ -33,7 +35,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
   @override
   void initState() {
     super.initState();
-    context.read<CommunityDetailsCubit>().communityDetails(widget.communityId);
+    context.read<CommunityDetailsCubit>().communityDetails(widget.communityId,widget.scope);
   }
 
   @override

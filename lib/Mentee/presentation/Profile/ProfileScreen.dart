@@ -10,9 +10,12 @@ import 'package:mentivisor/utils/color_constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Components/CustomAppButton.dart';
+import '../../../Components/CustomSnackBar.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
+import '../../data/cubits/AddResource/add_resource_cubit.dart';
+import '../../data/cubits/AddResource/add_resource_states.dart';
 import '../../data/cubits/PostComment/post_comment_cubit.dart';
 import '../Widgets/CommentBottomSheet.dart';
 
@@ -824,16 +827,65 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                             ),
                                                           ),
 
-                                                          Expanded(
-                                                            child:
-                                                                CustomAppButton1(
+                                                          BlocConsumer<
+                                                              AddResourceCubit,
+                                                              AddResourceStates
+                                                          >(
+                                                            listener: (context, state) {
+                                                              if (state
+                                                              is AddResourceLoaded) {
+                                                                CustomSnackBar1.show(
+                                                                  context,
+                                                                  "Downloaded Successfully",
+                                                                );
+                                                              } else if (state
+                                                              is AddResourceFailure) {
+                                                                CustomSnackBar1.show(
+                                                                  context,
+                                                                  state
+                                                                      .error
+                                                                      .isNotEmpty
+                                                                      ? state
+                                                                      .error
+                                                                      : "Download Failed",
+                                                                );
+                                                              }
+                                                            },
+                                                            builder: (context, state) {
+                                                              final currentId =
+                                                                  campusList
+                                                                      ?.id
+                                                                      .toString() ??
+                                                                      "";
+                                                              final isLoading =
+                                                                  state
+                                                                  is AddResourceLoading &&
+                                                                      state.resourceId ==
+                                                                          currentId;
+
+                                                              return Expanded(
+                                                                child: CustomAppButton1(
                                                                   radius: 24,
                                                                   height: 38,
+                                                                  isLoading:
+                                                                  isLoading,
                                                                   text:
-                                                                      "Download",
-                                                                  onPlusTap:
-                                                                      () {},
+                                                                  "Download",
+                                                                  textSize:
+                                                                  14,
+                                                                  onPlusTap: () {
+                                                                      context
+                                                                          .read<
+                                                                          AddResourceCubit
+                                                                      >()
+                                                                          .resourceDownload(
+                                                                        currentId,
+                                                                      );
+
+                                                                  },
                                                                 ),
+                                                              );
+                                                            },
                                                           ),
                                                         ],
                                                       ),

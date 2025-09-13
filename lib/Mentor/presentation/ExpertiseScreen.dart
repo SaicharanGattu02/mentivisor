@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
+import 'package:mentivisor/Components/CutomAppBar.dart';
 
 import '../Models/ExpertisesModel.dart';
 import '../data/Cubits/Expertises/ApprovedExpertiseCubit.dart';
@@ -64,27 +65,7 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
       end: Alignment.bottomRight,
     );
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leadingWidth: 44,
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 8),
-          child: BackButton(),
-        ),
-        centerTitle: true,
-        title: const Text(
-          'Expertise',
-          style: TextStyle(
-            fontSize: 18,
-            fontFamily: "segeo",
-            color: Color(0xff121212),
-            fontWeight: FontWeight.w700,
-            letterSpacing: .1,
-          ),
-        ),
-      ),
+      appBar: CustomAppBar1(title: 'Expertise', actions: []),
       body: Container(
         decoration: const BoxDecoration(gradient: bg),
         child: Column(
@@ -404,7 +385,6 @@ class _ExpertiseListTab extends StatelessWidget {
   }
 }
 
-/// Small rounded “Add new” button used in the list header.
 class AddChip extends StatelessWidget {
   const AddChip({super.key, required this.onPressed});
   final VoidCallback onPressed;

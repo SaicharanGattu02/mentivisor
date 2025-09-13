@@ -186,13 +186,19 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/community_details/:communityId',
       pageBuilder: (context, state) {
-        final id = int.parse(state.pathParameters['communityId']!);
+        final communityIdStr = state.pathParameters['communityId'];
+        final id = communityIdStr != null
+            ? int.tryParse(communityIdStr) ?? 0
+            : 0;
+        final scope = state.uri.queryParameters['scope'] ?? "";
+
         return buildSlideTransitionPage(
-          CommunityDetails(communityId: id),
+          CommunityDetails(communityId: id, scope: scope),
           state,
         );
       },
     ),
+
     GoRoute(
       path: '/coupons',
       pageBuilder: (context, state) =>
@@ -335,11 +341,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/resource_details_screen/:resourceId',
       pageBuilder: (context, state) {
-        final id = int.parse(
-          state.pathParameters['resourceId']!,
-        ); // Extract as int
+        final id = int.parse(state.pathParameters['resourceId']!);
+        final scope = state.uri.queryParameters['scope'] ?? "";
         return buildSlideTransitionPage(
-          ResourceDetailScreen(resourceId: id),
+          ResourceDetailScreen(resourceId: id, scope: scope),
           state,
         );
       },
@@ -354,7 +359,7 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/profile',
+      path: '/common_profile',
       pageBuilder: (context, state) {
         final idString = state.uri.queryParameters['id'];
         final id = int.tryParse(idString ?? '') ?? 0;
@@ -413,7 +418,10 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final id = int.parse(state.pathParameters['eventId']!);
         final scope = state.uri.queryParameters['scope'] ?? "";
-        return buildSlideTransitionPage(ViewEventScreen(eventId: id,scope: scope,), state);
+        return buildSlideTransitionPage(
+          ViewEventScreen(eventId: id, scope: scope),
+          state,
+        );
       },
     ),
 
@@ -474,8 +482,9 @@ final GoRouter appRouter = GoRouter(
       path: '/cost_per_minute_screen',
       pageBuilder: (context, state) {
         final coins = state.uri.queryParameters['coins'] ?? "";
+        final path = state.uri.queryParameters['path'] ?? "";
         return buildSlideTransitionPage(
-          CostPerMinuteScreen(coins: coins),
+          CostPerMinuteScreen(coins: coins,path: path,),
           state,
         );
       },
