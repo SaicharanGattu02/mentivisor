@@ -213,7 +213,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.startTime ?? "",
                                     session?.endTime ?? "",
                                   );
-                                  return SessionCard(
+                                  return SessionCard(menteeId: session?.mentee?.id,
                                     attachment: session?.attachment ?? "",
                                     sessionLink: session?.zoomLink ?? "",
                                     sessionId: session?.id ?? 0,

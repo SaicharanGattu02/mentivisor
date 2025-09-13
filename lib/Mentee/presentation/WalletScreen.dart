@@ -20,8 +20,6 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> {
   final ValueNotifier<bool> coinHistoryNotifier = ValueNotifier(true);
-
-  // Use int for proper number handling
   final ValueNotifier<int> _currentBalence = ValueNotifier(0);
   final ValueNotifier<int> _totelEarned = ValueNotifier(0);
   final ValueNotifier<int> _totelSpent = ValueNotifier(0);
@@ -154,7 +152,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     children: [
@@ -365,8 +363,9 @@ class _WalletScreenState extends State<WalletScreen> {
                         if (state is WalletmoneyStateLoaded) {
                           final wallet = state.walletResponseModel.data?.wallet;
 
-                          _currentBalence.value =
-                              _safeParse(wallet?.currentBalance);
+                          _currentBalence.value = _safeParse(
+                            wallet?.currentBalance,
+                          );
                           _totelEarned.value = _safeParse(wallet?.totalEarned);
                           _totelSpent.value = _safeParse(wallet?.totalSpent);
                         }
@@ -380,15 +379,17 @@ class _WalletScreenState extends State<WalletScreen> {
                           } else if (state is WalletmoneyStateLoaded ||
                               state is WalletmoneyStateLoadingMore) {
                             final walletModel =
-                            (state is WalletmoneyStateLoaded)
+                                (state is WalletmoneyStateLoaded)
                                 ? (state as WalletmoneyStateLoaded)
-                                .walletResponseModel
+                                      .walletResponseModel
                                 : (state as WalletmoneyStateLoadingMore)
-                                .walletResponseModel;
+                                      .walletResponseModel;
                             final coinsHistoryList =
-                                walletModel.data?.transactions
+                                walletModel
+                                    .data
+                                    ?.transactions
                                     ?.transectionsData ??
-                                    [];
+                                [];
 
                             if (coinsHistoryList.isEmpty) {
                               return Column(
@@ -400,7 +401,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "No Coins History available",
+                                    coinHistoryNotifier.value
+                                        ? "No Coins History available"
+                                        : "No Achievements available",
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontSize: 16,
@@ -435,11 +438,11 @@ class _WalletScreenState extends State<WalletScreen> {
                                 slivers: [
                                   SliverList(
                                     delegate: SliverChildBuilderDelegate((
-                                        context,
-                                        index,
-                                        ) {
+                                      context,
+                                      index,
+                                    ) {
                                       final historyItem =
-                                      coinsHistoryList[index];
+                                          coinsHistoryList[index];
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
                                           vertical: 10,
@@ -458,7 +461,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                               decoration: BoxDecoration(
                                                 color: const Color(0xffF3E8FF),
                                                 borderRadius:
-                                                BorderRadius.circular(100),
+                                                    BorderRadius.circular(100),
                                               ),
                                               child: Image.asset(
                                                 historyItem.type == "Debited"
@@ -474,7 +477,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     historyItem.activity ??
@@ -483,7 +486,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                       color: Color(0xff555555),
                                                       fontFamily: 'segeo',
                                                       fontWeight:
-                                                      FontWeight.w600,
+                                                          FontWeight.w600,
                                                       fontSize: 14,
                                                     ),
                                                   ),
@@ -494,7 +497,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                       color: Color(0xff666666),
                                                       fontFamily: 'segeo',
                                                       fontWeight:
-                                                      FontWeight.w400,
+                                                          FontWeight.w400,
                                                       fontSize: 12,
                                                     ),
                                                   ),
@@ -504,11 +507,10 @@ class _WalletScreenState extends State<WalletScreen> {
                                             const SizedBox(width: 12),
                                             Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.end,
+                                                  CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  historyItem.type ??
-                                                      'Unknown',
+                                                  historyItem.type ?? 'Unknown',
                                                   style: const TextStyle(
                                                     color: Color(0xff333333),
                                                     fontFamily: 'segeo',
@@ -528,7 +530,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                     const SizedBox(width: 4),
                                                     Text(
                                                       historyItem.coins
-                                                          ?.toString() ??
+                                                              ?.toString() ??
                                                           "0",
                                                       style: const TextStyle(
                                                         color: Color(
@@ -536,7 +538,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                         ),
                                                         fontFamily: 'segeo',
                                                         fontWeight:
-                                                        FontWeight.w600,
+                                                            FontWeight.w600,
                                                         fontSize: 16,
                                                       ),
                                                     ),

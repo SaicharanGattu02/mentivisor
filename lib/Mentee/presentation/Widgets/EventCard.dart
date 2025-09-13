@@ -25,7 +25,9 @@ class _EventCardState extends State<EventCard> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
-        color: widget.eccList.popular == 1 ? const Color(0xffFFF7CE) : Colors.white,
+        color: widget.eccList.popular == 1
+            ? const Color(0xffFFF7CE)
+            : Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Stack(

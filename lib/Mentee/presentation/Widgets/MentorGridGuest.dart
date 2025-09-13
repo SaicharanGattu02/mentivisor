@@ -23,7 +23,7 @@ class MentorGridGuest extends StatelessWidget {
     final aspectRatio = itemWidth / itemHeight;
     return GridView.builder(
       shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: mentors?.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -57,7 +57,6 @@ class MentorGridCampus extends StatelessWidget {
   const MentorGridCampus({
     required this.mentors_list,
     required this.onTapMentor,
-
   });
 
   @override
@@ -72,7 +71,7 @@ class MentorGridCampus extends StatelessWidget {
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       itemCount: mentors_list?.length ?? 0,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
 import '../../Components/CustomAppButton.dart';
@@ -19,6 +20,12 @@ class CouponsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _copy(BuildContext context, String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    HapticFeedback.lightImpact();
+    CustomSnackBar1.show(context, "Code copied!");
   }
 
   @override
@@ -133,8 +140,6 @@ class CouponsScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
-                    // Right Side
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -148,33 +153,38 @@ class CouponsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF5F5F5),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                "MENTI 500",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff121212),
-                                  fontFamily: "segeo",
-                                  fontSize: 12,
+                        GestureDetector(
+                          onTap: () {
+                            _copy(context, "MENTI 500");
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffF5F5F5),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "MENTI 500",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff121212),
+                                    fontFamily: "segeo",
+                                    fontSize: 12,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 10),
-                              Image.asset(
-                                "assets/images/Copyimg.png",
-                                height: 16,
-                                width: 16,
-                              ),
-                            ],
+                                SizedBox(width: 10),
+                                Image.asset(
+                                  "assets/images/Copyimg.png",
+                                  height: 16,
+                                  width: 16,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -294,7 +304,7 @@ class CouponsScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                             onTap: () {
                               Clipboard.setData(
-                                 ClipboardData(text: "MENTI 500"),
+                                ClipboardData(text: "MENTI 500"),
                               );
                             },
                             child: Row(

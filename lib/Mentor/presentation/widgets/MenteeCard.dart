@@ -9,6 +9,7 @@ import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../Models/MyMenteesModel.dart';
 import '../../data/Cubits/ReportMentee/report_mentee_states.dart';
+
 class MenteeCard extends StatelessWidget {
   final MenteeData mentee;
   const MenteeCard({required this.mentee});
@@ -263,6 +264,10 @@ class MenteeCard extends StatelessWidget {
                     BlocConsumer<ReportMenteeCubit, ReportMenteeStates>(
                       listener: (context, state) {
                         if (state is ReportMenteeSuccess) {
+                          CustomSnackBar1.show(
+                            context,
+                            "Report submitted successfully!",
+                          );
                           context.pop();
                         } else if (state is ReportMenteeFailure) {
                           CustomSnackBar1.show(context, state.error ?? "");

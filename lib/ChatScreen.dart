@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatStates.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/ImageUtils.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'Mentee/Models/ChatMessagesModel.dart';
@@ -18,7 +19,6 @@ import 'Mentee/data/cubits/ChatMessages/ChatMessagesStates.dart';
 import 'Mentee/data/cubits/UploadFileInChat/UploadFileInChatCubit.dart';
 import 'Mentee/presentation/Widgets/UserAvatar.dart';
 
-// ====== EXTENSIONS ======
 extension ChatScreenMessagesX on Messages {
   DateTime get createdAtDate {
     final raw = createdAt?.toString() ?? '';
@@ -42,7 +42,6 @@ class _ListItem {
   const _ListItem.header(this.day) : message = null, isHeader = true;
 }
 
-// ====== CHAT SCREEN ======
 class ChatScreen extends StatefulWidget {
   final String currentUserId;
   final String receiverId;
@@ -66,12 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool _isLoadingMore = false;
   bool _hasMoreMessages = true;
-
-  bool _showSafetyBanner = true;
-  bool _animSafetyBannerIn = false;
   Timer? _safetyAutoHide;
-
-  // ScrollablePositionedList controls
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _positionsListener =
       ItemPositionsListener.create();
@@ -100,8 +94,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // initial history load
     try {
+      AppLogger.info("receiverId:${widget.receiverId}");
       context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId);
     } catch (_) {}
 

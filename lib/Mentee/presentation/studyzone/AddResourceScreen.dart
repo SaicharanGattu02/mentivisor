@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,23 +55,37 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     final image = await FileImagePicker.pickImageBottomSheet(context);
     if (image != null) {
       final resizedImage = await _resizeImage(image);
-      setState(() => _imageFile.value = resizedImage);
+
+      // Evict old path from cache (if any)
+      final prev = _imageFile.value;
+      if (prev != null) {
+        FileImage(prev).evict();
+      }
+
+      // Update value (no need for setState when using ValueNotifier)
+      _imageFile.value = resizedImage;
     }
   }
 
   Future<File> _resizeImage(File imageFile) async {
-    final image = img.decodeImage(await imageFile.readAsBytes());
-    if (image == null) return imageFile;
-    final resized = img.copyResize(image, width: 800);
+    final decoded = img.decodeImage(await imageFile.readAsBytes());
+    if (decoded == null) return imageFile;
+
+    final resized = img.copyResize(decoded, width: 800);
 
     final tempDir = await getTemporaryDirectory();
-    final tempFile = File('${tempDir.path}/resized_image.jpg');
-    await tempFile.writeAsBytes(img.encodeJpg(resized));
+    final stamp = DateTime.now().microsecondsSinceEpoch; // unique
+    final tempFile = File('${tempDir.path}/resized_$stamp.jpg');
 
+    await tempFile.writeAsBytes(img.encodeJpg(resized), flush: true);
     return tempFile;
   }
 
   void _cancelImage() {
+    final prev = _imageFile.value;
+    if (prev != null) {
+      FileImage(prev).evict();
+    }
     _imageFile.value = null;
   }
 
@@ -89,9 +102,15 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _imageFile.dispose();
+    _pickedFile.dispose();
     _isHighlighted.dispose();
+    _anonymousNotifier.dispose();
     _useDefaultImage.dispose();
+    _resourceNameController.dispose();
+    _aboutController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -180,6 +199,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                     : Stack(
                                         children: [
                                           Image.file(
+                                            key: ValueKey(file.path),
                                             file,
                                             width: double.infinity,
                                             height: 180,
@@ -410,7 +430,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                           return Chip(
                             label: Text(
                               tag,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Color(0xff333333),
                                 fontFamily: 'segeo',
                                 fontWeight: FontWeight.w500,
@@ -419,7 +439,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                             ),
                             side: BorderSide(color: Colors.blue.shade50),
                             backgroundColor: Colors.blue.shade50,
-                            deleteIcon: const Icon(Icons.close, size: 16),
+                            deleteIcon: Icon(Icons.close, size: 16),
                             onDeleted: () {
                               setState(() {
                                 _selectedTags.remove(tag);
@@ -539,8 +559,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               "",
               "",
               "",
-            );                    CustomSnackBar1.show(context, "Your resource is under review. Once it’s approved, it will be available in the Study Zone.");
-
+            );
+            CustomSnackBar1.show(
+              context,
+              "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
+            );
 
             context.pop();
           } else if (state is AddResourceFailure) {

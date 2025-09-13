@@ -19,8 +19,6 @@ import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
-import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
-import '../data/cubits/MenteeDashBoard/mentee_dashboard_state.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'Widgets/FilterButton.dart';
@@ -589,246 +587,252 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                 ),
                 body: SafeArea(
                   child: SingleChildScrollView(
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BlocBuilder<Getbannerscubit, Getbannersstate>(
-                          builder: (context, state) {
-                            if (state is GetbannersStateLoaded) {
-                              final banners = state.getbannerModel.data ?? [];
-                              return CarouselSlider.builder(
-                                itemCount: banners.length,
-                                itemBuilder: (ctx, i, _) {
-                                  final b = banners[i];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      if (b.link != null) _launchUrl(b.link!);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 2.5,
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Image.network(
-                                          b.imgUrl ?? '',
-                                          fit: BoxFit.fill,
-                                          width: double.infinity,
-                                          errorBuilder: (_, __, ___) =>
-                                              Container(
-                                                color: Colors.grey[200],
-                                                alignment: Alignment.center,
-                                                child: const Icon(
-                                                  Icons.broken_image,
-                                                  color: Colors.grey,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BlocBuilder<Getbannerscubit, Getbannersstate>(
+                            builder: (context, state) {
+                              if (state is GetbannersStateLoaded) {
+                                final banners = state.getbannerModel.data ?? [];
+                                return CarouselSlider.builder(
+                                  itemCount: banners.length,
+                                  itemBuilder: (ctx, i, _) {
+                                    final b = banners[i];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        if (b.link != null) _launchUrl(b.link!);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 2.5,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(16),
+                                          child: Image.network(
+                                            b.imgUrl ?? '',
+                                            fit: BoxFit.fill,
+                                            width: double.infinity,
+                                            errorBuilder: (_, __, ___) =>
+                                                Container(
+                                                  color: Colors.grey[200],
+                                                  alignment: Alignment.center,
+                                                  child: const Icon(
+                                                    Icons.broken_image,
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
+                                          ),
                                         ),
                                       ),
+                                    );
+                                  },
+                                  options: CarouselOptions(
+                                    height: 180,
+                                    autoPlay: true,
+                                    autoPlayInterval: const Duration(seconds: 4),
+                                    viewportFraction: 1.0,
+                                  ),
+                                );
+                              } else {
+                                return SizedBox.shrink();
+                              }
+                            },
+                          ),
+                          !isGuest
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 15),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFE8EBF7),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: FilterButton(
+                                              text: 'On Campus',
+                                              isSelected:
+                                                  selectedFilter == 'On Campus',
+                                              onPressed: () {
+                                                setState(() {
+                                                  selectedFilter = 'On Campus';
+                                                  _onCampus = true;
+                                                  context
+                                                      .read<
+                                                        CampusMentorListCubit
+                                                      >()
+                                                      .fetchCampusMentorList(
+                                                        "",
+                                                        "",
+                                                      );
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: FilterButton(
+                                              text: 'Beyond Campus',
+                                              isSelected:
+                                                  selectedFilter ==
+                                                  'Beyond Campus',
+                                              onPressed: () {
+                                                setState(() {
+                                                  selectedFilter =
+                                                      'Beyond Campus';
+                                                  _onCampus = false;
+                                                  context
+                                                      .read<
+                                                        CampusMentorListCubit
+                                                      >()
+                                                      .fetchCampusMentorList(
+                                                        "beyond",
+                                                        "",
+                                                      );
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  );
-                                },
-                                options: CarouselOptions(
-                                  height: 180,
-                                  autoPlay: true,
-                                  autoPlayInterval: const Duration(seconds: 4),
-                                  viewportFraction: 1.0,
+                                  ],
+                                )
+                              : SizedBox.shrink(),
+                          SizedBox(height: 10),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  isGuest ? 'Top Mentors' : 'Mentors',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: "Inter",
+                                    color: Color(0xff222222),
+                                  ),
                                 ),
-                              );
-                            } else {
-                              return SizedBox.shrink();
-                            }
-                          },
-                        ),
-                        !isGuest
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 15),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFE8EBF7),
-                                      borderRadius: BorderRadius.circular(30),
+                                if (!isGuest) ...[
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.zero,
                                     ),
-                                    padding: const EdgeInsets.all(4),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: FilterButton(
-                                            text: 'On Campus',
-                                            isSelected:
-                                                selectedFilter == 'On Campus',
-                                            onPressed: () {
-                                              setState(() {
-                                                selectedFilter = 'On Campus';
-                                                _onCampus = true;
-                                                context
-                                                    .read<
-                                                      CampusMentorListCubit
-                                                    >()
-                                                    .fetchCampusMentorList(
-                                                      "",
-                                                      "",
-                                                    );
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: FilterButton(
-                                            text: 'Beyond Campus',
-                                            isSelected:
-                                                selectedFilter ==
-                                                'Beyond Campus',
-                                            onPressed: () {
-                                              setState(() {
-                                                selectedFilter =
-                                                    'Beyond Campus';
-                                                _onCampus = false;
-                                                context
-                                                    .read<
-                                                      CampusMentorListCubit
-                                                    >()
-                                                    .fetchCampusMentorList(
-                                                      "beyond",
-                                                      "",
-                                                    );
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ],
+                                    onPressed: () {
+                                      if (_onCampus == true) {
+                                        context.push(
+                                          '/campus_mentor_list?scope=',
+                                        );
+                                      } else {
+                                        context.push(
+                                          '/campus_mentor_list?scope=beyond',
+                                        );
+                                      }
+                                    },
+                                    child: Text(
+                                      'View All',
+                                      style: TextStyle(
+                                        color: Color(0xff4076ED),
+                                        fontFamily: 'segeo',
+                                        fontWeight: FontWeight.w600,
+                                        fontStyle: FontStyle.normal,
+                                        fontSize: 14,
+                                        decoration: TextDecoration.underline,
+                                        decorationStyle:
+                                            TextDecorationStyle.solid,
+                                        decorationColor: Color(0xff4076ED),
+                                        decorationThickness: 1,
+                                      ),
                                     ),
                                   ),
                                 ],
-                              )
-                            : SizedBox.shrink(),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              isGuest ? 'Top Mentors' : 'Mentors',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "Inter",
-                                color: Color(0xff222222),
-                              ),
+                              ],
                             ),
-                            if (!isGuest) ...[
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                ),
-                                onPressed: () {
-                                  if (_onCampus == true) {
-                                    context.push('/campus_mentor_list?scope=');
-                                  } else {
-                                    context.push(
-                                      '/campus_mentor_list?scope=beyond',
+
+                          SizedBox(height: 10),
+                          if (isGuest) ...[
+                            BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
+                              builder: (context, state) {
+                                if (state is GuestMentorsLoaded) {
+                                  final guestMentorlist =
+                                      state.guestMentorsModel.data?.mentors ?? [];
+                                  if (guestMentorlist.isEmpty) {
+                                    return Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/nodata/nodata_mentor_list.png",
+                                            width: 200,
+                                            height: 200,
+                                          ),
+                                        ],
+                                      ),
                                     );
                                   }
-                                },
-                                child: Text(
-                                  'View All',
-                                  style: TextStyle(
-                                    color: Color(0xff4076ED),
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 14,
-                                    decoration: TextDecoration.underline,
-                                    decorationStyle: TextDecorationStyle.solid,
-                                    decorationColor: Color(0xff4076ED),
-                                    decorationThickness: 1,
-                                  ),
-                                ),
-                              ),
-                            ],
+                                  return MentorGridGuest(
+                                    mentors: guestMentorlist,
+                                    onTapMentor: (m) =>
+                                        context.push('/auth_landing'),
+                                  );
+                                } else {
+                                  return SizedBox.shrink();
+                                }
+                              },
+                            ),
                           ],
-                        ),
-                        SizedBox(height: 10),
-                        if (isGuest) ...[
-                          BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
-                            builder: (context, state) {
-                              if (state is GuestMentorsLoaded) {
-                                final guestMentorlist =
-                                    state.guestMentorsModel.data?.mentors ?? [];
-                                if (guestMentorlist.isEmpty) {
-                                  return Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/nodata/nodata_mentor_list.png",
-                                          width: 200,
-                                          height: 200,
-                                        ),
-                                      ],
+                          if (!isGuest) ...[
+                            BlocBuilder<
+                              CampusMentorListCubit,
+                              CampusMentorListState
+                            >(
+                              builder: (context, state) {
+                                if (state is CampusMentorListStateLoading) {
+                                  return SizedBox(
+                                    height: SizeConfig.screenWidth * 0.6,
+                                    child: Center(
+                                      child: DottedProgressWithLogo(),
                                     ),
                                   );
-                                }
-                                return MentorGridGuest(
-                                  mentors: guestMentorlist,
-                                  onTapMentor: (m) =>
-                                      context.push('/auth_landing'),
-                                );
-                              } else {
-                                return SizedBox.shrink();
-                              }
-                            },
-                          ),
-                        ],
-                        if (!isGuest) ...[
-                          BlocBuilder<
-                            CampusMentorListCubit,
-                            CampusMentorListState
-                          >(
-                            builder: (context, state) {
-                              if (state is CampusMentorListStateLoading) {
-                                return SizedBox(
-                                  height: SizeConfig.screenWidth * 0.6,
-                                  child: Center(
-                                    child: DottedProgressWithLogo(),
-                                  ),
-                                );
-                              } else if (state is CampusMentorListStateLoaded) {
-                                final campusMentorlist =
-                                    state
-                                        .campusMentorListModel
-                                        .data
-                                        ?.mentors_list ??
-                                    [];
+                                } else if (state is CampusMentorListStateLoaded) {
+                                  final campusMentorlist =
+                                      state
+                                          .campusMentorListModel
+                                          .data
+                                          ?.mentors_list ??
+                                      [];
 
-                                if (campusMentorlist.isEmpty) {
-                                  return Center(
-                                    child: Image.asset(
-                                      "assets/nodata/nodata_mentor_list.png",
-                                      width: 200,
-                                      height: 200,
+                                  if (campusMentorlist.isEmpty) {
+                                    return Center(
+                                      child: Image.asset(
+                                        "assets/nodata/nodata_mentor_list.png",
+                                        width: 200,
+                                        height: 200,
+                                      ),
+                                    );
+                                  }
+                                  return MentorGridCampus(
+                                    mentors_list: campusMentorlist,
+                                    onTapMentor: (m) => context.push(
+                                      '/mentor_profile?id=${m.userId}',
                                     ),
                                   );
+                                } else {
+                                  return SizedBox.shrink();
                                 }
-                                return MentorGridCampus(
-                                  mentors_list: campusMentorlist,
-                                  onTapMentor: (m) => context.push(
-                                    '/mentor_profile?id=${m.userId}',
-                                  ),
-                                );
-                              } else {
-                                return SizedBox.shrink();
-                              }
-                            },
-                          ),
+                              },
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),

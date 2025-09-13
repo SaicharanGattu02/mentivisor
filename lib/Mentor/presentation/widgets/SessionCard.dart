@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
@@ -91,7 +92,8 @@ class SessionCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
@@ -111,7 +113,7 @@ class SessionCard extends StatelessWidget {
                             const SizedBox(height: 8),
                             Text(
                               sessionName,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'segeo',
@@ -133,12 +135,10 @@ class SessionCard extends StatelessWidget {
                                       await canLaunchUrl(Uri.parse(url))) {
                                     await launchUrl(Uri.parse(url));
                                   } else {
-
                                     CustomSnackBar1.show(
                                       context,
                                       "Unable to open Zoom link",
                                     );
-
                                   }
                                 },
                               ),
@@ -178,7 +178,6 @@ class SessionCard extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -190,17 +189,11 @@ class SessionCard extends StatelessWidget {
                         width: SizeConfig.screenWidth * 0.25,
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            16,
-                          ),
-                          color: Colors.brown.withOpacity(
-                            0.5,
-                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.brown.withOpacity(0.5),
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            8,
-                          ),
+                          borderRadius: BorderRadius.circular(8),
                           child: CachedNetworkImage(
                             imageUrl: sessionImage ?? "",
                             width: 70,
@@ -210,21 +203,12 @@ class SessionCard extends StatelessWidget {
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: spinkits
-                                    .getSpinningLinespinkit(),
+                                child: spinkits.getSpinningLinespinkit(),
                               ),
                             ),
-                            errorWidget:
-                                (
-                                context,
-                                url,
-                                error,
-                                ) => Container(
+                            errorWidget: (context, url, error) => Container(
                               decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(
-                                  8,
-                                ),
+                                borderRadius: BorderRadius.circular(8),
                                 image: const DecorationImage(
                                   image: AssetImage(
                                     "assets/images/profile.png",
@@ -262,7 +246,7 @@ class SessionCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if(status=="cancelled")...[
+                  if (status == "cancelled") ...[
                     Text(
                       'Reason',
                       style: TextStyle(
@@ -273,7 +257,7 @@ class SessionCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      cancelreason??"",
+                      cancelreason ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -282,7 +266,6 @@ class SessionCard extends StatelessWidget {
                         fontFamily: 'segeo',
                       ),
                     ),
-
                   ],
                   const SizedBox(height: 16),
                   if (status == "completed") ...[
@@ -291,8 +274,7 @@ class SessionCard extends StatelessWidget {
                         _showReportSheet(
                           context,
                           sessionId ?? 0,
-                          menteeId??0,
-
+                          menteeId ?? 0,
                         );
                       },
                       child: Container(
@@ -322,7 +304,7 @@ class SessionCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (attachment != null && status=='upcoming') ...[
+                  if (attachment != null && status == 'upcoming') ...[
                     Row(
                       spacing: 6,
                       children: [
@@ -365,7 +347,12 @@ class SessionCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(24),
                         ),
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            AppLogger.info("menteeId::${menteeId}");
+                            context.push(
+                              '/chat?receiverId=${menteeId}&sessionId=${sessionId}',
+                            );
+                          },
                           icon: Image.asset(buttonIcon, width: 18, height: 18),
                           label: Text(
                             buttonText,
@@ -416,7 +403,6 @@ class SessionCard extends StatelessWidget {
                   ],
                 ),
               ],
-
             ],
           ),
         ),
@@ -525,7 +511,12 @@ class SessionCard extends StatelessWidget {
                     BlocConsumer<ReportMentorCubit, ReportMentorStates>(
                       listener: (context, state) {
                         if (state is ReportMentorSuccess) {
-                          context.pop(); // ✅ close bottom sheet on success
+                          CustomSnackBar1.show(
+                            context,
+                            "Report submitted successfully!",
+                          );
+
+                          context.pop();
                         } else if (state is ReportMentorFailure) {
                           CustomSnackBar1.show(context, state.error);
                         }
@@ -533,7 +524,7 @@ class SessionCard extends StatelessWidget {
                       builder: (context, state) {
                         return CustomAppButton1(
                           isLoading:
-                              state is ReportMentorLoading, // ✅ show loader
+                              state is ReportMentorLoading,
                           text: "Submit Report",
                           onPlusTap: () {
                             String finalReason =

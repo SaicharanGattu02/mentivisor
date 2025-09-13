@@ -10,6 +10,8 @@ import 'package:mentivisor/utils/color_constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../services/AuthService.dart';
+import '../../data/cubits/EccTags/tags_cubit.dart';
+import '../../data/cubits/EccTags/tags_states.dart';
 import '../Widgets/CommonChoiceChip.dart';
 import '../Widgets/EventCard.dart';
 import '../Widgets/FilterButton.dart';
@@ -26,22 +28,25 @@ class _EccScreenState extends State<EccScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
   final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true); // NEW
-
-  int _selectedFilter = 0;
   String selectedFilter = 'On Campuses';
-  final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
+  final ValueNotifier<int> _selectedTagIndex = ValueNotifier<int>(-1);
+
   Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
-    context.read<ECCCubit>().getECC("", "", "");
+    Future.microtask(() async {
+      await context.read<EccTagsCubit>().getEccTags();
+      await context.read<ECCCubit>().getECC("", "", "");
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     _searchController.dispose();
-    _fabVisible.dispose(); // NEW
+    _fabVisible.dispose();
   }
 
   @override
@@ -106,9 +111,23 @@ class _EccScreenState extends State<EccScreen> {
                                         isSelected: isOnCampus,
                                         onPressed: () {
                                           _searchController.clear();
-                                          final selectedUpdate =
-                                              _filters[_selectedFilter]
-                                                  .toLowerCase();
+                                          final tagsState = context
+                                              .read<EccTagsCubit>()
+                                              .state;
+                                          String selectedUpdate = "";
+                                          if (tagsState is EccTagsLoaded &&
+                                              _selectedTagIndex.value >= 0 &&
+                                              _selectedTagIndex.value <
+                                                  (tagsState
+                                                          .tagsModel
+                                                          .data
+                                                          ?.length ??
+                                                      0)) {
+                                            selectedUpdate = tagsState
+                                                .tagsModel
+                                                .data![_selectedTagIndex.value];
+                                          }
+
                                           context.read<ECCCubit>().getECC(
                                             "",
                                             selectedUpdate,
@@ -125,9 +144,22 @@ class _EccScreenState extends State<EccScreen> {
                                         isSelected: !isOnCampus,
                                         onPressed: () {
                                           _searchController.clear();
-                                          final selectedUpdate =
-                                              _filters[_selectedFilter]
-                                                  .toLowerCase();
+                                          final tagsState = context
+                                              .read<EccTagsCubit>()
+                                              .state;
+                                          String selectedUpdate = "";
+                                          if (tagsState is EccTagsLoaded &&
+                                              _selectedTagIndex.value >= 0 &&
+                                              _selectedTagIndex.value <
+                                                  (tagsState
+                                                          .tagsModel
+                                                          .data
+                                                          ?.length ??
+                                                      0)) {
+                                            selectedUpdate = tagsState
+                                                .tagsModel
+                                                .data![_selectedTagIndex.value];
+                                          }
                                           context.read<ECCCubit>().getECC(
                                             "beyond",
                                             selectedUpdate,
@@ -150,49 +182,17 @@ class _EccScreenState extends State<EccScreen> {
                     }
                   },
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Updates',
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
 
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 32,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _filters.length,
-                    separatorBuilder: (_, __) => SizedBox(width: 8),
-                    itemBuilder: (context, i) {
-                      final selected = i == _selectedFilter;
-                      return CustomChoiceChip(
-                        label: _filters[i],
-                        selected: selected,
-                        onSelected: (_) {
-                          setState(() => _selectedFilter = i);
-                          if (onCampusNotifier.value == true) {
-                            context.read<ECCCubit>().getECC(
-                              "",
-                              _filters[i].toLowerCase(),
-                              "",
-                            );
-                          } else {
-                            context.read<ECCCubit>().getECC(
-                              "beyond",
-                              _filters[i].toLowerCase(),
-                              "",
-                            );
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ),
+                // const SizedBox(height: 20),
+                // const Text(
+                //   'Updates',
+                //   style: TextStyle(
+                //     fontFamily: 'segeo',
+                //     fontWeight: FontWeight.w700,
+                //     fontSize: 16,
+                //     color: Colors.black,
+                //   ),
+                // ),
                 SizedBox(height: 16),
                 SizedBox(
                   height: 48,
@@ -202,20 +202,32 @@ class _EccScreenState extends State<EccScreen> {
                     onChanged: (query) {
                       if (_debounce?.isActive ?? false) _debounce!.cancel();
                       _debounce = Timer(const Duration(milliseconds: 300), () {
-                        final selectedUpdate = _filters[_selectedFilter]
-                            .toLowerCase();
-                        if (onCampusNotifier.value == true) {
-                          context.read<ECCCubit>().getECC(
-                            "",
-                            selectedUpdate,
-                            query,
-                          );
-                        } else {
-                          context.read<ECCCubit>().getECC(
-                            "beyond",
-                            selectedUpdate,
-                            query,
-                          );
+                        {
+                          final tagsState = context.read<EccTagsCubit>().state;
+                          String selectedTag = "";
+
+                          if (tagsState is EccTagsLoaded &&
+                              _selectedTagIndex.value >= 0 &&
+                              _selectedTagIndex.value <
+                                  (tagsState.tagsModel.data?.length ?? 0)) {
+                            selectedTag = tagsState
+                                .tagsModel
+                                .data![_selectedTagIndex.value];
+                          }
+
+                          if (onCampusNotifier.value) {
+                            context.read<ECCCubit>().getECC(
+                              "",
+                              selectedTag,
+                              query,
+                            );
+                          } else {
+                            context.read<ECCCubit>().getECC(
+                              "beyond",
+                              selectedTag,
+                              query,
+                            );
+                          }
                         }
                       });
                     },
@@ -237,7 +249,113 @@ class _EccScreenState extends State<EccScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
+                BlocBuilder<EccTagsCubit, EccTagsState>(
+                  builder: (context, state) {
+                    if (state is EccTagsFailure) {
+                      return Center(child: Text(state.error));
+                    } else if (state is EccTagsLoaded) {
+                      final tags = state.tagsModel.data;
+                      return SizedBox(
+                        height: 30,
+                        child: ValueListenableBuilder<int>(
+                          valueListenable: _selectedTagIndex,
+                          builder: (context, selectedIndex, _) {
+                            if (tags == null || tags.isEmpty) {
+                              return Container(
+                                height: 40,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "No tags available",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                    fontFamily: 'segeo',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }
+                            return ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              physics: const BouncingScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              itemCount: tags.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 8),
+                              itemBuilder: (context, index) {
+                                final tagItem = tags[index];
+                                final isSelected = index == selectedIndex;
 
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (isSelected) {
+                                      _selectedTagIndex.value = -1;
+                                      if (onCampusNotifier.value) {
+                                        context.read<ECCCubit>().getECC(
+                                          "",
+                                          "",
+                                          _searchController.text,
+                                        );
+                                      } else {
+                                        context.read<ECCCubit>().getECC(
+                                          "beyond",
+                                          "",
+                                          _searchController.text,
+                                        );
+                                      }
+                                    } else {
+                                      _selectedTagIndex.value = index;
+
+                                      if (onCampusNotifier.value) {
+                                        context.read<ECCCubit>().getECC(
+                                          "",
+                                          tagItem,
+                                          _searchController.text,
+                                        );
+                                      } else {
+                                        context.read<ECCCubit>().getECC(
+                                          "beyond",
+                                          tagItem,
+                                          _searchController.text,
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? const Color(0xffD4E0FB)
+                                          : const Color(0xffffffff),
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    child: Text(
+                                      tagItem,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        color: isSelected
+                                            ? const Color(0xFF2563EB)
+                                            : const Color(0xFF555555),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 const SizedBox(height: 24),
                 BlocBuilder<ECCCubit, ECCStates>(
                   builder: (context, state) {
@@ -289,18 +407,30 @@ class _EccScreenState extends State<EccScreen> {
                             if (scrollInfo.metrics.pixels >=
                                 scrollInfo.metrics.maxScrollExtent * 0.9) {
                               if (state is ECCLoaded && state.hasNextPage) {
-                                final selectedUpdate = _filters[_selectedFilter]
-                                    .toLowerCase();
+                                final tagsState = context
+                                    .read<EccTagsCubit>()
+                                    .state;
+                                String selectedTag = "";
+
+                                if (tagsState is EccTagsLoaded &&
+                                    _selectedTagIndex.value >= 0 &&
+                                    _selectedTagIndex.value <
+                                        (tagsState.tagsModel.data?.length ??
+                                            0)) {
+                                  selectedTag = tagsState
+                                      .tagsModel
+                                      .data![_selectedTagIndex.value];
+                                }
                                 if (onCampusNotifier.value == true) {
                                   context.read<ECCCubit>().fetchMoreECC(
                                     "",
-                                    selectedUpdate,
+                                    selectedTag,
                                     "",
                                   );
                                 } else {
                                   context.read<ECCCubit>().fetchMoreECC(
                                     "beyond",
-                                    selectedUpdate,
+                                    selectedTag,
                                     "",
                                   );
                                 }
@@ -334,8 +464,12 @@ class _EccScreenState extends State<EccScreen> {
                                   itemCount: ecclist?.length ?? 0,
                                   separatorBuilder: (_, __) =>
                                       const SizedBox(height: 16),
-                                  itemBuilder: (context, index) =>
-                                      EventCard(eccList: ecclist![index],scope:onCampusNotifier.value?"":"beyond",),
+                                  itemBuilder: (context, index) => EventCard(
+                                    eccList: ecclist![index],
+                                    scope: onCampusNotifier.value
+                                        ? ""
+                                        : "beyond",
+                                  ),
                                 ),
                                 if (state is ECCLoadingMore)
                                   SliverToBoxAdapter(
@@ -387,11 +521,21 @@ class _EccScreenState extends State<EccScreen> {
                           if (isGuest) {
                             context.push('/auth_landing');
                           } else {
-                            final selectedUpdate = _filters[_selectedFilter]
-                                .toLowerCase();
-                            context.push(
-                              "/addeventscreen?type=$selectedUpdate",
-                            );
+                            final tagsState = context
+                                .read<EccTagsCubit>()
+                                .state;
+                            String selectedTag = "";
+
+                            if (tagsState is EccTagsLoaded &&
+                                _selectedTagIndex.value >= 0 &&
+                                _selectedTagIndex.value <
+                                    (tagsState.tagsModel.data?.length ?? 0)) {
+                              selectedTag = tagsState
+                                  .tagsModel
+                                  .data![_selectedTagIndex.value];
+                            }
+
+                            context.push("/addeventscreen?type=$selectedTag");
                           }
                         },
                         backgroundColor: Colors.transparent,
@@ -404,7 +548,7 @@ class _EccScreenState extends State<EccScreen> {
                               colors: [
                                 Color(0xFF9B40EF), // #9B40EF at 0%
                                 Color(0xFF5B4BEB), // #5B4BEB at 50%
-                                Color(0xFF315DEA)
+                                Color(0xFF315DEA),
                               ],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,

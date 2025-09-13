@@ -568,7 +568,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       final token = await AuthService.getAccessToken();
       if (token != null) {
         res = await ApiClient.get(
-          "${APIEndpointUrls.list_ecc}?scope=${scope}&${updates}=true&search=${search}&page=${page}",
+          "${APIEndpointUrls.list_ecc}?scope=${scope}&tag=${updates}&search=${search}&page=${page}",
         );
       } else {
         res = await ApiClient.get(

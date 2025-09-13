@@ -18,8 +18,10 @@ import '../../data/cubits/PostComment/post_comment_states.dart';
 import 'CommentBottomSheet.dart';
 
 class PostCard extends StatefulWidget {
+  final String scope;
   final CommunityPosts communityPosts;
-  const PostCard({Key? key, required this.communityPosts}) : super(key: key);
+  const PostCard({Key? key, required this.communityPosts, required this.scope})
+    : super(key: key);
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -92,9 +94,18 @@ class _PostCardState extends State<PostCard>
                   alignment: Alignment.center,
                   children: [
                     GestureDetector(
+                      onTap: () async {
+                        final isGuest = await AuthService.isGuest;
+                        if (isGuest) {
+                          if (mounted) context.push('/auth_landing');
+                        } else {
+                          context.push(
+                            "/community_details/${widget.communityPosts.id}?scope=${widget.scope}",
+                          );
+                        }
+                      },
                       onDoubleTap: () async {
                         final isGuest = await AuthService.isGuest;
-
                         if (isGuest) {
                           if (mounted) context.push('/auth_landing');
                         } else {
@@ -149,9 +160,12 @@ class _PostCardState extends State<PostCard>
                   children: [
                     Row(
                       children: [
-                        GestureDetector(onTap: () {
-                          context.push("/common_profile?id=${widget.communityPosts.uploader?.id}");
-                        },
+                        GestureDetector(
+                          onTap: () {
+                            context.push(
+                              "/common_profile?id=${widget.communityPosts.uploader?.id}",
+                            );
+                          },
                           child: CachedNetworkImage(
                             imageUrl: widget.communityPosts.image ?? "",
                             imageBuilder: (context, imageProvider) =>
@@ -275,68 +289,78 @@ class _PostCardState extends State<PostCard>
                                   },
                                 ),
 
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.zero,
-                                    onPressed: () {
-                                      if (isGuest) {
-                                        context.push('/auth_landing');
-                                      } else {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          useRootNavigator: true,
-                                          backgroundColor: Colors.transparent,
-                                          builder: (context) {
-                                            return DraggableScrollableSheet(
-                                              initialChildSize: 0.8,
-                                              minChildSize: 0.4,
-                                              maxChildSize: 0.95,
-                                              expand: false,
-                                              builder: (_, scrollController) => Container(
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xffF4F8FD),
-                                                  borderRadius: BorderRadius.vertical(
-                                                    top: Radius.circular(16),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {
+                                        if (isGuest) {
+                                          context.push('/auth_landing');
+                                        } else {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            useRootNavigator: true,
+                                            backgroundColor: Colors.transparent,
+                                            builder: (context) {
+                                              return DraggableScrollableSheet(
+                                                initialChildSize: 0.8,
+                                                minChildSize: 0.4,
+                                                maxChildSize: 0.95,
+                                                expand: false,
+                                                builder: (_, scrollController) => Container(
+                                                  decoration: const BoxDecoration(
+                                                    color: Color(0xffF4F8FD),
+                                                    borderRadius:
+                                                        BorderRadius.vertical(
+                                                          top: Radius.circular(
+                                                            16,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 12,
+                                                      ),
+                                                  child: CommentBottomSheet(
+                                                    communityPost:
+                                                        widget.communityPosts,
+                                                    scrollController:
+                                                        scrollController,
                                                   ),
                                                 ),
-                                                padding: const EdgeInsets.symmetric(
-                                                  horizontal: 16,
-                                                  vertical: 12,
-                                                ),
-                                                child: CommentBottomSheet(
-                                                  communityPost: widget.communityPosts,
-                                                  scrollController: scrollController,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      }
-                                    },
-                                    icon: Image.asset(
-                                      "assets/icons/Chat.png",
-                                      width: 18,
-                                      height: 18,
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      icon: Image.asset(
+                                        "assets/icons/Chat.png",
+                                        width: 18,
+                                        height: 18,
+                                      ),
                                     ),
-                                  ),
-                                  BlocBuilder<PostCommentCubit, PostCommentStates>(
-                                    builder: (context, state) {
-                                      return Text(
-                                        widget.communityPosts.commentsCount.toString(),
-                                        style: const TextStyle(
-                                          fontFamily: 'segeo',
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
+                                    BlocBuilder<
+                                      PostCommentCubit,
+                                      PostCommentStates
+                                    >(
+                                      builder: (context, state) {
+                                        return Text(
+                                          widget.communityPosts.commentsCount
+                                              .toString(),
+                                          style: const TextStyle(
+                                            fontFamily: 'segeo',
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
 
-                              // Share
+                                // Share
                                 IconButton(
                                   padding: EdgeInsets
                                       .zero, // remove default extra padding

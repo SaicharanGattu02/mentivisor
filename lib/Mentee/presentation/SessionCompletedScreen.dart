@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,14 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
-import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportState.dart';
 import 'package:mentivisor/Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/SubmitReview/submit_review_states.dart';
-
 import '../../Components/CommonLoader.dart';
-import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
-import '../../utils/media_query_helper.dart';
 import '../data/cubits/SessionCompleted/session_completed_cubit.dart';
 import '../data/cubits/SessionCompleted/session_completed_states.dart';
 
@@ -47,7 +42,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
               return Scaffold(body: Center(child: DottedProgressWithLogo()));
             } else if (state is SessionCompletedLoaded) {
               final sessions = state.completedSessionModel.data ?? [];
-
               if (sessions.isEmpty) {
                 return CustomScrollView(
                   slivers: [
@@ -78,7 +72,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                   ],
                 );
               }
-
               return CustomScrollView(
                 slivers: [
                   SliverPadding(
@@ -90,193 +83,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                           return const SizedBox.shrink();
                         }
 
-                        return
-                        //   Container(
-                        //   margin: const EdgeInsets.only(bottom: 16),
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.white,
-                        //     borderRadius: BorderRadius.circular(16),
-                        //   ),
-                        //   padding: EdgeInsets.all(12),
-                        //   child: Column(
-                        //     children: [
-                        //       Row(
-                        //         mainAxisAlignment:
-                        //             MainAxisAlignment.spaceBetween,
-                        //         children: [
-                        //           SizedBox(
-                        //             width: SizeConfig.screenWidth * 0.6,
-                        //             child: Column(
-                        //               crossAxisAlignment:
-                        //                   CrossAxisAlignment.start,
-                        //               children: [
-                        //                 Text(
-                        //                   completeSessions.topics?.isNotEmpty ??
-                        //                           false
-                        //                       ? completeSessions.topics!
-                        //                       : "No topics specified",
-                        //                   style: const TextStyle(
-                        //                     fontSize: 18,
-                        //                     fontWeight: FontWeight.bold,
-                        //                     fontFamily: "segeo",
-                        //                     color: Colors.black87,
-                        //                   ),
-                        //                 ),
-                        //                 const SizedBox(height: 6),
-                        //                 Text(
-                        //                   "With ${capitalize(completeSessions.mentor?.name ?? "Unknown Mentor")}",
-                        //                   style: TextStyle(
-                        //                     fontSize: 14,
-                        //                     fontFamily: "segeo",
-                        //                     color: Colors.grey.shade600,
-                        //                   ),
-                        //                 ),
-                        //                 const SizedBox(height: 12),
-                        //                 Wrap(
-                        //                   spacing: 12,
-                        //                   runSpacing: 8,
-                        //                   children: [
-                        //                     _buildInfoChip(
-                        //                       icon: Icons.calendar_today,
-                        //                       label:
-                        //                           completeSessions.date ??
-                        //                           "N/A",
-                        //                       color: Colors.blue.shade50,
-                        //                       textColor: Colors.blue.shade700,
-                        //                     ),
-                        //                     _buildInfoChip(
-                        //                       icon: Icons.access_time,
-                        //                       label:
-                        //                           "${completeSessions.startTime ?? 'N/A'} - ${completeSessions.endTime ?? 'N/A'}",
-                        //                       color: Colors.blue.shade50,
-                        //                       textColor: Colors.blue.shade700,
-                        //                     ),
-                        //                   ],
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //           SizedBox(
-                        //             width: SizeConfig.screenWidth * 0.25,
-                        //             child: Column(
-                        //               crossAxisAlignment:
-                        //                   CrossAxisAlignment.center,
-                        //               mainAxisAlignment:
-                        //                   MainAxisAlignment.center,
-                        //               children: [
-                        //                 Center(
-                        //                   child: CircleAvatar(
-                        //                     radius: 20,
-                        //                     backgroundColor: Colors.white,
-                        //                     child: Icon(
-                        //                       Icons.check_circle_outline,
-                        //                       color: Colors.green,
-                        //                       size: 30,
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //                 const SizedBox(height: 12),
-                        //                 const Text(
-                        //                   'Session completed',
-                        //                   style: TextStyle(
-                        //                     color: Color(0xff444444),
-                        //                     fontWeight: FontWeight.w600,
-                        //                     fontFamily: 'segeo',
-                        //                     fontSize: 14,
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //       const SizedBox(height: 16),
-                        //       Row(
-                        //         spacing: 10,
-                        //         children: [
-                        //           SizedBox(
-                        //             height: 32,
-                        //             child: OutlinedButton.icon(
-                        //               onPressed: () {
-                        //                 _showReportSheet(
-                        //                   context,
-                        //                   completeSessions.id ?? 0,
-                        //                 );
-                        //               },
-                        //               icon: Icon(
-                        //                 Icons.flag,
-                        //                 color: Color(0xFFA6A6A6),
-                        //                 size: 16,
-                        //               ),
-                        //               label: Text(
-                        //                 "Report Session",
-                        //                 style: TextStyle(
-                        //                   fontSize: 12,
-                        //                   fontFamily: "segeo",
-                        //                   fontWeight: FontWeight.w600,
-                        //                   color: Color(0xff000000),
-                        //                 ),
-                        //               ),
-                        //               style: OutlinedButton.styleFrom(
-                        //                 backgroundColor: Color(0xffF5F5F5),
-                        //                 visualDensity: VisualDensity.compact,
-                        //                 side: BorderSide(
-                        //                   color: Colors.transparent,
-                        //                 ),
-                        //                 shape: RoundedRectangleBorder(
-                        //                   borderRadius: BorderRadius.circular(
-                        //                     8,
-                        //                   ),
-                        //                 ),
-                        //                 padding: EdgeInsets.symmetric(
-                        //                   vertical: 8,
-                        //                   horizontal: 8,
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //           if (completeSessions.hasRating == false) ...[
-                        //             SizedBox(
-                        //               height: 32,
-                        //               child: OutlinedButton(
-                        //                 onPressed: () {
-                        //                   showReviewBottomSheet(
-                        //                     context: context,
-                        //                     sessionId: completeSessions.id ?? 0,
-                        //                   );
-                        //                 },
-                        //                 style: OutlinedButton.styleFrom(
-                        //                   visualDensity: VisualDensity.compact,
-                        //                   side: BorderSide(
-                        //                     color: Colors.grey.shade300,
-                        //                   ),
-                        //                   shape: RoundedRectangleBorder(
-                        //                     borderRadius: BorderRadius.circular(
-                        //                       8,
-                        //                     ),
-                        //                   ),
-                        //                   padding: const EdgeInsets.symmetric(
-                        //                     vertical: 8,
-                        //                     horizontal: 12,
-                        //                   ),
-                        //                 ),
-                        //                 child: const Text(
-                        //                   "Rate Us",
-                        //                   style: TextStyle(
-                        //                     fontSize: 12,
-                        //                     fontFamily: "segeo",
-                        //                     color: Colors.black87,
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ],
-                        //         ],
-                        //       ),
-                        //     ],
-                        //   ),
-                        // );
-                        Container(
+                        return Container(
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -356,7 +163,8 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                               ),
                               const SizedBox(height: 12),
                               // Report button
-                              Row(spacing: 12,
+                              Row(
+                                spacing: 12,
                                 children: [
                                   SizedBox(
                                     height: 32,
@@ -455,37 +263,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
     );
   }
 
-  Widget _buildInfoChip({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required Color textColor,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: textColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontFamily: "segeo",
-              color: textColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void showReviewBottomSheet({
     required BuildContext context,
     required int sessionId,
@@ -523,13 +300,13 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                             SizedBox(height: 12),
-                             Text(
+                            SizedBox(height: 12),
+                            Text(
                               "Rate your Experience",
                               style: TextStyle(
                                 color: Color(0xff666666),
                                 fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                fontSize: 16,
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -546,7 +323,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                     selectedRating >= starIndex
                                         ? Icons.star
                                         : Icons.star_border,
-                                    size: 42,
+                                    size: 36,
                                     color: Colors.amber,
                                   ),
                                 );
@@ -572,10 +349,14 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                 if (reviewSubmit is SubmitReviewSuccess) {
                                   feedbackController.clear();
                                   selectedRating = 0;
-                                  Navigator.pop(context);
+                                  context.pop();
                                   context
                                       .read<SessionCompletedCubit>()
                                       .sessionComplete();
+                                  CustomSnackBar1.show(
+                                    context,
+                                    "Report Submitted Successfully",
+                                  );
                                 } else if (reviewSubmit
                                     is SubmitReviewFailure) {
                                   CustomSnackBar1.show(
@@ -662,7 +443,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Report Session',
+                          '` Report Session',
                           style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'segeo',
