@@ -22,7 +22,6 @@ class APIEndpointUrls {
 
   /// Mentee
   static const String get_mentors = "${userUrl}mentors";
-  static const String study_zone_tags = "${userUrl}study-zone/tags";
   static const String mentor_profile = "${userUrl}mentors";
   static const String list_ecc = "${userUrl}list-ecc";
   static const String view_ecc_details = "${userUrl}list-ecc";
@@ -31,8 +30,7 @@ class APIEndpointUrls {
   static const String coins_pack = "${userUrl}/coin-packs";
   static const String community_zone_post = "${userUrl}/community-zone-post";
   static const String community_zone_post_details = "${userUrl}/community-zone-post";
-  static const String study_zone_report_resource =
-      "${userUrl}/study-zone-report";
+  static const String study_zone_report_resource = "${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
@@ -60,8 +58,7 @@ class APIEndpointUrls {
   static const String verify_paymenet = "${userUrl}razorpay/verify";
   static const String upcoming_session = "${userUrl}sessions/upcoming";
   static const String session_completed = "${userUrl}sessions/complete";
-  static const String completed_sessions_submit_review =
-      "${userUrl}sessions/feedback";
+  static const String completed_sessions_submit_review = "${userUrl}sessions/feedback";
   static const String sessions_report_submit = "${userUrl}session-report";
   static const String community_toggle_like = "${userUrl}community/toggle-like";
   static const String resource_download = "${userUrl}study-zone/download";
@@ -70,7 +67,7 @@ class APIEndpointUrls {
   static const String comment_like = "${userUrl}comments/";
   static const String community_zone_report = "${userUrl}community-zone-report";
   static const String ecc_tags = "${userUrl}ecctags";
-  static const String tags = "${userUrl}tags";
+  static const String study_zone_tags = "${userUrl}tags";
   static const String guestTags = "${apiUrl}tags";
   static const String tag_search = "${userUrl}tags/search";
   static const String ecc_tag_Search = "${userUrl}ecctags/search";

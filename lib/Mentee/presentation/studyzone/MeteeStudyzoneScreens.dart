@@ -44,7 +44,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   @override
   void initState() {
     super.initState();
-    context.read<TagsCubit>().getTags();
+    context.read<TagsCubit>().getStudyZoneTags();
     context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
   }
 
@@ -122,7 +122,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                         searchController.clear();
                                         onCampusNotifier.value = true;
 
-                                        // get selected tag from index
                                         final tagsState = context
                                             .read<TagsCubit>()
                                             .state;
@@ -365,7 +364,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                           ),
                         );
                       }
-                      return const SizedBox.shrink();
+                      return SizedBox.shrink();
                     },
                   ),
 
@@ -424,322 +423,311 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                               ),
                             );
                           }
-                          return Expanded(
-                            child: NotificationListener<ScrollNotification>(
-                              onNotification: (scrollInfo) {
-                                if (scrollInfo.metrics.pixels >=
-                                    scrollInfo.metrics.maxScrollExtent * 0.9) {
-                                  if (state is StudyZoneCampusLoaded &&
-                                      state.hasNextPage) {
-                                    context
-                                        .read<StudyZoneCampusCubit>()
-                                        .fetchMoreStudyZoneCampus("", "", "");
-                                  }
+                          return NotificationListener<ScrollNotification>(
+                            onNotification: (scrollInfo) {
+                              if (scrollInfo.metrics.pixels >=
+                                  scrollInfo.metrics.maxScrollExtent * 0.9) {
+                                if (state is StudyZoneCampusLoaded &&
+                                    state.hasNextPage) {
+                                  context
+                                      .read<StudyZoneCampusCubit>()
+                                      .fetchMoreStudyZoneCampus("", "", "");
                                 }
-                                return false;
+                              }
+                              return false;
+                            },
+                            child: NotificationListener<UserScrollNotification>(
+                              onNotification: (notification) {
+                                // Hide when scrolling down, show when scrolling up
+                                if (notification.direction ==
+                                        ScrollDirection.reverse &&
+                                    _fabVisible.value) {
+                                  _fabVisible.value = false;
+                                } else if (notification.direction ==
+                                        ScrollDirection.forward &&
+                                    !_fabVisible.value) {
+                                  _fabVisible.value = true;
+                                }
+                                return false; // let the notification continue to bubble
                               },
-                              child: NotificationListener<UserScrollNotification>(
-                                onNotification: (notification) {
-                                  // Hide when scrolling down, show when scrolling up
-                                  if (notification.direction ==
-                                          ScrollDirection.reverse &&
-                                      _fabVisible.value) {
-                                    _fabVisible.value = false;
-                                  } else if (notification.direction ==
-                                          ScrollDirection.forward &&
-                                      !_fabVisible.value) {
-                                    _fabVisible.value = true;
-                                  }
-                                  return false; // let the notification continue to bubble
-                                },
-                                child: CustomScrollView(
-                                  slivers: [
-                                    SliverList(
-                                      delegate: SliverChildBuilderDelegate(
-                                        (context, index) {
-                                          final campusList = studyZoneData
-                                              ?.studyZoneCampusData![index];
-                                          return InkWell(
-                                            onTap: () {
-                                              if (isGuest) {
-                                                context.push('/auth_landing');
-                                              } else {
-                                                AppLogger.info(
-                                                  "Scopes=${onCampusNotifier.value}",
-                                                );
-                                                context.push(
-                                                  '/resource_details_screen/${campusList?.id}?scope=${onCampusNotifier.value ? "" : "beyond"}',
-                                                );
-                                              }
-                                            },
-                                            child: Container(
-                                              margin: const EdgeInsets.only(
-                                                bottom: 16,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(24),
-                                              ),
-                                              child: Row(
-                                                spacing: 10,
-                                                children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadiusGeometry.circular(
-                                                          8,
+                              child: CustomScrollView(
+                                slivers: [
+                                  SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                      (context, index) {
+                                        final campusList = studyZoneData
+                                            ?.studyZoneCampusData![index];
+                                        return InkWell(
+                                          onTap: () {
+                                            if (isGuest) {
+                                              context.push('/auth_landing');
+                                            } else {
+                                              AppLogger.info(
+                                                "Scopes=${onCampusNotifier.value}",
+                                              );
+                                              context.push(
+                                                '/resource_details_screen/${campusList?.id}?scope=${onCampusNotifier.value ? "" : "beyond"}',
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                              bottom: 16,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(24),
+                                            ),
+                                            child: Row(
+                                              spacing: 10,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadiusGeometry.circular(
+                                                        8,
+                                                      ),
+                                                  child: CachedNetworkImage(
+                                                    width:
+                                                        SizeConfig.screenWidth *
+                                                        0.3,
+                                                    height: 144,
+                                                    imageUrl:
+                                                        campusList?.image ?? "",
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => SizedBox(
+                                                          width: 120,
+                                                          height: 120,
+                                                          child: Center(
+                                                            child: spinkits
+                                                                .getSpinningLinespinkit(),
+                                                          ),
                                                         ),
-                                                    child: CachedNetworkImage(
-                                                      width:
-                                                          SizeConfig
-                                                              .screenWidth *
-                                                          0.3,
-                                                      height: 144,
-                                                      imageUrl:
-                                                          campusList?.image ??
-                                                          "",
-                                                      fit: BoxFit.cover,
-                                                      placeholder:
-                                                          (
-                                                            context,
-                                                            url,
-                                                          ) => SizedBox(
-                                                            width: 120,
-                                                            height: 120,
-                                                            child: Center(
-                                                              child: spinkits
-                                                                  .getSpinningLinespinkit(),
-                                                            ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => Container(
+                                                          width: 120,
+                                                          height: 120,
+                                                          color: Color(
+                                                            0xffF8FAFE,
                                                           ),
-                                                      errorWidget:
-                                                          (
-                                                            context,
-                                                            url,
-                                                            error,
-                                                          ) => Container(
-                                                            width: 120,
-                                                            height: 120,
-                                                            color: Color(
-                                                              0xffF8FAFE,
-                                                            ),
-                                                            child: Icon(
-                                                              Icons
-                                                                  .broken_image,
-                                                              size: 40,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
+                                                          child: Icon(
+                                                            Icons.broken_image,
+                                                            size: 40,
+                                                            color: Colors.grey,
                                                           ),
-                                                    ),
+                                                        ),
                                                   ),
-                                                  // Right Content
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10.0,
-                                                            bottom: 10,
-                                                            left: 5,
+                                                ),
+                                                // Right Content
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          top: 10.0,
+                                                          bottom: 10,
+                                                          left: 5,
+                                                        ),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          campusList?.name ??
+                                                              "",
+                                                          style: TextStyle(
+                                                            fontFamily: 'segeo',
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            fontSize: 12,
+                                                            height: 1,
+                                                            letterSpacing: 0.5,
                                                           ),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            campusList?.name ??
-                                                                "",
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'segeo',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize: 12,
-                                                              height: 1,
-                                                              letterSpacing:
-                                                                  0.5,
-                                                            ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        Text(
+                                                          campusList
+                                                                  ?.description ??
+                                                              "",
+                                                          maxLines: 3,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontFamily: 'segeo',
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 11,
+                                                            height: 1,
                                                           ),
-                                                          const SizedBox(
-                                                            height: 8,
-                                                          ),
-                                                          Text(
-                                                            campusList
-                                                                    ?.description ??
-                                                                "",
-                                                            maxLines: 3,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'segeo',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 11,
-                                                              height: 1,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 12,
-                                                          ),
-                                                          if ((campusList
-                                                                  ?.tag
-                                                                  ?.isNotEmpty ??
-                                                              false))
-                                                            Wrap(
-                                                              spacing: 8,
-                                                              runSpacing: 8,
-                                                              children: campusList!.tag!.map((
-                                                                tag,
-                                                              ) {
-                                                                return Container(
-                                                                  padding:
-                                                                      const EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            12,
-                                                                        vertical:
-                                                                            6,
-                                                                      ),
-                                                                  decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                          20,
-                                                                        ),
-                                                                  ),
-                                                                  child: Text(
-                                                                    tag,
-                                                                    style: const TextStyle(
-                                                                      fontFamily:
-                                                                          'segeo',
-                                                                      fontSize:
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 12,
+                                                        ),
+                                                        if ((campusList
+                                                                ?.tag
+                                                                ?.isNotEmpty ??
+                                                            false))
+                                                          Wrap(
+                                                            spacing: 8,
+                                                            runSpacing: 8,
+                                                            children: campusList!.tag!.map((
+                                                              tag,
+                                                            ) {
+                                                              return Container(
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
                                                                           12,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
+                                                                      vertical:
+                                                                          6,
                                                                     ),
-                                                                  ),
-                                                                );
-                                                              }).toList(),
-                                                            ),
-                                                          SizedBox(height: 16),
-                                                          Row(
-                                                            spacing: 4,
-                                                            children: [
-                                                              Expanded(
-                                                                child: CustomOutlinedButton(
-                                                                  radius: 24,
-                                                                  height: 38,
-                                                                  text: "View",
-                                                                  onTap: () {
-                                                                    if (isGuest) {
-                                                                      context.push(
-                                                                        '/auth_landing',
-                                                                      );
-                                                                    } else {
-                                                                      context.push(
-                                                                        "/pdf_viewer?file_url=${campusList?.filePdf}",
-                                                                      );
-                                                                    }
-                                                                  },
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        20,
+                                                                      ),
                                                                 ),
-                                                              ),
-                                                              BlocConsumer<
-                                                                AddResourceCubit,
-                                                                AddResourceStates
-                                                              >(
-                                                                listener: (context, state) {
-                                                                  if (state
-                                                                      is AddResourceLoaded) {
-                                                                    CustomSnackBar1.show(
-                                                                      context,
-                                                                      "Downloaded Successfully",
+                                                                child: Text(
+                                                                  tag,
+                                                                  style: const TextStyle(
+                                                                    fontFamily:
+                                                                        'segeo',
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                        SizedBox(height: 16),
+                                                        Row(
+                                                          spacing: 4,
+                                                          children: [
+                                                            Expanded(
+                                                              child: CustomOutlinedButton(
+                                                                radius: 24,
+                                                                height: 38,
+                                                                text: "View",
+                                                                onTap: () {
+                                                                  if (isGuest) {
+                                                                    context.push(
+                                                                      '/auth_landing',
                                                                     );
-                                                                  } else if (state
-                                                                      is AddResourceFailure) {
-                                                                    CustomSnackBar1.show(
-                                                                      context,
-                                                                      state.error.isNotEmpty
-                                                                          ? state.error
-                                                                          : "Download Failed",
+                                                                  } else {
+                                                                    context.push(
+                                                                      "/pdf_viewer?file_url=${campusList?.filePdf}",
                                                                     );
                                                                   }
                                                                 },
-                                                                builder: (context, state) {
-                                                                  final currentId =
-                                                                      campusList
-                                                                          ?.id
-                                                                          .toString() ??
-                                                                      "";
-                                                                  final isLoading =
-                                                                      state
-                                                                          is AddResourceLoading &&
-                                                                      state.resourceId ==
-                                                                          currentId;
-
-                                                                  return Expanded(
-                                                                    child: CustomAppButton1(
-                                                                      radius:
-                                                                          24,
-                                                                      height:
-                                                                          38,
-                                                                      isLoading:
-                                                                          isLoading,
-                                                                      text:
-                                                                          "Download",
-                                                                      textSize:
-                                                                          14,
-                                                                      onPlusTap: () {
-                                                                        if (isGuest) {
-                                                                          context.push(
-                                                                            '/auth_landing',
-                                                                          );
-                                                                        } else {
-                                                                          context
-                                                                              .read<
-                                                                                AddResourceCubit
-                                                                              >()
-                                                                              .resourceDownload(
-                                                                                currentId,
-                                                                              );
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                  );
-                                                                },
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
+                                                            ),
+                                                            BlocConsumer<
+                                                              AddResourceCubit,
+                                                              AddResourceStates
+                                                            >(
+                                                              listener: (context, state) {
+                                                                if (state
+                                                                    is AddResourceLoaded) {
+                                                                  CustomSnackBar1.show(
+                                                                    context,
+                                                                    "Downloaded Successfully",
+                                                                  );
+                                                                } else if (state
+                                                                    is AddResourceFailure) {
+                                                                  CustomSnackBar1.show(
+                                                                    context,
+                                                                    state
+                                                                            .error
+                                                                            .isNotEmpty
+                                                                        ? state
+                                                                              .error
+                                                                        : "Download Failed",
+                                                                  );
+                                                                }
+                                                              },
+                                                              builder: (context, state) {
+                                                                final currentId =
+                                                                    campusList
+                                                                        ?.id
+                                                                        .toString() ??
+                                                                    "";
+                                                                final isLoading =
+                                                                    state
+                                                                        is AddResourceLoading &&
+                                                                    state.resourceId ==
+                                                                        currentId;
+
+                                                                return Expanded(
+                                                                  child: CustomAppButton1(
+                                                                    radius: 24,
+                                                                    height: 38,
+                                                                    isLoading:
+                                                                        isLoading,
+                                                                    text:
+                                                                        "Download",
+                                                                    textSize:
+                                                                        14,
+                                                                    onPlusTap: () {
+                                                                      if (isGuest) {
+                                                                        context.push(
+                                                                          '/auth_landing',
+                                                                        );
+                                                                      } else {
+                                                                        context
+                                                                            .read<
+                                                                              AddResourceCubit
+                                                                            >()
+                                                                            .resourceDownload(
+                                                                              currentId,
+                                                                            );
+                                                                      }
+                                                                    },
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        },
-                                        childCount: studyZoneData
-                                            ?.studyZoneCampusData
-                                            ?.length,
-                                      ),
+                                          ),
+                                        );
+                                      },
+                                      childCount: studyZoneData
+                                          ?.studyZoneCampusData
+                                          ?.length,
                                     ),
-                                    if (state is StudyZoneCampusLoadingMore)
-                                      SliverToBoxAdapter(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(25.0),
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.8,
-                                            ),
+                                  ),
+                                  if (state is StudyZoneCampusLoadingMore)
+                                    SliverToBoxAdapter(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(25.0),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 0.8,
                                           ),
                                         ),
                                       ),
-                                  ],
-                                ),
+                                    ),
+                                ],
                               ),
                             ),
                           );

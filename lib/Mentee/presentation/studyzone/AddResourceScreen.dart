@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
-import 'package:mentivisor/Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_states.dart';
 import 'package:path_provider/path_provider.dart';
@@ -554,7 +553,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
       bottomNavigationBar: BlocConsumer<AddResourceCubit, AddResourceStates>(
         listener: (context, state) {
           if (state is AddResourceSuccess) {
-            context.read<StudyZoneTagsCubit>().fetchStudyZoneTags();
             context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
               "",
               "",

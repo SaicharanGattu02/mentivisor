@@ -2,7 +2,7 @@ import 'package:mentivisor/Mentee/Models/TagsModel.dart';
 import 'package:mentivisor/Mentee/data/remote_data_source.dart';
 
 abstract class TagsRepository {
-  Future<TagsModel?> getTags();
+  Future<TagsModel?> getStudyZoneTags();
   Future<TagsModel?> getTagSearch(String query);
 }
 
@@ -11,8 +11,8 @@ class TagsImpl implements TagsRepository {
   TagsImpl({required this.remoteDataSource});
 
   @override
-  Future<TagsModel?> getTags() async {
-    return await remoteDataSource.getTags();
+  Future<TagsModel?> getStudyZoneTags() async {
+    return await remoteDataSource.getStudyZoneTags();
   }
 
   @override

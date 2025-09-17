@@ -64,7 +64,6 @@ abstract class RemoteDataSource {
     String search,
   );
   Future<GuestMentorsModel?> getGuestMentorsList();
-  Future<StudyZoneTagsModel?> getStudyZoneTags();
   Future<MentorProfileModel?> getMentorProfile(int id);
   Future<ECCModel?> getEcc(
     String scope,
@@ -126,7 +125,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> resourceDownload(String id);
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
   Future<NotificationModel?> notifications();
-  Future<TagsModel?> getTags();
+
   Future<TagsModel?> getTagSearch(String query);
   Future<SuccessModel?> forgotPassword(Map<String, dynamic> data);
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
@@ -140,6 +139,7 @@ abstract class RemoteDataSource {
   Future<ViewEccDetailsModel?> viewEccDetails(int eventId,String scope);
   Future<TagsModel?> getEccTagsSearch(String query);
   Future<TagsModel?> getEccTags();
+  Future<TagsModel?> getStudyZoneTags();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -704,25 +704,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<StudyZoneTagsModel?> getStudyZoneTags() async {
-    try {
-      Response res;
-      final token = await AuthService.getAccessToken();
-      if (token != null) {
-        res = await ApiClient.get("${APIEndpointUrls.study_zone_tags}");
-      } else {
-        res = await ApiClient.get("${APIEndpointUrls.guest_study_zone_tags}");
-      }
-      AppLogger.log('get StudyZoneTags::${res.data}');
-      return StudyZoneTagsModel.fromJson(res.data);
-    } catch (e) {
-      AppLogger.error('StudyZoneTags::${e}');
-
-      return null;
-    }
-  }
-
-  @override
   Future<MentorProfileModel?> getMentorProfile(int id) async {
     try {
       Response res = await ApiClient.get(
@@ -1173,12 +1154,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<TagsModel?> getTags() async {
+  Future<TagsModel?> getStudyZoneTags() async {
     try {
       final isGuest = await AuthService.isGuest;
       final endpoint = isGuest
-          ? APIEndpointUrls.guestTags
-          : APIEndpointUrls.tags;
+          ? APIEndpointUrls.guest_study_zone_tags
+          : APIEndpointUrls.study_zone_tags;
 
       Response res = await ApiClient.get(endpoint);
       AppLogger.log('get Tags :: ${res.data}');
@@ -1188,6 +1169,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<TagsModel?> getEccTags() async {
     try {

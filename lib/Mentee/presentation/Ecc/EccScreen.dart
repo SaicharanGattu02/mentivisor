@@ -36,10 +36,9 @@ class _EccScreenState extends State<EccScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
-      await context.read<EccTagsCubit>().getEccTags();
-      await context.read<ECCCubit>().getECC("", "", "");
-    });
+
+    context.read<EccTagsCubit>().getEccTags();
+    context.read<ECCCubit>().getECC("", "", "");
   }
 
   @override
@@ -360,10 +359,12 @@ class _EccScreenState extends State<EccScreen> {
                 BlocBuilder<ECCCubit, ECCStates>(
                   builder: (context, state) {
                     if (state is ECCLoading) {
-                      return Center(
-                        child: SizedBox(
-                          height: SizeConfig.screenWidth * 1,
-                          child: DottedProgressWithLogo(),
+                      return Expanded(
+                        child: Center(
+                          child: SizedBox(
+                            height: SizeConfig.screenWidth * 1,
+                            child: DottedProgressWithLogo(),
+                          ),
                         ),
                       );
                     } else if (state is ECCLoaded || state is ECCLoadingMore) {
@@ -371,36 +372,38 @@ class _EccScreenState extends State<EccScreen> {
                           ? (state as ECCLoaded).eccModel
                           : (state as ECCLoadingMore).eccModel;
                       final ecclist = ecc_model.data?.ecclist;
-                      if (ecclist?.length == 0) {
-                        return Center(
-                          child: Column(
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 200,
-                                width: 200,
-                                child: Center(
-                                  child: Image.asset(
-                                    "assets/nodata/no_data.png",
+
+                      if (ecclist == null || ecclist.isEmpty) {
+                        return Expanded(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  width: 200,
+                                  child: Center(
+                                    child: Image.asset(
+                                      "assets/nodata/no_data.png",
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Text(
-                                textAlign: TextAlign.center,
-                                'No Data Found!',
-                                style: TextStyle(
-                                  color: primarycolor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins',
+                                Text(
+                                  'No Data Found!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: primarycolor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins',
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }
+
                       return Expanded(
                         child: NotificationListener<ScrollNotification>(
                           onNotification: (scrollInfo) {
@@ -435,13 +438,11 @@ class _EccScreenState extends State<EccScreen> {
                                   );
                                 }
                               }
-                              return false;
                             }
                             return false;
                           },
                           child: NotificationListener<UserScrollNotification>(
                             onNotification: (n) {
-                              // Hide FAB when scrolling down, show when scrolling up
                               if (n.direction == ScrollDirection.reverse &&
                                   _fabVisible.value) {
                                 _fabVisible.value = false;
@@ -450,7 +451,6 @@ class _EccScreenState extends State<EccScreen> {
                                   !_fabVisible.value) {
                                 _fabVisible.value = true;
                               } else if (n.direction == ScrollDirection.idle) {
-                                // optional: when user stops, ensure FAB is visible near top
                                 if (n.metrics.pixels <= 8 &&
                                     !_fabVisible.value) {
                                   _fabVisible.value = true;
@@ -461,11 +461,11 @@ class _EccScreenState extends State<EccScreen> {
                             child: CustomScrollView(
                               slivers: [
                                 SliverList.separated(
-                                  itemCount: ecclist?.length ?? 0,
+                                  itemCount: ecclist.length,
                                   separatorBuilder: (_, __) =>
                                       const SizedBox(height: 16),
                                   itemBuilder: (context, index) => EventCard(
-                                    eccList: ecclist![index],
+                                    eccList: ecclist[index],
                                     scope: onCampusNotifier.value
                                         ? ""
                                         : "beyond",
@@ -489,7 +489,7 @@ class _EccScreenState extends State<EccScreen> {
                         ),
                       );
                     } else {
-                      return Center(child: Text("No Data"));
+                      return Expanded(child: Center(child: Text("No Data")));
                     }
                   },
                 ),

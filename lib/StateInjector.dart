@@ -111,8 +111,7 @@ import 'Mentee/data/cubits/SessionCompleted/session_completed_repo.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
 import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusRepository.dart';
 import 'Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
-import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsCubit.dart';
-import 'Mentee/data/cubits/StudyZoneTags/StudyZoneTagsRepository.dart';
+
 import 'Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
 import 'Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
 import 'Mentee/data/cubits/Tags/tags_cubit.dart';
@@ -176,11 +175,7 @@ class StateInjector {
       ),
     ),
 
-    RepositoryProvider<StudyZoneTagsRepository>(
-      create: (context) => StudyZoneTagsRepositoryImpl(
-        remoteDataSource: context.read<RemoteDataSource>(),
-      ),
-    ),
+
     RepositoryProvider<MentorProfileRepository>(
       create: (context) => MentorProfileRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
@@ -449,10 +444,7 @@ class StateInjector {
       create: (context) =>
           CampusMentorListCubit(context.read<CampusMentorListRepository>()),
     ),
-    BlocProvider<StudyZoneTagsCubit>(
-      create: (context) =>
-          StudyZoneTagsCubit(context.read<StudyZoneTagsRepository>()),
-    ),
+
     BlocProvider<EccTagsCubit>(
       create: (context) => EccTagsCubit(context.read<EccTagsRepository>()),
     ),
