@@ -19,7 +19,6 @@ class APIEndpointUrls {
   static const String guestcommunitytags_wol =
       "${apiUrl}community-zone-tags-without-login";
   static const String wallet_money = "${apiUrl}users/my-wallet";
-
   /// Mentee
   static const String get_mentors = "${userUrl}mentors";
   static const String mentor_profile = "${userUrl}mentors";
