@@ -679,13 +679,6 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      // path: '/expertiseaddlink',
-      path: '/slot_booking_screen',
-      pageBuilder: (context, state) {
-        return buildSlideTransitionPage(Slotsbookingscreen(), state);
-      },
-    ),
-    GoRoute(
       path: '/edit_mentor_profile',
       pageBuilder: (context, state) {
         final collegeId =
@@ -763,7 +756,6 @@ final GoRouter appRouter = GoRouter(
     final err = state.error ?? 'Unknown router error';
     FirebaseCrashlytics.instance.recordError(
       err,
-      // GoRouterState has no stackTrace; use current as best-effort
       StackTrace.current,
       fatal: false,
       information: [

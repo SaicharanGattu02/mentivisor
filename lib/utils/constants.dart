@@ -178,6 +178,7 @@ String formatDate(String? rawDate) {
     return rawDate;
   }
 }
+
 String formatTimeRange(String? rawTime) {
   if (rawTime == null || rawTime.isEmpty) return "";
 

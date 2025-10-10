@@ -36,7 +36,6 @@ class _EccScreenState extends State<EccScreen> {
   @override
   void initState() {
     super.initState();
-
     context.read<EccTagsCubit>().getEccTags();
     context.read<ECCCubit>().getECC("", "", "");
   }

@@ -146,12 +146,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   Future<File?> _pickValidateAndResize(
-      BuildContext context, {
-        required ImageSource source,
-        int targetWidth = 384,
-        double tolerancePct = 0.10, // 10% around 16:9
-        int? minSourceWidth,        // e.g. 800 to avoid tiny images
-      }) async {
+    BuildContext context, {
+    required ImageSource source,
+    int targetWidth = 384,
+    double tolerancePct = 0.10, // 10% around 16:9
+    int? minSourceWidth, // e.g. 800 to avoid tiny images
+  }) async {
     final XFile? picked = await _picker.pickImage(source: source);
     if (picked == null) return null;
 
@@ -167,26 +167,30 @@ class _AddPostScreenState extends State<AddPostScreen> {
       // Clear message explaining the constraint
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please pick a landscape photo close to 16:9. '
-              'Portrait (9:16) images are not allowed.'),
+          content: Text(
+            'Please pick a landscape photo close to 16:9. '
+            'Portrait (9:16) images are not allowed.',
+          ),
         ),
       );
       return null;
     }
 
     // Safe to resize to true 16:9
-    final resized = await ImageUtils1.resizeTo16by9(raw, targetWidth: targetWidth);
+    final resized = await ImageUtils1.resizeTo16by9(
+      raw,
+      targetWidth: targetWidth,
+    );
     return resized;
   }
-
 
   Future<void> _pickImageFromGallery() async {
     final exact = await _pickValidateAndResize(
       context,
       source: ImageSource.gallery,
-      targetWidth: 384,       // outputs 384×216
-      tolerancePct: 0.10,     // allow ±10% around 16:9
-      minSourceWidth: 800,    // optional: block very small images
+      targetWidth: 384, // outputs 384×216
+      tolerancePct: 0.10, // allow ±10% around 16:9
+      minSourceWidth: 800, // optional: block very small images
     );
     if (!mounted) return;
     if (exact != null) _imageFile.value = exact;
@@ -203,7 +207,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
     if (!mounted) return;
     if (exact != null) _imageFile.value = exact;
   }
-
 
   void _cancelImage() {
     _imageFile.value = null;
@@ -291,10 +294,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   if (state is TagsSearchLoading) {
                     return const Center(child: DottedProgressWithLogo());
                   } else if (state is TagsSearchLoaded) {
-                    final allTags = [...state.tagsModel.data!, ..._customTags];
-                    if (allTags.isEmpty) {
-                      return Center(child: Text("No Tags Found!"));
-                    }
+                    // Safe null check
+                    final apiTags = state.tagsModel.data ?? [];
+                    final allTags = [...apiTags, ..._customTags];
+
                     return Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -314,49 +317,67 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          Wrap(
-                            spacing: 5,
-                            runSpacing: 0,
-                            children: allTags.map((tag) {
-                              final isSelected = _selectedTags.contains(tag);
-                              return ChoiceChip(
-                                label: Text(
-                                  tag,
-                                  style: TextStyle(
-                                    color: Color(0xff333333),
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
+                          allTags.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    child: Text(
+                                      "No Tags Found!",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
+                                )
+                              : Wrap(
+                                  spacing: 5,
+                                  runSpacing: 0,
+                                  children: allTags.map((tag) {
+                                    final isSelected = _selectedTags.contains(
+                                      tag,
+                                    );
+                                    return ChoiceChip(
+                                      label: Text(
+                                        tag,
+                                        style: const TextStyle(
+                                          color: Color(0xff333333),
+                                          fontFamily: 'segeo',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      selected: isSelected,
+                                      onSelected: (selected) {
+                                        setState(() {
+                                          if (selected) {
+                                            _selectedTags.add(tag);
+                                          } else {
+                                            _selectedTags.remove(tag);
+                                          }
+                                        });
+                                      },
+                                      selectedColor: Colors.blue.shade100,
+                                      backgroundColor: Colors.white,
+                                      side: BorderSide(
+                                        color: isSelected
+                                            ? Colors.blue.shade100
+                                            : Colors.grey,
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  setState(() {
-                                    if (selected) {
-                                      _selectedTags.add(tag);
-                                    } else {
-                                      _selectedTags.remove(tag);
-                                    }
-                                  });
-                                },
-                                selectedColor: Colors.blue.shade100,
-                                backgroundColor: Colors.white,
-                                side: BorderSide(
-                                  color: isSelected
-                                      ? Colors.blue.shade100
-                                      : Colors.grey,
-                                ),
-                              );
-                            }).toList(),
-                          ),
                         ],
                       ),
                     );
+                  } else if (state is TagsSearchFailure) {
+                    return Center(child: Text("Error: ${state.error}"));
                   } else {
                     return const SizedBox.shrink();
                   }
                 },
               ),
+
               const SizedBox(height: 8),
               if (_selectedTags.isNotEmpty) ...[
                 Container(
@@ -717,7 +738,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       "",
                       "${widget.type}",
                     );
-                    CustomSnackBar1.show(context, "Your post is under review. Once it’s approved, it will be visible to the community");
+                    CustomSnackBar1.show(
+                      context,
+                      "Your post is under review. Once it’s approved, it will be visible to the community",
+                    );
                     Future.microtask(() => context.pop());
                   } else if (state is AddCommunityPostFailure) {
                     CustomSnackBar1.show(context, state.error);
@@ -781,7 +805,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       }
                       FocusScope.of(context).unfocus();
                       if (!(_formKey.currentState?.validate() ?? false)) return;
-
                       final isHighlighted = _isHighlighted.value;
                       final anonymous = _anonymousNotifier.value;
                       final file = _imageFile.value;
