@@ -27,8 +27,8 @@ class _NotificationsState extends State<Notifications> {
   final List<String> _filters = [
     "All",
     "Sessions",
-    "Reminders",
     "Rewards",
+    "Reminders",
     "Mentions",
   ];
 

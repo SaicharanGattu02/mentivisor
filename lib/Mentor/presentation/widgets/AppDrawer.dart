@@ -148,8 +148,8 @@ class AppDrawer extends StatelessWidget {
                             icon: Image.asset(
                               "assets/icons/ArrowCircleRight.png",
                               fit: BoxFit.cover,
-                              width: SizeConfig.screenWidth * 0.058,
-                              height: SizeConfig.screenHeight * 0.046,
+                              width: SizeConfig.screenWidth * 0.082,
+                              height: SizeConfig.screenHeight * 0.065,
                             ),
                             title: 'Switch to Mentee',
                             onTap: () {

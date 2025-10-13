@@ -151,33 +151,33 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
 
                           Row(
                             children: [
-                              CachedNetworkImage(
-                                imageUrl: image,
-                                imageBuilder: (context, imageProvider) =>
-                                    CircleAvatar(
-                                      radius: 12,
-                                      backgroundImage: imageProvider,
-                                    ),
-                                placeholder: (context, url) => CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: Colors.grey,
-                                  child: SizedBox(
-                                    width: 12,
-                                    height: 12,
-                                    child: Center(
-                                      child: spinkits.getSpinningLinespinkit(),
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    const CircleAvatar(
-                                      radius: 12,
-                                      backgroundImage: AssetImage(
-                                        "assets/images/profile.png",
-                                      ),
-                                    ),
-                              ),
-                              const SizedBox(width: 8),
+                              // CachedNetworkImage(
+                              //   imageUrl: image,
+                              //   imageBuilder: (context, imageProvider) =>
+                              //       CircleAvatar(
+                              //         radius: 12,
+                              //         backgroundImage: imageProvider,
+                              //       ),
+                              //   placeholder: (context, url) => CircleAvatar(
+                              //     radius: 12,
+                              //     backgroundColor: Colors.grey,
+                              //     child: SizedBox(
+                              //       width: 12,
+                              //       height: 12,
+                              //       child: Center(
+                              //         child: spinkits.getSpinningLinespinkit(),
+                              //       ),
+                              //     ),
+                              //   ),
+                              //   errorWidget: (context, url, error) =>
+                              //       const CircleAvatar(
+                              //         radius: 12,
+                              //         backgroundImage: AssetImage(
+                              //           "assets/images/profile.png",
+                              //         ),
+                              //       ),
+                              // ),
+                              // const SizedBox(width: 8),
                               Text(
                                 name.isEmpty ? '—' : name,
                                 style: const TextStyle(

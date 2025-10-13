@@ -298,7 +298,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           Container(
                             margin: EdgeInsets.symmetric(vertical: 10),
                             padding: EdgeInsets.symmetric(
-                              vertical: 12,
+                              // vertical: 12,
                               horizontal: 14,
                             ),
                             decoration: BoxDecoration(color: Color(0xffFFF7CE)),
@@ -308,8 +308,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   icon: Image.asset(
                                     "assets/icons/ArrowCircleleft.png",
                                     fit: BoxFit.cover,
-                                    width: SizeConfig.screenWidth * 0.058,
-                                    height: SizeConfig.screenHeight * 0.046,
+                                    width: SizeConfig.screenWidth * 0.082,
+                                    height: SizeConfig.screenHeight * 0.065,
                                   ),
                                   title: 'Switch to Mentor',
                                   onTap: () {
@@ -377,12 +377,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       ValueListenableBuilder<String?>(
                                         valueListenable: _mentorProfileName,
                                         builder: (context, name, _) {
-                                          return  SizedBox(width: SizeConfig.screenWidth*0.5,
+                                          return SizedBox(
+                                            width: SizeConfig.screenWidth * 0.5,
                                             child: Text(
                                               overflow: TextOverflow.ellipsis,
-                                              capitalize(
-                                                name ?? "User",
-                                              ),
+                                              capitalize(name ?? "User"),
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 16,
