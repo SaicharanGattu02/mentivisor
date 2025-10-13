@@ -37,7 +37,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true);
 
   String? selectedTag;
-
   Timer? _debounce;
 
   @override

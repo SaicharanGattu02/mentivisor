@@ -902,7 +902,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             "${widget.type}",
                             "",
                           );
-                          CustomSnackBar1.show(context, "Your event is under review. Once it’s approved, it will be visible in the ECC section");
+                          CustomSnackBar1.show(
+                            context,
+                            "Your event is under review. Once it’s approved, it will be visible in the ECC section",
+                          );
                           Future.microtask(() => context.pop());
                         } else if (state is AddEccFailure) {
                           CustomSnackBar1.show(context, state.error);
@@ -927,6 +930,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                 "dateofevent": selectedDateStr.value,
                                 // "popular": isHighlighted ? 1 : 0,
                                 "link": _eventLinkController.text,
+                                "tag[]": _selectedTags,
                               };
 
                               if (file != null) {

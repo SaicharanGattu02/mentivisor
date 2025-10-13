@@ -21,7 +21,11 @@ import '../../data/cubits/ResourceDetails/ResourceDetailsState.dart';
 class ResourceDetailScreen extends StatefulWidget {
   final int resourceId;
   final String scope;
-  const ResourceDetailScreen({super.key, required this.resourceId, required this.scope});
+  const ResourceDetailScreen({
+    super.key,
+    required this.resourceId,
+    required this.scope,
+  });
 
   @override
   State<ResourceDetailScreen> createState() => _ResourceDetailScreenState();
@@ -31,7 +35,10 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<Resourcedetailscubit>().resourceDetails(widget.resourceId,widget.scope);
+    context.read<Resourcedetailscubit>().resourceDetails(
+      widget.resourceId,
+      widget.scope,
+    );
   }
 
   @override
@@ -102,12 +109,9 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -248,13 +252,13 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 10),
                                 Row(
                                   children: [
-                                    const Icon(
-                                      Icons.download_rounded,
-                                      size: 16,
-                                      color: Colors.black54,
+                                    Image.asset(
+                                      "assets/icons/download.png",
+                                      width: 14,
+                                      height: 14,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(

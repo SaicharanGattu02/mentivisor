@@ -1200,6 +1200,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<TagsModel?> getEccTagsSearch(String query) async {
     try {

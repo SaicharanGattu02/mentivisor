@@ -27,8 +27,7 @@ class PostCard extends StatefulWidget {
   State<PostCard> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard>
-    with SingleTickerProviderStateMixin {
+class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin {
   bool _showHeart = false;
   late AnimationController _animationController;
   late Animation<double> _heartAnimation;
@@ -163,7 +162,7 @@ class _PostCardState extends State<PostCard>
                         GestureDetector(
                           onTap: () {
                             context.push(
-                              "/common_profile?id=${widget.communityPosts.uploader?.id}",
+                              "/common_profile/${widget.communityPosts.uploader?.id}",
                             );
                           },
                           child: CachedNetworkImage(

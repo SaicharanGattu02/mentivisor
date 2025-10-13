@@ -184,6 +184,16 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
+      path: '/community_post/:id',
+      redirect: (ctx, st) {
+        final id = st.pathParameters['id'];
+        if (id == null) return '/'; // fallback
+        // Pass id to the next route
+        return '/community_details/$id';
+      },
+    ),
+
+    GoRoute(
       path: '/community_details/:communityId',
       pageBuilder: (context, state) {
         final communityIdStr = state.pathParameters['communityId'];
@@ -191,7 +201,6 @@ final GoRouter appRouter = GoRouter(
             ? int.tryParse(communityIdStr) ?? 0
             : 0;
         final scope = state.uri.queryParameters['scope'] ?? "";
-
         return buildSlideTransitionPage(
           CommunityDetails(communityId: id, scope: scope),
           state,
@@ -328,16 +337,16 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(Campusmentorlist(scope: scope), state);
       },
     ),
-
     GoRoute(
       path: '/study_zone/:id',
       redirect: (ctx, st) {
         final id = st.pathParameters['id'];
         if (id == null) return '/'; // fallback
-        // Redirect to your internal route
-        return '/resource_details_screen';
+        // Pass id to the next route
+        return '/resource_details_screen/$id';
       },
     ),
+
     GoRoute(
       path: '/resource_details_screen/:resourceId',
       pageBuilder: (context, state) {
@@ -358,10 +367,21 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(MentorProfileScreen(id: id), state);
       },
     ),
+
     GoRoute(
-      path: '/common_profile',
+      path: '/profile/:id',
+      redirect: (ctx, st) {
+        final id = st.pathParameters['id'];
+        if (id == null) return '/'; // fallback
+        // Pass id to the next route
+        return '/common_profile/$id';
+      },
+    ),
+
+    GoRoute(
+      path: '/common_profile/:id',
       pageBuilder: (context, state) {
-        final idString = state.uri.queryParameters['id'];
+        final idString = state.pathParameters['id'];
         final id = int.tryParse(idString ?? '') ?? 0;
         return buildSlideTransitionPage(ProfileDetails(id: id), state);
       },
@@ -374,6 +394,7 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(InterestingScreen(data: data), state);
       },
     ),
+
     GoRoute(
       path: '/becomementorscreen',
       pageBuilder: (context, state) =>
@@ -413,6 +434,17 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(AddEventScreen(type: type), state);
       },
     ),
+
+    GoRoute(
+      path: '/ecc/:id',
+      redirect: (ctx, st) {
+        final id = st.pathParameters['id'];
+        if (id == null) return '/'; // fallback
+        // Pass id to the next route
+        return '/view_event/$id';
+      },
+    ),
+
     GoRoute(
       path: '/view_event/:eventId',
       pageBuilder: (context, state) {
@@ -484,7 +516,7 @@ final GoRouter appRouter = GoRouter(
         final coins = state.uri.queryParameters['coins'] ?? "";
         final path = state.uri.queryParameters['path'] ?? "";
         return buildSlideTransitionPage(
-          CostPerMinuteScreen(coins: coins,path: path,),
+          CostPerMinuteScreen(coins: coins, path: path),
           state,
         );
       },
