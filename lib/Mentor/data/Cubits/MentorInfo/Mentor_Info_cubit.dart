@@ -6,11 +6,11 @@ class MentorInfoCubit extends Cubit<MentorInfoStates> {
   MentorInfoRepo mentorProfileRepo;
   MentorInfoCubit(this.mentorProfileRepo) : super(MentorinfoInitially());
 
-  Future<void> getMentorinfo() async {
+  Future<void> getMentorinfo(String role) async {
     emit(MentorinfoLoading());
 
     try {
-      final response = await mentorProfileRepo.getMentorinfo();
+      final response = await mentorProfileRepo.getMentorinfo(role);
       if (response != null && response.status == true) {
         emit(MentorinfoLoaded(response));
       } else {

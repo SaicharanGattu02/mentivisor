@@ -10,6 +10,7 @@ import '../../Components/CutomAppBar.dart';
 import '../../Components/ShakeWidget.dart';
 import '../../utils/media_query_helper.dart';
 import '../../utils/spinkittsLoader.dart';
+import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import '../data/Cubits/MentorSessionCancel/mentor_session_cancel_cubit.dart';
 import '../data/Cubits/MentorSessionCancel/mentor_session_cancel_states.dart';
 import '../data/Cubits/SessionDetails/SessionsDetailsCubit.dart';
@@ -223,6 +224,7 @@ class _CancelSessionScreenState extends State<CancelSessionScreen> {
                 listener: (context, state) {
                   if (state is MentorsessionCancelSuccess) {
                     context.pop();
+                    context.read<MentorDashboardCubit>().fetchDashboard();
                   } else if (state is MentorsessioncancleFailure) {
                     CustomSnackBar1.show(context, state.error);
                   }

@@ -123,16 +123,6 @@ class _MentorDashboardState extends State<MentorDashboard> {
           actions: [
             IconButton(
               icon: Image.asset(
-                "assets/images/mente.png",
-                height: 21,
-                width: 26,
-              ),
-              onPressed: () {
-                context.pushReplacement('/dashboard');
-              },
-            ),
-            IconButton(
-              icon: Image.asset(
                 "assets/icons/notifications.png",
                 height: 21,
                 width: 26,

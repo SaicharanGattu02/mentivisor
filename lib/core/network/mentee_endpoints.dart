@@ -66,8 +66,7 @@ class APIEndpointUrls {
   static const String comment_like = "${userUrl}comments/";
   static const String community_zone_report = "${userUrl}community-zone-report";
   static const String ecc_tags = "${userUrl}ecctags";
-  static const String study_zone_tags = "${userUrl}tags";
-
+  static const String study_zone_tags = "${userUrl}/study-zone/tags";
   static const String tag_search = "${userUrl}tags/search";
   static const String ecc_tag_Search = "${userUrl}ecctags/search";
   static const String forgot_password = "${apiUrl}forget-password";

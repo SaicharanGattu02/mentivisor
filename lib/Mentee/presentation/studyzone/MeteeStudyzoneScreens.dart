@@ -119,7 +119,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       onPressed: () {
                                         searchController.clear();
                                         onCampusNotifier.value = true;
-
                                         final tagsState = context
                                             .read<TagsCubit>()
                                             .state;

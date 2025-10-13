@@ -12,6 +12,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Components/CommonLoader.dart';
+import '../../Mentor/presentation/widgets/AppDrawer.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
@@ -100,8 +101,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       case 'Upcoming Sessions':
         context.push("/upcoming_session");
         break;
-      // case 'Invite Friend':
-      //   break;
       case 'Customer Services':
         context.push('/customersscreen');
         break;
@@ -188,7 +187,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   final menteeProfile = menteeProfilestate
                                       .menteeProfileModel
                                       .data;
-
                                   _mentorStatus.value =
                                       menteeProfile?.user?.mentorStatus ??
                                       "none";
@@ -224,14 +222,18 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),
-                                      Text(
-                                        capitalize(
-                                          menteeProfile?.user?.name ?? "User",
-                                        ),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                                      SizedBox(
+                                        width: SizeConfig.screenWidth * 0.5,
+                                        child: Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          capitalize(
+                                            menteeProfile?.user?.name ?? "User",
+                                          ),
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -260,18 +262,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         padding: EdgeInsets.only(right: 16.0),
                         child: Row(
                           children: [
-                            if (role == "Both") ...[
-                              IconButton(
-                                icon: Image.asset(
-                                  "assets/images/mentor.png",
-                                  height: 21,
-                                  width: 26,
-                                ),
-                                onPressed: () {
-                                  context.push('/mentor_dashboard');
-                                },
-                              ),
-                            ],
                             IconButton(
                               icon: Image.asset(
                                 "assets/images/crownonly.png",
@@ -306,6 +296,33 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         padding: EdgeInsets.zero,
                         children: [
                           Container(
+                            margin: EdgeInsets.symmetric(vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 14,
+                            ),
+                            decoration: BoxDecoration(color: Color(0xffFFF7CE)),
+                            child: Column(
+                              children: [
+                                _DrawerItem(
+                                  icon: Image.asset(
+                                    "assets/icons/ArrowCircleleft.png",
+                                    fit: BoxFit.cover,
+                                    width: SizeConfig.screenWidth * 0.058,
+                                    height: SizeConfig.screenHeight * 0.046,
+                                  ),
+                                  title: 'Switch to Mentor',
+                                  onTap: () {
+                                    context.pop();
+                                    context.pushReplacement(
+                                      '/mentor_dashboard',
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
                             padding: const EdgeInsets.all(16),
                             color: Colors.white,
                             child: Column(
@@ -321,8 +338,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         valueListenable: _mentorProfileUrl,
                                         builder: (context, url, _) {
                                           return CachedNetworkImage(
-                                            imageUrl:
-                                                url ?? "", // listen for updates
+                                            imageUrl: url ?? "",
                                             imageBuilder:
                                                 (context, imageProvider) =>
                                                     CircleAvatar(
@@ -361,14 +377,17 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       ValueListenableBuilder<String?>(
                                         valueListenable: _mentorProfileName,
                                         builder: (context, name, _) {
-                                          return Text(
-                                            capitalize(name ?? 'Profile'),
-
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xff4B5462),
-                                              fontFamily: "segeo",
+                                          return  SizedBox(width: SizeConfig.screenWidth*0.5,
+                                            child: Text(
+                                              overflow: TextOverflow.ellipsis,
+                                              capitalize(
+                                                name ?? "User",
+                                              ),
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           );
                                         },
@@ -376,7 +395,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(width: 8),
+
                                 _buildDrawerItem(
                                   assetpath: "assets/icons/Wallet.png",
                                   label: 'Wallet',
@@ -609,7 +629,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           horizontal: 2.5,
                                         ),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                           child: Image.network(
                                             b.imgUrl ?? '',
                                             fit: BoxFit.fill,
@@ -631,7 +653,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   options: CarouselOptions(
                                     height: 180,
                                     autoPlay: true,
-                                    autoPlayInterval: const Duration(seconds: 4),
+                                    autoPlayInterval: const Duration(
+                                      seconds: 4,
+                                    ),
                                     viewportFraction: 1.0,
                                   ),
                                 );
@@ -707,54 +731,54 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               : SizedBox.shrink(),
                           SizedBox(height: 10),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  isGuest ? 'Top Mentors' : 'Mentors',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: "Inter",
-                                    color: Color(0xff222222),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                isGuest ? 'Top Mentors' : 'Mentors',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "Inter",
+                                  color: Color(0xff222222),
+                                ),
+                              ),
+                              if (!isGuest) ...[
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                  onPressed: () {
+                                    if (_onCampus == true) {
+                                      context.push(
+                                        '/campus_mentor_list?scope=',
+                                      );
+                                    } else {
+                                      context.push(
+                                        '/campus_mentor_list?scope=beyond',
+                                      );
+                                    }
+                                  },
+                                  child: Text(
+                                    'View All',
+                                    style: TextStyle(
+                                      color: Color(0xff4076ED),
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w600,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 14,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor: Color(0xff4076ED),
+                                      decorationThickness: 1,
+                                    ),
                                   ),
                                 ),
-                                if (!isGuest) ...[
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    onPressed: () {
-                                      if (_onCampus == true) {
-                                        context.push(
-                                          '/campus_mentor_list?scope=',
-                                        );
-                                      } else {
-                                        context.push(
-                                          '/campus_mentor_list?scope=beyond',
-                                        );
-                                      }
-                                    },
-                                    child: Text(
-                                      'View All',
-                                      style: TextStyle(
-                                        color: Color(0xff4076ED),
-                                        fontFamily: 'segeo',
-                                        fontWeight: FontWeight.w600,
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: 14,
-                                        decoration: TextDecoration.underline,
-                                        decorationStyle:
-                                            TextDecorationStyle.solid,
-                                        decorationColor: Color(0xff4076ED),
-                                        decorationThickness: 1,
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               ],
-                            ),
+                            ],
+                          ),
 
                           SizedBox(height: 10),
                           if (isGuest) ...[
@@ -762,7 +786,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               builder: (context, state) {
                                 if (state is GuestMentorsLoaded) {
                                   final guestMentorlist =
-                                      state.guestMentorsModel.data?.mentors ?? [];
+                                      state.guestMentorsModel.data?.mentors ??
+                                      [];
                                   if (guestMentorlist.isEmpty) {
                                     return Center(
                                       child: Column(
@@ -802,7 +827,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       child: DottedProgressWithLogo(),
                                     ),
                                   );
-                                } else if (state is CampusMentorListStateLoaded) {
+                                } else if (state
+                                    is CampusMentorListStateLoaded) {
                                   final campusMentorlist =
                                       state
                                           .campusMentorListModel
@@ -996,4 +1022,38 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     trailing: trailing,
     onTap: onTap,
   );
+}
+
+class _DrawerItem extends StatelessWidget {
+  final Widget icon;
+  final String title;
+  final VoidCallback? onTap;
+
+  const _DrawerItem({required this.icon, required this.title, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          children: [
+            icon, // Directly use the passed widget
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'segeo',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

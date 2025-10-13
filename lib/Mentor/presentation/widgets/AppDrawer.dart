@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_states.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../../services/AuthService.dart';
 import '../../../utils/color_constants.dart';
@@ -95,7 +96,7 @@ class AppDrawer extends StatelessWidget {
                             ),
                           ),
                           _DrawerItem(
-                            icon: Icons.groups_outlined,
+                            icon: Icon(Icons.groups_outlined),
                             title: 'My Mentees',
                             onTap: () {
                               context.pop();
@@ -103,7 +104,7 @@ class AppDrawer extends StatelessWidget {
                             },
                           ),
                           _DrawerItem(
-                            icon: Icons.grade_outlined,
+                            icon: Icon(Icons.grade_outlined),
                             title: 'Feedback',
                             onTap: () {
                               context.pop();
@@ -119,7 +120,7 @@ class AppDrawer extends StatelessWidget {
                       child: Column(
                         children: [
                           _DrawerItem(
-                            icon: Icons.history,
+                            icon: Icon(Icons.history),
                             title: 'Coin History',
                             onTap: () {
                               context.pop();
@@ -127,11 +128,33 @@ class AppDrawer extends StatelessWidget {
                             },
                           ),
                           _DrawerItem(
-                            icon: Icons.local_offer_outlined,
+                            icon: Icon(Icons.local_offer_outlined),
                             title: 'Coupon',
                             onTap: () {
                               context.pop();
                               context.push('/coupons');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    _Separator(),
+                    Container(
+                      decoration: BoxDecoration(color: Color(0xffFFF7CE)),
+                      child: Column(
+                        children: [
+                          _DrawerItem(
+                            icon: Image.asset(
+                              "assets/icons/ArrowCircleRight.png",
+                              fit: BoxFit.cover,
+                              width: SizeConfig.screenWidth * 0.058,
+                              height: SizeConfig.screenHeight * 0.046,
+                            ),
+                            title: 'Switch to Mentee',
+                            onTap: () {
+                              context.pop();
+                              context.pushReplacement('/dashboard');
                             },
                           ),
                         ],
@@ -145,7 +168,7 @@ class AppDrawer extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(color: Colors.white),
                       child: _DrawerItem(
-                        icon: Icons.info_outline,
+                        icon: Icon(Icons.info_outline),
                         title: 'Info',
                         onTap: () {
                           context.pop();
@@ -159,7 +182,7 @@ class AppDrawer extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(color: Colors.white),
                       child: _DrawerItem(
-                        icon: Icons.trending_up_outlined,
+                        icon: Icon(Icons.trending_up_outlined),
                         title: 'Update Mentor Profile',
                         onTap: () {
                           context.pop();
@@ -231,7 +254,7 @@ class _Separator extends StatelessWidget {
 
 /// Standard drawer row with larger outlined icon + precise paddings
 class _DrawerItem extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String title;
   final VoidCallback? onTap;
 
@@ -247,7 +270,7 @@ class _DrawerItem extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: AppDrawer._textColor),
+              icon, // Directly use the passed widget
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
@@ -345,7 +368,7 @@ void showLogoutDialog(BuildContext context) {
                               onPressed: () => Navigator.pop(context),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                primarycolor, // Filled button color
+                                    primarycolor, // Filled button color
                                 foregroundColor: Colors.white, // Text color
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,

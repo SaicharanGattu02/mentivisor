@@ -35,7 +35,7 @@ import '../Mentee/data/cubits/Chat/private_chat_cubit.dart';
 import '../Mentee/presentation/CommingSoon.dart';
 import '../Mentee/presentation/Ecc/AddEventScreen.dart';
 import '../Mentee/presentation/ExclusiveServicesInfo.dart';
-import '../Mentee/presentation/InfoScreen.dart';
+import '../Mentee/presentation/MenteeInfoScreen.dart';
 import '../Mentee/presentation/MentorProfileScreen.dart';
 import '../Mentee/presentation/Notifications.dart';
 import '../Mentee/presentation/PaymentSuccessfully.dart';

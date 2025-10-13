@@ -82,7 +82,7 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
                   if (state is CoinhistoryLoading) {
                     return SliverToBoxAdapter(
                       child: SizedBox(
-                        height: SizeConfig.screenHeight*0.6 ,
+                        height: SizeConfig.screenHeight * 0.6,
                         child: Center(child: DottedProgressWithLogo()),
                       ),
                     );

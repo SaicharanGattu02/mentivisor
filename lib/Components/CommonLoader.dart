@@ -18,7 +18,7 @@ class DottedProgressWithLogo extends StatefulWidget {
     this.size = 60.0,
     this.logoSize = 40.0,
     this.logoPath = "assets/icons/newappicon.png",
-    this.dotColor = primarycolor,
+    this.dotColor = Colors.black,
     this.dotCount = 12,
     this.dotRadius = 3.0,
     this.animationDuration = const Duration(seconds: 2),

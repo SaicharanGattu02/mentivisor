@@ -213,7 +213,8 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     session?.startTime ?? "",
                                     session?.endTime ?? "",
                                   );
-                                  return SessionCard(menteeId: session?.mentee?.id,
+                                  return SessionCard(
+                                    menteeId: session?.mentee?.id,
                                     attachment: session?.attachment ?? "",
                                     sessionLink: session?.zoomLink ?? "",
                                     sessionId: session?.id ?? 0,
@@ -233,7 +234,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     reason: '',
                                     buttonText:
                                         'Message from ${session?.mentee?.name ?? ""}',
-                                    buttonIcon:  "assets/icons/ChatCircle.png",
+                                    buttonIcon: "assets/icons/ChatCircle.png",
                                     remainingTime:
                                         '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
                                   );

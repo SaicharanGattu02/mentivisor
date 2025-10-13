@@ -13,7 +13,7 @@ class Mentorinfoscreen extends StatefulWidget {
 class _MentorinfoscreenState extends State<Mentorinfoscreen> {
   @override
   void initState() {
-    context.read<MentorInfoCubit>().getMentorinfo();
+    context.read<MentorInfoCubit>().getMentorinfo("mentor");
     super.initState();
   }
 
@@ -64,7 +64,6 @@ class _MentorinfoscreenState extends State<Mentorinfoscreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Heading for each info card
                               Text(
                                 item.heading ?? 'No Heading',
                                 style: TextStyle(

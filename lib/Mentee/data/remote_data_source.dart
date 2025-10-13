@@ -131,12 +131,18 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
   Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
   Future<SuccessModel?> communityZoneReport(Map<String, dynamic> data);
-  Future<ResourceDetailsModel?> getResourceDetails(int resourceId,String scope);
-  Future<CommunityDetailsModel?> communityPostsDetails(int communityId,String scope);
+  Future<ResourceDetailsModel?> getResourceDetails(
+    int resourceId,
+    String scope,
+  );
+  Future<CommunityDetailsModel?> communityPostsDetails(
+    int communityId,
+    String scope,
+  );
   Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
-  Future<ViewEccDetailsModel?> viewEccDetails(int eventId,String scope);
+  Future<ViewEccDetailsModel?> viewEccDetails(int eventId, String scope);
   Future<TagsModel?> getEccTagsSearch(String query);
   Future<TagsModel?> getEccTags();
   Future<TagsModel?> getStudyZoneTags();
@@ -182,7 +188,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data) async {
+  Future<UploadFileInChatModel?> uploadFileInChat(
+    Map<String, dynamic> data,
+  ) async {
     try {
       final url = "${ApiConfig.socket_url}/api/upload-file";
       MultipartFile? filePart;
@@ -224,7 +232,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page) async {
@@ -542,7 +549,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<CommunityDetailsModel?> communityPostsDetails(int communityId,String scope) async {
+  Future<CommunityDetailsModel?> communityPostsDetails(
+    int communityId,
+    String scope,
+  ) async {
     try {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.community_zone_post_details}/${communityId}?scope=${scope}",
@@ -572,7 +582,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         );
       } else {
         res = await ApiClient.get(
-          "${APIEndpointUrls.guest_list_ecc}?page=${page}",
+          "${APIEndpointUrls.guest_list_ecc}?scope=${scope}&tag=${updates}&search=${search}&page=${page}",
         );
       }
       debugPrint('getEcc::$res');
@@ -584,7 +594,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ViewEccDetailsModel?> viewEccDetails(int eventId,String scope) async {
+  Future<ViewEccDetailsModel?> viewEccDetails(int eventId, String scope) async {
     try {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.view_ecc_details}/${eventId}?scope=${scope}",
@@ -745,7 +755,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ResourceDetailsModel?> getResourceDetails(int resourceId,String scope) async {
+  Future<ResourceDetailsModel?> getResourceDetails(
+    int resourceId,
+    String scope,
+  ) async {
     AppLogger.log('resourceId::${resourceId}');
     try {
       Response res = await ApiClient.get(

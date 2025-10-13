@@ -24,7 +24,7 @@ class EccScreen extends StatefulWidget {
 }
 
 class _EccScreenState extends State<EccScreen> {
-  String searchQuery = '';
+
   final TextEditingController _searchController = TextEditingController();
   final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
   final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true); // NEW

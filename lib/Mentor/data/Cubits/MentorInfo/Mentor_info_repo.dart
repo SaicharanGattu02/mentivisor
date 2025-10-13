@@ -3,7 +3,7 @@ import 'package:mentivisor/Mentor/Models/MentorinfoResponseModel.dart';
 import '../../MentorRemoteDataSource.dart';
 
 abstract class MentorInfoRepo {
-  Future<MentorinfoResponseModel?> getMentorinfo();
+  Future<MentorinfoResponseModel?> getMentorinfo(String role);
 }
 
 class MentorProfileRepoImpl implements MentorInfoRepo {
@@ -11,7 +11,7 @@ class MentorProfileRepoImpl implements MentorInfoRepo {
   MentorProfileRepoImpl({required this.mentorRemoteDataSource});
 
   @override
-  Future<MentorinfoResponseModel?> getMentorinfo() async {
-    return await mentorRemoteDataSource.mentorinfo();
+  Future<MentorinfoResponseModel?> getMentorinfo(String role) async {
+    return await mentorRemoteDataSource.mentorinfo(role);
   }
 }

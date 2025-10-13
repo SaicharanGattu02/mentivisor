@@ -16,7 +16,11 @@ class ViewEventScreen extends StatefulWidget {
   final int eventId;
   final String scope;
 
-  const ViewEventScreen({super.key, required this.eventId, required this.scope});
+  const ViewEventScreen({
+    super.key,
+    required this.eventId,
+    required this.scope,
+  });
 
   @override
   State<ViewEventScreen> createState() => _ViewEventScreenState();
@@ -24,17 +28,25 @@ class ViewEventScreen extends StatefulWidget {
 
 class _ViewEventScreenState extends State<ViewEventScreen> {
   ValueNotifier<String> eventLink = ValueNotifier<String>("");
+
   @override
   void initState() {
     super.initState();
-    context.read<ViewEventDetailsCubit>().eventDetails(widget.eventId,widget.scope);
+    context.read<ViewEventDetailsCubit>().eventDetails(
+      widget.eventId,
+      widget.scope,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // extendBodyBehindAppBar: true,
-      appBar: CustomAppBar1(title: 'View Event', actions: [],color: Color(0xffF5F6FF),),
+      appBar: CustomAppBar1(
+        title: 'View Event',
+        actions: [],
+        color: Color(0xffF5F6FF),
+      ),
       body: BlocBuilder<ViewEventDetailsCubit, ViewEventDetailsState>(
         builder: (context, state) {
           if (state is ViewEventDetailsLoading) {
@@ -97,7 +109,7 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 16.0,left: 20),
+                            padding: const EdgeInsets.only(top: 16.0, left: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -142,7 +154,9 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
                                   'Event Details',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 16,fontFamily: 'segeo',color: Color(0xff333333)
+                                    fontSize: 16,
+                                    fontFamily: 'segeo',
+                                    color: Color(0xff333333),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
