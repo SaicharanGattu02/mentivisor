@@ -67,7 +67,7 @@ class APIEndpointUrls {
   static const String community_zone_report = "${userUrl}community-zone-report";
   static const String ecc_tags = "${userUrl}ecctags";
   static const String study_zone_tags = "${userUrl}tags";
-  static const String guestTags = "${apiUrl}tags";
+
   static const String tag_search = "${userUrl}tags/search";
   static const String ecc_tag_Search = "${userUrl}ecctags/search";
   static const String forgot_password = "${apiUrl}forget-password";
@@ -81,6 +81,7 @@ class APIEndpointUrls {
   static const String guest_list_ecc = "${apiUrl}guest-list-ecc";
   static const String guest_community_post =
       "${apiUrl}community-zone-post-without-login";
+  static const String guestTags = "${apiUrl}tags";
   static const String get_banners = "${apiUrl}banners";
   static const String getmenteecustomersupport = "${userUrl}support";
   static const String get_messages = "${userUrl}get-messages";

@@ -6,14 +6,21 @@ class TagsModel {
 
   TagsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = (json['data'] as List<dynamic>?)?.cast<String>();
+
+    // Handle both 'data' and 'tags' keys
+    if (json['data'] != null) {
+      data = (json['data'] as List<dynamic>?)?.cast<String>();
+    } else if (json['tags'] != null) {
+      data = (json['tags'] as List<dynamic>?)?.cast<String>();
+    } else {
+      data = [];
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> dataMap = <String, dynamic>{};
     dataMap['status'] = status;
-    dataMap['data'] = data;
+    dataMap['data'] = data; // Always sending 'data' when posting/updating
     return dataMap;
   }
 }
-

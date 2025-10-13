@@ -11,6 +11,7 @@ import '../Models/AvailableSlotsModel.dart';
 import '../Models/MentorCoinHistoryModel.dart';
 import '../Models/ExpertisesModel.dart';
 import '../Models/FeedbackModel.dart';
+import '../Models/MentorEarningsModel.dart';
 import '../Models/MentorExpertiseModel.dart';
 import '../Models/MentorProfileModel.dart';
 import '../Models/MentorinfoResponseModel.dart';
@@ -59,6 +60,7 @@ abstract class MentorRemoteDataSource {
     String time,
   );
   Future<SuccessModel?> sessionCompleted(int sessionId);
+  Future<MentorEarningsModel?> mentorEarnings();
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -358,6 +360,18 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return MentorinfoResponseModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('get MentorInfo:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<MentorEarningsModel?> mentorEarnings() async {
+    try {
+      Response res = await ApiClient.get("${MentorEndpointsUrls.mentor_earnings}");
+      AppLogger.log('get Mentor Earnings: ${res.data}');
+      return MentorEarningsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get Mentor Earnings:${e}');
       return null;
     }
   }

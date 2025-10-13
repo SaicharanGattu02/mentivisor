@@ -122,6 +122,8 @@ import 'Mentee/data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
+import 'Mentor/data/Cubits/MentorEarnings/MentorEarningsCubit.dart';
+import 'Mentor/data/Cubits/MentorEarnings/MentorEarningsRepository.dart';
 import 'Mentor/data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
 import 'Mentor/data/Cubits/MentorInfo/Mentor_info_repo.dart';
 import 'Mentor/data/Cubits/MentorProfile/MentorProfileUpdate/MentorProfileCubit.dart';
@@ -174,7 +176,6 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
-
 
     RepositoryProvider<MentorProfileRepository>(
       create: (context) => MentorProfileRepositoryImpl(
@@ -407,6 +408,11 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<MentorEarningsRepo>(
+      create: (context) => MentorEarningsRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
 
     RepositoryProvider<ReviewsRepo>(
       create: (context) => ReviewsRepoImpl(
@@ -449,7 +455,8 @@ class StateInjector {
       create: (context) => EccTagsCubit(context.read<EccTagsRepository>()),
     ),
     BlocProvider<EccTagsSearchCubit>(
-      create: (context) => EccTagsSearchCubit(context.read<EccTagsRepository>()),
+      create: (context) =>
+          EccTagsSearchCubit(context.read<EccTagsRepository>()),
     ),
     BlocProvider<MentorProfileCubit>(
       create: (context) =>
@@ -730,6 +737,10 @@ class StateInjector {
     BlocProvider<UploadFileInChatCubit>(
       create: (context) =>
           UploadFileInChatCubit(context.read<UploadFileInChatRepo>()),
+    ),
+    BlocProvider<MentorEarningsCubit>(
+      create: (context) =>
+          MentorEarningsCubit(context.read<MentorEarningsRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

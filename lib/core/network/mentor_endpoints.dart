@@ -19,14 +19,20 @@ class MentorEndpointsUrls {
       "${userUrl}/add-mentor-availability";
   static const String mentor_availability_slots =
       "${userUrl}mentor/recent-slots";
-  static const String approved_expertises = "${userUrl}/mentor/expertise/details";
-  static const String pending_expertises = "${userUrl}/mentor/new-expertise-requests";
-  static const String rejected_expertises = "${userUrl}/mentor/new-expertise-requests";
+  static const String approved_expertises =
+      "${userUrl}/mentor/expertise/details";
+  static const String pending_expertises =
+      "${userUrl}/mentor/new-expertise-requests";
+  static const String rejected_expertises =
+      "${userUrl}/mentor/new-expertise-requests";
   static const String update_expertises = "${userUrl}/mentor/expertise/update";
-  static const String non_attached_expertises = "${userUrl}/mentor/not-attached-expertise";
+  static const String non_attached_expertises =
+      "${userUrl}/mentor/not-attached-expertise";
   static const String mentor_reports = "${userUrl}/mentor-reports";
-  static const String new_expertise_request = "${userUrl}/mentor/new-expertise-request";
+  static const String new_expertise_request =
+      "${userUrl}/mentor/new-expertise-request";
   static const String comments = "${userUrl}/communities/comments";
   static const String reviews = "${userUrl}/mentors/reviews/";
   static const String session_complete = "${userUrl}/sessions/complete";
+  static const String mentor_earnings = "${userUrl}/mentor-earnings";
 }
