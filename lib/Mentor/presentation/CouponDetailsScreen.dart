@@ -76,7 +76,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
           if (state is CouponsDetailsLoading) {
             return Center(child: DottedProgressWithLogo());
           } else if (state is CouponsDetailsLoaded) {
-            final couponsDetails=state.couponDetailsModel.data;
+            final couponsDetails = state.couponDetailsModel.data;
             return Container(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
               child: Column(
@@ -91,44 +91,30 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        couponsDetails?.image??"",
+                        couponsDetails?.image ?? "",
                         height: 140,
                         width: SizeConfig.screenWidth,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  // logo + title row
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/gmailimg.png',
-                        width: 28,
-                        height: 20,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'Myntra',
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
+                  SizedBox(height: 14),
+                  Text(
+                    couponsDetails?.title ?? "",
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                    ),
                   ),
 
                   const SizedBox(height: 10),
 
                   // description text - left aligned and with softer color
-                  const Text(
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
-                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                  Text(
+                    couponsDetails?.description ?? "",
+
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontFamily: 'segeo',
@@ -150,7 +136,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                           bgColor: Color(0xFFFFF6CF),
                           borderColor: Color(0xFF999999),
                           textColor: Color(0xFF333333),
-                          text: 'Worth of ₹ 500',
+                          text: couponsDetails?.actualValue ?? "",
                           textStyle: TextStyle(fontSize: 12),
                           onTap: () {
                             // your tap handler
@@ -162,10 +148,10 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                         child: DashedOutlinedButton(
                           height: 32,
                           radius: 24,
-                          bgColor: const Color(0xFFF5F5F5),
-                          borderColor: const Color(0xFF999999),
-                          textColor: const Color(0xFF333333),
-                          text: 'For 1000 Coins',
+                          bgColor: Color(0xFFF5F5F5),
+                          borderColor: Color(0xFF999999),
+                          textColor: Color(0xFF333333),
+                          text: couponsDetails?.coinsRequired.toString() ?? "0",
                           textStyle: TextStyle(fontSize: 12),
                           onTap: () {
                             // your tap handler
