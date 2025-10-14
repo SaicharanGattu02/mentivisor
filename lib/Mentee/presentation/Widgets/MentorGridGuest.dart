@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
+import '../../../Components/Shimmers.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CompusMentorListModel.dart';
@@ -10,40 +11,63 @@ import '../../Models/GuestMentorsModel.dart';
 class MentorGridGuest extends StatelessWidget {
   final List<Mentor>? mentors;
   final void Function(Mentor) onTapMentor;
-  const MentorGridGuest({required this.mentors, required this.onTapMentor});
+
+  const MentorGridGuest({
+    required this.mentors,
+    required this.onTapMentor,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final crossAxisCount = 2;
-    final spacing = 16.0;
+    final width = SizeConfig.screenWidth;
+    int crossAxisCount;
+    if (width < 600) {
+      crossAxisCount = 2;
+    } else if (width > 600) {
+      crossAxisCount = 3;
+    } else {
+      crossAxisCount = 4;
+    }
+
+    // Adaptive spacing
+    final spacing = SizeConfig.width(3); // ~3% of width
     final itemWidth =
-        (size.width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
-    final itemHeight = itemWidth * 1.14;
+        (width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+    final itemHeight =
+        itemWidth *
+        (width < 600
+            ? 1.1 // mobile
+            : width > 600
+            ? 0.85 // tablet
+            : 0.95); // desktop
     final aspectRatio = itemWidth / itemHeight;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: mentors?.length,
+      itemCount: mentors?.length ?? 0,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: spacing,
+        mainAxisSpacing: spacing,
         childAspectRatio: aspectRatio,
       ),
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
-        final url = m?.profilePicUrl?.trim();
+        if (m == null) return const SizedBox();
+        final url = m.profilePicUrl?.trim() ?? "";
+
         return GestureDetector(
-          onTap: () => onTapMentor(m!),
+          onTap: () => onTapMentor(m),
           child: _MentorCard(
-            name: m?.name ?? '',
-            designation: m?.bio ?? '',
-            collegeName: m?.college?.name ?? '',
-            image: url ?? "",
-            rating: (m?.ratingsReceivedCount ?? 0).toDouble(),
-            ratingCount: m?.ratingsReceivedCount ?? 0,
-            coinsPerMinute: m?.costPerMinute ?? "",
+            name: m.name ?? '',
+            designation: m.bio ?? '',
+            collegeName: m.college?.name ?? '',
+            image: url,
+            rating: (m.ratingsReceivedCount ?? 0).toDouble(),
+            ratingCount: m.ratingsReceivedCount ?? 0,
+            coinsPerMinute: m.costPerMinute ?? "",
           ),
         );
       },
@@ -61,12 +85,30 @@ class MentorGridCampus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final crossAxisCount = 2;
-    final spacing = 16.0;
+    final width = SizeConfig.screenWidth;
+    int crossAxisCount;
+    if (width < 600) {
+      crossAxisCount = 2;
+    } else if (width > 600) {
+      crossAxisCount = 3;
+    } else {
+      crossAxisCount = 4;
+    }
+    // Adaptive spacing
+    final spacing = width * 0.03; // 3% of screen width
+    final horizontalPadding = width * 0.04;
     final itemWidth =
-        (size.width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
-    final itemHeight = itemWidth * 1.132;
+        (width - ((crossAxisCount + 1) * spacing) - (2 * horizontalPadding)) /
+        crossAxisCount;
+
+    final itemHeight =
+        itemWidth *
+        (width < 600
+            ? 1.15
+            : width < 1024
+            ? 1.08
+            : 0.65);
+
     final aspectRatio = itemWidth / itemHeight;
 
     return GridView.builder(
@@ -239,6 +281,149 @@ class _MentorCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class MentorGridCampusShimmer extends StatefulWidget {
+  const MentorGridCampusShimmer({super.key});
+
+  @override
+  State<MentorGridCampusShimmer> createState() =>
+      _MentorGridCampusShimmerState();
+}
+
+class _MentorGridCampusShimmerState extends State<MentorGridCampusShimmer> {
+  @override
+  Widget build(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+
+    int crossAxisCount;
+    if (width >= 1000) {
+      crossAxisCount = 4; // Desktop
+    } else if (width >= 700) {
+      crossAxisCount = 3; // Tablet
+    } else {
+      crossAxisCount = 2; // Mobile
+    }
+
+    final spacing = SizeConfig.width(3);
+    final itemWidth =
+        (width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+    final itemHeight =
+        itemWidth *
+        (width < 600
+            ? 1.04 // mobile
+            : width < 1024
+            ? 0.95 // tablet
+            : 0.85); // desktop
+    final aspectRatio = itemWidth / itemHeight;
+
+    // Let's show 6 shimmer cards for smooth UX
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Row(
+          spacing: 10,
+          children: [
+            shimmerCircle(48, context),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerText(itemWidth * 0.6, 14, context),
+                SizedBox(height: 6),
+                shimmerText(itemWidth * 0.2, 14, context), // name
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: Row(
+              spacing: 5,
+              children: [
+                shimmerRectangle(22, context),
+                shimmerRectangle(22, context),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: SizeConfig.height(25),
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 2,
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    return shimmerContainer(
+                      SizeConfig.screenWidth,
+                      160,
+                      context,
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 8),
+              shimmerText(itemWidth * 0.6, 14, context), // name
+              SizedBox(height: 8),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 6,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: spacing,
+                  mainAxisSpacing: spacing,
+                  childAspectRatio: aspectRatio,
+                ),
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          offset: const Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        shimmerCircle(itemWidth * 0.4, context),
+                        const SizedBox(height: 12),
+                        shimmerText(itemWidth * 0.6, 14, context), // name
+                        const SizedBox(height: 8),
+                        shimmerText(itemWidth * 0.4, 12, context), // bio
+                        const SizedBox(height: 8),
+                        shimmerText(
+                          itemWidth * 0.5,
+                          12,
+                          context,
+                        ), // college name
+                        const SizedBox(height: 12),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

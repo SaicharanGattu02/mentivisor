@@ -12,6 +12,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Components/CommonLoader.dart';
+import '../../Components/Shimmers.dart';
 import '../../Mentor/presentation/widgets/AppDrawer.dart';
 import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
@@ -130,7 +131,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       builder: (context, snapshot) {
         final isGuest = snapshot.data ?? false;
         return _isLoading
-            ? Scaffold(body: const Center(child: DottedProgressWithLogo()))
+            ? Scaffold(body: MentorGridCampusShimmer())
             : Scaffold(
                 drawerEnableOpenDragGesture: !isGuest,
                 key: _scaffoldKey,
@@ -607,12 +608,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                 body: SafeArea(
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.fromLTRB(16.0,10,16,0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           BlocBuilder<Getbannerscubit, Getbannersstate>(
                             builder: (context, state) {
+
                               if (state is GetbannersStateLoaded) {
                                 final banners = state.getbannerModel.data ?? [];
                                 return CarouselSlider.builder(
@@ -783,6 +785,72 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           if (isGuest) ...[
                             BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
                               builder: (context, state) {
+                                if(state is GuestMentorsLoading){
+                                  int crossAxisCount;
+                                  if (SizeConfig.screenWidth >= 1000) {
+                                    crossAxisCount = 4; // Desktop
+                                  } else if (SizeConfig.screenWidth >= 700) {
+                                    crossAxisCount = 3; // Tablet
+                                  } else {
+                                    crossAxisCount = 2; // Mobile
+                                  }
+
+                                  final spacing = SizeConfig.width(3);
+                                  final itemWidth =
+                                      (SizeConfig.screenWidth - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+                                  final itemHeight =
+                                      itemWidth *
+                                          (SizeConfig.screenWidth < 600
+                                              ? 1.04 // mobile
+                                              : SizeConfig.screenWidth < 1024
+                                              ? 0.95 // tablet
+                                              : 0.85); // desktop
+                                  final aspectRatio = itemWidth / itemHeight;
+                                  return  GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: 6,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: spacing,
+                                      mainAxisSpacing: spacing,
+                                      childAspectRatio: aspectRatio,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.05),
+                                              blurRadius: 4,
+                                              offset: const Offset(2, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            shimmerCircle(itemWidth * 0.4, context),
+                                            const SizedBox(height: 12),
+                                            shimmerText(itemWidth * 0.6, 14, context), // name
+                                            const SizedBox(height: 8),
+                                            shimmerText(itemWidth * 0.4, 12, context), // bio
+                                            const SizedBox(height: 8),
+                                            shimmerText(
+                                              itemWidth * 0.5,
+                                              12,
+                                              context,
+                                            ), // college name
+                                            const SizedBox(height: 12),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
                                 if (state is GuestMentorsLoaded) {
                                   final guestMentorlist =
                                       state.guestMentorsModel.data?.mentors ??
@@ -819,14 +887,73 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               CampusMentorListState
                             >(
                               builder: (context, state) {
-                                if (state is CampusMentorListStateLoading) {
-                                  return SizedBox(
-                                    height: SizeConfig.screenWidth * 0.6,
-                                    child: Center(
-                                      child: DottedProgressWithLogo(),
+                                if(state is CampusMentorListStateLoading){
+                                  int crossAxisCount;
+                                  if (SizeConfig.screenWidth >= 1000) {
+                                    crossAxisCount = 4; // Desktop
+                                  } else if (SizeConfig.screenWidth >= 700) {
+                                    crossAxisCount = 3; // Tablet
+                                  } else {
+                                    crossAxisCount = 2; // Mobile
+                                  }
+
+                                  final spacing = SizeConfig.width(3);
+                                  final itemWidth =
+                                      (SizeConfig.screenWidth - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+                                  final itemHeight =
+                                      itemWidth *
+                                          (SizeConfig.screenWidth < 600
+                                              ? 1.04 // mobile
+                                              : SizeConfig.screenWidth < 1024
+                                              ? 0.95 // tablet
+                                              : 0.85); // desktop
+                                  final aspectRatio = itemWidth / itemHeight;
+                                  return  GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: 6,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: spacing,
+                                      mainAxisSpacing: spacing,
+                                      childAspectRatio: aspectRatio,
                                     ),
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.05),
+                                              blurRadius: 4,
+                                              offset: const Offset(2, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            shimmerCircle(itemWidth * 0.4, context),
+                                            const SizedBox(height: 12),
+                                            shimmerText(itemWidth * 0.6, 14, context), // name
+                                            const SizedBox(height: 8),
+                                            shimmerText(itemWidth * 0.4, 12, context), // bio
+                                            const SizedBox(height: 8),
+                                            shimmerText(
+                                              itemWidth * 0.5,
+                                              12,
+                                              context,
+                                            ), // college name
+                                            const SizedBox(height: 12),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   );
-                                } else if (state
+                                }
+                                 if (state
                                     is CampusMentorListStateLoaded) {
                                   final campusMentorlist =
                                       state

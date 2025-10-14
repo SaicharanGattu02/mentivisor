@@ -28,6 +28,7 @@ import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/Mentor/presentation/MentorInfoScreen.dart';
 import 'package:mentivisor/Mentor/presentation/PendingSubExpertiseScreen.dart';
 import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import '../ChatScreen.dart';
 import '../Components/NoInternet.dart';
 import '../Mentee/Models/MentorProfileModel.dart';
@@ -85,14 +86,17 @@ import '../services/AuthService.dart';
 import '../utils/CrashlyticsNavObserver.dart';
 
 final GoRouter appRouter = GoRouter(
+
   initialLocation: '/',
-  debugLogDiagnostics: false,
-  observers: [CrashlyticsNavObserver()],
-  overridePlatformDefaultLocation: false,
+  // debugLogDiagnostics: false,
+  // observers: [CrashlyticsNavObserver()],
+  // overridePlatformDefaultLocation: false,
   routes: [
+
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
+        AppLogger.info("hiii");
         return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
