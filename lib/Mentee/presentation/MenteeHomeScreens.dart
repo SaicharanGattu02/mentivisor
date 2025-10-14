@@ -608,13 +608,12 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                 body: SafeArea(
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0,10,16,0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 10, 16, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           BlocBuilder<Getbannerscubit, Getbannersstate>(
                             builder: (context, state) {
-
                               if (state is GetbannersStateLoaded) {
                                 final banners = state.getbannerModel.data ?? [];
                                 return CarouselSlider.builder(
@@ -785,7 +784,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           if (isGuest) ...[
                             BlocBuilder<GuestMentorsCubit, GuestMentorsState>(
                               builder: (context, state) {
-                                if(state is GuestMentorsLoading){
+                                if (state is GuestMentorsLoading) {
                                   int crossAxisCount;
                                   if (SizeConfig.screenWidth >= 1000) {
                                     crossAxisCount = 4; // Desktop
@@ -797,47 +796,67 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
                                   final spacing = SizeConfig.width(3);
                                   final itemWidth =
-                                      (SizeConfig.screenWidth - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+                                      (SizeConfig.screenWidth -
+                                          ((crossAxisCount + 1) * spacing)) /
+                                      crossAxisCount;
                                   final itemHeight =
                                       itemWidth *
-                                          (SizeConfig.screenWidth < 600
-                                              ? 1.04 // mobile
-                                              : SizeConfig.screenWidth < 1024
-                                              ? 0.95 // tablet
-                                              : 0.85); // desktop
+                                      (SizeConfig.screenWidth < 600
+                                          ? 1.04 // mobile
+                                          : SizeConfig.screenWidth < 1024
+                                          ? 0.95 // tablet
+                                          : 0.85); // desktop
                                   final aspectRatio = itemWidth / itemHeight;
-                                  return  GridView.builder(
+                                  return GridView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: 6,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: spacing,
-                                      mainAxisSpacing: spacing,
-                                      childAspectRatio: aspectRatio,
-                                    ),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: crossAxisCount,
+                                          crossAxisSpacing: spacing,
+                                          mainAxisSpacing: spacing,
+                                          childAspectRatio: aspectRatio,
+                                        ),
                                     itemBuilder: (context, index) {
                                       return Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.05),
+                                              color: Colors.black.withOpacity(
+                                                0.05,
+                                              ),
                                               blurRadius: 4,
                                               offset: const Offset(2, 2),
                                             ),
                                           ],
                                         ),
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            shimmerCircle(itemWidth * 0.4, context),
+                                            shimmerCircle(
+                                              itemWidth * 0.4,
+                                              context,
+                                            ),
                                             const SizedBox(height: 12),
-                                            shimmerText(itemWidth * 0.6, 14, context), // name
+                                            shimmerText(
+                                              itemWidth * 0.6,
+                                              14,
+                                              context,
+                                            ), // name
                                             const SizedBox(height: 8),
-                                            shimmerText(itemWidth * 0.4, 12, context), // bio
+                                            shimmerText(
+                                              itemWidth * 0.4,
+                                              12,
+                                              context,
+                                            ), // bio
                                             const SizedBox(height: 8),
                                             shimmerText(
                                               itemWidth * 0.5,
@@ -887,7 +906,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               CampusMentorListState
                             >(
                               builder: (context, state) {
-                                if(state is CampusMentorListStateLoading){
+                                if (state is CampusMentorListStateLoading) {
                                   int crossAxisCount;
                                   if (SizeConfig.screenWidth >= 1000) {
                                     crossAxisCount = 4; // Desktop
@@ -899,47 +918,67 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
                                   final spacing = SizeConfig.width(3);
                                   final itemWidth =
-                                      (SizeConfig.screenWidth - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
+                                      (SizeConfig.screenWidth -
+                                          ((crossAxisCount + 1) * spacing)) /
+                                      crossAxisCount;
                                   final itemHeight =
                                       itemWidth *
-                                          (SizeConfig.screenWidth < 600
-                                              ? 1.04 // mobile
-                                              : SizeConfig.screenWidth < 1024
-                                              ? 0.95 // tablet
-                                              : 0.85); // desktop
+                                      (SizeConfig.screenWidth < 600
+                                          ? 1.04 // mobile
+                                          : SizeConfig.screenWidth < 1024
+                                          ? 0.95 // tablet
+                                          : 0.85); // desktop
                                   final aspectRatio = itemWidth / itemHeight;
-                                  return  GridView.builder(
+                                  return GridView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: 6,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: spacing,
-                                      mainAxisSpacing: spacing,
-                                      childAspectRatio: aspectRatio,
-                                    ),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: crossAxisCount,
+                                          crossAxisSpacing: spacing,
+                                          mainAxisSpacing: spacing,
+                                          childAspectRatio: aspectRatio,
+                                        ),
                                     itemBuilder: (context, index) {
                                       return Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.05),
+                                              color: Colors.black.withOpacity(
+                                                0.05,
+                                              ),
                                               blurRadius: 4,
                                               offset: const Offset(2, 2),
                                             ),
                                           ],
                                         ),
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            shimmerCircle(itemWidth * 0.4, context),
+                                            shimmerCircle(
+                                              itemWidth * 0.4,
+                                              context,
+                                            ),
                                             const SizedBox(height: 12),
-                                            shimmerText(itemWidth * 0.6, 14, context), // name
+                                            shimmerText(
+                                              itemWidth * 0.6,
+                                              14,
+                                              context,
+                                            ), // name
                                             const SizedBox(height: 8),
-                                            shimmerText(itemWidth * 0.4, 12, context), // bio
+                                            shimmerText(
+                                              itemWidth * 0.4,
+                                              12,
+                                              context,
+                                            ), // bio
                                             const SizedBox(height: 8),
                                             shimmerText(
                                               itemWidth * 0.5,
@@ -953,8 +992,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     },
                                   );
                                 }
-                                 if (state
-                                    is CampusMentorListStateLoaded) {
+                                if (state is CampusMentorListStateLoaded) {
                                   final campusMentorlist =
                                       state
                                           .campusMentorListModel

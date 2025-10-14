@@ -1,7 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/utils/constants.dart';
 import '../../Components/CommonLoader.dart';
+import '../../utils/spinkittsLoader.dart';
+import '../data/Cubits/Coupons/CategoryCouponsCubit.dart';
+import '../data/Cubits/Coupons/CouponsCategoryStates.dart';
 import '../data/Cubits/MentorEarnings/MentorEarningsCubit.dart';
 import '../data/Cubits/MentorEarnings/MentorEarningsStates.dart';
 
@@ -17,6 +22,7 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
   void initState() {
     super.initState();
     context.read<MentorEarningsCubit>().getMentorEarnings();
+    context.read<CategoryCouponscubit>().getCouponsCategory();
   }
 
   @override
@@ -100,35 +106,7 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                         ],
                       ),
 
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            '= with out commission ₹2800',
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff575757),
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Text(
-                            '+ 15% from last month',
-                            style: TextStyle(
-                              fontFamily: 'segeo',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff575757),
-                            ),
-                          ),
-                        ],
-                      ),
-
                       const SizedBox(height: 20),
-
-                      // ===== Available Coupons =====
                       const Text(
                         'Available Coupons',
                         style: TextStyle(
@@ -139,32 +117,167 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // 2x2 grid of category cards
-                      GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 1.08,
-                        children: const [
-                          _CategoryCard(
-                            title: 'Shopping',
-                            asset: 'assets/images/bagsimg.png',
-                          ),
-                          _CategoryCard(
-                            title: 'Restaurant',
-                            asset: 'assets/images/personimg.png',
-                          ),
-                          _CategoryCard(
-                            title: 'Grocery',
-                            asset: 'assets/images/grosary.png',
-                          ),
-                          _CategoryCard(
-                            title: 'Travel',
-                            asset: 'assets/images/travelscreen.png',
-                          ),
-                        ],
+                      BlocBuilder<CategoryCouponscubit, CouponsCategoryStates>(
+                        builder: (context, state) {
+                          if (state is CouponsCategoryLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (state is CouponsCategoryFailure) {
+                            return Center(child: Text(state.error));
+                          } else if (state is CouponsCategoryLoaded ||
+                              state is CouponsCategoryLoadingMore) {
+                            final model = (state is CouponsCategoryLoaded)
+                                ? state.couponCategoryModel
+                                : (state as CouponsCategoryLoadingMore)
+                                      .couponCategoryModel;
+                            final categories =
+                                model.couponsCategory?.data ?? [];
+
+                            if (categories.isEmpty) {
+                              return const Center(
+                                child: Text("No categories available."),
+                              );
+                            }
+
+                            return NotificationListener<ScrollNotification>(
+                              onNotification: (scrollInfo) {
+                                if (scrollInfo.metrics.pixels >=
+                                    scrollInfo.metrics.maxScrollExtent * 0.9) {
+                                  if (state is CouponsCategoryLoaded &&
+                                      state.hasNextPage) {
+                                    context
+                                        .read<CategoryCouponscubit>()
+                                        .fetchMoreCouponsCategory();
+                                  }
+                                }
+                                return false;
+                              },
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                MediaQuery.of(
+                                                      context,
+                                                    ).size.width <
+                                                    600
+                                                ? 2
+                                                : 3,
+                                            mainAxisSpacing: 12,
+                                            crossAxisSpacing: 12,
+                                            childAspectRatio: 1.08,
+                                          ),
+                                      itemCount: categories.length,
+                                      itemBuilder: (context, index) {
+                                        final item = categories[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            context.push(
+                                              '/coupon_list?categoryId=${item.id??""}',
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                              12,
+                                              12,
+                                              12,
+                                              10,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color(0x0F0E1240),
+                                                  blurRadius: 14,
+                                                  offset: Offset(0, 6),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  child: CachedNetworkImage(
+                                                    width: 120,
+                                                    height: 120,
+                                                    imageUrl: item.image ?? "",
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => SizedBox(
+                                                          width: 120,
+                                                          height: 120,
+                                                          child: Center(
+                                                            child: spinkits
+                                                                .getSpinningLinespinkit(),
+                                                          ),
+                                                        ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => Container(
+                                                          width: 120,
+                                                          height: 120,
+                                                          color: const Color(
+                                                            0xffF8FAFE,
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.broken_image,
+                                                            size: 40,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  capitalize(item.name ?? ""),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontFamily: 'segeo',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF555555),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    if (state is CouponsCategoryLoadingMore)
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 20,
+                                        ),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.8,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -249,55 +362,6 @@ class _StatCard extends StatelessWidget {
           const SizedBox(width: 6),
           trailing,
         ],
-      ),
-    );
-  }
-}
-
-/// Category tile used in the grid
-class _CategoryCard extends StatelessWidget {
-  final String title;
-  final String asset;
-  const _CategoryCard({required this.title, required this.asset});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.push('/coupon_details');
-      },
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0F0E1240),
-              blurRadius: 14,
-              offset: Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(child: Image.asset(asset, fit: BoxFit.contain)),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontFamily: 'segeo',
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF222222),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

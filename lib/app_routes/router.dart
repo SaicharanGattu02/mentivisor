@@ -64,6 +64,7 @@ import '../Mentee/presentation/studyzone/ResourceDetailScreen.dart';
 import '../Mentor/presentation/CoinHistoryScreen.dart';
 import '../Mentor/presentation/CouponCard.dart';
 import '../Mentor/presentation/CouponCongratsScreen.dart';
+import '../Mentor/presentation/CouponList.dart';
 import '../Mentor/presentation/CouponsHomeScreen.dart';
 import '../Mentor/presentation/ExpertiseScreen.dart';
 import '../Mentor/presentation/MenteeListScreen.dart';
@@ -86,17 +87,14 @@ import '../services/AuthService.dart';
 import '../utils/CrashlyticsNavObserver.dart';
 
 final GoRouter appRouter = GoRouter(
-
   initialLocation: '/',
   // debugLogDiagnostics: false,
   // observers: [CrashlyticsNavObserver()],
   // overridePlatformDefaultLocation: false,
   routes: [
-
     GoRoute(
       path: '/',
       pageBuilder: (context, state) {
-        AppLogger.info("hiii");
         return buildSlideTransitionPage(SplashScreen(), state);
       },
     ),
@@ -684,8 +682,23 @@ final GoRouter appRouter = GoRouter(
 
     GoRoute(
       path: '/coupon_details',
-      pageBuilder: (context, state) =>
-          buildSlideTransitionPage(CouponDetailsScreen(), state),
+      pageBuilder: (context, state) {
+        final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+        return buildSlideTransitionPage(
+          CouponDetailsScreen(categoryId: categoryId),
+          state,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/coupon_list',
+      pageBuilder: (context, state) {
+        final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+        return buildSlideTransitionPage(
+          CouponsList(categoryId: categoryId),
+          state,
+        );
+      },
     ),
 
     GoRoute(

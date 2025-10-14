@@ -8,6 +8,9 @@ import '../../Mentee/Models/CommentsModel.dart';
 import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/AvailableSlotsModel.dart';
+import '../Models/CouponCategoryModel.dart';
+import '../Models/CouponDetailsModel.dart';
+import '../Models/CouponListModel.dart';
 import '../Models/MentorCoinHistoryModel.dart';
 import '../Models/ExpertisesModel.dart';
 import '../Models/FeedbackModel.dart';
@@ -61,6 +64,9 @@ abstract class MentorRemoteDataSource {
   );
   Future<SuccessModel?> sessionCompleted(int sessionId);
   Future<MentorEarningsModel?> mentorEarnings();
+  Future<CouponCategoryModel?> couponsCategory(int page);
+  Future<CouponListModel?> couponList(String categoryId,int page);
+  Future<CouponDetailsModel?> couponDetails(String couponId);
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -355,7 +361,9 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   @override
   Future<MentorinfoResponseModel?> mentorinfo(String role) async {
     try {
-      Response res = await ApiClient.get("${MentorEndpointsUrls.mentorinfo}?role=${role}");
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.mentorinfo}?role=${role}",
+      );
       AppLogger.log('get MentorInfo: ${res.data}');
       return MentorinfoResponseModel.fromJson(res.data);
     } catch (e) {
@@ -367,11 +375,55 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   @override
   Future<MentorEarningsModel?> mentorEarnings() async {
     try {
-      Response res = await ApiClient.get("${MentorEndpointsUrls.mentor_earnings}");
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.mentor_earnings}",
+      );
       AppLogger.log('get Mentor Earnings: ${res.data}');
       return MentorEarningsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('get Mentor Earnings:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<CouponCategoryModel?> couponsCategory(int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.coupon_categories}?page=${page}",
+      );
+      AppLogger.log('get coupons Category: ${res.data}');
+      return CouponCategoryModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get coupons Category:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<CouponListModel?> couponList(String categoryId,int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.coupon_list}/${categoryId}?page=${page}",
+      );
+      AppLogger.log('get coupon List: ${res.data}');
+      return CouponListModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get coupons List:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<CouponDetailsModel?> couponDetails(String categoryId) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.coupon_details}/${categoryId}",
+      );
+      AppLogger.log('get coupon Details: ${res.data}');
+      return CouponDetailsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get coupons Details:${e}');
       return null;
     }
   }

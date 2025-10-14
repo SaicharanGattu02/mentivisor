@@ -1,10 +1,12 @@
 import 'package:mentivisor/Mentor/Models/SessionsModel.dart';
 import 'package:mentivisor/Mentor/data/MentorRemoteDataSource.dart';
 
+import '../../../Models/CouponCategoryModel.dart';
+import '../../../Models/CouponListModel.dart';
 import '../../../Models/MentorEarningsModel.dart';
 
 abstract class MentorEarningsRepo {
-  Future<MentorEarningsModel?> getMentorEarnings( );
+  Future<MentorEarningsModel?> getMentorEarnings();
 }
 
 class MentorEarningsRepoImpl implements MentorEarningsRepo {
@@ -12,7 +14,7 @@ class MentorEarningsRepoImpl implements MentorEarningsRepo {
   MentorEarningsRepoImpl({required this.mentorRemoteDataSource});
 
   @override
-  Future<MentorEarningsModel?> getMentorEarnings( ) async {
+  Future<MentorEarningsModel?> getMentorEarnings() async {
     return await mentorRemoteDataSource.mentorEarnings();
   }
 }

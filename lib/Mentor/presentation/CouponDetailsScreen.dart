@@ -1,18 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentor/data/Cubits/CouponsDetails/CouponsDetailsStates.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
-const TextStyle buttonTextStyle = TextStyle(
-  fontFamily: 'segeo',
-  fontSize: 14,
-  fontWeight: FontWeight.w600,
-  letterSpacing: 0.2,
-);
+import '../data/Cubits/CouponsDetails/CouponsDetailsCubit.dart';
 
-class CouponDetailsScreen extends StatelessWidget {
-  const CouponDetailsScreen({super.key});
+class CouponDetailsScreen extends StatefulWidget {
+  final String categoryId;
+  const CouponDetailsScreen({super.key, required this.categoryId});
 
+  @override
+  State<CouponDetailsScreen> createState() => _CouponDetailsScreenState();
+}
+
+class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
   void _showConfirmDialog(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -55,113 +61,136 @@ class CouponDetailsScreen extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    AppLogger.info("categoryId:${widget.categoryId}");
+    context.read<CouponsDetailCubit>().fetchCouponsDetails(widget.categoryId);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(title: 'Shopping Coupons', actions: []),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF6F2FF),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/images/shoppingimgbannerimg.png',
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(height: 14),
-            // logo + title row
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // replace with your logo asset
-                Image.asset(
-                  'assets/images/gmailimg.png',
-                  width: 28,
-                  height: 20,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'Myntra',
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+      body: BlocBuilder<CouponsDetailCubit, CouponsDetailsStates>(
+        builder: (context, state) {
+          if (state is CouponsDetailsLoading) {
+            return Center(child: DottedProgressWithLogo());
+          } else if (state is CouponsDetailsLoaded) {
+            final couponsDetails=state.couponDetailsModel.data;
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF6F2FF),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        couponsDetails?.image??"",
+                        height: 140,
+                        width: SizeConfig.screenWidth,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 14),
+                  // logo + title row
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/gmailimg.png',
+                        width: 28,
+                        height: 20,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Myntra',
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
 
-            const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-            // description text - left aligned and with softer color
-            const Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-              "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
-              "when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontFamily: 'segeo',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
-                color: Color(0xFF666666),
+                  // description text - left aligned and with softer color
+                  const Text(
+                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
+                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                      color: Color(0xFF666666),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  Row(
+                    spacing: 12,
+                    children: [
+                      Expanded(
+                        child: DashedOutlinedButton(
+                          height: 32,
+                          radius: 24,
+                          bgColor: Color(0xFFFFF6CF),
+                          borderColor: Color(0xFF999999),
+                          textColor: Color(0xFF333333),
+                          text: 'Worth of ₹ 500',
+                          textStyle: TextStyle(fontSize: 12),
+                          onTap: () {
+                            // your tap handler
+                          },
+                        ),
+                      ),
+
+                      Expanded(
+                        child: DashedOutlinedButton(
+                          height: 32,
+                          radius: 24,
+                          bgColor: const Color(0xFFF5F5F5),
+                          borderColor: const Color(0xFF999999),
+                          textColor: const Color(0xFF333333),
+                          text: 'For 1000 Coins',
+                          textStyle: TextStyle(fontSize: 12),
+                          onTap: () {
+                            // your tap handler
+                          },
+                        ),
+                      ),
+
+                      Expanded(
+                        child: CustomAppButton1(
+                          height: 32,
+                          text: "Buy Now",
+                          onPlusTap: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-
-            const SizedBox(height: 16),
-            Row(
-              spacing: 12,
-              children: [
-                Expanded(
-                  child: DashedOutlinedButton(
-                    height: 32,
-                    radius: 24,
-                    bgColor: Color(0xFFFFF6CF),
-                    borderColor: Color(0xFF999999),
-                    textColor: Color(0xFF333333),
-                    text: 'Worth of ₹ 500',textStyle: TextStyle(fontSize: 12),
-                    onTap: () {
-                      // your tap handler
-                    },
-                  ),
-                ),
-
-                Expanded(
-                  child: DashedOutlinedButton(
-                    height: 32,
-                    radius: 24,
-                    bgColor: const Color(0xFFF5F5F5),
-                    borderColor: const Color(0xFF999999),
-                    textColor: const Color(0xFF333333),
-                    text: 'For 1000 Coins',textStyle: TextStyle(fontSize: 12),
-                    onTap: () {
-                      // your tap handler
-                    },
-                  ),
-                ),
-
-                Expanded(
-                  child: CustomAppButton1(height: 32,text: "Buy Now", onPlusTap: (){
-
-                  }),
-                ),
-              ],
-            )
-          ],
-        ),
+            );
+          } else if (state is CouponsDetailsFailure) {
+            return Text(state.error);
+          } else {
+            return Text("No Data");
+          }
+        },
       ),
     );
   }

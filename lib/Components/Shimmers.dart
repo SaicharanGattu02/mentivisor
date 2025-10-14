@@ -5,7 +5,9 @@ FadeShimmer_box_elite(height, width, radius) {
   return Container(
     margin: EdgeInsets.all(5),
     decoration: BoxDecoration(
-        color: Color(0xFF3D3D3D), borderRadius: BorderRadius.circular(radius)),
+      color: Color(0xFF3D3D3D),
+      borderRadius: BorderRadius.circular(radius),
+    ),
     height: height,
     width: width,
   );
@@ -15,7 +17,9 @@ FadeShimmer_box_porter(height, width, radius) {
   return Container(
     margin: EdgeInsets.all(5),
     decoration: BoxDecoration(
-        color: Color(0xFF959595), borderRadius: BorderRadius.circular(radius)),
+      color: Color(0xFF959595),
+      borderRadius: BorderRadius.circular(radius),
+    ),
     height: height,
     width: width,
   );
@@ -32,10 +36,7 @@ shimmerCircle(double size, BuildContext context) {
     child: Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
     ),
   );
 }
@@ -64,17 +65,22 @@ shimmerDivider(double height, double width, BuildContext context) {
   final baseColor = Colors.grey[300]!;
   final highlightColor = Colors.grey[100]!;
   return Shimmer.fromColors(
-      child: Container(
-
-          height: height,
-          width: width,
-          decoration: BoxDecoration(color: Colors.white)),
-      baseColor: baseColor,
-      highlightColor: highlightColor);
+    child: Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(color: Colors.white),
+    ),
+    baseColor: baseColor,
+    highlightColor: highlightColor,
+  );
 }
 
-shimmerContainer(double width, double height, BuildContext context,
-    {bool isButton = false}) {
+shimmerContainer(
+  double width,
+  double height,
+  BuildContext context, {
+  bool isButton = false,
+}) {
   // Light mode colors
   final baseColor = Colors.grey[300]!;
   final highlightColor = Colors.grey[100]!;
@@ -89,8 +95,9 @@ shimmerContainer(double width, double height, BuildContext context,
         color: isButton ? Colors.grey : Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
       ),
-      child:
-      isButton ? Center(child: shimmerText(80, 18, context)) : SizedBox(),
+      child: isButton
+          ? Center(child: shimmerText(80, 18, context))
+          : SizedBox(),
     ),
   );
 }
@@ -107,7 +114,9 @@ shimmerText(double width, double height, BuildContext context) {
       width: width,
       height: height,
       decoration: BoxDecoration(
-          color: Color(0xffE6E8EB), borderRadius: BorderRadius.circular(18)),
+        color: Color(0xffE6E8EB),
+        borderRadius: BorderRadius.circular(18),
+      ),
     ),
   );
 }
@@ -123,7 +132,9 @@ shimmerLinearProgress(double height, BuildContext context) {
     child: Container(
       height: height,
       decoration: BoxDecoration(
-          color: Color(0xffE6E8EB), borderRadius: BorderRadius.circular(18)),
+        color: Color(0xffE6E8EB),
+        borderRadius: BorderRadius.circular(18),
+      ),
     ),
   );
 }

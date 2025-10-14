@@ -431,7 +431,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                             },
                             child: NotificationListener<UserScrollNotification>(
                               onNotification: (notification) {
-                                // Hide when scrolling down, show when scrolling up
                                 if (notification.direction ==
                                         ScrollDirection.reverse &&
                                     _fabVisible.value) {
@@ -447,7 +446,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                 slivers: [
                                   SliverPadding(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
+                                      horizontal: 4,
                                     ),
                                     sliver: SliverLayoutBuilder(
                                       builder: (context, constraints) {
@@ -459,7 +458,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             ? 1
                                             : 2;
                                         final aspectRatio =
-                                            (screenWidth / crossAxisCount) / (screenHeight * 0.16);
+                                            (screenWidth / crossAxisCount) / (screenHeight * 0.18);
 
                                         return SliverGrid(
                                           gridDelegate:

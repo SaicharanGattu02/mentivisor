@@ -121,6 +121,10 @@ import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
+import 'Mentor/data/Cubits/Coupons/CategoryCouponsCubit.dart';
+import 'Mentor/data/Cubits/Coupons/CouponCategoryRepository.dart';
+import 'Mentor/data/Cubits/CouponsDetails/CouponsDetailsCubit.dart';
+import 'Mentor/data/Cubits/CouponsList/CouponsListCubit.dart';
 import 'Mentor/data/Cubits/FeedBack/feedback_cubit.dart';
 import 'Mentor/data/Cubits/MentorEarnings/MentorEarningsCubit.dart';
 import 'Mentor/data/Cubits/MentorEarnings/MentorEarningsRepository.dart';
@@ -416,6 +420,11 @@ class StateInjector {
 
     RepositoryProvider<ReviewsRepo>(
       create: (context) => ReviewsRepoImpl(
+        mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<CouponsRepo>(
+      create: (context) => CouponsRepoImpl(
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
@@ -738,9 +747,19 @@ class StateInjector {
       create: (context) =>
           UploadFileInChatCubit(context.read<UploadFileInChatRepo>()),
     ),
+    BlocProvider<CategoryCouponscubit>(
+      create: (context) => CategoryCouponscubit(context.read<CouponsRepo>()),
+    ),
     BlocProvider<MentorEarningsCubit>(
       create: (context) =>
           MentorEarningsCubit(context.read<MentorEarningsRepo>()),
+    ),
+
+    BlocProvider<CouponsListCubit>(
+      create: (context) => CouponsListCubit(context.read<CouponsRepo>()),
+    ),
+    BlocProvider<CouponsDetailCubit>(
+      create: (context) => CouponsDetailCubit(context.read<CouponsRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

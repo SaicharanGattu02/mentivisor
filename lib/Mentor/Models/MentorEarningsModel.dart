@@ -24,7 +24,7 @@ class MentorEarningsModel {
 
 class Data {
   int? currentBalance;
-  String? thisMonthEarnings;
+  int? thisMonthEarnings;
 
   Data({this.currentBalance, this.thisMonthEarnings});
 
