@@ -13,6 +13,7 @@ import 'package:mentivisor/Mentee/Models/YearsModel.dart';
 import 'package:mentivisor/core/network/api_config.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import '../../Mentor/Models/CoinsAchievementModel.dart';
 import '../../Mentor/Models/FeedbackModel.dart';
 import '../Models/BecomeMentorSuccessModel.dart';
 import '../Models/CampusesModel.dart';
@@ -146,6 +147,7 @@ abstract class RemoteDataSource {
   Future<TagsModel?> getEccTagsSearch(String query);
   Future<TagsModel?> getEccTags();
   Future<TagsModel?> getStudyZoneTags();
+  Future<CoinsAchievementModel?> getcoinsAchievements(int page);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -368,6 +370,21 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       Response res = await ApiClient.get("${APIEndpointUrls.coins_pack}");
       AppLogger.log('get coins pack::${res.data}');
       return CoinsPackRespModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('coins pack::${e}');
+
+      return null;
+    }
+  }
+
+  @override
+  Future<CoinsAchievementModel?> getcoinsAchievements(int page) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.coins_achievements}",
+      );
+      AppLogger.log('get coins pack::${res.data}');
+      return CoinsAchievementModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('coins pack::${e}');
 

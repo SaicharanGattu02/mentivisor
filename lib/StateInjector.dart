@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mentivisor/Mentee/Models/DailySlotsModel.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
@@ -21,7 +20,6 @@ import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersup
 import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dart';
-import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
@@ -44,7 +42,6 @@ import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session
 import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatRepo.dart';
-import 'package:mentivisor/Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/WalletMoney/Walletmoney_Repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
@@ -77,6 +74,7 @@ import 'Mentee/data/cubits/BecomeMentor/become_mentor_cubit.dart';
 import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
+import 'Mentee/data/cubits/CoinsAchievements/CoinsAchievementCubit.dart';
 import 'Mentee/data/cubits/CommunityDetails/CommunityDetailsCubit.dart';
 import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
@@ -119,6 +117,7 @@ import 'Mentee/data/cubits/Tags/tags_repository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
+import 'Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/BuyCoupon/BuyCouponCubit.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
@@ -624,6 +623,10 @@ class StateInjector {
     BlocProvider<ForgotPassswordCubit>(
       create: (context) =>
           ForgotPassswordCubit(context.read<ForgotPassswordRepository>()),
+    ),
+    BlocProvider<CoinsAchievementCubit>(
+      create: (context) =>
+          CoinsAchievementCubit(context.read<WalletmoneyRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

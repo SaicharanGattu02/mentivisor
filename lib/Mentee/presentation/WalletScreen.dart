@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
+import 'package:mentivisor/Mentee/data/cubits/CoinsAchievements/CoinsAchievementCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/CoinsAchievements/CoinsAchievementState.dart';
 import 'package:mentivisor/utils/constants.dart';
 
 import '../../Components/CutomAppBar.dart';
@@ -358,39 +360,252 @@ class _WalletScreenState extends State<WalletScreen> {
                   ),
 
                   const SizedBox(height: 12),
-                  Expanded(
-                    child: BlocListener<WalletmoneyCubit, WalletmoneyState>(
-                      listener: (context, state) {
-                        if (state is WalletmoneyStateLoaded) {
-                          final wallet = state.walletResponseModel.data?.wallet;
+                  if (coinHistoryNotifier.value) ...[
+                    Expanded(
+                      child: BlocListener<WalletmoneyCubit, WalletmoneyState>(
+                        listener: (context, state) {
+                          if (state is WalletmoneyStateLoaded) {
+                            final wallet =
+                                state.walletResponseModel.data?.wallet;
 
-                          _currentBalence.value = _safeParse(
-                            wallet?.currentBalance,
-                          );
-                          _totelEarned.value = _safeParse(wallet?.totalEarned);
-                          _totelSpent.value = _safeParse(wallet?.totalSpent);
-                        }
-                      },
-                      child: BlocBuilder<WalletmoneyCubit, WalletmoneyState>(
+                            _currentBalence.value = _safeParse(
+                              wallet?.currentBalance,
+                            );
+                            _totelEarned.value = _safeParse(
+                              wallet?.totalEarned,
+                            );
+                            _totelSpent.value = _safeParse(wallet?.totalSpent);
+                          }
+                        },
+                        child: BlocBuilder<WalletmoneyCubit, WalletmoneyState>(
+                          builder: (context, state) {
+                            if (state is WalletmoneyStateLoading) {
+                              return CoinsHistoryShimmer();
+                            } else if (state is WalletmoneyStateLoaded ||
+                                state is WalletmoneyStateLoadingMore) {
+                              final walletModel =
+                                  (state is WalletmoneyStateLoaded)
+                                  ? (state as WalletmoneyStateLoaded)
+                                        .walletResponseModel
+                                  : (state as WalletmoneyStateLoadingMore)
+                                        .walletResponseModel;
+                              final coinsHistoryList =
+                                  walletModel
+                                      .data
+                                      ?.transactions
+                                      ?.transectionsData ??
+                                  [];
+
+                              if (coinsHistoryList.isEmpty) {
+                                return Column(
+                                  children: [
+                                    Center(
+                                      child: Image.asset(
+                                        "assets/nodata/no_data.png",
+                                        width: 200,
+                                      ),
+                                    ),
+                                    Text(
+                                      "No Coins History available",
+
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'segeo',
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+
+                              return NotificationListener<ScrollNotification>(
+                                onNotification: (scrollInfo) {
+                                  if (scrollInfo.metrics.pixels >=
+                                      scrollInfo.metrics.maxScrollExtent *
+                                          0.9) {
+                                    if (state is WalletmoneyStateLoaded &&
+                                        state.hasNextPage) {
+                                      if (coinHistoryNotifier.value == true) {
+                                        context
+                                            .read<WalletmoneyCubit>()
+                                            .fetchMoreWallet(0);
+                                      } else {
+                                        context
+                                            .read<WalletmoneyCubit>()
+                                            .fetchMoreWallet(1);
+                                      }
+                                    }
+                                  }
+                                  return false;
+                                },
+                                child: CustomScrollView(
+                                  slivers: [
+                                    SliverList(
+                                      delegate: SliverChildBuilderDelegate((
+                                        context,
+                                        index,
+                                      ) {
+                                        final historyItem =
+                                            coinsHistoryList[index];
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            vertical: 10,
+                                          ),
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xffFFFFFF),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xffF3E8FF),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        100,
+                                                      ),
+                                                ),
+                                                child: Image.asset(
+                                                  historyItem.type == "Debited"
+                                                      ? "assets/icons/VideoConference.png"
+                                                      : "assets/icons/CoinVertical.png",
+                                                  width: 20,
+                                                  height: 20,
+                                                  fit: BoxFit.cover,
+                                                  color: const Color(
+                                                    0xffA351EE,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      historyItem.activity ??
+                                                          'Unknown Activity',
+                                                      style: const TextStyle(
+                                                        color: Color(
+                                                          0xff555555,
+                                                        ),
+                                                        fontFamily: 'segeo',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      "on ${formatDate(historyItem.date ?? 'No Date')}",
+                                                      style: const TextStyle(
+                                                        color: Color(
+                                                          0xff666666,
+                                                        ),
+                                                        fontFamily: 'segeo',
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    historyItem.type ??
+                                                        'Unknown',
+                                                    style: const TextStyle(
+                                                      color: Color(0xff333333),
+                                                      fontFamily: 'segeo',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Row(
+                                                    children: [
+                                                      Image.asset(
+                                                        "assets/icons/Coins.png",
+                                                        width: 20,
+                                                        height: 20,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        historyItem.coins
+                                                                ?.toString() ??
+                                                            "0",
+                                                        style: const TextStyle(
+                                                          color: Color(
+                                                            0xff444444,
+                                                          ),
+                                                          fontFamily: 'segeo',
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }, childCount: coinsHistoryList.length),
+                                    ),
+                                    if (state is WalletmoneyStateLoadingMore)
+                                      const SliverToBoxAdapter(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(25.0),
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 0.8,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            } else if (state is WalletmoneyStateFailure) {
+                              return Center(child: Text(state.msg));
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    Expanded(
+                      child: BlocBuilder<CoinsAchievementCubit, CoinsAchievementState>(
                         builder: (context, state) {
-                          if (state is WalletmoneyStateLoading) {
+                          if (state is CoinsAchievementLoading) {
                             return CoinsHistoryShimmer();
-                          } else if (state is WalletmoneyStateLoaded ||
-                              state is WalletmoneyStateLoadingMore) {
-                            final walletModel =
-                                (state is WalletmoneyStateLoaded)
-                                ? (state as WalletmoneyStateLoaded)
-                                      .walletResponseModel
-                                : (state as WalletmoneyStateLoadingMore)
-                                      .walletResponseModel;
-                            final coinsHistoryList =
-                                walletModel
-                                    .data
-                                    ?.transactions
-                                    ?.transectionsData ??
-                                [];
+                          } else if (state is CoinsAchievementLoaded ||
+                              state is CoinsAchievementLoadingMore) {
+                            final coinsAchievements =
+                                (state is CoinsAchievementLoaded)
+                                ? state.coinsAchievementModel
+                                : (state as CoinsAchievementLoadingMore)
+                                      .coinsAchievementModel;
 
-                            if (coinsHistoryList.isEmpty) {
+                            final achievementsList =
+                                coinsAchievements.achievement?.data ?? [];
+
+                            if (achievementsList.isEmpty) {
                               return Column(
                                 children: [
                                   Center(
@@ -400,9 +615,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     ),
                                   ),
                                   Text(
-                                    coinHistoryNotifier.value
-                                        ? "No Coins History available"
-                                        : "No Achievements available",
+                                    "No Achievements available",
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontSize: 16,
@@ -418,17 +631,11 @@ class _WalletScreenState extends State<WalletScreen> {
                               onNotification: (scrollInfo) {
                                 if (scrollInfo.metrics.pixels >=
                                     scrollInfo.metrics.maxScrollExtent * 0.9) {
-                                  if (state is WalletmoneyStateLoaded &&
+                                  if (state is CoinsAchievementLoaded &&
                                       state.hasNextPage) {
-                                    if (coinHistoryNotifier.value == true) {
-                                      context
-                                          .read<WalletmoneyCubit>()
-                                          .fetchMoreWallet(0);
-                                    } else {
-                                      context
-                                          .read<WalletmoneyCubit>()
-                                          .fetchMoreWallet(1);
-                                    }
+                                    context
+                                        .read<CoinsAchievementCubit>()
+                                        .fetchMoreCoinsAchievements(0);
                                   }
                                 }
                                 return false;
@@ -440,8 +647,8 @@ class _WalletScreenState extends State<WalletScreen> {
                                       context,
                                       index,
                                     ) {
-                                      final historyItem =
-                                          coinsHistoryList[index];
+                                      final achievement =
+                                          achievementsList[index];
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
                                           vertical: 10,
@@ -463,9 +670,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                     BorderRadius.circular(100),
                                               ),
                                               child: Image.asset(
-                                                historyItem.type == "Debited"
-                                                    ? "assets/icons/VideoConference.png"
-                                                    : "assets/icons/CoinVertical.png",
+                                                "assets/icons/CoinVertical.png",
                                                 width: 20,
                                                 height: 20,
                                                 fit: BoxFit.cover,
@@ -479,8 +684,8 @@ class _WalletScreenState extends State<WalletScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    historyItem.activity ??
-                                                        'Unknown Activity',
+                                                    achievement.type ??
+                                                        'Unknown',
                                                     style: const TextStyle(
                                                       color: Color(0xff555555),
                                                       fontFamily: 'segeo',
@@ -491,7 +696,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    "on ${formatDate(historyItem.date ?? 'No Date')}",
+                                                    "From ${achievement.periodStartDate ?? '-'} to ${achievement.periodEndDate ?? '-'}",
                                                     style: const TextStyle(
                                                       color: Color(0xff666666),
                                                       fontFamily: 'segeo',
@@ -509,48 +714,22 @@ class _WalletScreenState extends State<WalletScreen> {
                                                   CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  historyItem.type ?? 'Unknown',
+                                                  "${achievement.coinsReceived ?? 0} Coins",
                                                   style: const TextStyle(
                                                     color: Color(0xff333333),
                                                     fontFamily: 'segeo',
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
                                                   ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Row(
-                                                  children: [
-                                                    Image.asset(
-                                                      "assets/icons/Coins.png",
-                                                      width: 20,
-                                                      height: 20,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      historyItem.coins
-                                                              ?.toString() ??
-                                                          "0",
-                                                      style: const TextStyle(
-                                                        color: Color(
-                                                          0xff444444,
-                                                        ),
-                                                        fontFamily: 'segeo',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                  ],
                                                 ),
                                               ],
                                             ),
                                           ],
                                         ),
                                       );
-                                    }, childCount: coinsHistoryList.length),
+                                    }, childCount: achievementsList.length),
                                   ),
-                                  if (state is WalletmoneyStateLoadingMore)
+                                  if (state is CoinsAchievementLoadingMore)
                                     const SliverToBoxAdapter(
                                       child: Padding(
                                         padding: EdgeInsets.all(25.0),
@@ -564,14 +743,14 @@ class _WalletScreenState extends State<WalletScreen> {
                                 ],
                               ),
                             );
-                          } else if (state is WalletmoneyStateFailure) {
+                          } else if (state is CoinsAchievementFailure) {
                             return Center(child: Text(state.msg));
                           }
                           return const SizedBox.shrink();
                         },
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -592,7 +771,7 @@ class CoinsHistoryShimmer extends StatelessWidget {
         /// 🔹 Shimmer List
         SliverList(
           delegate: SliverChildBuilderDelegate(
-                (context, index) {
+            (context, index) {
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 padding: const EdgeInsets.all(12),

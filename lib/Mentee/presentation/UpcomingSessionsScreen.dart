@@ -351,11 +351,9 @@ class UpcomingSessionsShimmer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             shimmerText(200, 18, context),
-                            const SizedBox(height: 8),
-
+                            SizedBox(height: 8),
                             shimmerText(150, 14, context),
-                            const SizedBox(height: 12),
-
+                            SizedBox(height: 12),
                             Wrap(
                               spacing: 12,
                               runSpacing: 8,

@@ -19,6 +19,7 @@ class APIEndpointUrls {
   static const String guestcommunitytags_wol =
       "${apiUrl}community-zone-tags-without-login";
   static const String wallet_money = "${apiUrl}users/my-wallet";
+
   /// Mentee
   static const String get_mentors = "${userUrl}mentors";
   static const String mentor_profile = "${userUrl}mentors";
@@ -28,8 +29,10 @@ class APIEndpointUrls {
   static const String study_zone_details = "${userUrl}/study-zones";
   static const String coins_pack = "${userUrl}/coin-packs";
   static const String community_zone_post = "${userUrl}/community-zone-post";
-  static const String community_zone_post_details = "${userUrl}/community-zone-post";
-  static const String study_zone_report_resource = "${userUrl}/study-zone-report";
+  static const String community_zone_post_details =
+      "${userUrl}/community-zone-post";
+  static const String study_zone_report_resource =
+      "${userUrl}/study-zone-report";
   static const String my_downloads = "${userUrl}/my-downloads";
   static const String add_ecc = "${userUrl}/add-ecc";
   static const String add_comment = "${userUrl}community/add-comment";
@@ -57,7 +60,8 @@ class APIEndpointUrls {
   static const String verify_paymenet = "${userUrl}razorpay/verify";
   static const String upcoming_session = "${userUrl}sessions/upcoming";
   static const String session_completed = "${userUrl}sessions/complete";
-  static const String completed_sessions_submit_review = "${userUrl}sessions/feedback";
+  static const String completed_sessions_submit_review =
+      "${userUrl}sessions/feedback";
   static const String sessions_report_submit = "${userUrl}session-report";
   static const String community_toggle_like = "${userUrl}community/toggle-like";
   static const String resource_download = "${userUrl}study-zone/download";
@@ -72,6 +76,7 @@ class APIEndpointUrls {
   static const String forgot_password = "${apiUrl}forget-password";
   static const String forgot_verify_otp = "${apiUrl}verify-otp";
   static const String resetPassword = "${apiUrl}reset-password";
+  static const String coins_achievements = "${apiUrl}achivements";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

@@ -7,7 +7,7 @@ class WalletmoneyCubit extends Cubit<WalletmoneyState> {
   final WalletmoneyRepository walletmoneyRepository;
 
   WalletmoneyCubit(this.walletmoneyRepository)
-      : super(WalletmoneyStateIntially());
+    : super(WalletmoneyStateIntially());
 
   WalletModel walletModel = WalletModel();
 
@@ -68,10 +68,7 @@ class WalletmoneyCubit extends Cubit<WalletmoneyState> {
           transactions: updatedTransactions,
         );
 
-        walletModel = WalletModel(
-          status: newData.status,
-          data: updatedData,
-        );
+        walletModel = WalletModel(status: newData.status, data: updatedData);
 
         _hasNextPage = newData.data?.transactions?.nextPageUrl != null;
         emit(WalletmoneyStateLoaded(walletModel, _hasNextPage));
