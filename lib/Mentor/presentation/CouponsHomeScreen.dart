@@ -29,40 +29,36 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
   Widget build(BuildContext context) {
     var height = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      body: BlocBuilder<MentorEarningsCubit, MentorEarningsStates>(
-        builder: (context, state) {
-          if (state is MentorEarningsLoaded) {
-            return Container(
-              height: height,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFFAF5FF),
-                    Color(0xFFF5F6FF),
-                    Color(0xFFEFF6FF),
-                  ],
+      body: Container(
+        height: height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Earnings',
+                  style: TextStyle(
+                    fontFamily: 'segeo',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF121212),
+                  ),
                 ),
-              ),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Earnings',
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF121212),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-                      Row(
+                BlocBuilder<MentorEarningsCubit, MentorEarningsStates>(
+                  builder: (context, mentorEarning) {
+                    if (mentorEarning is MentorEarningsLoaded) {
+                      return Row(
                         children: [
                           Expanded(
                             child: _StatCard(
@@ -70,7 +66,10 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                               bgColor: const Color(0xFFFFE7B6),
                               title: 'Total Coins',
                               value:
-                                  state.mentorEarningsModel.data?.currentBalance
+                                  mentorEarning
+                                      .mentorEarningsModel
+                                      .data
+                                      ?.currentBalance
                                       .toString() ??
                                   "0",
                               trailing: Image.asset(
@@ -88,7 +87,7 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                               bgColor: Color(0xFF4076ED), // light blue
                               title: 'This Month',
                               value:
-                                  state
+                                  mentorEarning
                                       .mentorEarningsModel
                                       .data
                                       ?.thisMonthEarnings
@@ -102,190 +101,267 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                             ),
                           ),
                         ],
-                      ),
-
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Available Coupons',
-                        style: TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF121212),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      BlocBuilder<CategoryCouponscubit, CouponsCategoryStates>(
-                        builder: (context, state) {
-                          if (state is CouponsCategoryLoading) {
-                            return CategoryGridShimmer();
-                          } else if (state is CouponsCategoryFailure) {
-                            return Center(child: Text(state.error));
-                          } else if (state is CouponsCategoryLoaded ||
-                              state is CouponsCategoryLoadingMore) {
-                            final model = (state is CouponsCategoryLoaded)
-                                ? state.couponCategoryModel
-                                : (state as CouponsCategoryLoadingMore)
-                                      .couponCategoryModel;
-                            final categories =
-                                model.couponsCategory?.data ?? [];
-
-                            if (categories.isEmpty) {
-                              return const Center(
-                                child: Text("No categories available."),
-                              );
-                            }
-
-                            return NotificationListener<ScrollNotification>(
-                              onNotification: (scrollInfo) {
-                                if (scrollInfo.metrics.pixels >=
-                                    scrollInfo.metrics.maxScrollExtent * 0.9) {
-                                  if (state is CouponsCategoryLoaded &&
-                                      state.hasNextPage) {
-                                    context
-                                        .read<CategoryCouponscubit>()
-                                        .fetchMoreCouponsCategory();
-                                  }
-                                }
-                                return false;
-                              },
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    GridView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount:
-                                                MediaQuery.of(
-                                                      context,
-                                                    ).size.width <
-                                                    600
-                                                ? 2
-                                                : 3,
-                                            mainAxisSpacing: 12,
-                                            crossAxisSpacing: 12,
-                                            childAspectRatio: 1.08,
-                                          ),
-                                      itemCount: categories.length,
-                                      itemBuilder: (context, index) {
-                                        final item = categories[index];
-                                        return GestureDetector(
-                                          onTap: () {
-                                            context.push(
-                                              '/coupon_list?categoryId=${item.id ?? ""}',
-                                            );
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              12,
-                                              12,
-                                              12,
-                                              10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                  color: Color(0x0F0E1240),
-                                                  blurRadius: 14,
-                                                  offset: Offset(0, 6),
-                                                ),
-                                              ],
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  child: CachedNetworkImage(
-                                                    width: 120,
-                                                    height: 120,
-                                                    imageUrl: item.image ?? "",
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (
-                                                          context,
-                                                          url,
-                                                        ) => SizedBox(
-                                                          width: 120,
-                                                          height: 120,
-                                                          child: Center(
-                                                            child: spinkits
-                                                                .getSpinningLinespinkit(),
-                                                          ),
-                                                        ),
-                                                    errorWidget:
-                                                        (
-                                                          context,
-                                                          url,
-                                                          error,
-                                                        ) => Container(
-                                                          width: 120,
-                                                          height: 120,
-                                                          color: const Color(
-                                                            0xffF8FAFE,
-                                                          ),
-                                                          child: const Icon(
-                                                            Icons.broken_image,
-                                                            size: 40,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  capitalize(item.name ?? ""),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontFamily: 'segeo',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color(0xFF555555),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    if (state is CouponsCategoryLoadingMore)
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 20,
-                                        ),
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 0.8,
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                      );
+                    } else if (mentorEarning is MentorEarningsFailure) {
+                      return Center(child: Text(mentorEarning.error));
+                    } else {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 80,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
                               ),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
-                      ),
-                    ],
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFE7B6),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x140E1240),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        shimmerText(80, 12, context),
+                                        const SizedBox(height: 4),
+                                        shimmerText(60, 18, context),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  SizedBox(
+                                    height: 36,
+                                    width: 36,
+                                    child: shimmerContainer(36, 36, context),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Container(
+                              height: 80,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4076ED),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x140E1240),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        shimmerText(80, 12, context),
+                                        const SizedBox(height: 4),
+                                        shimmerText(60, 18, context),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  SizedBox(
+                                    height: 36,
+                                    width: 36,
+                                    child: shimmerContainer(36, 36, context),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Available Coupons',
+                  style: TextStyle(
+                    fontFamily: 'segeo',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF121212),
                   ),
                 ),
-              ),
-            );
-          } else if (state is MentorEarningsFailure) {
-            return Center(child: Text(state.error));
-          } else {
-            return Center(child: Text("No Data"));
-          }
-        },
+                const SizedBox(height: 12),
+                BlocBuilder<CategoryCouponscubit, CouponsCategoryStates>(
+                  builder: (context, state) {
+                    if (state is CouponsCategoryLoading ||
+                        state is MentorEarningsLoading) {
+                      return CategoryGridShimmer();
+                    } else if (state is CouponsCategoryFailure) {
+                      return Center(child: Text(state.error));
+                    } else if (state is CouponsCategoryLoaded ||
+                        state is CouponsCategoryLoadingMore) {
+                      final model = (state is CouponsCategoryLoaded)
+                          ? state.couponCategoryModel
+                          : (state as CouponsCategoryLoadingMore)
+                                .couponCategoryModel;
+                      final categories = model.couponsCategory?.data ?? [];
+
+                      if (categories.isEmpty) {
+                        return const Center(
+                          child: Text("No categories available."),
+                        );
+                      }
+
+                      return NotificationListener<ScrollNotification>(
+                        onNotification: (scrollInfo) {
+                          if (scrollInfo.metrics.pixels >=
+                              scrollInfo.metrics.maxScrollExtent * 0.9) {
+                            if (state is CouponsCategoryLoaded &&
+                                state.hasNextPage) {
+                              context
+                                  .read<CategoryCouponscubit>()
+                                  .fetchMoreCouponsCategory();
+                            }
+                          }
+                          return false;
+                        },
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          MediaQuery.of(context).size.width <
+                                              600
+                                          ? 2
+                                          : 3,
+                                      mainAxisSpacing: 12,
+                                      crossAxisSpacing: 12,
+                                      childAspectRatio: 1.08,
+                                    ),
+                                itemCount: categories.length,
+                                itemBuilder: (context, index) {
+                                  final item = categories[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      context.push(
+                                        '/coupon_list?categoryId=${item.id ?? ""}',
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        12,
+                                        12,
+                                        12,
+                                        10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color(0x0F0E1240),
+                                            blurRadius: 14,
+                                            offset: Offset(0, 6),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              width: 120,
+                                              height: 120,
+                                              imageUrl: item.image ?? "",
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  SizedBox(
+                                                    width: 120,
+                                                    height: 120,
+                                                    child: Center(
+                                                      child: spinkits
+                                                          .getSpinningLinespinkit(),
+                                                    ),
+                                                  ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Container(
+                                                        width: 120,
+                                                        height: 120,
+                                                        color: const Color(
+                                                          0xffF8FAFE,
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.broken_image,
+                                                          size: 40,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            capitalize(item.name ?? ""),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontFamily: 'segeo',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF555555),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              if (state is CouponsCategoryLoadingMore)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 0.8,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
