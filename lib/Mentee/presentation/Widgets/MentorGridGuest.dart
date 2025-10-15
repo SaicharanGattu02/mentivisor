@@ -61,8 +61,10 @@ class MentorGridGuest extends StatelessWidget {
         return GestureDetector(
           onTap: () => onTapMentor(m),
           child: _MentorCard(
+            stream: m.stream,
+            year: m.year,
             name: m.name ?? '',
-            designation: m.bio ?? '',
+            // designation: m.bio ?? '',
             collegeName: m.college?.name ?? '',
             image: url,
             rating: (m.ratingsReceivedCount ?? 0).toDouble(),
@@ -104,7 +106,7 @@ class MentorGridCampus extends StatelessWidget {
     final itemHeight =
         itemWidth *
         (width < 600
-            ? 1.15
+            ? 0.98
             : width < 1024
             ? 1.08
             : 0.65);
@@ -128,8 +130,10 @@ class MentorGridCampus extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.user?.name ?? '',
-            designation: m?.user?.bio ?? '',
+            // designation: m?.user?.bio ?? '',
             collegeName: m?.user?.college?.name ?? '',
+            year: m?.user?.year ?? '',
+            stream: m?.user?.stream ?? '',
             image: url ?? "",
             rating: double.tryParse(m?.averageRating?.toString() ?? "0") ?? 0.0,
             ratingCount: m?.totalReviews ?? 0,
@@ -143,21 +147,25 @@ class MentorGridCampus extends StatelessWidget {
 
 class _MentorCard extends StatelessWidget {
   final String name;
-  final String designation;
+  // final String designation;
   final String image;
   final double rating;
   final int ratingCount;
   final String coinsPerMinute;
   final String collegeName;
+  final String? stream;
+  final String? year;
 
   const _MentorCard({
     required this.name,
-    required this.designation,
+    // required this.designation,
     required this.image,
     required this.rating,
     required this.ratingCount,
     required this.coinsPerMinute,
     required this.collegeName,
+    this.stream,
+    this.year,
   });
 
   @override
@@ -168,119 +176,121 @@ class _MentorCard extends StatelessWidget {
         color: Color(0xffF1F5FD).withOpacity(0.6),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        children: [
-          CachedNetworkImage(
-            imageUrl: image,
-            imageBuilder: (context, imageProvider) =>
-                CircleAvatar(radius: 36, backgroundImage: imageProvider),
-            placeholder: (context, url) => CircleAvatar(
-              radius: 36,
-              backgroundColor: Colors.grey,
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: Center(child: spinkits.getSpinningLinespinkit()),
-              ),
-            ),
-            errorWidget: (context, url, error) => const CircleAvatar(
-              radius: 36,
-              backgroundImage: AssetImage("assets/images/profile.png"),
-            ),
-          ),
-          SizedBox(height: 3),
-          Text(
-            capitalize(name),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Color(0xff333333),
-            ),
-          ),
-          SizedBox(height: 3),
-          Text(
-            collegeName,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              height: 1,
-              color: Color(0xff333333),
-            ),
-          ),
-          SizedBox(height: 3),
-          SizedBox(
-            width: SizeConfig.screenWidth * 0.4,
-            child: Center(
-              child: Text(
-                designation,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xff555555),
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w400,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            CachedNetworkImage(
+              imageUrl: image,
+              imageBuilder: (context, imageProvider) =>
+                  CircleAvatar(radius: 36, backgroundImage: imageProvider),
+              placeholder: (context, url) => CircleAvatar(
+                radius: 36,
+                backgroundColor: Colors.grey,
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: Center(child: spinkits.getSpinningLinespinkit()),
                 ),
               ),
-            ),
-          ),
-
-          SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/images/starvector.png",
-                color: Colors.amber,
-                height: 14,
-                width: 14,
+              errorWidget: (context, url, error) => const CircleAvatar(
+                radius: 36,
+                backgroundImage: AssetImage("assets/images/profile.png"),
               ),
-              SizedBox(width: 4),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: rating.toStringAsFixed(1),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontFamily: 'segeo',
-                        color: Color(0xff333333),
-                        fontWeight: FontWeight.bold,
+            ),
+            SizedBox(height: 3),
+            Text(
+              capitalize(name),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Color(0xff333333),
+              ),
+            ),
+            SizedBox(height: 3),
+            Text(
+              "$collegeName",
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                height: 1,
+                color: Color(0xff555555),
+              ),
+            ),
+            SizedBox(height: 8),
+            // SizedBox(
+            //   width: SizeConfig.screenWidth * 0.4,
+            //   child: Center(
+            //     child: Text(
+            //       designation,
+            //       textAlign: TextAlign.center,
+            //       maxLines: 1,
+            //       overflow: TextOverflow.ellipsis,
+            //       style: const TextStyle(
+            //         color: Color(0xff555555),
+            //         fontFamily: 'segeo',
+            //         fontWeight: FontWeight.w400,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+        
+            // SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/images/starvector.png",
+                  color: Colors.amber,
+                  height: 14,
+                  width: 14,
+                ),
+                SizedBox(width: 4),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: rating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'segeo',
+                          color: Color(0xff333333),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: " ($ratingCount)",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontFamily: 'segeo',
-                        color: Color(0xff666666),
-                        fontWeight: FontWeight.w400,
+                      TextSpan(
+                        text: " ($ratingCount)",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'segeo',
+                          color: Color(0xff666666),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Image.asset("assets/images/coinsgold.png", height: 16, width: 16),
-              SizedBox(width: 4),
-              Text(
-                '$coinsPerMinute',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'segeo',
-                  color: Color(0xff333333),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
+                // const SizedBox(width: 8),
+                // Image.asset("assets/images/coinsgold.png", height: 16, width: 16),
+                // SizedBox(width: 4),
+                // Text(
+                //   '$coinsPerMinute',
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     fontFamily: 'segeo',
+                //     color: Color(0xff333333),
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

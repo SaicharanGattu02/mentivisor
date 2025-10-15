@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:intl/intl.dart';
 import '../../Components/CommonLoader.dart';
+import '../../Components/Shimmers.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_states.dart';
 import '../data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
@@ -507,9 +508,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                             BlocBuilder<TaskByDateCubit, TaskBydateStates>(
                               builder: (context, taskState) {
                                 if (taskState is TaskBydateLoading) {
-                                  return Center(
-                                    child: DottedProgressWithLogo(),
-                                  );
+                                  return TaskListShimmer();
                                 } else if (taskState is TaskBydateLoaded) {
                                   final tasks =
                                       taskState
@@ -911,4 +910,51 @@ Widget _buildTextField({
     ),
     validator: validator,
   );
+}
+
+class TaskListShimmer extends StatelessWidget {
+  const TaskListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 6, // number of shimmer placeholders
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              /// 🔹 Checkbox shimmer (icon placeholder)
+              shimmerCircle(28, context),
+
+              const SizedBox(width: 8),
+
+              /// 🔹 Task title shimmer
+              Expanded(child: shimmerText(220, 16, context)),
+
+              const SizedBox(width: 8),
+
+              /// 🔹 Delete icon shimmer
+              shimmerCircle(28, context),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

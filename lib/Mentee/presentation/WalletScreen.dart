@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/utils/constants.dart';
 
 import '../../Components/CutomAppBar.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/media_query_helper.dart';
 import '../data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import '../data/cubits/WalletMoney/WalletMoney_State.dart';
@@ -373,9 +374,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       child: BlocBuilder<WalletmoneyCubit, WalletmoneyState>(
                         builder: (context, state) {
                           if (state is WalletmoneyStateLoading) {
-                            return const Center(
-                              child: DottedProgressWithLogo(),
-                            );
+                            return CoinsHistoryShimmer();
                           } else if (state is WalletmoneyStateLoaded ||
                               state is WalletmoneyStateLoadingMore) {
                             final walletModel =
@@ -579,6 +578,91 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CoinsHistoryShimmer extends StatelessWidget {
+  const CoinsHistoryShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        /// 🔹 Shimmer List
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (context, index) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xffFFFFFF),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    /// Left icon shimmer
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF3E8FF),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: shimmerCircle(28, context),
+                    ),
+                    const SizedBox(width: 12),
+
+                    /// Middle text column shimmer
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          shimmerText(140, 14, context), // Activity title
+                          const SizedBox(height: 4),
+                          shimmerText(100, 12, context), // Date
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
+                    /// Right column shimmer (Type + Coins)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        shimmerText(60, 12, context), // Type
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            shimmerCircle(20, context), // Coin icon
+                            const SizedBox(width: 6),
+                            shimmerText(40, 14, context), // Coin value
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+            childCount: 6, // show 6 shimmer placeholders
+          ),
+        ),
+
+        /// Optional shimmer loading indicator (for pagination)
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(25.0),
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 0.8),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

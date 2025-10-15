@@ -5,9 +5,11 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/Models/ECCModel.dart';
 import 'package:mentivisor/utils/AppLauncher.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../Components/CommonLoader.dart';
+import '../../../Components/Shimmers.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
 import '../../data/cubits/ViewEccEventDetails/ViewEventDetailsState.dart';
@@ -50,7 +52,7 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
       body: BlocBuilder<ViewEventDetailsCubit, ViewEventDetailsState>(
         builder: (context, state) {
           if (state is ViewEventDetailsLoading) {
-            return const Center(child: DottedProgressWithLogo());
+            return EventDetailsShimmer();
           } else if (state is ViewEventDetailsLoaded) {
             final eventDetails = state.viewEccDetailsModel.data;
             eventLink.value = eventDetails?.link ?? "";
@@ -70,7 +72,7 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            width: double.infinity,
+                            width: SizeConfig.screenWidth,
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
@@ -289,6 +291,141 @@ class _InfoRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class EventDetailsShimmer extends StatelessWidget {
+  const EventDetailsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 🔹 Header Section (gradient simulated with shimmer overlay)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 12,
+                  children: [
+                    shimmerText(180, 24, context), // Event Title
+                    shimmerText(250, 14, context), // Event Short Desc
+                    const SizedBox(height: 4),
+                    shimmerText(220, 14, context),
+                  ],
+                ),
+              ),
+
+              /// 🔹 Info Rows Section
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0, left: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _InfoRowShimmer(
+                      context: context,
+                      labelWidth: 120,
+                      valueLines: 2,
+                    ),
+                    const SizedBox(height: 16),
+                    _InfoRowShimmer(
+                      context: context,
+                      labelWidth: 100,
+                      valueLines: 1,
+                    ),
+                    const SizedBox(height: 16),
+                    _InfoRowShimmer(
+                      context: context,
+                      labelWidth: 140,
+                      valueLines: 1,
+                    ),
+                  ],
+                ),
+              ),
+
+              /// 🔹 Event Details Box
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xffBEBEBE).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerText(100, 16, context), // "Event Details"
+                    const SizedBox(height: 12),
+                    shimmerText(250, 14, context),
+                    const SizedBox(height: 8),
+                    shimmerText(220, 14, context),
+                    const SizedBox(height: 8),
+                    shimmerText(260, 14, context),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 🔸 Shimmer version of _InfoRow
+class _InfoRowShimmer extends StatelessWidget {
+  final BuildContext context;
+  final double labelWidth;
+  final int valueLines;
+
+  const _InfoRowShimmer({
+    required this.context,
+    required this.labelWidth,
+    this.valueLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        shimmerCircle(36, context), // icon background
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            shimmerText(labelWidth, 14, context),
+            const SizedBox(height: 6),
+            ...List.generate(
+              valueLines,
+                  (index) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: shimmerText(200 - (index * 20), 12, context),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

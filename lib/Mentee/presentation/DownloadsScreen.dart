@@ -5,6 +5,7 @@ import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_states.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
+import '../../Components/Shimmers.dart';
 import 'Widgets/DownloadCard.dart';
 
 class DownloadsScreen extends StatefulWidget {
@@ -30,7 +31,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         // color: Colors.transparent,
       ),
       body: SafeArea(
-        child:Container(
+        child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
@@ -51,7 +52,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                 child: BlocBuilder<DownloadsCubit, DownloadStates>(
                   builder: (context, state) {
                     if (state is DownloadLoading) {
-                      return const Center(child: DottedProgressWithLogo());
+                      return DownloadListShimmer();
                     } else if (state is DownloadLoaded ||
                         state is DownloadLoadingMore) {
                       final downloadsModel = (state is DownloadLoaded)
@@ -127,6 +128,71 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class DownloadListShimmer extends StatelessWidget {
+  const DownloadListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 6, // show 6 shimmer placeholders
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 🔹 Thumbnail / Preview Box
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: shimmerRectangle(100, context),
+              ),
+              const SizedBox(width: 12),
+
+              /// 🔹 Text Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerText(180, 16, context), // Title
+                    const SizedBox(height: 8),
+                    shimmerText(140, 12, context), // Subtitle / Description
+                    const SizedBox(height: 8),
+                    shimmerText(120, 12, context), // Secondary line
+
+                    const SizedBox(height: 10),
+
+                    /// 🔹 Optional progress shimmer (simulate download bar)
+                    shimmerLinearProgress(8, context),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 10),
+
+              /// 🔹 Action Icon (Download / Play)
+              shimmerCircle(32, context),
+            ],
+          ),
+        );
+      },
     );
   }
 }

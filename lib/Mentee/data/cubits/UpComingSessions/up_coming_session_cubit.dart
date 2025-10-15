@@ -14,9 +14,9 @@ class UpComingSessionCubit extends Cubit<UpComingSessionStates> {
     try {
       final upComingSessions = await upComingSessionRepository.getUpComingSessions();
       if (upComingSessions != null && upComingSessions.status == true) {
-        emit(UpComingSessionLoaded(upComingSessionModel: upComingSessions));
+        // emit(UpComingSessionLoaded(upComingSessionModel: upComingSessions));
       } else {
-        emit(UpComingSessionFailure(msg: upComingSessions?.message??""));
+        // emit(UpComingSessionFailure(msg: upComingSessions?.message??""));
       }
     } catch (e) {
       emit(UpComingSessionFailure(msg: 'An error occurred: $e'));

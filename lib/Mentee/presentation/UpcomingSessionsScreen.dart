@@ -11,6 +11,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Components/CommonLoader.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 
@@ -37,7 +38,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
         child: BlocBuilder<UpComingSessionCubit, UpComingSessionStates>(
           builder: (context, state) {
             if (state is UpComingSessionsLoading) {
-              return Scaffold(body: Center(child: DottedProgressWithLogo()));
+              return UpcomingSessionsShimmer();
             } else if (state is UpComingSessionLoaded) {
               final items = state.upComingSessionModel.data;
 
@@ -103,8 +104,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     Text(
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                        "With ${capitalize(upComingSessions.mentor?.name ?? "Unknown Mentor")}",
-                                      
+                                      "With ${capitalize(upComingSessions.mentor?.name ?? "Unknown Mentor")}",
+
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: "segeo",
@@ -118,7 +119,9 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       children: [
                                         _buildInfoChip(
                                           icon: Icons.calendar_today,
-                                          label: formatDate(upComingSessions.date ?? "N/A"),
+                                          label: formatDate(
+                                            upComingSessions.date ?? "N/A",
+                                          ),
                                           color: Colors.blue.shade50,
                                           textColor: Colors.blue.shade700,
                                         ),
@@ -149,18 +152,24 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                           '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
                                         );
                                       },
-                                      icon:Image.asset("assets/icons/ChatCircle.png",width: 20,height: 20,),
+                                      icon: Image.asset(
+                                        "assets/icons/ChatCircle.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
                                       label: Text(
                                         "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
                                         style: const TextStyle(
-                                          fontSize: 14,fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
                                           fontFamily: "segeo",
                                           color: Color(0xff666666),
                                         ),
                                       ),
                                       style: OutlinedButton.styleFrom(
                                         side: BorderSide(
-                                          color: Color(0xffCCCCCC),width: 1
+                                          color: Color(0xffCCCCCC),
+                                          width: 1,
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
@@ -305,4 +314,101 @@ Widget _buildInfoChip({
       ],
     ),
   );
+}
+
+class UpcomingSessionsShimmer extends StatelessWidget {
+  const UpcomingSessionsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(16.0),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.525,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            shimmerText(200, 18, context),
+                            const SizedBox(height: 8),
+
+                            shimmerText(150, 14, context),
+                            const SizedBox(height: 12),
+
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 8,
+                              children: [
+                                _buildChipShimmer(context, 100),
+                                _buildChipShimmer(context, 120),
+                                _buildChipShimmer(context, 80),
+                              ],
+                            ),
+
+                            SizedBox(height: 16),
+                            Row(
+                              spacing: 10,
+                              children: [
+                                shimmerContainer(
+                                  SizeConfig.screenWidth * 0.33,
+                                  40,
+                                  context,
+                                ),
+                                shimmerContainer(
+                                  SizeConfig.screenWidth * 0.33,
+                                  40,
+                                  context,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.34,
+                        child: Column(children: [shimmerCircle(80, context)]),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              childCount: 5, // Number of shimmer placeholders
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChipShimmer(BuildContext context, double width) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.blue.shade50.withOpacity(0.5),
+      ),
+      child: shimmerText(width, 12, context),
+    );
+  }
 }

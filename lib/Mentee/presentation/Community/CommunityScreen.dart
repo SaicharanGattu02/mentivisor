@@ -269,10 +269,18 @@ class _CommunityScreenState extends State<Communityscreen> {
               BlocBuilder<CommunityPostsCubit, CommunityPostsStates>(
                 builder: (context, state) {
                   if (state is CommunityPostsLoading) {
-                    return Center(
-                      child: SizedBox(
-                        height: SizeConfig.screenWidth * 1,
-                        child: DottedProgressWithLogo(),
+                    return Expanded(
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverList.separated(
+                            itemCount: 5,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 16), // The separator
+                            itemBuilder: (context, index) {
+                              return CommunityPostShimmer();
+                            },
+                          ),
+                        ],
                       ),
                     );
                   } else if (state is CommunityPostsLoaded ||
@@ -369,7 +377,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                                   const SizedBox(height: 16), // The separator
                               itemBuilder: (context, index) {
                                 final communitypost = communityposts?[index];
-                                return PostCard(scope: _onCampus.value ? "" : "beyond",
+                                return PostCard(
+                                  scope: _onCampus.value ? "" : "beyond",
                                   communityPosts:
                                       communitypost ?? CommunityPosts(),
                                 );
@@ -410,7 +419,9 @@ class _CommunityScreenState extends State<Communityscreen> {
             builder: (context, isVisible, child) {
               // If the user is not a guest, show the FAB based on scroll
               return Visibility(
-                visible: isVisible && !isGuest, // Hide FAB if guest, else use scroll logic
+                visible:
+                    isVisible &&
+                    !isGuest, // Hide FAB if guest, else use scroll logic
                 child: Container(
                   height: 64,
                   width: 64,

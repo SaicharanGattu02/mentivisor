@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
+import 'package:mentivisor/Components/Shimmers.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/constants.dart';
@@ -27,7 +28,8 @@ class PostCard extends StatefulWidget {
   State<PostCard> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin {
+class _PostCardState extends State<PostCard>
+    with SingleTickerProviderStateMixin {
   bool _showHeart = false;
   late AnimationController _animationController;
   late Animation<double> _heartAnimation;
@@ -602,4 +604,88 @@ void _showReportSheet(BuildContext context, communityPosts) {
       );
     },
   );
+}
+
+class CommunityPostShimmer extends StatelessWidget {
+  const CommunityPostShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: shimmerContainer(SizeConfig.screenWidth, 110, context),
+            ),
+          ),
+          SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                shimmerCircle(32, context),
+                const SizedBox(width: 10),
+                shimmerText(100, 12, context),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: shimmerText(180, 16, context),
+          ),
+
+          const SizedBox(height: 8),
+
+          /// 📝 Description Lines
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerText(250, 14, context),
+                const SizedBox(height: 6),
+                shimmerText(200, 14, context),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          /// ❤️ 💬 🔄 Like / Comment / Share Row
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                shimmerCircle(20, context),
+                const SizedBox(width: 8),
+                shimmerText(24, 10, context),
+                const SizedBox(width: 20),
+                shimmerCircle(20, context),
+                const SizedBox(width: 8),
+                shimmerText(24, 10, context),
+                const SizedBox(width: 20),
+                shimmerCircle(20, context),
+                const SizedBox(width: 8),
+                shimmerText(24, 10, context),
+                const Spacer(),
+                shimmerText(60, 12, context),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
 }

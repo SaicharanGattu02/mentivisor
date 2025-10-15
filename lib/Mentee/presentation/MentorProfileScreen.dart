@@ -7,6 +7,8 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/MentorProfile/MentorProfileCubit.dart';
 import '../data/cubits/MentorProfile/MentorProfileState.dart';
@@ -54,7 +56,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           },
           builder: (context, state) {
             if (state is MentorProfileLoading) {
-              return const Center(child: DottedProgressWithLogo());
+              return MentorProfileShimmer();
             } else if (state is MentorProfileFailure) {
               return Center(child: Text(state.message));
             } else if (state is MentorProfileLoaded) {
@@ -133,7 +135,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
+                                "${mentorData?.user?.year ?? ''} year student in ${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -142,16 +144,15 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 ),
                               ),
 
-                              Text(
-                                "${mentorData?.user?.email ?? ''}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff444444),
-                                  fontFamily: "segeo",
-                                ),
-                              ),
-
+                              // Text(
+                              //   "${mentorData?.user?.email ?? ''}",
+                              //   style: TextStyle(
+                              //     fontSize: 14,
+                              //     fontWeight: FontWeight.w400,
+                              //     color: Color(0xff444444),
+                              //     fontFamily: "segeo",
+                              //   ),
+                              // ),
                               Row(
                                 children: [
                                   Image.asset(
@@ -171,10 +172,11 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               if ((mentorData?.totalReviews ?? 0) > 0)
                                 Row(
                                   children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.yellow[700],
-                                      size: 16,
+                                    Image.asset(
+                                      "assets/images/starvector.png",
+                                      color: Colors.amber,
+                                      height: 14,
+                                      width: 14,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
@@ -408,6 +410,142 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       padding: EdgeInsets.symmetric(horizontal: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(36), // change 12 to your need
+      ),
+    );
+  }
+}
+
+class MentorProfileShimmer extends StatelessWidget {
+  const MentorProfileShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xfff6faff), Color(0xffe0f2fe)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 👤 Profile Image
+              Center(child: shimmerCircle(150, context)),
+              const SizedBox(height: 16),
+
+              /// 🧾 Profile Info Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerText(140, 20, context), // name
+                    const SizedBox(height: 8),
+                    shimmerText(260, 14, context), // college line
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        shimmerCircle(18, context),
+                        const SizedBox(width: 8),
+                        shimmerText(120, 14, context), // languages
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        shimmerCircle(14, context),
+                        const SizedBox(width: 8),
+                        shimmerText(80, 12, context), // rating
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              _buildSectionShimmer(context, 'About', 3),
+
+              _buildSectionShimmer(context, 'Expertise', 2, isChips: true),
+
+              _buildSectionShimmer(
+                context,
+                'Available Slots',
+                2,
+                isChips: true,
+              ),
+
+              _buildSectionShimmer(context, 'Recent Reviews', 3),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionShimmer(
+    BuildContext context,
+    String title,
+    int lines, {
+    bool isChips = false,
+  }) {
+    return Container(
+      width: SizeConfig.screenWidth,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      margin: EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          shimmerText(120, 18, context), // section title
+          const SizedBox(height: 12),
+          if (isChips)
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(
+                lines * 3,
+                (index) => shimmerText(60 + (index % 2) * 20, 28, context),
+              ),
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(
+                lines,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: shimmerText(280 - (index * 40), 14, context),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

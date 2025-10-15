@@ -7,7 +7,9 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/SubmitReview/submit_review_states.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/CommonLoader.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/constants.dart';
 import '../data/cubits/SessionCompleted/session_completed_cubit.dart';
 import '../data/cubits/SessionCompleted/session_completed_states.dart';
@@ -39,7 +41,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
         child: BlocBuilder<SessionCompletedCubit, SessionCompletedStates>(
           builder: (context, state) {
             if (state is SessionCompletedLoading) {
-              return Scaffold(body: Center(child: DottedProgressWithLogo()));
+              return CompletedSessionsShimmer();
             } else if (state is SessionCompletedLoaded) {
               final sessions = state.completedSessionModel.data ?? [];
               if (sessions.isEmpty) {
@@ -545,6 +547,87 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class CompletedSessionsShimmer extends StatelessWidget {
+  const CompletedSessionsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(16.0),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 🔹 Header Row (Left: session info | Right: completed badge)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left Column
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              shimmerText(180, 18, context), // topic title
+                              const SizedBox(height: 6),
+                              shimmerText(150, 14, context), // mentor name
+                              const SizedBox(height: 8),
+                              shimmerText(130, 12, context), // date/time
+                            ],
+                          ),
+
+                          // Right Column
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 20),
+                              shimmerCircle(24, context), // check icon
+                              const SizedBox(height: 6),
+                              shimmerText(
+                                100,
+                                12,
+                                context,
+                              ), // "Session completed"
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: SizeConfig.screenWidth * 0.4,
+                        child: shimmerRectangle(40, context),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              childCount: 5, // number of shimmer placeholders
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

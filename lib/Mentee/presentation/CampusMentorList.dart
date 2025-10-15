@@ -7,6 +7,7 @@ import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/color_constants.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
@@ -85,10 +86,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                 BlocBuilder<CampusMentorListCubit, CampusMentorListState>(
                   builder: (context, state) {
                     if (state is CampusMentorListStateLoading) {
-                      return SizedBox(
-                        height: SizeConfig.screenWidth * 1.5,
-                        child: Center(child: DottedProgressWithLogo()),
-                      );
+                      return MentorGridShimmer();
                     }
                     if (state is CampusMentorListStateFailure) {
                       return SizedBox(
@@ -182,8 +180,8 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                   ),
                                   SizedBox(height: 4),
                                   Text(
-                                    m.user?.bio ?? '',
-                                    maxLines: 1,
+                                    m.user?.college?.name ?? '',
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -230,21 +228,21 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 8),
-                                      Image.asset(
-                                        "assets/images/coinsgold.png",
-                                        height: 16,
-                                        width: 16,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '${m.coinsPerMinute ?? 0}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xff333333),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
+                                      // SizedBox(width: 8),
+                                      // Image.asset(
+                                      //   "assets/images/coinsgold.png",
+                                      //   height: 16,
+                                      //   width: 16,
+                                      // ),
+                                      // const SizedBox(width: 4),
+                                      // Text(
+                                      //   '${m.coinsPerMinute ?? 0}',
+                                      //   style: const TextStyle(
+                                      //     fontSize: 12,
+                                      //     color: Color(0xff333333),
+                                      //     fontWeight: FontWeight.w700,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ],
@@ -261,6 +259,66 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
           ),
         );
       },
+    );
+  }
+}
+
+class MentorGridShimmer extends StatelessWidget {
+  const MentorGridShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 6, // number of shimmer placeholders
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.85,
+        ),
+        itemBuilder: (ctx, i) {
+          return Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              children: [
+                /// 👤 Profile Image Placeholder
+                shimmerCircle(80, context),
+                const SizedBox(height: 8),
+
+                /// 🧾 Mentor Name Placeholder
+                shimmerText(100, 16, context),
+                const SizedBox(height: 6),
+
+                /// 🎓 College Name Placeholder (2 lines)
+                shimmerText(120, 12, context),
+                const SizedBox(height: 4),
+                shimmerText(80, 12, context),
+
+                const SizedBox(height: 12),
+
+                /// ⭐ Rating Row Placeholder
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    shimmerCircle(14, context),
+                    const SizedBox(width: 6),
+                    shimmerText(30, 12, context),
+                    const SizedBox(width: 4),
+                    shimmerText(20, 12, context),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
