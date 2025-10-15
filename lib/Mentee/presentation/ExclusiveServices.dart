@@ -8,6 +8,7 @@ import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_state.dart';
 
+import '../../Components/Shimmers.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
 import '../../utils/spinkittsLoader.dart';
@@ -337,6 +338,52 @@ class _ServiceCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class ExclusiveServiceShimmers extends StatelessWidget {
+  const ExclusiveServiceShimmers({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 🔹 Example: Image Banner
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: shimmerRectangle(250, context),
+          ),
+          const SizedBox(height: 10),
+
+          /// 🔹 Example: Title Text
+          shimmerText(180, 16, context),
+          const SizedBox(height: 6),
+
+          /// 🔹 Example: Description Text
+          shimmerText(240, 12, context),
+          const SizedBox(height: 6),
+
+          /// 🔹 Example: Button
+          shimmerContainer(100, 36, context, isButton: true),
+        ],
       ),
     );
   }

@@ -152,6 +152,7 @@ class TransectionsData {
   String? activity;
   String? date;
   String? type;
+  String? achievementType;
   int? coins;
   int? achivements;
   String? createdAt;
@@ -165,6 +166,7 @@ class TransectionsData {
         this.type,
         this.coins,
         this.achivements,
+        this.achievementType,
         this.createdAt,
         this.updatedAt});
 
@@ -176,6 +178,7 @@ class TransectionsData {
     type = json['type'];
     coins = json['coins'];
     achivements = json['achivements'];
+    achievementType= json['achivements_type'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
@@ -189,6 +192,7 @@ class TransectionsData {
     data['type'] = this.type;
     data['coins'] = this.coins;
     data['achivements'] = this.achivements;
+    data['achivements_type'] = this.achievementType;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     return data;

@@ -15,7 +15,7 @@ class CoinsAchievementCubit extends Cubit<CoinsAchievementState> {
   bool _hasNextPage = true;
   bool _isLoadingMore = false;
 
-  Future<void> getCoinsAchievements(int id) async {
+  Future<void> getCoinsAchievements() async {
     emit(CoinsAchievementLoading());
     _currentPage = 1;
 
@@ -36,7 +36,7 @@ class CoinsAchievementCubit extends Cubit<CoinsAchievementState> {
   }
 
   /// 🔹 Load more (pagination)
-  Future<void> fetchMoreCoinsAchievements(int id) async {
+  Future<void> fetchMoreCoinsAchievements() async {
     if (_isLoadingMore || !_hasNextPage) return;
     _isLoadingMore = true;
     _currentPage++;

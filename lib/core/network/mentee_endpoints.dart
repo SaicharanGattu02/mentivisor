@@ -76,7 +76,7 @@ class APIEndpointUrls {
   static const String forgot_password = "${apiUrl}forget-password";
   static const String forgot_verify_otp = "${apiUrl}verify-otp";
   static const String resetPassword = "${apiUrl}reset-password";
-  static const String coins_achievements = "${apiUrl}achivements";
+  static const String coins_achievements = "${userUrl}achivements";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
