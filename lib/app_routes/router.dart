@@ -213,7 +213,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/coupons',
       pageBuilder: (context, state) =>
-          buildSlideTransitionPage(CouponsScreen(), state),
+          buildSlideTransitionPage(RedeemedCouponsScreen(), state),
     ),
 
     GoRoute(
@@ -683,9 +683,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/coupon_details',
       pageBuilder: (context, state) {
-        final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+        final categoryId = state.uri.queryParameters['couponId'] ?? '';
         return buildSlideTransitionPage(
-          CouponDetailsScreen(categoryId: categoryId),
+          CouponDetailsScreen(couponId: categoryId),
           state,
         );
       },

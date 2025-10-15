@@ -91,7 +91,7 @@ class _CouponsListState extends State<CouponsList> {
                           return GestureDetector(
                             onTap: () {
                               context.push(
-                                '/coupon_details?categoryId=${coupon.id ?? ""}',
+                                '/coupon_details?couponId=${coupon.id ?? ""}',
                               );
                             },
                             child: Container(

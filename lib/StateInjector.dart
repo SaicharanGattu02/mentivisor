@@ -120,6 +120,7 @@ import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
 import 'Mentee/data/remote_data_source.dart';
+import 'Mentor/data/Cubits/BuyCoupon/BuyCouponCubit.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
 import 'Mentor/data/Cubits/Coupons/CategoryCouponsCubit.dart';
 import 'Mentor/data/Cubits/Coupons/CouponCategoryRepository.dart';
@@ -135,6 +136,7 @@ import 'Mentor/data/Cubits/MentorProfile/mentor_profile_cubit.dart';
 import 'Mentor/data/Cubits/MentorProfile/mentor_profile_repo.dart';
 import 'Mentor/data/Cubits/MentorSessionCancel/mentor_Session_cancel_repo.dart';
 import 'Mentor/data/Cubits/PendingSubExpertise/PendingSubExpertiseCubit.dart';
+import 'Mentor/data/Cubits/RedeemedCoupons/RedeemedCouponsCubit.dart';
 import 'Mentor/data/Cubits/ReportMentor/report_mentor_cubit.dart';
 import 'Mentor/data/Cubits/ReportMentor/report_repository.dart';
 import 'Mentor/data/Cubits/SessionComplete/session_complete_cubit.dart';
@@ -760,6 +762,13 @@ class StateInjector {
     ),
     BlocProvider<CouponsDetailCubit>(
       create: (context) => CouponsDetailCubit(context.read<CouponsRepo>()),
+    ),
+    BlocProvider<BuyCouponCubit>(
+      create: (context) => BuyCouponCubit(context.read<CouponsRepo>()),
+    ),
+
+    BlocProvider<RedeemedCouponCubit>(
+      create: (context) => RedeemedCouponCubit(context.read<CouponsRepo>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

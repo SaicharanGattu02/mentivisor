@@ -325,7 +325,7 @@ class DashedOutlinedButton extends StatelessWidget {
               style: (textStyle ??
                   TextStyle(
                     fontFamily: 'segeo',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   )),

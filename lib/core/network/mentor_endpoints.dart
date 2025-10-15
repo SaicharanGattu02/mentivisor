@@ -37,5 +37,7 @@ class MentorEndpointsUrls {
   static const String mentor_earnings = "${userUrl}/mentor-earnings";
   static const String coupon_categories = "${userUrl}/coupon/categories";
   static const String coupon_list= "${userUrl}/coupons";
-  static const String coupon_details= "${userUrl}/coupons";
+  static const String coupon_details= "${userUrl}/show/coupon";
+  static const String buy_coupon= "${userUrl}/buy/coupon";
+  static const String redeemedCoupons= "${userUrl}/user-coupons";
 }

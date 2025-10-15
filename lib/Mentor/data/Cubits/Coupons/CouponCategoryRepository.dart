@@ -1,15 +1,19 @@
 import 'package:mentivisor/Mentor/Models/SessionsModel.dart';
 import 'package:mentivisor/Mentor/data/MentorRemoteDataSource.dart';
 
+import '../../../Models/BuyCouponModel.dart';
 import '../../../Models/CouponCategoryModel.dart';
 import '../../../Models/CouponDetailsModel.dart';
 import '../../../Models/CouponListModel.dart';
+import '../../../Models/RedeemedCouponsModel.dart';
 import '../../../Models/MentorEarningsModel.dart';
 
 abstract class CouponsRepo {
   Future<CouponCategoryModel?> couponsCategory(int page);
   Future<CouponListModel?> couponList(String categoryId,int page);
   Future<CouponDetailsModel?> couponDetails(String couponId);
+  Future<BuyCouponModel?> buyCoupon(int couponId);
+  Future<RedeemedCouponsModel?> redeemedCoupons(String filters,int page);
 }
 
 class CouponsRepoImpl implements CouponsRepo {
@@ -22,12 +26,22 @@ class CouponsRepoImpl implements CouponsRepo {
   }
 
   @override
-  Future<CouponListModel?> couponList(String categoryId,int page) async {
-    return await mentorRemoteDataSource.couponList(categoryId,page);
+  Future<CouponListModel?> couponList(String categoryId, int page) async {
+    return await mentorRemoteDataSource.couponList(categoryId, page);
   }
 
   @override
   Future<CouponDetailsModel?> couponDetails(String couponId) async {
     return await mentorRemoteDataSource.couponDetails(couponId);
+  }
+
+  @override
+  Future<BuyCouponModel?> buyCoupon(int couponId) async {
+    return await mentorRemoteDataSource.buyCoupon(couponId);
+  }
+
+  @override
+  Future<RedeemedCouponsModel?> redeemedCoupons(String filters,int page) async {
+    return await mentorRemoteDataSource.redeemedCoupons(filters,page);
   }
 }

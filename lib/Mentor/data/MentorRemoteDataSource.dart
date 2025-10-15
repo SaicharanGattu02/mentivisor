@@ -8,9 +8,11 @@ import '../../Mentee/Models/CommentsModel.dart';
 import '../../Mentee/Models/SuccessModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/AvailableSlotsModel.dart';
+import '../Models/BuyCouponModel.dart';
 import '../Models/CouponCategoryModel.dart';
 import '../Models/CouponDetailsModel.dart';
 import '../Models/CouponListModel.dart';
+import '../Models/RedeemedCouponsModel.dart';
 import '../Models/MentorCoinHistoryModel.dart';
 import '../Models/ExpertisesModel.dart';
 import '../Models/FeedbackModel.dart';
@@ -65,8 +67,10 @@ abstract class MentorRemoteDataSource {
   Future<SuccessModel?> sessionCompleted(int sessionId);
   Future<MentorEarningsModel?> mentorEarnings();
   Future<CouponCategoryModel?> couponsCategory(int page);
-  Future<CouponListModel?> couponList(String categoryId,int page);
+  Future<CouponListModel?> couponList(String categoryId, int page);
   Future<CouponDetailsModel?> couponDetails(String couponId);
+  Future<BuyCouponModel?> buyCoupon(int couponId);
+  Future<RedeemedCouponsModel?> redeemedCoupons(String filters, int page);
 }
 
 class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
@@ -401,7 +405,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   }
 
   @override
-  Future<CouponListModel?> couponList(String categoryId,int page) async {
+  Future<CouponListModel?> couponList(String categoryId, int page) async {
     try {
       Response res = await ApiClient.get(
         "${MentorEndpointsUrls.coupon_list}/${categoryId}?page=${page}",
@@ -424,6 +428,37 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
       return CouponDetailsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('get coupons Details:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<BuyCouponModel?> buyCoupon(int couponId) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.buy_coupon}/${couponId}",
+      );
+      AppLogger.log('get Buy coupon: ${res.data}');
+      return BuyCouponModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get Buy Coupons :${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<RedeemedCouponsModel?> redeemedCoupons(
+    String filters,
+    int page,
+  ) async {
+    try {
+      Response res = await ApiClient.get(
+        "${MentorEndpointsUrls.redeemedCoupons}?page=${page}&filters=${filters}",
+      );
+      AppLogger.log('get coupons: ${res.data}');
+      return RedeemedCouponsModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('get Coupons :${e}');
       return null;
     }
   }
