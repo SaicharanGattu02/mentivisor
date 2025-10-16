@@ -11,6 +11,7 @@ import 'package:mentivisor/Mentor/data/Cubits/BuyCoupon/BuyCouponCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/BuyCoupon/BuyCouponStates.dart';
 import 'package:mentivisor/Mentor/data/Cubits/CouponsDetails/CouponsDetailsStates.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/Cubits/CouponsDetails/CouponsDetailsCubit.dart';
 import '../../services/AuthService.dart';
@@ -283,7 +284,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
       body: BlocBuilder<CouponsDetailCubit, CouponsDetailsStates>(
         builder: (context, state) {
           if (state is CouponsDetailsLoading) {
-            return Center(child: DottedProgressWithLogo());
+            return CouponDetailsShimmer();
           } else if (state is CouponsDetailsLoaded) {
             final couponsDetails = state.couponDetailsModel.data;
             final double actualValue =
@@ -688,6 +689,174 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CouponDetailsShimmer extends StatelessWidget {
+  const CouponDetailsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Image with expiry overlay
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: shimmerContainer(double.infinity, 200, context),
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: shimmerContainer(100, 20, context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 🔹 Vendor + Website row
+          Row(
+            children: [
+              shimmerText(100, 16, context),
+              const SizedBox(width: 10),
+              shimmerCircle(18, context),
+            ],
+          ),
+          const SizedBox(height: 6),
+          shimmerText(180, 12, context),
+
+          const SizedBox(height: 20),
+
+          // 🔹 Title shimmer
+          shimmerText(200, 20, context),
+          const SizedBox(height: 12),
+
+          // 🔹 Description shimmer (3–4 lines)
+          shimmerText(double.infinity, 12, context),
+          const SizedBox(height: 6),
+          shimmerText(double.infinity, 12, context),
+          const SizedBox(height: 6),
+          shimmerText(250, 12, context),
+
+          const SizedBox(height: 20),
+
+          // 🔹 Discount Details Card shimmer
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.withOpacity(0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerText(140, 14, context),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          shimmerText(100, 12, context),
+                          const SizedBox(height: 6),
+                          shimmerText(80, 18, context),
+                        ],
+                      ),
+                    ),
+                    const Text("→", style: TextStyle(color: Colors.grey)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          shimmerText(100, 12, context),
+                          const SizedBox(height: 6),
+                          shimmerText(80, 18, context),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    shimmerText(160, 14, context),
+                    shimmerContainer(60, 18, context),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // 🔹 Validity Dates Card shimmer
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.withOpacity(0.1)),
+            ),
+            child: Row(
+              children: [
+                shimmerCircle(20, context),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      shimmerText(120, 14, context),
+                      const SizedBox(height: 4),
+                      shimmerText(200, 12, context),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // 🔹 Coins Required Card shimmer
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.amber.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.amber.withOpacity(0.1)),
+            ),
+            child: Row(
+              children: [
+                shimmerCircle(20, context),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      shimmerText(120, 14, context),
+                      const SizedBox(height: 6),
+                      shimmerText(100, 18, context),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }
