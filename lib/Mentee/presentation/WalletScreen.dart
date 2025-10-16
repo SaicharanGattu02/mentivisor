@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsAchievements/CoinsAchievementCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsAchievements/CoinsAchievementState.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/constants.dart';
 
 import '../../Components/CutomAppBar.dart';
@@ -443,16 +444,19 @@ class _WalletScreenState extends State<WalletScreen> {
                                       context,
                                       index,
                                     ) {
-                                      // Helper function to determine the icon path based on the type
+                                      final historyItem =
+                                          coinsHistoryList[index];
+
                                       String getIconPath(
-                                        String type,
+                                        String? type,
                                         String? achievementType,
-                                        bool isNotifierValue,
                                       ) {
-                                        if (isNotifierValue) {
-                                          return type == "Debited"
-                                              ? "assets/icons/VideoConference.png"
-                                              : "assets/icons/CoinVertical.png";
+                                        if (coinHistoryNotifier.value == true) {
+                                          if (type == "Debited") {
+                                            return "assets/icons/VideoConference.png";
+                                          } else {
+                                            return "assets/icons/CoinVertical.png";
+                                          }
                                         } else {
                                           switch (achievementType) {
                                             case 'study_zone':
@@ -469,8 +473,6 @@ class _WalletScreenState extends State<WalletScreen> {
                                         }
                                       }
 
-                                      final historyItem =
-                                          coinsHistoryList[index];
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
                                           vertical: 10,
@@ -496,7 +498,6 @@ class _WalletScreenState extends State<WalletScreen> {
                                                   historyItem.type ??
                                                       "assets/icons/CoinVertical.png",
                                                   historyItem.achievementType,
-                                                  coinHistoryNotifier.value,
                                                 ),
                                                 width: 20,
                                                 height: 20,
