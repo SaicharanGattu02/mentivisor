@@ -3,24 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states.dart';
-
 import '../../Components/CommonLoader.dart';
+import '../../Mentee/presentation/Widgets/CommonChoiceChip.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
-import 'Widgets/CommonChoiceChip.dart';
 
-class Notifications extends StatefulWidget {
-  const Notifications({super.key});
+class NotificationMentor extends StatefulWidget {
+  const NotificationMentor({super.key});
 
   @override
-  State<Notifications> createState() => _NotificationsState();
+  State<NotificationMentor> createState() => _NotificationMentorState();
 }
 
-class _NotificationsState extends State<Notifications> {
+class _NotificationMentorState extends State<NotificationMentor> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationsCubit>().notifiactions("mentee","all");
+    context.read<NotificationsCubit>().notifiactions("mentor","all");
   }
 
   int _selectedFilter = 0;

@@ -71,6 +71,7 @@ import '../Mentor/presentation/MenteeListScreen.dart';
 import '../Mentor/presentation/MentorDashBoard.dart';
 import '../Mentor/presentation/MentorProfile/EditMentorProfileScreen.dart';
 import '../Mentor/presentation/MentorProfile/MentorProfileScreen.dart';
+import '../Mentor/presentation/Notification.dart';
 import '../Mentor/presentation/ProofOfExpertise.dart';
 import '../Mentor/presentation/SessionDetailScreen.dart';
 import '../Mentee/presentation/BuyCoinsScreens.dart';
@@ -470,6 +471,13 @@ final GoRouter appRouter = GoRouter(
       path: '/notifications',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(Notifications(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/notifications_mentor',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(NotificationMentor(), state);
       },
     ),
 

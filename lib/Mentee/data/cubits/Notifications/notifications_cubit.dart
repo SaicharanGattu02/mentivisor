@@ -9,10 +9,10 @@ class NotificationsCubit extends Cubit<NotificationsStates> {
   NotificationsCubit(this.notificationsRepo)
       : super(NotificationsIntially());
 
-  Future<void> notifiactions() async {
+  Future<void> notifiactions(String role, String filter) async {
     emit(NotificationsLoading());
     try {
-      final res = await notificationsRepo.notifications();
+      final res = await notificationsRepo.notifications(role,filter);
       if (res != null && res.status == true) {
         emit(NotificationsLoaded(notificationModel: res));
       } else {

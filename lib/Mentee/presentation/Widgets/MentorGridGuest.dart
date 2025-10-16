@@ -44,7 +44,7 @@ class MentorGridGuest extends StatelessWidget {
           final screenWidth = size.width;
           double aspectRatio = screenWidth / (screenHeight * 0.45);
           if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.32);
+            aspectRatio = screenWidth / (screenHeight * 0.28);
           } else if (screenWidth < 800) {
             aspectRatio = screenWidth / (screenHeight * 0.4);
           } else {
@@ -173,121 +173,119 @@ class _MentorCard extends StatelessWidget {
         color: Color(0xffF1F5FD).withOpacity(0.6),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            CachedNetworkImage(
-              imageUrl: image,
-              imageBuilder: (context, imageProvider) =>
-                  CircleAvatar(radius: 36, backgroundImage: imageProvider),
-              placeholder: (context, url) => CircleAvatar(
-                radius: 36,
-                backgroundColor: Colors.grey,
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: Center(child: spinkits.getSpinningLinespinkit()),
-                ),
-              ),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                radius: 36,
-                backgroundImage: AssetImage("assets/images/profile.png"),
+      child: Column(
+        children: [
+          CachedNetworkImage(
+            imageUrl: image,
+            imageBuilder: (context, imageProvider) =>
+                CircleAvatar(radius: 36, backgroundImage: imageProvider),
+            placeholder: (context, url) => CircleAvatar(
+              radius: 36,
+              backgroundColor: Colors.grey,
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: Center(child: spinkits.getSpinningLinespinkit()),
               ),
             ),
-            SizedBox(height: 3),
-            Text(
-              capitalize(name),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Color(0xff333333),
-              ),
+            errorWidget: (context, url, error) => const CircleAvatar(
+              radius: 36,
+              backgroundImage: AssetImage("assets/images/profile.png"),
             ),
-            SizedBox(height: 3),
-            Text(
-              "$collegeName",
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                height: 1,
-                color: Color(0xff555555),
-              ),
+          ),
+          SizedBox(height: 3),
+          Text(
+            capitalize(name),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Color(0xff333333),
             ),
-            SizedBox(height: 8),
-            // SizedBox(
-            //   width: SizeConfig.screenWidth * 0.4,
-            //   child: Center(
-            //     child: Text(
-            //       designation,
-            //       textAlign: TextAlign.center,
-            //       maxLines: 1,
-            //       overflow: TextOverflow.ellipsis,
-            //       style: const TextStyle(
-            //         color: Color(0xff555555),
-            //         fontFamily: 'segeo',
-            //         fontWeight: FontWeight.w400,
-            //       ),
-            //     ),
-            //   ),
-            // ),
+          ),
+          SizedBox(height: 3),
+          Text(
+            "$collegeName",
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              height: 1,
+              color: Color(0xff555555),
+            ),
+          ),
+          SizedBox(height: 8),
+          // SizedBox(
+          //   width: SizeConfig.screenWidth * 0.4,
+          //   child: Center(
+          //     child: Text(
+          //       designation,
+          //       textAlign: TextAlign.center,
+          //       maxLines: 1,
+          //       overflow: TextOverflow.ellipsis,
+          //       style: const TextStyle(
+          //         color: Color(0xff555555),
+          //         fontFamily: 'segeo',
+          //         fontWeight: FontWeight.w400,
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
-            // SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/images/starvector.png",
-                  color: Colors.amber,
-                  height: 14,
-                  width: 14,
-                ),
-                SizedBox(width: 4),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: rating.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'segeo',
-                          color: Color(0xff333333),
-                          fontWeight: FontWeight.bold,
-                        ),
+          // SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "assets/images/starvector.png",
+                color: Colors.amber,
+                height: 14,
+                width: 14,
+              ),
+              SizedBox(width: 4),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: rating.toStringAsFixed(1),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'segeo',
+                        color: Color(0xff333333),
+                        fontWeight: FontWeight.bold,
                       ),
-                      TextSpan(
-                        text: " ($ratingCount)",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'segeo',
-                          color: Color(0xff666666),
-                          fontWeight: FontWeight.w400,
-                        ),
+                    ),
+                    TextSpan(
+                      text: " ($ratingCount)",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'segeo',
+                        color: Color(0xff666666),
+                        fontWeight: FontWeight.w400,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // const SizedBox(width: 8),
-                // Image.asset("assets/images/coinsgold.png", height: 16, width: 16),
-                // SizedBox(width: 4),
-                // Text(
-                //   '$coinsPerMinute',
-                //   style: TextStyle(
-                //     fontSize: 12,
-                //     fontFamily: 'segeo',
-                //     color: Color(0xff333333),
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              // const SizedBox(width: 8),
+              // Image.asset("assets/images/coinsgold.png", height: 16, width: 16),
+              // SizedBox(width: 4),
+              // Text(
+              //   '$coinsPerMinute',
+              //   style: TextStyle(
+              //     fontSize: 12,
+              //     fontFamily: 'segeo',
+              //     color: Color(0xff333333),
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+            ],
+          ),
+        ],
       ),
     );
   }

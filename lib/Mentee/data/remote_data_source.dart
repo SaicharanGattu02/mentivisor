@@ -126,7 +126,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> commentLike(int id);
   Future<SuccessModel?> resourceDownload(String id);
   Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
-  Future<NotificationModel?> notifications();
+  Future<NotificationModel?> notifications(String role, String filter);
 
   Future<TagsModel?> getTagSearch(String query);
   Future<SuccessModel?> forgotPassword(Map<String, dynamic> data);
@@ -294,9 +294,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<NotificationModel?> notifications() async {
+  Future<NotificationModel?> notifications(String role, String filter) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.notification}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.notification}?role=${role}&filter=${filter}",
+      );
       AppLogger.log('notifications : ${res.data}');
       return NotificationModel.fromJson(res.data);
     } catch (e) {

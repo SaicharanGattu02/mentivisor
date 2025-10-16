@@ -58,7 +58,6 @@ class _MentorDashboardState extends State<MentorDashboard> {
     return false; // we handled it
   }
 
-
   void _toggleDrawerOrExit() {
     final scaffoldState = _scaffoldKey.currentState;
     if (scaffoldState != null && scaffoldState.isDrawerOpen) {
@@ -128,7 +127,7 @@ class _MentorDashboardState extends State<MentorDashboard> {
                 width: 26,
               ),
               onPressed: () {
-                context.push('/notifications');
+                context.push('/notifications_mentor');
               },
             ),
           ],

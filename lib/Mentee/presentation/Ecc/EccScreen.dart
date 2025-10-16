@@ -636,91 +636,87 @@ class _ECCShimmerState extends State<ECCShimmer> {
                     shimmerContainer(40, 20, context),
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            Expanded(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 6,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: width < 600 ? 1.15 : 1.9,
-                ),
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Stack(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 10,
-                              ),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: shimmerContainer(
-                                  SizeConfig.screenWidth,
-                                  160,
-                                  context,
-                                ),
-                              ),
+            SizedBox(height: 24),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 6,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 16,
+                childAspectRatio: width < 600 ? 1.15 : 1.9,
+              ),
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 10,
                             ),
-
-                            // Title
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: shimmerText(110, 12, context),
-                            ),
-                            const SizedBox(height: 10),
-
-                            // Details
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  shimmerText(60, 12, context),
-                                  const SizedBox(height: 8),
-                                  shimmerText(
-                                    SizeConfig.screenWidth,
-                                    12,
-                                    context,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  shimmerText(60, 12, context),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 10,
-                              ),
+                            child: SizedBox(
+                              width: double.infinity,
                               child: shimmerContainer(
                                 SizeConfig.screenWidth,
-                                40,
+                                160,
                                 context,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                          ),
+
+                          // Title
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: shimmerText(110, 12, context),
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Details
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                shimmerText(60, 12, context),
+                                const SizedBox(height: 8),
+                                shimmerText(
+                                  SizeConfig.screenWidth,
+                                  12,
+                                  context,
+                                ),
+                                const SizedBox(height: 8),
+                                shimmerText(60, 12, context),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 10,
+                            ),
+                            child: shimmerContainer(
+                              SizeConfig.screenWidth,
+                              40,
+                              context,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ],
         ),
