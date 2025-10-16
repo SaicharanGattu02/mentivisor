@@ -358,7 +358,7 @@ class _EccScreenState extends State<EccScreen> {
                 BlocBuilder<ECCCubit, ECCStates>(
                   builder: (context, state) {
                     if (state is ECCLoading) {
-                      return Expanded(child: ECCShimmer());
+                      return SingleChildScrollView(child: ECCShimmer());
                     } else if (state is ECCLoaded || state is ECCLoadingMore) {
                       final ecc_model = (state is ECCLoaded)
                           ? (state as ECCLoaded).eccModel

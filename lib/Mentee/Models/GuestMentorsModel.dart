@@ -1,19 +1,20 @@
 class GuestMentorsModel {
   bool? status;
   MentorData? data;
-
   GuestMentorsModel({this.status, this.data});
 
   GuestMentorsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = json['data'] != null ? MentorData.fromJson(json['data']) : null;
+    data = json['data'] != null ? new MentorData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['status'] = status;
-    if (data != null) map['data'] = data!.toJson();
-    return map;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    return data;
   }
 }
 
@@ -32,28 +33,27 @@ class MentorData {
   int? to;
   int? total;
 
-  MentorData({
-    this.currentPage,
-    this.mentors,
-    this.firstPageUrl,
-    this.from,
-    this.lastPage,
-    this.lastPageUrl,
-    this.links,
-    this.nextPageUrl,
-    this.path,
-    this.perPage,
-    this.prevPageUrl,
-    this.to,
-    this.total,
-  });
+  MentorData(
+      {this.currentPage,
+        this.mentors,
+        this.firstPageUrl,
+        this.from,
+        this.lastPage,
+        this.lastPageUrl,
+        this.links,
+        this.nextPageUrl,
+        this.path,
+        this.perPage,
+        this.prevPageUrl,
+        this.to,
+        this.total});
 
   MentorData.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
       mentors = <Mentor>[];
       json['data'].forEach((v) {
-        mentors!.add(Mentor.fromJson(v));
+        mentors!.add(new Mentor.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -63,7 +63,7 @@ class MentorData {
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
-        links!.add(Links.fromJson(v));
+        links!.add(new Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -75,25 +75,25 @@ class MentorData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['current_page'] = currentPage;
-    if (mentors != null) {
-      map['data'] = mentors!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['current_page'] = this.currentPage;
+    if (this.mentors != null) {
+      data['data'] = this.mentors!.map((v) => v.toJson()).toList();
     }
-    map['first_page_url'] = firstPageUrl;
-    map['from'] = from;
-    map['last_page'] = lastPage;
-    map['last_page_url'] = lastPageUrl;
-    if (links != null) {
-      map['links'] = links!.map((v) => v.toJson()).toList();
+    data['first_page_url'] = this.firstPageUrl;
+    data['from'] = this.from;
+    data['last_page'] = this.lastPage;
+    data['last_page_url'] = this.lastPageUrl;
+    if (this.links != null) {
+      data['links'] = this.links!.map((v) => v.toJson()).toList();
     }
-    map['next_page_url'] = nextPageUrl;
-    map['path'] = path;
-    map['per_page'] = perPage;
-    map['prev_page_url'] = prevPageUrl;
-    map['to'] = to;
-    map['total'] = total;
-    return map;
+    data['next_page_url'] = this.nextPageUrl;
+    data['path'] = this.path;
+    data['per_page'] = this.perPage;
+    data['prev_page_url'] = this.prevPageUrl;
+    data['to'] = this.to;
+    data['total'] = this.total;
+    return data;
   }
 }
 
@@ -102,77 +102,76 @@ class Mentor {
   String? name;
   String? email;
   int? contact;
-  String? emailVerifiedAt;
+  Null? emailVerifiedAt;
   String? refreshToken;
   String? webFcmToken;
   String? deviceFcmToken;
   String? role;
-  String? designation;
-  int? exp;
+  Null? designation;
+  Null? exp;
   String? bio;
   int? collegeId;
   String? year;
   String? stream;
-  String? gender;
+  Null? gender;
   String? status;
   String? profilePic;
-  String? state;
-  String? city;
-  String? country;
+  Null? state;
+  Null? city;
+  Null? country;
   String? saasId;
-  int? emailOtp;
-  String? expiredTime;
+  Null? emailOtp;
+  Null? expiredTime;
   String? createdAt;
   String? updatedAt;
-  String? deletedAt;
+  Null? deletedAt;
   int? activeStatus;
   String? lastLoginAt;
   String? mentorStatus;
+  int? topMentorRank;
   int? ratingsReceivedCount;
   double? ratingsReceivedAvgRating;
-  List<Slot>? slots;
+  String? coinsPerMinute;
   String? profilePicUrl;
-  String? costPerMinute;
   College? college;
 
-  Mentor({
-    this.id,
-    this.name,
-    this.email,
-    this.contact,
-    this.emailVerifiedAt,
-    this.refreshToken,
-    this.webFcmToken,
-    this.deviceFcmToken,
-    this.role,
-    this.designation,
-    this.exp,
-    this.bio,
-    this.collegeId,
-    this.year,
-    this.stream,
-    this.gender,
-    this.status,
-    this.profilePic,
-    this.state,
-    this.city,
-    this.country,
-    this.saasId,
-    this.emailOtp,
-    this.expiredTime,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-    this.activeStatus,
-    this.lastLoginAt,
-    this.mentorStatus,
-    this.ratingsReceivedCount,
-    this.ratingsReceivedAvgRating,
-    this.slots,
-    this.profilePicUrl,
-    this.costPerMinute,
-    this.college
-  });
+  Mentor(
+      {this.id,
+        this.name,
+        this.email,
+        this.contact,
+        this.emailVerifiedAt,
+        this.refreshToken,
+        this.webFcmToken,
+        this.deviceFcmToken,
+        this.role,
+        this.designation,
+        this.exp,
+        this.bio,
+        this.collegeId,
+        this.year,
+        this.stream,
+        this.gender,
+        this.status,
+        this.profilePic,
+        this.state,
+        this.city,
+        this.country,
+        this.saasId,
+        this.emailOtp,
+        this.expiredTime,
+        this.createdAt,
+        this.updatedAt,
+        this.deletedAt,
+        this.activeStatus,
+        this.lastLoginAt,
+        this.mentorStatus,
+        this.topMentorRank,
+        this.ratingsReceivedCount,
+        this.ratingsReceivedAvgRating,
+        this.coinsPerMinute,
+        this.profilePicUrl,
+        this.college});
 
   Mentor.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -204,145 +203,76 @@ class Mentor {
     deletedAt = json['deleted_at'];
     activeStatus = json['active_status'];
     lastLoginAt = json['last_login_at'];
-    costPerMinute = json['coins_per_minute'];
     mentorStatus = json['mentor_status'];
+    topMentorRank = json['top_mentor_rank'];
     ratingsReceivedCount = json['ratings_received_count'];
-    ratingsReceivedAvgRating = json['ratings_received_avg_rating'] != null
-        ? json['ratings_received_avg_rating'].toDouble()
-        : null;
-    if (json['slots'] != null) {
-      slots = <Slot>[];
-      json['slots'].forEach((v) {
-        slots!.add(Slot.fromJson(v));
-      });
-    }
-    json['college'] != null ? new College.fromJson(json['college']) : null;
-
+    ratingsReceivedAvgRating = json['ratings_received_avg_rating'];
+    coinsPerMinute = json['coins_per_minute'];
     profilePicUrl = json['profile_pic_url'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['id'] = id;
-    map['name'] = name;
-    map['email'] = email;
-    map['contact'] = contact;
-    map['email_verified_at'] = emailVerifiedAt;
-    map['refresh_token'] = refreshToken;
-    map['web_fcm_token'] = webFcmToken;
-    map['device_fcm_token'] = deviceFcmToken;
-    map['role'] = role;
-    map['designation'] = designation;
-    map['exp'] = exp;
-    map['bio'] = bio;
-    map['college_id'] = collegeId;
-    map['year'] = year;
-    map['stream'] = stream;
-    map['gender'] = gender;
-    map['status'] = status;
-    map['profile_pic'] = profilePic;
-    map['state'] = state;
-    map['city'] = city;
-    map['country'] = country;
-    map['saas_id'] = saasId;
-    map['email_otp'] = emailOtp;
-    map['expired_time'] = expiredTime;
-    map['created_at'] = createdAt;
-    map['updated_at'] = updatedAt;
-    map['deleted_at'] = deletedAt;
-    map['coins_per_minute'] = costPerMinute;
-    map['active_status'] = activeStatus;
-    map['last_login_at'] = lastLoginAt;
-    map['mentor_status'] = mentorStatus;
-    map['ratings_received_count'] = ratingsReceivedCount;
-    map['ratings_received_avg_rating'] = ratingsReceivedAvgRating;
-    if (slots != null) {
-      map['slots'] = slots!.map((v) => v.toJson()).toList();
-    }
-    if (this.college != null) {
-      map['college'] = this.college!.toJson();
-    }
-    map['profile_pic_url'] = profilePicUrl;
-    return map;
-  }
-}
-class College {
-  int? id;
-  String? name;
-  String? state;
-  String? city;
-  String? dist;
-  String? pincode;
-  String? createdAt;
-  String? updatedAt;
-  Null? deletedAt;
-  int? activeStatus;
-
-  College(
-      {this.id,
-        this.name,
-        this.state,
-        this.city,
-        this.dist,
-        this.pincode,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus});
-
-  College.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['Name'];
-    state = json['State'];
-    city = json['City'];
-    dist = json['Dist'];
-    pincode = json['pincode'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
-    activeStatus = json['active_status'];
+    college =
+    json['college'] != null ? new College.fromJson(json['college']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['Name'] = this.name;
-    data['State'] = this.state;
-    data['City'] = this.city;
-    data['Dist'] = this.dist;
-    data['pincode'] = this.pincode;
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['contact'] = this.contact;
+    data['email_verified_at'] = this.emailVerifiedAt;
+    data['refresh_token'] = this.refreshToken;
+    data['web_fcm_token'] = this.webFcmToken;
+    data['device_fcm_token'] = this.deviceFcmToken;
+    data['role'] = this.role;
+    data['designation'] = this.designation;
+    data['exp'] = this.exp;
+    data['bio'] = this.bio;
+    data['college_id'] = this.collegeId;
+    data['year'] = this.year;
+    data['stream'] = this.stream;
+    data['gender'] = this.gender;
+    data['status'] = this.status;
+    data['profile_pic'] = this.profilePic;
+    data['state'] = this.state;
+    data['city'] = this.city;
+    data['country'] = this.country;
+    data['saas_id'] = this.saasId;
+    data['email_otp'] = this.emailOtp;
+    data['expired_time'] = this.expiredTime;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['deleted_at'] = this.deletedAt;
     data['active_status'] = this.activeStatus;
+    data['last_login_at'] = this.lastLoginAt;
+    data['mentor_status'] = this.mentorStatus;
+    data['top_mentor_rank'] = this.topMentorRank;
+    data['ratings_received_count'] = this.ratingsReceivedCount;
+    data['ratings_received_avg_rating'] = this.ratingsReceivedAvgRating;
+    data['coins_per_minute'] = this.coinsPerMinute;
+    data['profile_pic_url'] = this.profilePicUrl;
+    if (this.college != null) {
+      data['college'] = this.college!.toJson();
+    }
     return data;
   }
 }
-class Slot {
+
+class College {
   int? id;
-  String? date;
-  String? startTime;
-  String? endTime;
-  String? status;
+  String? name;
 
-  Slot({this.id, this.date, this.startTime, this.endTime, this.status});
+  College({this.id, this.name});
 
-  Slot.fromJson(Map<String, dynamic> json) {
+  College.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    date = json['date'];
-    startTime = json['start_time'];
-    endTime = json['end_time'];
-    status = json['status'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['id'] = id;
-    map['date'] = date;
-    map['start_time'] = startTime;
-    map['end_time'] = endTime;
-    map['status'] = status;
-    return map;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
   }
 }
 
@@ -360,10 +290,10 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['url'] = url;
-    map['label'] = label;
-    map['active'] = active;
-    return map;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['label'] = this.label;
+    data['active'] = this.active;
+    return data;
   }
 }

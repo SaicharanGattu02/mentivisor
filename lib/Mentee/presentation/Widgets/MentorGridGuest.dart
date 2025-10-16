@@ -30,28 +30,28 @@ class MentorGridGuest extends StatelessWidget {
       crossAxisCount = 4;
     }
 
-    // Adaptive spacing
-    final spacing = SizeConfig.width(3); // ~3% of width
-    final itemWidth =
-        (width - ((crossAxisCount + 1) * spacing)) / crossAxisCount;
-    final itemHeight =
-        itemWidth *
-        (width < 600
-            ? 1.1 // mobile
-            : width > 600
-            ? 0.85 // tablet
-            : 0.95); // desktop
-    final aspectRatio = itemWidth / itemHeight;
-
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: mentors?.length ?? 0,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        crossAxisSpacing: spacing,
-        mainAxisSpacing: spacing,
-        childAspectRatio: aspectRatio,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: () {
+          final screenHeight = MediaQuery.of(context).size.height;
+          final size = MediaQuery.of(context).size;
+          final screenWidth = size.width;
+          double aspectRatio = screenWidth / (screenHeight * 0.45);
+          if (screenWidth < 400) {
+            aspectRatio = screenWidth / (screenHeight * 0.32);
+          } else if (screenWidth < 800) {
+            aspectRatio = screenWidth / (screenHeight * 0.4);
+          } else {
+            aspectRatio = screenWidth / (screenHeight * 0.35);
+          }
+          return aspectRatio.clamp(0.7, 1.5);
+        }(),
       ),
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
@@ -69,7 +69,7 @@ class MentorGridGuest extends StatelessWidget {
             image: url,
             rating: (m.ratingsReceivedCount ?? 0).toDouble(),
             ratingCount: m.ratingsReceivedCount ?? 0,
-            coinsPerMinute: m.costPerMinute ?? "",
+            coinsPerMinute: m.coinsPerMinute ?? "",
           ),
         );
       },
@@ -96,22 +96,6 @@ class MentorGridCampus extends StatelessWidget {
     } else {
       crossAxisCount = 4;
     }
-    // Adaptive spacing
-    final spacing = width * 0.03; // 3% of screen width
-    final horizontalPadding = width * 0.04;
-    final itemWidth =
-        (width - ((crossAxisCount + 1) * spacing) - (2 * horizontalPadding)) /
-        crossAxisCount;
-
-    final itemHeight =
-        itemWidth *
-        (width < 600
-            ? 0.98
-            : width < 1024
-            ? 1.08
-            : 0.65);
-
-    final aspectRatio = itemWidth / itemHeight;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -119,9 +103,22 @@ class MentorGridCampus extends StatelessWidget {
       itemCount: mentors_list?.length ?? 0,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        crossAxisSpacing: spacing,
-        mainAxisSpacing: spacing,
-        childAspectRatio: aspectRatio,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: () {
+          final screenHeight = MediaQuery.of(context).size.height;
+          final size = MediaQuery.of(context).size;
+          final screenWidth = size.width;
+          double aspectRatio = screenWidth / (screenHeight * 0.45);
+          if (screenWidth < 400) {
+            aspectRatio = screenWidth / (screenHeight * 0.32);
+          } else if (screenWidth < 800) {
+            aspectRatio = screenWidth / (screenHeight * 0.4);
+          } else {
+            aspectRatio = screenWidth / (screenHeight * 0.35);
+          }
+          return aspectRatio.clamp(0.7, 1.5);
+        }(),
       ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
@@ -239,7 +236,7 @@ class _MentorCard extends StatelessWidget {
             //     ),
             //   ),
             // ),
-        
+
             // SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
