@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states.dart';
-
-import '../../Components/CommonLoader.dart';
-import '../../utils/color_constants.dart';
-import '../../utils/media_query_helper.dart';
+import 'package:mentivisor/utils/color_constants.dart';
+import '../../Components/Shimmers.dart';
 import 'Widgets/CommonChoiceChip.dart';
 
 class Notifications extends StatefulWidget {
@@ -17,13 +16,9 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<NotificationsCubit>().notifiactions("mentee","all");
-  }
-
+  final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true);
   int _selectedFilter = 0;
+
   final List<String> _filters = [
     "All",
     "Sessions",
@@ -32,26 +27,42 @@ class _NotificationsState extends State<Notifications> {
     "Mentions",
   ];
 
+  final Map<String, String> _filterKeywordMap = {
+    "All": "",
+    "Sessions": "session",
+    "Rewards": "reward",
+    "Reminders": "reminder",
+    "Mentions": "mention",
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<NotificationsCubit>().fetchNotifications("", "");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF2F4FD),
       appBar: CustomAppBar1(
-        title: 'Notification',
+        title: 'Notifications',
         actions: [],
-        color: Color(0xffF2F4FD),
+        color: const Color(0xffF2F4FD),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 🔹 Filters Row
             SizedBox(
               height: 32,
               child: ListView.separated(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 itemCount: _filters.length,
-                separatorBuilder: (_, __) => SizedBox(width: 8),
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (context, i) {
                   final selected = i == _selectedFilter;
                   return CustomChoiceChip(
@@ -59,129 +70,127 @@ class _NotificationsState extends State<Notifications> {
                     selected: selected,
                     onSelected: (_) {
                       setState(() => _selectedFilter = i);
+                      final filterKey = _filters[i];
+                      final filterType = _filterKeywordMap[filterKey] ?? "";
+                      context.read<NotificationsCubit>().fetchNotifications(
+                        "",
+                        filterType,
+                      );
                     },
                   );
                 },
               ),
             ),
-            BlocBuilder<NotificationsCubit, NotificationsStates>(
-              builder: (context, state) {
-                if (state is NotificationsLoading) {
-                  return Center(
-                    child: SizedBox(
-                      height: SizeConfig.screenWidth * 1,
-                      child: const DottedProgressWithLogo(),
-                    ),
-                  );
-                } else if (state is NotificationsLoaded) {
-                  final data = state.notificationModel.data;
-                  return CustomScrollView(
-                    slivers: [
-                      if (data?.session != null &&
-                          data!.session!.isNotEmpty) ...[
-                        _buildHeader("Session"),
-                        // _buildList(
-                        //   itemCount: data.session!.length,
-                        //   itemBuilder: (context, index) {
-                        //     final session = data.session![index];
-                        //     return _buildCard(
-                        //       icon: "assets/icons/meet.png",
-                        //       title: session.title ?? "",
-                        //       subtitle: session.message ?? "",
-                        //     );
-                        //   },
-                        // ),
-                      ],
+            const SizedBox(height: 16),
+            Expanded(
+              child: BlocBuilder<NotificationsCubit, NotificationsStates>(
+                builder: (context, state) {
+                  if (state is NotificationsLoading) {
+                    return NotificationsListShimmer();
+                  } else if (state is NotificationsFailure) {
+                    return Center(child: Text(state.message));
+                  } else if (state is NotificationsLoaded ||
+                      state is NotificationsLoadingMore) {
+                    final notificationModel = (state is NotificationsLoaded)
+                        ? state.notificationModel
+                        : (state as NotificationsLoadingMore).notificationModel;
 
-                      // Reminder Section
-                      if (data?.reminder != null &&
-                          data!.reminder!.isNotEmpty) ...[
-                        _buildHeader("Reminder"),
-                        // _buildList(
-                        //   itemCount: data.reminder!.length,
-                        //   itemBuilder: (context, index) {
-                        //     final reminder = data.reminder![index];
-                        // return _buildCard(
-                        //   icon: "assets/icons/calendar.png",
-                        //   title: reminder.title ?? "",
-                        //   subtitle: reminder.message ?? "",
-                        // );
-                        //   },
-                        // ),
-                      ],
+                    final notifyData = notificationModel.notify?.data ?? [];
 
-                      // Rewards Section
-                      if (data?.rewards != null &&
-                          data!.rewards!.isNotEmpty) ...[
-                        _buildHeader("Rewards"),
-                        // _buildList(
-                        //   itemCount: data.rewards!.length,
-                        //   itemBuilder: (context, index) {
-                        //     final reward = data.rewards![index];
-                        // return _buildCard(
-                        //   icon: "assets/icons/coin.png",
-                        //   title: reward.title ?? "",
-                        //   subtitle: reward.message ?? "",
-                        // );
-                        //   },
-                        // ),
-                      ],
+                    if (notifyData.isEmpty) {
+                      return _noDataWidget();
+                    }
 
-                      if (data?.rejections != null) ...[
-                        if (data!.rejections!.isEmpty)
-                          SliverToBoxAdapter(
-                            child: SizedBox(
-                              height: SizeConfig.screenHeight * 0.55,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 200,
-                                      width: 200,
-                                      child: Image.asset(
-                                        "assets/nodata/no_data.png",
-                                      ),
-                                    ),
-                                    Text(
-                                      'No Notifications Found!',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: primarycolor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                  ],
+                    final selectedLabel = _filters[_selectedFilter];
+                    final keyword =
+                        _filterKeywordMap[selectedLabel]?.toLowerCase() ?? "";
+
+                    // Apply filter
+                    final filtered = keyword == ""
+                        ? notifyData
+                        : notifyData
+                              .where(
+                                (n) => (n.type ?? "").toLowerCase().contains(
+                                  keyword,
+                                ),
+                              )
+                              .toList();
+
+                    if (filtered.isEmpty) {
+                      return _noDataWidget();
+                    }
+
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (scrollInfo) {
+                        if (scrollInfo.metrics.pixels >=
+                            scrollInfo.metrics.maxScrollExtent * 0.9) {
+                          if (state is NotificationsLoaded &&
+                              state.hasNextPage) {
+                            context
+                                .read<NotificationsCubit>()
+                                .fetchMoreNotifications("", keyword);
+                          }
+                        }
+                        return false;
+                      },
+                      child: NotificationListener<UserScrollNotification>(
+                        onNotification: (notification) {
+                          if (notification.direction ==
+                                  ScrollDirection.reverse &&
+                              _fabVisible.value) {
+                            _fabVisible.value = false;
+                          } else if (notification.direction ==
+                                  ScrollDirection.forward &&
+                              !_fabVisible.value) {
+                            _fabVisible.value = true;
+                          }
+                          return false;
+                        },
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final item = filtered[index];
+                                    return _buildNotificationCard(
+                                      icon: _getIconForType(item.type),
+                                      title: item.title ?? "",
+                                      subtitle:
+                                          item.remarks ?? item.message ?? "",
+                                      date: item.createdAt ?? "",
+                                    );
+                                  },
+                                  childCount: filtered.length,
+                                  addAutomaticKeepAlives: false,
+                                  addRepaintBoundaries: true,
+                                  addSemanticIndexes: false,
                                 ),
                               ),
                             ),
-                          )
-                        else //
-                          _buildHeader(
-                            "Rejections",
-                          ),
-                        _buildList(
-                          itemCount: data.rejections!.length,
-                          itemBuilder: (context, index) {
-                            final rejection = data.rejections![index];
-                            return _buildCard(
-                              icon: "assets/icons/meet.png",
-                              title: rejection.message ?? "",
-                              subtitle: rejection.date ?? "",
-                            );
-                          },
+                            if (state is NotificationsLoadingMore)
+                              const SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: EdgeInsets.all(25.0),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                      ],
-                    ],
-                  );
-                } else if (state is NotificationsFailure) {
-                  return Center(child: Text(state.msg));
-                }
-                return const Center(child: Text("No Data"));
-              },
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -189,71 +198,178 @@ class _NotificationsState extends State<Notifications> {
     );
   }
 
-  // 🔹 Section Header
-  SliverToBoxAdapter _buildHeader(String title) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 15,
-            color: Color(0xff040404),
-            fontWeight: FontWeight.w600,
-            fontFamily: 'segeo',
-          ),
-        ),
-      ),
-    );
-  }
-
-  // 🔹 SliverList builder
-  SliverList _buildList({
-    required int itemCount,
-    required Widget Function(BuildContext, int) itemBuilder,
-  }) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
-    );
-  }
-
-  // 🔹 Reusable Card Widget
-  Widget _buildCard({
+  // 🔹 Notification Card Widget
+  Widget _buildNotificationCard({
     required String icon,
     required String title,
     required String subtitle,
+    required String date,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xffFFFFFF),
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: ListTile(
-        leading: SizedBox(
-          width: 46,
-          height: 46,
-          child: Image.asset(icon, fit: BoxFit.fill),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              icon,
+              width: 40,
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xff222222),
+                    fontFamily: 'segeo',
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xff666666),
+                    fontFamily: 'segeo',
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  date,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xff999999),
+                    fontFamily: 'segeo',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 🔹 Icon helper
+  String _getIconForType(String? type) {
+    final t = type?.toLowerCase() ?? "";
+    if (t.contains("session")) return "assets/icons/meet.png";
+    if (t.contains("reward")) return "assets/images/coinsimage.png";
+    if (t.contains("reminder")) return "assets/icons/bell.png";
+    if (t.contains("mention")) return "assets/icons/approval.png";
+    return "assets/icons/bell.png";
+  }
+
+  // 🔹 Empty state
+  Widget _noDataWidget() {
+    return Center(
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset("assets/nodata/no_data.png", height: 200),
+            const SizedBox(height: 10),
+            Text(
+              'No Notifications Found!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: primarycolor,
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ],
         ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xff666666),
-            fontWeight: FontWeight.w600,
-            fontFamily: 'segeo',
+      ),
+    );
+  }
+}
+
+class NotificationsListShimmer extends StatelessWidget {
+  const NotificationsListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => const _NotificationCardShimmer(),
+              childCount: 6, // number of shimmer cards
+            ),
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xff666666),
-            fontWeight: FontWeight.w400,
-            fontFamily: 'segeo',
+      ],
+    );
+  }
+}
+
+class _NotificationCardShimmer extends StatelessWidget {
+  const _NotificationCardShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: shimmerContainer(40, 40, context),
           ),
-        ),
+          const SizedBox(width: 10),
+
+          // 🔹 Text shimmer section
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title shimmer
+                shimmerText(140, 14, context),
+                const SizedBox(height: 6),
+
+                // Subtitle shimmer (2 lines)
+                shimmerText(double.infinity, 12, context),
+                const SizedBox(height: 4),
+                shimmerText(220, 12, context),
+
+                const SizedBox(height: 6),
+
+                // Date shimmer
+                shimmerText(100, 10, context),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

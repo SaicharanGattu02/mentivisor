@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -15,6 +14,7 @@ import '../../Components/Shimmers.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/Cubits/CouponsDetails/CouponsDetailsCubit.dart';
 import '../../services/AuthService.dart';
+import '../data/Cubits/MentorEarnings/MentorEarningsCubit.dart';
 
 class CouponDetailsScreen extends StatefulWidget {
   final String couponId;
@@ -40,6 +40,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
       barrierColor: Colors.black45,
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (_, __, ___) {
+
         return Align(
           alignment: Alignment.center,
           child: Padding(
@@ -146,7 +147,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                               valueListenable: enoughBalance,
                               builder: (context, value, child) {
                                 final enough_coins = value;
-                                AppLogger.info("enough_coins:${enough_coins}");
+                                AppLogger.info("enoughCoins:${enough_coins}");
                                 return Expanded(
                                   child: SizedBox(
                                     height: 44,
@@ -155,6 +156,9 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                                         if (state is BuyCouponLoaded) {
                                           context.pop();
                                           context.pushReplacement("/coupons");
+                                          context
+                                              .read<MentorEarningsCubit>()
+                                              .getMentorEarnings();
                                         } else if (state is BuyCouponFailure) {
                                           CustomSnackBar1.show(
                                             context,
@@ -167,7 +171,10 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                                           isLoading: state is BuyCouponLoading,
                                           text: "Confirm",
                                           onPlusTap: () {
-                                            if (enough_coins == false) {
+                                            if (enoughBalance == false) {
+                                              AppLogger.info(
+                                                "enough_coins::$enoughBalance",
+                                              );
                                               showDialog(
                                                 context: context,
                                                 builder: (context) => AlertDialog(
@@ -177,7 +184,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                                                           16,
                                                         ),
                                                   ),
-                                                  title: const Text(
+                                                  title: Text(
                                                     "Insufficient Coins",
                                                     style: TextStyle(
                                                       fontWeight:
@@ -297,11 +304,10 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                 : 0;
 
             final requiredCoins = couponsDetails?.coinsRequired ?? 0;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              AuthService.getCoins().then((coinsStr) {
-                final coins = int.tryParse(coinsStr ?? '0') ?? 0;
-                enoughBalance.value = coins >= requiredCoins;
-              });
+            AuthService.getCoins().then((coinsStr) {
+              final coins = int.tryParse(coinsStr ?? '0') ?? 0;
+              enoughBalance.value = coins >= requiredCoins;
+              AppLogger.info("enoughBalancecc:${enoughBalance.value}");
             });
 
             return SingleChildScrollView(
@@ -561,7 +567,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Validity Dates
                   if (couponsDetails?.startDate != null ||
                       couponsDetails?.expiryDate != null)
                     Container(

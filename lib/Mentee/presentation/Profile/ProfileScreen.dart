@@ -819,7 +819,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                               text: "View",
                                                               onTap: () {
                                                                 context.push(
-                                                                  '/downloads',
+                                                                  "/pdf_viewer?file_url=${campusList?.filePdf??""}",
                                                                 );
                                                               },
                                                             ),

@@ -2,16 +2,25 @@ import 'package:mentivisor/Mentee/Models/NotificationModel.dart';
 
 abstract class NotificationsStates {}
 
-class NotificationsIntially extends NotificationsStates {}
+class NotificationsInitial extends NotificationsStates {}
 
 class NotificationsLoading extends NotificationsStates {}
 
 class NotificationsLoaded extends NotificationsStates {
-  NotificationModel notificationModel;
-  NotificationsLoaded({required this.notificationModel});
+  final NotificationModel notificationModel;
+  final bool hasNextPage;
+
+  NotificationsLoaded(this.notificationModel, this.hasNextPage);
+}
+
+class NotificationsLoadingMore extends NotificationsStates {
+  final NotificationModel notificationModel;
+  final bool hasNextPage;
+
+  NotificationsLoadingMore(this.notificationModel, this.hasNextPage);
 }
 
 class NotificationsFailure extends NotificationsStates {
-  final String msg;
-  NotificationsFailure({required this.msg});
+  final String message;
+  NotificationsFailure({required this.message});
 }

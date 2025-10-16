@@ -50,7 +50,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                       Image.asset("assets/nodata/no_data.png", height: 120),
                       const SizedBox(height: 16),
                       const Text(
-                        "No data available",
+                        "No upcoming session available",
                         style: TextStyle(
                           fontFamily: "segeo",
                           fontSize: 14,
