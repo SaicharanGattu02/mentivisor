@@ -28,9 +28,6 @@ class _CouponsListState extends State<CouponsList> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = screenWidth < 600 ? 1 : 2;
-    final aspectRatio = screenWidth < 600 ? 1.6 : 2.6;
 
     return Scaffold(
       backgroundColor: const Color(0xffF8FAFE),
@@ -78,20 +75,18 @@ class _CouponsListState extends State<CouponsList> {
                       vertical: 12,
                     ),
                     sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 12,
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 500, // responsive item width (~2 per row on mobile)
                         mainAxisSpacing: 12,
-                        childAspectRatio: aspectRatio,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 1.55, // slightly taller cards
                       ),
                       delegate: SliverChildBuilderDelegate(
-                        (context, index) {
+                            (context, index) {
                           final coupon = coupons[index];
                           return GestureDetector(
                             onTap: () {
-                              context.push(
-                                '/coupon_details?couponId=${coupon.id ?? ""}',
-                              );
+                              context.push('/coupon_details?couponId=${coupon.id ?? ""}');
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -106,58 +101,46 @@ class _CouponsListState extends State<CouponsList> {
                                 ],
                               ),
                               child: Column(
+                                mainAxisSize: MainAxisSize.min, // ✅ fixes overflow
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Top Image with expiry badge
+                                  // Top Image + Expiry badge
                                   Stack(
                                     children: [
                                       ClipRRect(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(16),
-                                        ),
+                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                         child: CachedNetworkImage(
                                           imageUrl: coupon.image ?? "",
                                           height: 140,
                                           width: double.infinity,
                                           fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              Container(
-                                                height: 140,
-                                                color: Colors.grey.shade200,
-                                                child: const Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        strokeWidth: 1,
-                                                      ),
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                                height: 140,
-                                                color: Colors.grey.shade100,
-                                                child: const Icon(
-                                                  Icons.broken_image,
-                                                  size: 40,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
+                                          placeholder: (context, url) => Container(
+                                            height: 140,
+                                            color: Colors.grey.shade200,
+                                            child: const Center(
+                                              child: CircularProgressIndicator(strokeWidth: 1),
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) => Container(
+                                            height: 140,
+                                            color: Colors.grey.shade100,
+                                            child: const Icon(
+                                              Icons.broken_image,
+                                              size: 40,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      // expiry tag
                                       if ((coupon.expiryDate ?? "").isNotEmpty)
                                         Positioned(
                                           right: 10,
                                           top: 10,
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 6,
-                                            ),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(
-                                                0.6,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                              color: Colors.black.withOpacity(0.6),
+                                              borderRadius: BorderRadius.circular(20),
                                             ),
                                             child: Text(
                                               "Expires: ${coupon.expiryDate}",
@@ -173,76 +156,62 @@ class _CouponsListState extends State<CouponsList> {
                                     ],
                                   ),
 
-                                  // Content Section
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 10,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // vendor + website icon
-                                          Row(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade100,
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                child: Text(
-                                                  coupon.vendor ?? "Vendor",
-                                                  style: const TextStyle(
-                                                    fontFamily: 'segeo',
-                                                    fontSize: 12,
-                                                    color: Color(0xFF666666),
-                                                  ),
+                                  // Bottom content
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade100,
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                coupon.vendor ?? "Vendor",
+                                                style: const TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontSize: 12,
+                                                  color: Color(0xFF666666),
                                                 ),
                                               ),
-                                              const SizedBox(width: 8),
-                                              if ((coupon.website ?? "")
-                                                  .isNotEmpty)
-                                                Icon(
-                                                  Icons.language,
-                                                  size: 16,
-                                                  color:
-                                                      Colors.blueGrey.shade300,
-                                                ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            coupon.title ?? "",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontFamily: 'segeo',
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xFF222222),
                                             ),
+                                            const SizedBox(width: 8),
+                                            if ((coupon.website ?? "").isNotEmpty)
+                                              Icon(
+                                                Icons.language,
+                                                size: 16,
+                                                color: Colors.blueGrey.shade300,
+                                              ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          coupon.title ?? "",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontFamily: 'segeo',
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF222222),
                                           ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            coupon.description ?? "",
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontFamily: 'segeo',
-                                              fontSize: 12,
-                                              color: Colors.black54,
-                                            ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          coupon.description ?? "",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontFamily: 'segeo',
+                                            fontSize: 12,
+                                            color: Colors.black54,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -251,11 +220,9 @@ class _CouponsListState extends State<CouponsList> {
                           );
                         },
                         childCount: coupons.length,
-                        addAutomaticKeepAlives: false,
-                        addRepaintBoundaries: true,
-                        addSemanticIndexes: false,
                       ),
                     ),
+
                   ),
                   if (state is CouponsListLoadingMore)
                     const SliverToBoxAdapter(
