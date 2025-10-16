@@ -77,6 +77,8 @@ import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
 import 'Mentee/data/cubits/CoinsAchievements/CoinsAchievementCubit.dart';
 import 'Mentee/data/cubits/CommunityDetails/CommunityDetailsCubit.dart';
 import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
+import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsCubit.dart';
+import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsRepo.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
 import 'Mentee/data/cubits/EccTags/TagsSearch/tags_search_cubit.dart';
 import 'Mentee/data/cubits/EccTags/tags_cubit.dart';
@@ -333,6 +335,10 @@ class StateInjector {
       create: (context) => StudyZoneCampusRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
+    ),
+    RepositoryProvider<DailyCheckInsRepo>(
+      create: (context) =>
+          DailyCheckInsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
     ///Mentor Repositories
@@ -627,6 +633,10 @@ class StateInjector {
     BlocProvider<CoinsAchievementCubit>(
       create: (context) =>
           CoinsAchievementCubit(context.read<WalletmoneyRepository>()),
+    ),
+    BlocProvider<DailyCheckInsCubit>(
+      create: (context) =>
+          DailyCheckInsCubit(context.read<DailyCheckInsRepo>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

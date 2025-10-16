@@ -52,6 +52,7 @@ import '../Models/UpComingSessionModel.dart';
 import '../Models/UploadFileInChatModel.dart';
 import '../Models/ViewEccDetailsModel.dart';
 import '../Models/WeeklySlotsModel.dart';
+import '../Models/checkInModel.dart';
 
 abstract class RemoteDataSource {
   Future<LogInModel?> login(Map<String, dynamic> data);
@@ -148,6 +149,7 @@ abstract class RemoteDataSource {
   Future<TagsModel?> getEccTags();
   Future<TagsModel?> getStudyZoneTags();
   Future<CoinsAchievementModel?> getcoinsAchievements(int page);
+  Future<checkInModel?> dailyCheckins();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -400,6 +402,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return YearsModel.fromJson(res.data);
     } catch (e) {
       debugPrint('Error getYears::$e');
+      return null;
+    }
+  }
+
+  @override
+  Future<checkInModel?> dailyCheckins() async {
+    try {
+      Response res = await ApiClient.post("${APIEndpointUrls.daily_checkins}");
+      debugPrint('daily CheckIns::$res');
+      return checkInModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint('Error daily CheckIns::$e');
       return null;
     }
   }

@@ -4,6 +4,7 @@ import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/utils/AppLauncher.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CutomAppBar.dart';
+import '../../../Components/Shimmers.dart';
 import '../../data/cubits/CustomerSupport/Mentee_Customersupport_Cubit.dart';
 import '../../data/cubits/CustomerSupport/Mentee_Customersupport_States.dart';
 
@@ -31,9 +32,7 @@ class CustomerServiceScreen extends StatelessWidget {
               >(
                 builder: (context, state) {
                   if (state is MenteeCustomersupportLoading) {
-                    return Center(child: SizedBox(
-                      height: SizeConfig.screenHeight*0.7,
-                        child: DottedProgressWithLogo()));
+                    return const CustomerSupportShimmer();
                   }
 
                   if (state is MenteeCustomersupportFailure) {
@@ -135,6 +134,61 @@ class CustomerServiceScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomerSupportShimmer extends StatelessWidget {
+  const CustomerSupportShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 🔹 Placeholder for top image
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: shimmerContainer(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.5,
+            context,
+          ),
+        ),
+        const SizedBox(height: 32),
+
+        // 🔹 Section title shimmer
+        shimmerText(120, 16, context),
+        const SizedBox(height: 10),
+
+        // 🔹 Description shimmer (3 lines)
+        shimmerText(double.infinity, 12, context),
+        const SizedBox(height: 6),
+        shimmerText(250, 12, context),
+        const SizedBox(height: 6),
+        shimmerText(200, 12, context),
+
+        const SizedBox(height: 32),
+
+        // 🔹 Phone shimmer row
+        Row(
+          children: [
+            shimmerCircle(20, context),
+            const SizedBox(width: 10),
+            shimmerText(140, 14, context),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        // 🔹 Email shimmer row
+        Row(
+          children: [
+            shimmerCircle(20, context),
+            const SizedBox(width: 10),
+            shimmerText(180, 14, context),
+          ],
+        ),
+      ],
     );
   }
 }

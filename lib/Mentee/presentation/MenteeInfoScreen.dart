@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import '../../Components/CutomAppBar.dart';
+import '../../Components/Shimmers.dart';
 import '../../Mentor/data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
 import '../../Mentor/data/Cubits/MentorInfo/Mentor_Info_states.dart';
 
@@ -27,7 +28,6 @@ class _InfoScreenState extends State<InfoScreen> {
       ),
       body: SafeArea(
         child: Container(
-          // Apply gradient background here
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -42,7 +42,15 @@ class _InfoScreenState extends State<InfoScreen> {
           child: BlocBuilder<MentorInfoCubit, MentorInfoStates>(
             builder: (context, state) {
               if (state is MentorinfoLoading) {
-                return Center(child: DottedProgressWithLogo());
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    children: List.generate(
+                      6, // number of shimmer placeholders
+                      (index) => const MentorInfoCardShimmer(),
+                    ),
+                  ),
+                );
               }
 
               if (state is MentorinfoFailure) {
@@ -55,7 +63,6 @@ class _InfoScreenState extends State<InfoScreen> {
                 return ListView(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   children: [
-                    // Dynamically created info cards
                     ...mentorData?.map((item) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(
@@ -106,6 +113,38 @@ class _InfoScreenState extends State<InfoScreen> {
               return Center(child: Text('Unexpected state'));
             },
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class MentorInfoCardShimmer extends StatelessWidget {
+  const MentorInfoCardShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔹 Shimmer for heading
+            shimmerText(120, 16, context),
+            const SizedBox(height: 8),
+            // 🔹 Shimmer for description (simulate 2–3 lines)
+            shimmerText(double.infinity, 12, context),
+            const SizedBox(height: 6),
+            shimmerText(250, 12, context),
+            const SizedBox(height: 6),
+            shimmerText(180, 12, context),
+          ],
         ),
       ),
     );

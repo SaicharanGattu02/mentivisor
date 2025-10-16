@@ -104,17 +104,15 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
             BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
               builder: (context, state) {
                 if (state is ExclusiveserviceStateLoading) {
-                  return SingleChildScrollView(
-                    child: SizedBox(
-                      height: SizeConfig.screenHeight * 0.7,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [DottedProgressWithLogo()],
-                      ),
+                  return Expanded(
+                    child: ListView.separated(
+                      itemCount: 5,
+                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      itemBuilder: (context, index) => const ServiceCardShimmer(),
                     ),
                   );
-                } else if (state is ExclusiveserviceStateFailure) {
+                }
+                else if (state is ExclusiveserviceStateFailure) {
                   return Center(child: Text(state.msg ?? 'Failed to load'));
                 } else if (state is! ExclusiveserviceStateLoaded) {
                   return const Center(child: Text('No data available'));
@@ -344,17 +342,17 @@ class _ServiceCard extends StatelessWidget {
 }
 
 
-class ExclusiveServiceShimmers extends StatelessWidget {
-  const ExclusiveServiceShimmers({super.key});
+class ServiceCardShimmer extends StatelessWidget {
+  const ServiceCardShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -366,23 +364,29 @@ class ExclusiveServiceShimmers extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// 🔹 Example: Image Banner
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: shimmerRectangle(250, context),
+          // 🔹 Image section shimmer
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFD9DEE7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: shimmerContainer(double.infinity, 140, context),
+            ),
           ),
-          const SizedBox(height: 10),
 
-          /// 🔹 Example: Title Text
-          shimmerText(180, 16, context),
+          const SizedBox(height: 12),
+
+          // 🔹 Title shimmer
+          shimmerText(150, 14, context),
           const SizedBox(height: 6),
 
-          /// 🔹 Example: Description Text
-          shimmerText(240, 12, context),
-          const SizedBox(height: 6),
-
-          /// 🔹 Example: Button
-          shimmerContainer(100, 36, context, isButton: true),
+          // 🔹 Description shimmer (2 lines)
+          shimmerText(double.infinity, 12, context),
+          const SizedBox(height: 4),
+          shimmerText(200, 12, context),
         ],
       ),
     );

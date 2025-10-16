@@ -467,6 +467,8 @@ class _WalletScreenState extends State<WalletScreen> {
                                               return "assets/icons/VideoConference.png";
                                             case 'feedback':
                                               return "assets/icons/review.png";
+                                            case 'daily_checkin':
+                                              return "assets/icons/dailyChcekins.png";
                                             default:
                                               return "assets/icons/CoinVertical.png";
                                           }

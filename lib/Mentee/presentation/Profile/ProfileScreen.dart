@@ -11,6 +11,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
+import '../../../Components/Shimmers.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommunityPostsModel.dart';
@@ -59,10 +60,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
           child: BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
             builder: (context, state) {
               if (state is MenteeProfileLoading) {
-                return SizedBox(
-                  height: SizeConfig.screenHeight,
-                  child: Center(child: DottedProgressWithLogo()),
-                );
+                return const MenteeProfileShimmer();
               } else if (state is MenteeProfileLoaded) {
                 final menteeProfile = state.menteeProfileModel.data;
                 return Column(
@@ -828,60 +826,57 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           ),
 
                                                           BlocConsumer<
-                                                              AddResourceCubit,
-                                                              AddResourceStates
+                                                            AddResourceCubit,
+                                                            AddResourceStates
                                                           >(
                                                             listener: (context, state) {
                                                               if (state
-                                                              is AddResourceLoaded) {
+                                                                  is AddResourceLoaded) {
                                                                 CustomSnackBar1.show(
                                                                   context,
                                                                   "Downloaded Successfully",
                                                                 );
                                                               } else if (state
-                                                              is AddResourceFailure) {
+                                                                  is AddResourceFailure) {
                                                                 CustomSnackBar1.show(
                                                                   context,
                                                                   state
-                                                                      .error
-                                                                      .isNotEmpty
+                                                                          .error
+                                                                          .isNotEmpty
                                                                       ? state
-                                                                      .error
+                                                                            .error
                                                                       : "Download Failed",
                                                                 );
                                                               }
                                                             },
                                                             builder: (context, state) {
                                                               final currentId =
-                                                                  campusList
-                                                                      ?.id
+                                                                  campusList?.id
                                                                       .toString() ??
-                                                                      "";
+                                                                  "";
                                                               final isLoading =
                                                                   state
-                                                                  is AddResourceLoading &&
-                                                                      state.resourceId ==
-                                                                          currentId;
+                                                                      is AddResourceLoading &&
+                                                                  state.resourceId ==
+                                                                      currentId;
 
                                                               return Expanded(
                                                                 child: CustomAppButton1(
                                                                   radius: 24,
                                                                   height: 38,
                                                                   isLoading:
-                                                                  isLoading,
+                                                                      isLoading,
                                                                   text:
-                                                                  "Download",
-                                                                  textSize:
-                                                                  14,
+                                                                      "Download",
+                                                                  textSize: 14,
                                                                   onPlusTap: () {
-                                                                      context
-                                                                          .read<
+                                                                    context
+                                                                        .read<
                                                                           AddResourceCubit
-                                                                      >()
-                                                                          .resourceDownload(
-                                                                        currentId,
-                                                                      );
-
+                                                                        >()
+                                                                        .resourceDownload(
+                                                                          currentId,
+                                                                        );
                                                                   },
                                                                 ),
                                                               );
@@ -921,6 +916,170 @@ class _ProfileScreen1State extends State<ProfileScreen> {
               return Center(child: Text("No Data "));
             },
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class MenteeProfileShimmer extends StatelessWidget {
+  const MenteeProfileShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFFFAF5FF), Color(0xFFF2F4FD)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 20, bottom: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            shimmerCircle(120, context),
+            const SizedBox(height: 12),
+            shimmerText(120, 16, context),
+            const SizedBox(height: 8),
+            shimmerText(180, 14, context),
+            const SizedBox(height: 8),
+            shimmerText(160, 14, context),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                children: [
+                  shimmerText(double.infinity, 12, context),
+                  const SizedBox(height: 6),
+                  shimmerText(double.infinity, 12, context),
+                  const SizedBox(height: 6),
+                  shimmerText(220, 12, context),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                shimmerContainer(100, 36, context, isButton: true),
+                const SizedBox(width: 16),
+                shimmerContainer(100, 36, context, isButton: true),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // 🔹 Tabs: Post / Resources
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(child: shimmerText(80, 14, context)),
+                  Expanded(child: shimmerText(80, 14, context)),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // 🔹 Simulate 3 Post Cards (for Post tab)
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 3,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Post Image
+                    shimmerContainer(double.infinity, 160, context),
+                    const SizedBox(height: 8),
+                    // Post Title
+                    shimmerText(160, 14, context),
+                    const SizedBox(height: 6),
+                    // Post Content
+                    shimmerText(double.infinity, 12, context),
+                    const SizedBox(height: 4),
+                    shimmerText(220, 12, context),
+                    const SizedBox(height: 8),
+                    // Like & Comment Icons Row
+                    Row(
+                      children: [
+                        shimmerCircle(16, context),
+                        const SizedBox(width: 8),
+                        shimmerText(30, 10, context),
+                        const SizedBox(width: 20),
+                        shimmerCircle(16, context),
+                        const SizedBox(width: 8),
+                        shimmerText(30, 10, context),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // 🔹 Resource Placeholder (for Resources tab)
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 2,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerContainer(90, 120, context),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          shimmerText(140, 14, context),
+                          const SizedBox(height: 6),
+                          shimmerText(double.infinity, 12, context),
+                          const SizedBox(height: 6),
+                          shimmerText(200, 12, context),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              shimmerContainer(80, 28, context, isButton: true),
+                              const SizedBox(width: 12),
+                              shimmerContainer(
+                                100,
+                                28,
+                                context,
+                                isButton: true,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

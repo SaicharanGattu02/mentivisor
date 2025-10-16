@@ -247,70 +247,99 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
-                              GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          MediaQuery.of(context).size.width <
-                                              600
-                                          ? 2
-                                          : 3,
-                                      mainAxisSpacing: 12,
-                                      crossAxisSpacing: 12,
-                                      childAspectRatio: 1.08,
-                                    ),
-                                itemCount: categories.length,
-                                itemBuilder: (context, index) {
-                                  final item = categories[index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      context.push(
-                                        '/coupon_list?categoryId=${item.id ?? ""}',
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        12,
-                                        12,
-                                        12,
-                                        10,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Color(0x0F0E1240),
-                                            blurRadius: 14,
-                                            offset: Offset(0, 6),
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  // Get screen width
+                                  double screenWidth = MediaQuery.of(
+                                    context,
+                                  ).size.width;
+
+                                  // Dynamically decide how many columns to show
+                                  int crossAxisCount = screenWidth < 500
+                                      ? 2
+                                      : screenWidth < 900
+                                      ? 3
+                                      : 4;
+
+                                  // Adjust childAspectRatio based on screen width
+                                  double childAspectRatio = screenWidth < 400
+                                      ? 0.9
+                                      : screenWidth < 800
+                                      ? 1.0
+                                      : 1.1;
+
+                                  return GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: crossAxisCount,
+                                          mainAxisSpacing: 12,
+                                          crossAxisSpacing: 12,
+                                          childAspectRatio: childAspectRatio,
+                                        ),
+                                    itemCount: categories.length,
+                                    itemBuilder: (context, index) {
+                                      final item = categories[index];
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context.push(
+                                            '/coupon_list?categoryId=${item.id ?? ""}',
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.fromLTRB(
+                                            12,
+                                            12,
+                                            12,
+                                            10,
                                           ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          ClipRRect(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
                                             borderRadius: BorderRadius.circular(
-                                              8,
+                                              16,
                                             ),
-                                            child: CachedNetworkImage(
-                                              width: 120,
-                                              height: 120,
-                                              imageUrl: item.image ?? "",
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  SizedBox(
-                                                    width: 120,
-                                                    height: 120,
-                                                    child: Center(
-                                                      child: spinkits
-                                                          .getSpinningLinespinkit(),
-                                                    ),
-                                                  ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Container(
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Color(0x0F0E1240),
+                                                blurRadius: 14,
+                                                offset: Offset(0, 6),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: CachedNetworkImage(
+                                                  width:
+                                                      screenWidth /
+                                                          crossAxisCount -
+                                                      72,
+                                                  height:
+                                                      screenWidth /
+                                                          crossAxisCount -
+                                                      72,
+                                                  imageUrl: item.image ?? "",
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      SizedBox(
+                                                        width: 120,
+                                                        height: 120,
+                                                        child: Center(
+                                                          child: spinkits
+                                                              .getSpinningLinespinkit(),
+                                                        ),
+                                                      ),
+                                                  errorWidget:
+                                                      (
+                                                        context,
+                                                        url,
+                                                        error,
+                                                      ) => Container(
                                                         width: 120,
                                                         height: 120,
                                                         color: const Color(
@@ -322,23 +351,25 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                                                           color: Colors.grey,
                                                         ),
                                                       ),
-                                            ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                capitalize(item.name ?? ""),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFF555555),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            capitalize(item.name ?? ""),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontFamily: 'segeo',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF555555),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
                               ),

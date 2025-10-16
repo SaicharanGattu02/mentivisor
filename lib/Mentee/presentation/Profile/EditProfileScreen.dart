@@ -27,7 +27,6 @@ class EditProfileScreen extends StatefulWidget {
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
-
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
@@ -107,7 +106,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         color: Color(0xFFF2F4FD),
       ),
       body: isLoading
-          ? Center(child: DottedProgressWithLogo())
+          ? Center(child: CircularProgressIndicator(color: primarycolor))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Form(
@@ -186,7 +185,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onTap: () {
                         _openCollegeSelectionBottomSheet(context);
                       },
-                      decoration: InputDecoration(       suffixIcon: Icon(Icons.arrow_drop_down_sharp),
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.arrow_drop_down_sharp),
                         hintText: 'Enter your college name',
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,

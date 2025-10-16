@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Mentee/data/cubits/DailyCheckIns/DailyCheckInsCubit.dart';
 
 enum UserRole { mentor, mentee }
 
@@ -24,6 +26,12 @@ class _RoleSelectionScreenState extends State<Selecterscreen> {
     } else {
       context.pushReplacement('/dashboard');
     }
+  }
+
+  @override
+  void initState() {
+    context.read<DailyCheckInsCubit>().getDailyCheckIns();
+    super.initState();
   }
 
   @override

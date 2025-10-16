@@ -23,8 +23,8 @@ class MentorEarningsModel {
 }
 
 class Data {
-  int? currentBalance;
-  int? thisMonthEarnings;
+  dynamic currentBalance;
+  dynamic thisMonthEarnings;
 
   Data({this.currentBalance, this.thisMonthEarnings});
 

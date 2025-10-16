@@ -19,6 +19,7 @@ import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
+import '../data/cubits/DailyCheckIns/DailyCheckInsCubit.dart';
 import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
@@ -62,6 +63,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       final List<Future> futures = [
         context.read<Getbannerscubit>().getbanners(),
         context.read<MenteeProfileCubit>().fetchMenteeProfile(),
+        context.read<DailyCheckInsCubit>().getDailyCheckIns(),
+
         if (!guest)
           context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
         if (guest) context.read<GuestMentorsCubit>().fetchGuestMentorList(),
@@ -323,21 +326,23 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               ),
                               child: Column(
                                 children: [
-                                  _DrawerItem(
-                                    icon: Image.asset(
-                                      "assets/icons/ArrowCircleleft.png",
-                                      fit: BoxFit.cover,
-                                      width: SizeConfig.screenWidth * 0.082,
-                                      height: SizeConfig.screenHeight * 0.065,
+                                  if (role == "Both") ...[
+                                    _DrawerItem(
+                                      icon: Image.asset(
+                                        "assets/icons/ArrowCircleleft.png",
+                                        fit: BoxFit.cover,
+                                        width: SizeConfig.screenWidth * 0.082,
+                                        height: SizeConfig.screenHeight * 0.065,
+                                      ),
+                                      title: 'Switch to Mentor',
+                                      onTap: () {
+                                        context.pop();
+                                        context.pushReplacement(
+                                          '/mentor_dashboard',
+                                        );
+                                      },
                                     ),
-                                    title: 'Switch to Mentor',
-                                    onTap: () {
-                                      context.pop();
-                                      context.pushReplacement(
-                                        '/mentor_dashboard',
-                                      );
-                                    },
-                                  ),
+                                  ],
                                 ],
                               ),
                             ),
