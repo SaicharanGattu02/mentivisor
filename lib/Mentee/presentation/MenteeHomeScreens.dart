@@ -242,7 +242,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: SizeConfig.screenWidth * 0.5,
+                                          width: SizeConfig.screenWidth * 0.45,
                                           child: Text(
                                             overflow: TextOverflow.ellipsis,
                                             capitalize(
