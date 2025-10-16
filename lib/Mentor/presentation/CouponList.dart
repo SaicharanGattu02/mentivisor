@@ -85,15 +85,24 @@ class _CouponsListState extends State<CouponsList> {
                           final screenHeight = size.height;
 
                           // Base responsive ratio formula
-                          double aspectRatio = screenWidth / (screenHeight * 0.45);
+                          double aspectRatio =
+                              screenWidth / (screenHeight * 0.45);
 
                           // Optional fine-tuning for breakpoints
                           if (screenWidth < 400) {
-                            aspectRatio = screenWidth / (screenHeight * 0.32); // tighter cards on small phones
+                            aspectRatio =
+                                screenWidth /
+                                (screenHeight *
+                                    0.32); // tighter cards on small phones
                           } else if (screenWidth < 800) {
-                            aspectRatio = screenWidth / (screenHeight * 0.4); // balanced cards for tablets
+                            aspectRatio =
+                                screenWidth /
+                                (screenHeight *
+                                    0.4); // balanced cards for tablets
                           } else {
-                            aspectRatio = screenWidth / (screenHeight * 0.35); // wider for desktop
+                            aspectRatio =
+                                screenWidth /
+                                (screenHeight * 0.35); // wider for desktop
                           }
 
                           return aspectRatio;
@@ -295,7 +304,7 @@ class CouponGridShimmer extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           sliver: SliverGrid(
-            gridDelegate:  SliverGridDelegateWithMaxCrossAxisExtent(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 500,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
@@ -309,11 +318,16 @@ class CouponGridShimmer extends StatelessWidget {
 
                 // Optional fine-tuning for breakpoints
                 if (screenWidth < 400) {
-                  aspectRatio = screenWidth / (screenHeight * 0.32); // tighter cards on small phones
+                  aspectRatio =
+                      screenWidth /
+                      (screenHeight * 0.32); // tighter cards on small phones
                 } else if (screenWidth < 800) {
-                  aspectRatio = screenWidth / (screenHeight * 0.4); // balanced cards for tablets
+                  aspectRatio =
+                      screenWidth /
+                      (screenHeight * 0.4); // balanced cards for tablets
                 } else {
-                  aspectRatio = screenWidth / (screenHeight * 0.35); // wider for desktop
+                  aspectRatio =
+                      screenWidth / (screenHeight * 0.35); // wider for desktop
                 }
 
                 return aspectRatio;

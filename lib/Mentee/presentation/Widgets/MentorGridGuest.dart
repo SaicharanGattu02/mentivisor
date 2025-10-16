@@ -42,15 +42,15 @@ class MentorGridGuest extends StatelessWidget {
           final screenHeight = MediaQuery.of(context).size.height;
           final size = MediaQuery.of(context).size;
           final screenWidth = size.width;
-          double aspectRatio = screenWidth / (screenHeight * 0.45);
+          double aspectRatio = screenWidth / (screenHeight * 0.5);
           if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.28);
+            aspectRatio = screenWidth / (screenHeight * 0.48);
           } else if (screenWidth < 800) {
             aspectRatio = screenWidth / (screenHeight * 0.4);
           } else {
             aspectRatio = screenWidth / (screenHeight * 0.35);
           }
-          return aspectRatio.clamp(0.7, 1.5);
+          return aspectRatio;
         }(),
       ),
       itemBuilder: (ctx, i) {
@@ -111,7 +111,7 @@ class MentorGridCampus extends StatelessWidget {
           final screenWidth = size.width;
           double aspectRatio = screenWidth / (screenHeight * 0.45);
           if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.32);
+            aspectRatio = screenWidth / (screenHeight * 0.5);
           } else if (screenWidth < 800) {
             aspectRatio = screenWidth / (screenHeight * 0.4);
           } else {

@@ -125,14 +125,27 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     return Expanded(
                       child: GridView.builder(
                         shrinkWrap: true,
-                        physics: const AlwaysScrollableScrollPhysics(),
+                        physics:  AlwaysScrollableScrollPhysics(),
                         itemCount: list.length,
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                             SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: 0.85,
+                              childAspectRatio: () {
+                                final screenHeight = MediaQuery.of(context).size.height;
+                                final size = MediaQuery.of(context).size;
+                                final screenWidth = size.width;
+                                double aspectRatio = screenWidth / (screenHeight * 0.5);
+                                if (screenWidth < 400) {
+                                  aspectRatio = screenWidth / (screenHeight * 0.6);
+                                } else if (screenWidth < 800) {
+                                  aspectRatio = screenWidth / (screenHeight * 0.4);
+                                } else {
+                                  aspectRatio = screenWidth / (screenHeight * 0.35);
+                                }
+                                return aspectRatio;
+                              }(),
                             ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
