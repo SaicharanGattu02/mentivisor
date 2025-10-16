@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/FilterButton.dart';
 import '../../utils/constants.dart';
@@ -142,7 +143,7 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
               child: BlocBuilder<SessionCubit, SessionStates>(
                 builder: (context, state) {
                   if (state is SessionLoading) {
-                    return Center(child: DottedProgressWithLogo());
+                    return const SessionShimmerLoader(itemCount: 5);
                   } else if (state is SessionLoaded) {
                     final Sessions = state.sessionsModel.data;
                     if (Sessions?.length == 0) {

@@ -33,7 +33,7 @@ android {
             keyAlias = "upload"
             keyPassword = "mentivisor"
             storePassword = "mentivisor"
-            storeFile = file("C:\\Users\\Ozrit\\StudioProjects\\mentivisor\\android\\upload-keystore.jks")
+            storeFile = file("D:\\mentivisor\\android\\app\\upload-keystore.jks")
         }
     }
 

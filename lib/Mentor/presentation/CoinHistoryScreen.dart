@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/CoinHistoryShimmerLoader.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../Components/CommonLoader.dart';
@@ -80,12 +81,7 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
               BlocBuilder<CoinHistoryCubit, CoinHistoryStates>(
                 builder: (context, state) {
                   if (state is CoinhistoryLoading) {
-                    return SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: SizeConfig.screenHeight * 0.6,
-                        child: Center(child: DottedProgressWithLogo()),
-                      ),
-                    );
+                    return const CoinHistoryShimmerLoader(itemCount: 6);
                   }
 
                   if (state is CoinhistoryFailure) {

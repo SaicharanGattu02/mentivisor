@@ -45,7 +45,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() {
   // Optional in dev: make zone mistakes fatal
   // BindingBase.debugZoneErrorsAreFatal = true;
-
   runZonedGuarded(
     () async {
       // Everything below runs in the SAME zone as runApp()

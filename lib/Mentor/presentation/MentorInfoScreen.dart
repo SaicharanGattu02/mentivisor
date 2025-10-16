@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/MentorInfoShimmerLoader.dart';
 import '../../Components/CutomAppBar.dart';
 import '../data/Cubits/MentorInfo/Mentor_Info_cubit.dart';
 import '../data/Cubits/MentorInfo/Mentor_Info_states.dart';
@@ -38,7 +39,7 @@ class _MentorinfoscreenState extends State<Mentorinfoscreen> {
           child: BlocBuilder<MentorInfoCubit, MentorInfoStates>(
             builder: (context, state) {
               if (state is MentorinfoLoading) {
-                return Center(child: DottedProgressWithLogo());
+                return const MentorInfoShimmerLoader(itemCount: 6);
               }
 
               if (state is MentorinfoFailure) {

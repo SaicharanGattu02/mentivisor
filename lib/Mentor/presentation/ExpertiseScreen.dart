@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/ExpertiseShimmerLoader.dart';
 
 import '../Models/ExpertisesModel.dart';
 import '../data/Cubits/Expertises/ApprovedExpertiseCubit.dart';
@@ -222,7 +223,7 @@ class ExpertiseTabFromState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state is ExpertiseInitially || state is ExpertiseLoading) {
-      return const Center(child: DottedProgressWithLogo());
+      return const ExpertiseShimmerLoader(itemCount: 6);
     }
     if (state is ExpertiseFailure) {
       final msg = (state as ExpertiseFailure).message;

@@ -10,6 +10,7 @@ import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/Sessions/SessionsStates.dart';
 import 'package:mentivisor/Mentor/presentation/MentorDashBoard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
+import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart';
 import 'package:mentivisor/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
@@ -79,7 +80,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         child: BlocBuilder<MentorDashboardCubit, MentorDashBoardState>(
           builder: (context, state) {
             if (state is MentorDashBoardLoading) {
-              return Center(child: DottedProgressWithLogo());
+              return const SessionShimmerLoader(itemCount: 5);
             } else if (state is MentorDashBoardLoaded) {
               final banners_data = state.getBannersRespModel;
               final session_data = state.sessionsModel;
