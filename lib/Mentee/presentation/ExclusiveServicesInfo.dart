@@ -8,6 +8,7 @@ import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../Components/CommonLoader.dart';
+import '../../Components/Shimmers.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
 import '../data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_State.dart';
@@ -67,8 +68,9 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
             >(
               builder: (context, state) {
                 if (state is ExclusiveservicedetailsStateLoading) {
-                  return Center(child: DottedProgressWithLogo());
+                  return const ExclusiveServiceDetailsShimmer();
                 }
+
                 if (state is ExclusiveservicedetailsFailure) {
                   return Center(
                     child: Text(
@@ -257,6 +259,88 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
               },
             ),
       ),
+    );
+  }
+}
+
+class ExclusiveServiceDetailsShimmer extends StatelessWidget {
+  const ExclusiveServiceDetailsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          children: [
+            // 🔹 Top Image Container with shadow and border radius
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F6FA),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: shimmerContainer(double.infinity, 170, context),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // 🔹 Profile Row shimmer
+            Row(
+              children: [
+                shimmerCircle(24, context),
+                const SizedBox(width: 8),
+                shimmerText(100, 12, context),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // 🔹 Title shimmer
+            shimmerText(180, 20, context),
+
+            const SizedBox(height: 10),
+
+            // 🔹 Description shimmer (3–4 lines)
+            shimmerText(double.infinity, 12, context),
+            const SizedBox(height: 6),
+            shimmerText(double.infinity, 12, context),
+            const SizedBox(height: 6),
+            shimmerText(240, 12, context),
+
+            const SizedBox(height: 16),
+
+            // 🔹 Link info section shimmer
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  shimmerText(200, 14, context),
+                  const SizedBox(height: 8),
+                  shimmerText(100, 14, context),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

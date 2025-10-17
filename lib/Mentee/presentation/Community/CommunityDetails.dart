@@ -25,7 +25,11 @@ class CommunityDetails extends StatefulWidget {
   final int communityId;
   final String scope;
 
-  const CommunityDetails({super.key, required this.communityId, required this.scope});
+  const CommunityDetails({
+    super.key,
+    required this.communityId,
+    required this.scope,
+  });
 
   @override
   State<CommunityDetails> createState() => _CommunityDetailsState();
@@ -35,7 +39,10 @@ class _CommunityDetailsState extends State<CommunityDetails> {
   @override
   void initState() {
     super.initState();
-    context.read<CommunityDetailsCubit>().communityDetails(widget.communityId,widget.scope);
+    context.read<CommunityDetailsCubit>().communityDetails(
+      widget.communityId,
+      widget.scope,
+    );
   }
 
   @override
@@ -90,52 +97,99 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: "",
-                              imageBuilder: (context, imageProvider) =>
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundImage: imageProvider,
-                                  ),
-                              placeholder: (context, url) => CircleAvatar(
-                                radius: 16,
-                                backgroundColor: Colors.grey,
-                                child: SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: Center(
-                                    child: spinkits.getSpinningLinespinkit(),
-                                  ),
+                        if (communityDetails?.anonymous == 0)
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  // if (widget.communityPosts.anonymous == 1) {
+                                  //   CustomSnackBar1.show(
+                                  //     context,
+                                  //     "Anonymous post user profile cannot be visited.",
+                                  //   );
+                                  // } else {
+                                  context.push(
+                                    "/common_profile/${communityDetails?.uploader?.id}",
+                                  );
+                                  // }
+                                },
+                                child:
+                                    communityDetails
+                                            ?.uploader
+                                            ?.profilePicUrl
+                                            ?.isEmpty ==
+                                        true
+                                    ? CircleAvatar(
+                                        radius: 16,
+                                        backgroundColor: Colors.grey.shade400,
+                                        child: Text(
+                                          communityDetails?.uploader?.name![0]
+                                                  .toUpperCase() ??
+                                              "",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : CachedNetworkImage(
+                                        imageUrl:
+                                            communityDetails?.anonymous == 1
+                                            ? "assets/images/profile.png"
+                                            : communityDetails
+                                                      ?.uploader
+                                                      ?.profilePicUrl ??
+                                                  "",
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                CircleAvatar(
+                                                  radius: 16,
+                                                  backgroundImage:
+                                                      imageProvider,
+                                                ),
+                                        placeholder: (context, url) =>
+                                            CircleAvatar(
+                                              radius: 16,
+                                              backgroundColor: Colors.grey,
+                                              child: SizedBox(
+                                                width: 14,
+                                                height: 14,
+                                                child: Center(
+                                                  child: spinkits
+                                                      .getSpinningLinespinkit(),
+                                                ),
+                                              ),
+                                            ),
+                                        errorWidget: (context, url, error) =>
+                                            const CircleAvatar(
+                                              radius: 16,
+                                              backgroundImage: AssetImage(
+                                                "assets/images/profile.png",
+                                              ),
+                                            ),
+                                      ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                communityDetails?.anonymous == 1
+                                    ? "Anonymous"
+                                    : capitalize(
+                                        communityDetails?.uploader?.name ?? "",
+                                      ),
+                                style: const TextStyle(
+                                  fontFamily: 'segeo',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: Color(0xff222222),
                                 ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const CircleAvatar(
-                                    radius: 16,
-                                    backgroundImage: AssetImage(
-                                      "assets/images/profile.png",
-                                    ),
-                                  ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              capitalize(
-                                communityDetails?.uploader?.name ?? "",
-                              ),
-                              style: TextStyle(
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
-                                color: Color(0xff222222),
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                         const SizedBox(height: 4),
                         Text(
                           communityDetails?.heading ?? "",

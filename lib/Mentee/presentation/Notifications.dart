@@ -273,9 +273,9 @@ class _NotificationsState extends State<Notifications> {
     final t = type?.toLowerCase() ?? "";
     if (t.contains("session")) return "assets/icons/meet.png";
     if (t.contains("reward")) return "assets/images/coinsimage.png";
-    if (t.contains("reminder")) return "assets/icons/bell.png";
+    if (t.contains("reminder")) return "assets/icons/approval.png";
     if (t.contains("mention")) return "assets/icons/approval.png";
-    return "assets/icons/bell.png";
+    return "assets/icons/approval.png";
   }
 
   // 🔹 Empty state

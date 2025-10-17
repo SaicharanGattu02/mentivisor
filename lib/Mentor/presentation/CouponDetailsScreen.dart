@@ -10,6 +10,7 @@ import 'package:mentivisor/Mentor/data/Cubits/BuyCoupon/BuyCouponCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/BuyCoupon/BuyCouponStates.dart';
 import 'package:mentivisor/Mentor/data/Cubits/CouponsDetails/CouponsDetailsStates.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../Components/Shimmers.dart';
 import '../../Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../../utils/constants.dart';
@@ -203,6 +204,13 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
     );
   }
 
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   @override
   void initState() {
     AppLogger.info("couponId:${widget.couponId}");
@@ -229,7 +237,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                 ? ((savings / actualValue) * 100).round().toInt()
                 : 0;
             final requiredCoins = couponsDetails?.coinsRequired ?? 0;
-             context.read<MenteeProfileCubit>().fetchMenteeProfile();
+            context.read<MenteeProfileCubit>().fetchMenteeProfile();
             enoughBalance.value = AppState.coinsNotifier.value >= requiredCoins;
 
             return SingleChildScrollView(
@@ -312,10 +320,9 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                       if (couponsDetails?.website != null)
                         GestureDetector(
                           onTap: () {
-                            // Open website
-                            AppLogger.info(
-                              "Opening website: ${couponsDetails!.website}",
-                            );
+                            if (couponsDetails?.website != null)
+                              _launchUrl(couponsDetails?.website ?? "");
+
                           },
                           child: Icon(
                             Icons.open_in_new,

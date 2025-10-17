@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
 import '../../Components/CustomSnackBar.dart';
+import '../../Components/Shimmers.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
 import '../Models/AvailableSlotsModel.dart';
@@ -487,12 +488,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
             BlocBuilder<AvailableSlotsCubit, AvailableSlotsStates>(
               builder: (context, state) {
                 if (state is AvailableSlotsLoading) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24),
-                      child: DottedProgressWithLogo(),
-                    ),
-                  );
+                  return const AvailableSlotsShimmer();
                 }
                 if (state is AvailableSlotsFailure) {
                   return Padding(
@@ -1267,4 +1263,96 @@ class _Grouped {
   final List<String> chips;
   final int count; // NEW
   _Grouped(this.sortKey, this.title, this.badge, this.chips, this.count);
+}
+
+class AvailableSlotsShimmer extends StatelessWidget {
+  const AvailableSlotsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Week Range Header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerText(160, 16, context), // Week range title
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    shimmerText(100, 12, context),
+                    const SizedBox(width: 8),
+                    shimmerText(80, 12, context),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    shimmerContainer(80, 24, context),
+                    const SizedBox(width: 6),
+                    shimmerContainer(80, 24, context),
+                    const SizedBox(width: 6),
+                    shimmerContainer(80, 24, context),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // 🔹 Simulated "Recent Days" slot groups
+          for (int i = 0; i < 3; i++) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  shimmerText(140, 16, context), // Day title
+                  const SizedBox(height: 10),
+
+                  // Slot chips shimmer
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(
+                      4,
+                      (index) => shimmerContainer(80, 28, context),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Count/status shimmer
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      shimmerText(100, 12, context),
+                      shimmerText(80, 12, context),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ],
+      ),
+    );
+  }
 }

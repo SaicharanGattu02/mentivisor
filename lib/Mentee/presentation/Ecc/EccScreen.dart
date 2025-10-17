@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_states.dart';
 import 'package:mentivisor/utils/color_constants.dart';
+import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/Shimmers.dart';
@@ -333,7 +334,7 @@ class _EccScreenState extends State<EccScreen> {
                                       borderRadius: BorderRadius.circular(24),
                                     ),
                                     child: Text(
-                                      tagItem,
+                                      capitalize(tagItem),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12,
@@ -641,11 +642,7 @@ class _ECCShimmerState extends State<ECCShimmer> {
                       children: [
                         shimmerText(60, 12, context),
                         const SizedBox(height: 8),
-                        shimmerText(
-                          SizeConfig.screenWidth,
-                          12,
-                          context,
-                        ),
+                        shimmerText(SizeConfig.screenWidth, 12, context),
                         const SizedBox(height: 8),
                         shimmerText(60, 12, context),
                       ],

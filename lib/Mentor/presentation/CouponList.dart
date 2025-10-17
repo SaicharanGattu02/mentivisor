@@ -326,6 +326,10 @@ class CouponGridShimmer extends StatelessWidget {
                   aspectRatio =
                       screenWidth /
                       (screenHeight * 0.32); // tighter cards on small phones
+                } else if (screenWidth < 600) {
+                  aspectRatio =
+                      screenWidth /
+                      (screenHeight * 0.28); // balanced cards for tablets
                 } else if (screenWidth < 800) {
                   aspectRatio =
                       screenWidth /

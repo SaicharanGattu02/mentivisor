@@ -6,29 +6,33 @@ class NotificationModel {
   int? lastPage;
   int? total;
 
-  NotificationModel(
-      {this.status, this.notify, this.currentPage, this.lastPage, this.total, this.message});
+  NotificationModel({
+    this.status,
+    this.message,
+    this.notify,
+    this.currentPage,
+    this.lastPage,
+    this.total,
+  });
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    notify = json['data'] != null ? new Notify.fromJson(json['data']) : null;
+    notify = json['data'] != null ? Notify.fromJson(json['data']) : null;
     currentPage = json['currentPage'];
     lastPage = json['lastPage'];
     total = json['total'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    if (this.notify != null) {
-      data['data'] = this.notify!.toJson();
-    }
-    data['currentPage'] = this.currentPage;
-    data['lastPage'] = this.lastPage;
-    data['total'] = this.total;
-    return data;
+    final map = <String, dynamic>{};
+    map['status'] = status;
+    map['message'] = message;
+    if (notify != null) map['data'] = notify!.toJson();
+    map['currentPage'] = currentPage;
+    map['lastPage'] = lastPage;
+    map['total'] = total;
+    return map;
   }
 }
 
@@ -42,32 +46,33 @@ class Notify {
   List<Links>? links;
   dynamic nextPageUrl;
   String? path;
-  int? perPage;
+  dynamic perPage;
   dynamic prevPageUrl;
   int? to;
   int? total;
 
-  Notify(
-      {this.currentPage,
-        this.data,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  Notify({
+    this.currentPage,
+    this.data,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
   Notify.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -77,7 +82,7 @@ class Notify {
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
+        links!.add(Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -89,25 +94,21 @@ class Notify {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
-    }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
-    return data;
+    final map = <String, dynamic>{};
+    map['current_page'] = currentPage;
+    if (data != null) map['data'] = data!.map((v) => v.toJson()).toList();
+    map['first_page_url'] = firstPageUrl;
+    map['from'] = from;
+    map['last_page'] = lastPage;
+    map['last_page_url'] = lastPageUrl;
+    if (links != null) map['links'] = links!.map((v) => v.toJson()).toList();
+    map['next_page_url'] = nextPageUrl;
+    map['path'] = path;
+    map['per_page'] = perPage;
+    map['prev_page_url'] = prevPageUrl;
+    map['to'] = to;
+    map['total'] = total;
+    return map;
   }
 }
 
@@ -124,18 +125,19 @@ class Data {
   String? updatedAt;
   User? user;
 
-  Data(
-      {this.id,
-        this.userId,
-        this.type,
-        this.title,
-        this.remarks,
-        this.message,
-        this.isRead,
-        this.role,
-        this.createdAt,
-        this.updatedAt,
-        this.user});
+  Data({
+    this.id,
+    this.userId,
+    this.type,
+    this.title,
+    this.remarks,
+    this.message,
+    this.isRead,
+    this.role,
+    this.createdAt,
+    this.updatedAt,
+    this.user,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -148,25 +150,23 @@ class Data {
     role = json['role'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['type'] = this.type;
-    data['title'] = this.title;
-    data['remarks'] = this.remarks;
-    data['message'] = this.message;
-    data['is_read'] = this.isRead;
-    data['role'] = this.role;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
-    }
-    return data;
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['userId'] = userId;
+    map['type'] = type;
+    map['title'] = title;
+    map['remarks'] = remarks;
+    map['message'] = message;
+    map['is_read'] = isRead;
+    map['role'] = role;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    if (user != null) map['user'] = user!.toJson();
+    return map;
   }
 }
 
@@ -175,68 +175,69 @@ class User {
   String? name;
   String? email;
   int? contact;
-  Null? emailVerifiedAt;
+  dynamic emailVerifiedAt;
   String? refreshToken;
-  Null? webFcmToken;
+  dynamic webFcmToken;
   String? deviceFcmToken;
   String? role;
-  Null? designation;
-  Null? exp;
+  dynamic designation;
+  dynamic exp;
   String? bio;
   int? collegeId;
   String? year;
   String? stream;
-  Null? gender;
+  dynamic gender;
   String? status;
   String? profilePic;
-  Null? state;
-  Null? city;
-  Null? country;
+  dynamic state;
+  dynamic city;
+  dynamic country;
   String? saasId;
-  Null? emailOtp;
-  Null? expiredTime;
+  dynamic emailOtp;
+  dynamic expiredTime;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  dynamic deletedAt;
   int? activeStatus;
   String? lastLoginAt;
   String? mentorStatus;
-  Null? topMentorRank;
+  dynamic topMentorRank;
   String? profilePicUrl;
 
-  User(
-      {this.id,
-        this.name,
-        this.email,
-        this.contact,
-        this.emailVerifiedAt,
-        this.refreshToken,
-        this.webFcmToken,
-        this.deviceFcmToken,
-        this.role,
-        this.designation,
-        this.exp,
-        this.bio,
-        this.collegeId,
-        this.year,
-        this.stream,
-        this.gender,
-        this.status,
-        this.profilePic,
-        this.state,
-        this.city,
-        this.country,
-        this.saasId,
-        this.emailOtp,
-        this.expiredTime,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus,
-        this.lastLoginAt,
-        this.mentorStatus,
-        this.topMentorRank,
-        this.profilePicUrl});
+  User({
+    this.id,
+    this.name,
+    this.email,
+    this.contact,
+    this.emailVerifiedAt,
+    this.refreshToken,
+    this.webFcmToken,
+    this.deviceFcmToken,
+    this.role,
+    this.designation,
+    this.exp,
+    this.bio,
+    this.collegeId,
+    this.year,
+    this.stream,
+    this.gender,
+    this.status,
+    this.profilePic,
+    this.state,
+    this.city,
+    this.country,
+    this.saasId,
+    this.emailOtp,
+    this.expiredTime,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+    this.lastLoginAt,
+    this.mentorStatus,
+    this.topMentorRank,
+    this.profilePicUrl,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -274,40 +275,40 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['contact'] = this.contact;
-    data['email_verified_at'] = this.emailVerifiedAt;
-    data['refresh_token'] = this.refreshToken;
-    data['web_fcm_token'] = this.webFcmToken;
-    data['device_fcm_token'] = this.deviceFcmToken;
-    data['role'] = this.role;
-    data['designation'] = this.designation;
-    data['exp'] = this.exp;
-    data['bio'] = this.bio;
-    data['college_id'] = this.collegeId;
-    data['year'] = this.year;
-    data['stream'] = this.stream;
-    data['gender'] = this.gender;
-    data['status'] = this.status;
-    data['profile_pic'] = this.profilePic;
-    data['state'] = this.state;
-    data['city'] = this.city;
-    data['country'] = this.country;
-    data['saas_id'] = this.saasId;
-    data['email_otp'] = this.emailOtp;
-    data['expired_time'] = this.expiredTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['last_login_at'] = this.lastLoginAt;
-    data['mentor_status'] = this.mentorStatus;
-    data['top_mentor_rank'] = this.topMentorRank;
-    data['profile_pic_url'] = this.profilePicUrl;
-    return data;
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['name'] = name;
+    map['email'] = email;
+    map['contact'] = contact;
+    map['email_verified_at'] = emailVerifiedAt;
+    map['refresh_token'] = refreshToken;
+    map['web_fcm_token'] = webFcmToken;
+    map['device_fcm_token'] = deviceFcmToken;
+    map['role'] = role;
+    map['designation'] = designation;
+    map['exp'] = exp;
+    map['bio'] = bio;
+    map['college_id'] = collegeId;
+    map['year'] = year;
+    map['stream'] = stream;
+    map['gender'] = gender;
+    map['status'] = status;
+    map['profile_pic'] = profilePic;
+    map['state'] = state;
+    map['city'] = city;
+    map['country'] = country;
+    map['saas_id'] = saasId;
+    map['email_otp'] = emailOtp;
+    map['expired_time'] = expiredTime;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    map['deleted_at'] = deletedAt;
+    map['active_status'] = activeStatus;
+    map['last_login_at'] = lastLoginAt;
+    map['mentor_status'] = mentorStatus;
+    map['top_mentor_rank'] = topMentorRank;
+    map['profile_pic_url'] = profilePicUrl;
+    return map;
   }
 }
 
@@ -325,10 +326,10 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
-    return data;
+    final map = <String, dynamic>{};
+    map['url'] = url;
+    map['label'] = label;
+    map['active'] = active;
+    return map;
   }
 }

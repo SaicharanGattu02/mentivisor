@@ -346,7 +346,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                         borderRadius: BorderRadius.circular(24),
                                       ),
                                       child: Text(
-                                        tagItem,
+                                        capitalize(tagItem),
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12,
