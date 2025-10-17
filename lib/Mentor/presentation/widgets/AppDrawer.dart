@@ -141,21 +141,41 @@ class AppDrawer extends StatelessWidget {
 
                     _Separator(),
                     Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      // height: 56,
                       decoration: BoxDecoration(color: Color(0xffFFF7CE)),
                       child: Column(
                         children: [
-                          _DrawerItem(
-                            icon: Image.asset(
-                              "assets/icons/ArrowCircleRight.png",
-                              fit: BoxFit.cover,
-                              width: SizeConfig.screenWidth * 0.082,
-                              height: SizeConfig.screenHeight * 0.065,
-                            ),
-                            title: 'Switch to Mentee',
+                          InkWell(
                             onTap: () {
                               context.pop();
                               context.pushReplacement('/dashboard');
                             },
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  "assets/icons/ArrowCircleRight.png",
+                                  fit: BoxFit.cover,
+                                  width: SizeConfig.screenWidth * 0.082,
+                                  height: SizeConfig.screenHeight * 0.055,
+                                ), // Directly use the passed widget
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Switch to Mentee',
+                                    style: TextStyle(
+                                      fontFamily: 'segeo',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff4B5462),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
