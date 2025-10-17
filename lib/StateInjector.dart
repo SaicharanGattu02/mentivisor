@@ -75,6 +75,8 @@ import 'Mentee/data/cubits/BecomeMentor/become_mentor_repository.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import 'Mentee/data/cubits/CampusMentorList/campus_mentor_list_repo.dart';
 import 'Mentee/data/cubits/CoinsAchievements/CoinsAchievementCubit.dart';
+import 'Mentee/data/cubits/CommonProfile/CommonProfileCubit.dart';
+import 'Mentee/data/cubits/CommonProfile/CommonProfileRepo.dart';
 import 'Mentee/data/cubits/CommunityDetails/CommunityDetailsCubit.dart';
 import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsCubit.dart';
@@ -316,6 +318,11 @@ class StateInjector {
 
     RepositoryProvider<ChatMessagesRepository>(
       create: (context) => ChatMessagesRepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<CommonProfileRepository>(
+      create: (context) => CommonProfileRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
@@ -637,6 +644,11 @@ class StateInjector {
     BlocProvider<DailyCheckInsCubit>(
       create: (context) =>
           DailyCheckInsCubit(context.read<DailyCheckInsRepo>()),
+    ),
+
+    BlocProvider<CommonProfileCubit>(
+      create: (context) =>
+          CommonProfileCubit(context.read<CommonProfileRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

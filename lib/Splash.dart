@@ -26,11 +26,11 @@ class _SplashScreenState extends State<SplashScreen>
             if (token == null || token.isEmpty) {
               context.pushReplacement('/dashboard');
             } else {
-              if (role == "Both") {
-                context.pushReplacement('/selected_screen');
-              } else if (role == "Mentee") {
-                context.pushReplacement('/dashboard');
-              }
+              // if (role == "Both") {
+              //   context.pushReplacement('/selected_screen');
+              // } else
+
+              context.pushReplacement('/dashboard');
             }
           });
   }
@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen>
                   FadeInUp(
                     delay: const Duration(milliseconds: 400),
                     child: const Text(
-                      'Mentorship Made Scalable',
+                      'The College Ecosystem In Your Hands',
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.white70,

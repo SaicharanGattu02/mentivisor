@@ -192,7 +192,7 @@ class StudyZoneBooks {
   StudyZoneBooks.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
-    tags = json['tags'].cast<String>();
+    tags = json['tags'] != null ? List<String>.from(json['tags']) : [];
     image = json['image'];
     description = json['description'];
     filePdf = json['file_pdf'];
@@ -224,15 +224,16 @@ class CommunityPost {
   String? createdAt;
   bool? isLike;
 
-  CommunityPost(
-      {this.id,
-        this.title,
-        this.content,
-        this.image,
-        this.likesCount,
-        this.commentsCount,
-        this.createdAt,
-        this.isLike});
+  CommunityPost({
+    this.id,
+    this.title,
+    this.content,
+    this.image,
+    this.likesCount,
+    this.commentsCount,
+    this.createdAt,
+    this.isLike,
+  });
 
   CommunityPost.fromJson(Map<String, dynamic> json) {
     id = json['id'];

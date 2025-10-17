@@ -159,55 +159,89 @@ class _PostCardState extends State<PostCard>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            context.push(
-                              "/common_profile/${widget.communityPosts.uploader?.id}",
-                            );
-                          },
-                          child: CachedNetworkImage(
-                            imageUrl: widget.communityPosts.image ?? "",
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: imageProvider,
-                                ),
-                            placeholder: (context, url) => CircleAvatar(
-                              radius: 16,
-                              backgroundColor: Colors.grey,
-                              child: SizedBox(
-                                width: 14,
-                                height: 14,
-                                child: Center(
-                                  child: spinkits.getSpinningLinespinkit(),
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: AssetImage(
-                                    "assets/images/profile.png",
+                    if (widget.communityPosts.anonymous == 0)
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              // if (widget.communityPosts.anonymous == 1) {
+                              //   CustomSnackBar1.show(
+                              //     context,
+                              //     "Anonymous post user profile cannot be visited.",
+                              //   );
+                              // } else {
+                              context.push(
+                                "/common_profile/${widget.communityPosts.uploader?.id}",
+                              );
+                              // }
+                            },
+                            child: widget.communityPosts.imgUrl?.isEmpty == true
+                                ? CircleAvatar(
+                                    radius: 16,
+                                    backgroundColor: Colors.grey.shade400,
+                                    child: Text(
+                                      widget.communityPosts.uploader?.name![0]
+                                              .toUpperCase() ??
+                                          "",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl:
+                                        widget.communityPosts.anonymous == 1
+                                        ? "assets/images/profile.png"
+                                        : widget
+                                                  .communityPosts
+                                                  .uploader
+                                                  ?.profilePicUrl ??
+                                              "",
+                                    imageBuilder: (context, imageProvider) =>
+                                        CircleAvatar(
+                                          radius: 16,
+                                          backgroundImage: imageProvider,
+                                        ),
+                                    placeholder: (context, url) => CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: Colors.grey,
+                                      child: SizedBox(
+                                        width: 14,
+                                        height: 14,
+                                        child: Center(
+                                          child: spinkits
+                                              .getSpinningLinespinkit(),
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                          radius: 16,
+                                          backgroundImage: AssetImage(
+                                            "assets/images/profile.png",
+                                          ),
+                                        ),
                                   ),
-                                ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          capitalize(
-                            widget.communityPosts.uploader?.name ?? "",
+                          const SizedBox(width: 8),
+                          Text(
+                            widget.communityPosts.anonymous == 1
+                                ? "Anonymous"
+                                : capitalize(
+                                    widget.communityPosts.uploader?.name ?? "",
+                                  ),
+                            style: const TextStyle(
+                              fontFamily: 'segeo',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: Color(0xff222222),
+                            ),
                           ),
-                          style: const TextStyle(
-                            fontFamily: 'segeo',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                            color: Color(0xff222222),
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+
                     const SizedBox(height: 4),
                     Text(
                       widget.communityPosts.heading ?? "",
@@ -620,7 +654,7 @@ class CommunityPostShimmer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: shimmerContainer(SizeConfig.screenWidth, 110, context),

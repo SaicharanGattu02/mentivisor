@@ -28,6 +28,7 @@ class MentorData {
   String? linkedIn;
   String? gitHub;
   String? resume;
+  String? yearName;
   List<String>? langages;
   int? coinsPerMinute;
   dynamic upgradeLink;
@@ -75,6 +76,7 @@ class MentorData {
     this.user,
     this.expertises,
     this.ratings,
+    this.yearName,
   });
 
   MentorData.fromJson(Map<String, dynamic> json) {
@@ -97,6 +99,7 @@ class MentorData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    yearName = json['year_name'];
     remainingSlots = json['remaining_slots_this_week'];
     slotsMessage = json['slots_message'];
     activeStatus = json['active_status'];
@@ -158,6 +161,7 @@ class MentorData {
     map['deleted_at'] = deletedAt;
     map['active_status'] = activeStatus;
     map['resume_url'] = resumeUrl;
+    map['year_name'] = yearName;
     if (todaySlots != null)
       map['today_slots'] = todaySlots!.map((v) => v.toJson()).toList();
     if (tomorrowSlots != null)

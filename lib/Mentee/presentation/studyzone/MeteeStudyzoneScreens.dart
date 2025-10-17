@@ -16,6 +16,7 @@ import 'package:mentivisor/Mentee/data/cubits/Tags/tags_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/tags_states.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/Shimmers.dart';
@@ -458,7 +459,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                             ? 1
                                             : 2;
                                         final aspectRatio =
-                                            (screenWidth / crossAxisCount) / (screenHeight * 0.18);
+                                            (screenWidth / crossAxisCount) /
+                                            (screenHeight * 0.18);
 
                                         return SliverGrid(
                                           gridDelegate:
@@ -510,7 +512,16 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                               8,
                                                             ),
                                                         child: CachedNetworkImage(
-                                                          width: SizeConfig.screenWidth < 600 ? SizeConfig.screenWidth * 0.3 : SizeConfig.screenWidth * 0.17,
+                                                          width:
+                                                              SizeConfig
+                                                                      .screenWidth <
+                                                                  600
+                                                              ? SizeConfig
+                                                                        .screenWidth *
+                                                                    0.3
+                                                              : SizeConfig
+                                                                        .screenWidth *
+                                                                    0.17,
                                                           height: 144,
                                                           imageUrl:
                                                               campusList
@@ -553,9 +564,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                       ),
                                                       Expanded(
                                                         child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                top: 10.0,
+                                                          padding: EdgeInsets.only(
+                                                            top: 10.0,
                                                                 bottom: 10,
                                                                 left: 5,
                                                               ),
@@ -565,9 +575,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                     .start,
                                                             children: [
                                                               Text(
-                                                                campusList
-                                                                        ?.name ??
-                                                                    "",
+                                                                capitalize(
+                                                                  campusList
+                                                                          ?.name ??
+                                                                      "",
+                                                                ),
+
                                                                 style: const TextStyle(
                                                                   fontFamily:
                                                                       'segeo',
@@ -750,7 +763,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                 studyZoneData
                                                     ?.studyZoneCampusData
                                                     ?.length ??
-                                                0, addAutomaticKeepAlives: false,
+                                                0,
+                                            addAutomaticKeepAlives: false,
                                             addRepaintBoundaries: true,
                                             addSemanticIndexes: false,
                                           ),
@@ -845,7 +859,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
     );
   }
 }
-
 
 class StudyZoneShimmer extends StatelessWidget {
   const StudyZoneShimmer({super.key});
@@ -951,14 +964,20 @@ class StudyZoneShimmer extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: shimmerContainer(
-                                        double.infinity, 32, context,
-                                        isButton: true),
+                                      double.infinity,
+                                      32,
+                                      context,
+                                      isButton: true,
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: shimmerContainer(
-                                        double.infinity, 32, context,
-                                        isButton: true),
+                                      double.infinity,
+                                      32,
+                                      context,
+                                      isButton: true,
+                                    ),
                                   ),
                                 ],
                               ),

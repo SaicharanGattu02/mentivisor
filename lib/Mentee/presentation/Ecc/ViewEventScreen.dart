@@ -61,121 +61,119 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
                 // SizedBox(
                 //   height: MediaQuery.of(context).padding.top + kToolbarHeight,
                 // ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 16,
-                    ),
-                    child: Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: SizeConfig.screenWidth,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  child: Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: SizeConfig.screenWidth,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 12,
+                            children: [
+                              Text(
+                                eventDetails?.name ?? "",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'segeo',
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
+                              Text(
+                                eventDetails?.description ?? "",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'segeo',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              spacing: 12,
-                              children: [
-                                Text(
-                                  eventDetails?.name ?? "",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'segeo',
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  eventDetails?.description ?? "",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'segeo',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0, left: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _InfoRow(
-                                  icon: Icons.calendar_today_outlined,
-                                  iconBg: const Color(0xFFE8F1FF),
-                                  iconColor: const Color(0xFF4A90E2),
-                                  label: 'Date & Time',
-                                  value:
-                                      '${formatDate(eventDetails?.dateofevent)}\n${formatTimeRange(eventDetails?.time)}',
-                                ),
-                                _InfoRow(
-                                  icon: Icons.location_on_outlined,
-                                  iconBg: const Color(0xFFE8FFEE),
-                                  iconColor: const Color(0xFF2ECC71),
-                                  label: 'Location',
-                                  value: eventDetails?.location ?? "",
-                                ),
-                                _InfoRow(
-                                  icon: Icons.apartment_rounded,
-                                  iconBg: const Color(0xFFF4E8FF),
-                                  iconColor: const Color(0xFF9013FE),
-                                  label: 'Organizing Institution',
-                                  value: eventDetails?.college ?? "",
-                                ),
-                              ],
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0, left: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _InfoRow(
+                                icon: Icons.calendar_today_outlined,
+                                iconBg: const Color(0xFFE8F1FF),
+                                iconColor: const Color(0xFF4A90E2),
+                                label: 'Date & Time',
+                                value:
+                                    '${formatDate(eventDetails?.dateofevent)}\n${formatTimeRange(eventDetails?.time)}',
+                              ),
+                              _InfoRow(
+                                icon: Icons.location_on_outlined,
+                                iconBg: const Color(0xFFE8FFEE),
+                                iconColor: const Color(0xFF2ECC71),
+                                label: 'Location',
+                                value: eventDetails?.location ?? "",
+                              ),
+                              _InfoRow(
+                                icon: Icons.apartment_rounded,
+                                iconBg: const Color(0xFFF4E8FF),
+                                iconColor: const Color(0xFF9013FE),
+                                label: 'Organizing Institution',
+                                value: eventDetails?.college ?? "",
+                              ),
+                            ],
                           ),
-                          // — Details box
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(16),
-                            margin: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Color(0xffBEBEB).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Event Details',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 16,
-                                    fontFamily: 'segeo',
-                                    color: Color(0xff333333),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  eventDetails?.description ?? "",
-                                  style: TextStyle(
-                                    color: Color(0xff666666),
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'segeo',
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        ),
+                        // — Details box
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          margin: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Color(0xffBEBEB).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Event Details',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  fontFamily: 'segeo',
+                                  color: Color(0xff333333),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                eventDetails?.description ?? "",
+                                style: TextStyle(
+                                  color: Color(0xff666666),
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'segeo',
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -300,106 +298,92 @@ class EventDetailsShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// 🔹 Header Section (gradient simulated with shimmer overlay)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
-                  ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12,
-                  children: [
-                    shimmerText(180, 24, context), // Event Title
-                    shimmerText(250, 14, context), // Event Short Desc
-                    const SizedBox(height: 4),
-                    shimmerText(220, 14, context),
-                  ],
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
                 ),
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                // If your Flutter version doesn't support `spacing`, remove this line.
+                // spacing: 12,
+                children: [
+                  shimmerText(180, 24, context),
+                  const SizedBox(height: 12),
+                  shimmerText(250, 14, context),
+                  const SizedBox(height: 4),
+                  shimmerText(220, 14, context),
+                ],
+              ),
+            ),
 
-              /// 🔹 Info Rows Section
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0, left: 20, right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _InfoRowShimmer(
-                      context: context,
-                      labelWidth: 120,
-                      valueLines: 2,
-                    ),
-                    const SizedBox(height: 16),
-                    _InfoRowShimmer(
-                      context: context,
-                      labelWidth: 100,
-                      valueLines: 1,
-                    ),
-                    const SizedBox(height: 16),
-                    _InfoRowShimmer(
-                      context: context,
-                      labelWidth: 140,
-                      valueLines: 1,
-                    ),
-                  ],
-                ),
+            // Info rows
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 20, right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  _InfoRowShimmer(labelWidth: 120, valueLines: 2),
+                  SizedBox(height: 16),
+                  _InfoRowShimmer(labelWidth: 100, valueLines: 1),
+                  SizedBox(height: 16),
+                  _InfoRowShimmer(labelWidth: 140, valueLines: 1),
+                ],
               ),
+            ),
 
-              /// 🔹 Event Details Box
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xffBEBEBE).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    shimmerText(100, 16, context), // "Event Details"
-                    const SizedBox(height: 12),
-                    shimmerText(250, 14, context),
-                    const SizedBox(height: 8),
-                    shimmerText(220, 14, context),
-                    const SizedBox(height: 8),
-                    shimmerText(260, 14, context),
-                  ],
-                ),
+            // Details box
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xffBEBEBE).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
               ),
-            ],
-          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  shimmerText(100, 16, context),
+                  const SizedBox(height: 12),
+                  shimmerText(250, 14, context),
+                  const SizedBox(height: 8),
+                  shimmerText(220, 14, context),
+                  const SizedBox(height: 8),
+                  shimmerText(260, 14, context),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// 🔸 Shimmer version of _InfoRow
 class _InfoRowShimmer extends StatelessWidget {
-  final BuildContext context;
   final double labelWidth;
   final int valueLines;
 
   const _InfoRowShimmer({
-    required this.context,
+    super.key,
     required this.labelWidth,
     this.valueLines = 1,
   });
@@ -409,7 +393,7 @@ class _InfoRowShimmer extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        shimmerCircle(36, context), // icon background
+        shimmerCircle(36, context),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,7 +402,7 @@ class _InfoRowShimmer extends StatelessWidget {
             const SizedBox(height: 6),
             ...List.generate(
               valueLines,
-                  (index) => Padding(
+              (index) => Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: shimmerText(200 - (index * 20), 12, context),
               ),

@@ -11,6 +11,8 @@ import 'package:mentivisor/Mentor/data/Cubits/BuyCoupon/BuyCouponStates.dart';
 import 'package:mentivisor/Mentor/data/Cubits/CouponsDetails/CouponsDetailsStates.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Components/Shimmers.dart';
+import '../../Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/Cubits/CouponsDetails/CouponsDetailsCubit.dart';
 import '../../services/AuthService.dart';
@@ -40,7 +42,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
       barrierColor: Colors.black45,
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (_, __, ___) {
-
         return Align(
           alignment: Alignment.center,
           child: Padding(
@@ -72,7 +73,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // tag icon inside rounded square circle (as in screenshot)
                         Container(
                           width: 56,
                           height: 56,
@@ -111,8 +111,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                           ),
                         ),
                         const SizedBox(height: 18),
-
-                        // buttons row
                         Row(
                           children: [
                             Expanded(
@@ -143,15 +141,14 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            ValueListenableBuilder<bool>(
-                              valueListenable: enoughBalance,
-                              builder: (context, value, child) {
-                                final enough_coins = value;
-                                AppLogger.info("enoughCoins:${enough_coins}");
-                                return Expanded(
-                                  child: SizedBox(
-                                    height: 44,
-                                    child: BlocConsumer<BuyCouponCubit, BuyCouponStates>(
+                            Expanded(
+                              child: SizedBox(
+                                height: 44,
+                                child:
+                                    BlocConsumer<
+                                      BuyCouponCubit,
+                                      BuyCouponStates
+                                    >(
                                       listener: (context, state) {
                                         if (state is BuyCouponLoaded) {
                                           context.pop();
@@ -171,85 +168,14 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                                           isLoading: state is BuyCouponLoading,
                                           text: "Confirm",
                                           onPlusTap: () {
-                                            if (enoughBalance == false) {
-                                              AppLogger.info(
-                                                "enough_coins::$enoughBalance",
-                                              );
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) => AlertDialog(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          16,
-                                                        ),
-                                                  ),
-                                                  title: Text(
-                                                    "Insufficient Coins",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                      color: Colors.redAccent,
-                                                    ),
-                                                  ),
-                                                  content: const Text(
-                                                    "You don’t have enough coins to redeem this coupon.\n\nPlease purchase more coins to continue.",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black87,
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                            context,
-                                                          ),
-                                                      child: const Text(
-                                                        "Cancel",
-                                                        style: TextStyle(
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        context.push(
-                                                          "/buy_coins_screens",
-                                                        );
-                                                        Navigator.pop(context);
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.orange,
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "Purchase Coins",
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                              return;
-                                            } else {
-                                              context
-                                                  .read<BuyCouponCubit>()
-                                                  .buyCoupons(couponId);
-                                            }
+                                            context
+                                                .read<BuyCouponCubit>()
+                                                .buyCoupons(couponId);
                                           },
                                         );
                                       },
                                     ),
-                                  ),
-                                );
-                              },
+                              ),
                             ),
                           ],
                         ),
@@ -302,13 +228,9 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
             final int discountPercent = actualValue > 0
                 ? ((savings / actualValue) * 100).round().toInt()
                 : 0;
-
             final requiredCoins = couponsDetails?.coinsRequired ?? 0;
-            AuthService.getCoins().then((coinsStr) {
-              final coins = int.tryParse(coinsStr ?? '0') ?? 0;
-              enoughBalance.value = coins >= requiredCoins;
-              AppLogger.info("enoughBalancecc:${enoughBalance.value}");
-            });
+             context.read<MenteeProfileCubit>().fetchMenteeProfile();
+            enoughBalance.value = AppState.coinsNotifier.value >= requiredCoins;
 
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -681,12 +603,61 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                 return CustomAppButton1(
                   text: "Redeem Now",
                   onPlusTap: () {
-                    _showConfirmDialog(
-                      context,
-                      coinsRequired,
-                      couponsDetails?.title ?? "",
-                      couponId,
-                    );
+                    if (enoughBalance.value == false) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: Text(
+                            "Insufficient Coins",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                          content: const Text(
+                            "You don’t have enough coins to redeem this coupon.\n\nPlease purchase more coins to continue.",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.push("/buy_coins_screens");
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Purchase Coins"),
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    } else {
+                      _showConfirmDialog(
+                        context,
+                        coinsRequired,
+                        couponsDetails?.title ?? "",
+                        couponId,
+                      );
+                    }
                   },
                 );
               }

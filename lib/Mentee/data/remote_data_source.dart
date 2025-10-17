@@ -19,6 +19,7 @@ import '../Models/BecomeMentorSuccessModel.dart';
 import '../Models/CampusesModel.dart';
 import '../Models/ChatMessagesModel.dart';
 import '../Models/CoinsPackRespModel.dart';
+import '../Models/CommonProfileModel.dart';
 import '../Models/CommunityDetailsModel.dart';
 import '../Models/CommunityPostsModel.dart';
 import '../Models/CommunityZoneTagsModel.dart';
@@ -67,6 +68,7 @@ abstract class RemoteDataSource {
   );
   Future<GuestMentorsModel?> getGuestMentorsList();
   Future<MentorProfileModel?> getMentorProfile(int id);
+  Future<CommonProfileModel?> commonProfile(int id);
   Future<ECCModel?> getEcc(
     String scope,
     String updates,
@@ -756,6 +758,19 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return MentorProfileModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('MentorProfile::${e}');
+      return null;
+    }
+  }
+  @override
+  Future<CommonProfileModel?> commonProfile(int id) async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.common_profile}/${id}",
+      );
+      AppLogger.log('get commonProfile::${res.data}/${id}');
+      return CommonProfileModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('commonProfile::${e}');
       return null;
     }
   }

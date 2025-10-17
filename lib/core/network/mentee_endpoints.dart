@@ -78,6 +78,7 @@ class APIEndpointUrls {
   static const String resetPassword = "${apiUrl}reset-password";
   static const String coins_achievements = "${userUrl}achivements";
   static const String daily_checkins = "${userUrl}checkin";
+  static const String common_profile = "${userUrl}common-profile";
 
   ///Guest urls
   static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

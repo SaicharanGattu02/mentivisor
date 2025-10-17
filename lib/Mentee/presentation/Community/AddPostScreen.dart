@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
@@ -45,31 +46,31 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<String> highlitedCoinValue = ValueNotifier<String>('');
+  final ValueNotifier<int> AvailableCoins = ValueNotifier<int>(0);
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
 
   final ImagePicker _picker = ImagePicker();
   final searchController = TextEditingController();
   Timer? _debounce;
   List<String> _selectedTags = [];
-  List<String> _customTags = [];
+  // List<String> _customTags = [];
 
   @override
   void initState() {
     super.initState();
     searchController.clear();
-    context.read<TagsSearchCubit>().reset();
     context.read<HighlightedCoinsCubit>().highlitedCoins("community");
   }
 
   @override
   void dispose() {
+    super.dispose();
     _headingController.dispose();
     _describeController.dispose();
     _tagController.dispose();
     _imageFile.dispose();
     _isHighlighted.dispose();
     _anonymousNotifier.dispose();
-    super.dispose();
   }
 
   Future<void> _pickImage() async {
@@ -185,15 +186,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   Future<void> _pickImageFromGallery() async {
-    final exact = await _pickValidateAndResize(
-      context,
-      source: ImageSource.gallery,
-      targetWidth: 384, // outputs 384×216
-      tolerancePct: 0.10, // allow ±10% around 16:9
-      minSourceWidth: 800, // optional: block very small images
-    );
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
     if (!mounted) return;
-    if (exact != null) _imageFile.value = exact;
+
+    if (pickedFile != null) {
+      _imageFile.value = File(pickedFile.path);
+    }
   }
 
   Future<void> _pickImageFromCamera() async {
@@ -258,178 +257,178 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
+              // const SizedBox(height: 10),
+              //
+              // buildCustomLabel('Tags'),
+              // const SizedBox(height: 8),
+              //
+              // SizedBox(
+              //   height: 48,
+              //   child: TextField(
+              //     controller: searchController,
+              //     cursorColor: primarycolor,
+              //     onChanged: (query) {
+              //       if (_debounce?.isActive ?? false) _debounce!.cancel();
+              //       _debounce = Timer(const Duration(milliseconds: 300), () {
+              //         context.read<TagsSearchCubit>().getTagsSearch(query);
+              //       });
+              //     },
+              //     style: TextStyle(fontFamily: "segeo", fontSize: 15),
+              //     decoration: InputDecoration(
+              //       prefixIcon: Icon(Icons.search, color: Colors.grey),
+              //       hoverColor: Colors.white,
+              //       hintText: "Search Tags here",
+              //       hintStyle: const TextStyle(color: Colors.grey),
+              //       fillColor: Colors.white,
+              //       filled: true,
+              //       contentPadding: EdgeInsets.only(right: 33, left: 20),
+              //     ),
+              //   ),
+              // ),
 
-              buildCustomLabel('Tags'),
-              const SizedBox(height: 8),
+              // const SizedBox(height: 8),
 
-              SizedBox(
-                height: 48,
-                child: TextField(
-                  controller: searchController,
-                  cursorColor: primarycolor,
-                  onChanged: (query) {
-                    if (_debounce?.isActive ?? false) _debounce!.cancel();
-                    _debounce = Timer(const Duration(milliseconds: 300), () {
-                      context.read<TagsSearchCubit>().getTagsSearch(query);
-                    });
-                  },
-                  style: TextStyle(fontFamily: "segeo", fontSize: 15),
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    hoverColor: Colors.white,
-                    hintText: "Search Tags here",
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.only(right: 33, left: 20),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              BlocBuilder<TagsSearchCubit, TagsSearchState>(
-                builder: (context, state) {
-                  if (state is TagsSearchLoading) {
-                    return const Center(child: DottedProgressWithLogo());
-                  } else if (state is TagsSearchLoaded) {
-                    // Safe null check
-                    final apiTags = state.tagsModel.data ?? [];
-                    final allTags = [...apiTags, ..._customTags];
-
-                    return Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Select Tags",
-                            style: TextStyle(
-                              color: Color(0xff374151),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'segeo',
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          allTags.isEmpty
-                              ? const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "No Tags Found!",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Wrap(
-                                  spacing: 5,
-                                  runSpacing: 0,
-                                  children: allTags.map((tag) {
-                                    final isSelected = _selectedTags.contains(
-                                      tag,
-                                    );
-                                    return ChoiceChip(
-                                      label: Text(
-                                        tag,
-                                        style: const TextStyle(
-                                          color: Color(0xff333333),
-                                          fontFamily: 'segeo',
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      selected: isSelected,
-                                      onSelected: (selected) {
-                                        setState(() {
-                                          if (selected) {
-                                            _selectedTags.add(tag);
-                                          } else {
-                                            _selectedTags.remove(tag);
-                                          }
-                                        });
-                                      },
-                                      selectedColor: Colors.blue.shade100,
-                                      backgroundColor: Colors.white,
-                                      side: BorderSide(
-                                        color: isSelected
-                                            ? Colors.blue.shade100
-                                            : Colors.grey,
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                        ],
-                      ),
-                    );
-                  } else if (state is TagsSearchFailure) {
-                    return Center(child: Text("Error: ${state.error}"));
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
-
-              const SizedBox(height: 8),
-              if (_selectedTags.isNotEmpty) ...[
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Selected Tags",
-                        style: TextStyle(
-                          color: Color(0xff374151),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'segeo',
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 0,
-                        children: _selectedTags.map((tag) {
-                          return Chip(
-                            label: Text(
-                              tag,
-                              style: const TextStyle(
-                                color: Color(0xff333333),
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                              ),
-                            ),
-                            side: BorderSide(color: Colors.blue.shade50),
-                            backgroundColor: Colors.blue.shade50,
-                            deleteIcon: const Icon(Icons.close, size: 16),
-                            onDeleted: () {
-                              setState(() {
-                                _selectedTags.remove(tag);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ] else ...[
-                SizedBox.shrink(),
-              ],
+              // BlocBuilder<TagsSearchCubit, TagsSearchState>(
+              //   builder: (context, state) {
+              //     if (state is TagsSearchLoading) {
+              //       return const Center(child: DottedProgressWithLogo());
+              //     } else if (state is TagsSearchLoaded) {
+              //       // Safe null check
+              //       final apiTags = state.tagsModel.data ?? [];
+              //       final allTags = [...apiTags, ..._customTags];
+              //
+              //       return Container(
+              //         padding: const EdgeInsets.all(10),
+              //         decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(8),
+              //         ),
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             const Text(
+              //               "Select Tags",
+              //               style: TextStyle(
+              //                 color: Color(0xff374151),
+              //                 fontSize: 14,
+              //                 fontWeight: FontWeight.w600,
+              //                 fontFamily: 'segeo',
+              //               ),
+              //             ),
+              //             const SizedBox(height: 5),
+              //             allTags.isEmpty
+              //                 ? const Center(
+              //                     child: Padding(
+              //                       padding: EdgeInsets.symmetric(vertical: 10),
+              //                       child: Text(
+              //                         "No Tags Found!",
+              //                         style: TextStyle(
+              //                           fontSize: 14,
+              //                           fontWeight: FontWeight.w500,
+              //                         ),
+              //                       ),
+              //                     ),
+              //                   )
+              //                 : Wrap(
+              //                     spacing: 5,
+              //                     runSpacing: 0,
+              //                     children: allTags.map((tag) {
+              //                       final isSelected = _selectedTags.contains(
+              //                         tag,
+              //                       );
+              //                       return ChoiceChip(
+              //                         label: Text(
+              //                           tag,
+              //                           style: const TextStyle(
+              //                             color: Color(0xff333333),
+              //                             fontFamily: 'segeo',
+              //                             fontWeight: FontWeight.w400,
+              //                             fontSize: 12,
+              //                           ),
+              //                         ),
+              //                         selected: isSelected,
+              //                         onSelected: (selected) {
+              //                           setState(() {
+              //                             if (selected) {
+              //                               _selectedTags.add(tag);
+              //                             } else {
+              //                               _selectedTags.remove(tag);
+              //                             }
+              //                           });
+              //                         },
+              //                         selectedColor: Colors.blue.shade100,
+              //                         backgroundColor: Colors.white,
+              //                         side: BorderSide(
+              //                           color: isSelected
+              //                               ? Colors.blue.shade100
+              //                               : Colors.grey,
+              //                         ),
+              //                       );
+              //                     }).toList(),
+              //                   ),
+              //           ],
+              //         ),
+              //       );
+              //     } else if (state is TagsSearchFailure) {
+              //       return Center(child: Text("Error: ${state.error}"));
+              //     } else {
+              //       return const SizedBox.shrink();
+              //     }
+              //   },
+              // ),
+              //
+              // const SizedBox(height: 8),
+              // if (_selectedTags.isNotEmpty) ...[
+              //   Container(
+              //     padding: const EdgeInsets.all(10),
+              //     decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         const Text(
+              //           "Selected Tags",
+              //           style: TextStyle(
+              //             color: Color(0xff374151),
+              //             fontSize: 14,
+              //             fontWeight: FontWeight.w600,
+              //             fontFamily: 'segeo',
+              //           ),
+              //         ),
+              //         const SizedBox(height: 5),
+              //         Wrap(
+              //           spacing: 5,
+              //           runSpacing: 0,
+              //           children: _selectedTags.map((tag) {
+              //             return Chip(
+              //               label: Text(
+              //                 tag,
+              //                 style: const TextStyle(
+              //                   color: Color(0xff333333),
+              //                   fontFamily: 'segeo',
+              //                   fontWeight: FontWeight.w500,
+              //                   fontSize: 12,
+              //                 ),
+              //               ),
+              //               side: BorderSide(color: Colors.blue.shade50),
+              //               backgroundColor: Colors.blue.shade50,
+              //               deleteIcon: const Icon(Icons.close, size: 16),
+              //               onDeleted: () {
+              //                 setState(() {
+              //                   _selectedTags.remove(tag);
+              //                 });
+              //               },
+              //             );
+              //           }).toList(),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ] else ...[
+              //   SizedBox.shrink(),
+              // ],
               const SizedBox(height: 8),
               const Text(
                 'Image',
@@ -468,7 +467,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: const [
                                       Text(
-                                        "Upload image in 16:9",
+                                        "Upload image",
                                         style: TextStyle(
                                           fontSize: 15,
                                           color: Color(0xff6D6D6D),
@@ -560,151 +559,195 @@ class _AddPostScreenState extends State<AddPostScreen> {
               ),
               SizedBox(height: 24),
               ValueListenableBuilder<bool>(
-                valueListenable: _isHighlighted,
-                builder: (context, value, _) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: value,
-                        onChanged: (val) {
-                          if (val != null) _isHighlighted.value = val;
-                        },
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Highlight Post',
-                              style: TextStyle(
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff333333),
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            BlocBuilder<
-                              HighlightedCoinsCubit,
-                              HighlightedCoinsState
-                            >(
-                              builder: (context, state) {
-                                if (state is GetHighlightedCoinsLoading) {
-                                  return Center(
-                                    child: DottedProgressWithLogo(),
-                                  );
-                                } else if (state is GetHighlightedCoinsLoaded) {
-                                  final coins =
-                                      (state.highlightedCoinsModel.data !=
-                                              null &&
-                                          state
-                                              .highlightedCoinsModel
-                                              .data!
-                                              .isNotEmpty)
-                                      ? state
-                                            .highlightedCoinsModel
-                                            .data!
-                                            .first
-                                            .coins
-                                      : "0";
-                                  highlitedCoinValue.value = coins ?? "";
-                                  final requiredCoins =
-                                      int.tryParse(coins.toString()) ?? 0;
-                                  final availableCoins =
-                                      AppState.coinsNotifier.value;
-                                  AppLogger.info(
-                                    "availableCoins:${availableCoins}",
-                                  );
-                                  AppLogger.info("requiredCoins:${coins}");
-                                  if (_isHighlighted.value) {
-                                    final bool coinsValue =
-                                        availableCoins >= requiredCoins;
-                                    if (coinsValue == true) {
-                                      AppLogger.info(
-                                        "coinsValue:${coinsValue}",
-                                      );
-                                      enoughBalance.value = true;
-                                    } else {
-                                      enoughBalance.value = false;
-                                    }
-                                    AppLogger.info(
-                                      "enoughBalance:${enoughBalance.value}",
-                                    );
-                                  } else {
-                                    enoughBalance.value = true;
-                                    AppLogger.info(
-                                      "enoughBalance:${enoughBalance.value}",
-                                    );
-                                  }
+                valueListenable: enoughBalance,
+                builder: (context, enough_coins, _) {
+                  return ValueListenableBuilder<bool>(
+                    valueListenable: _isHighlighted,
+                    builder: (context, value, _) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: value,
+                            onChanged: (val) {
+                              AppLogger.info(
+                                "Info  Enoug:${val},${enoughBalance.value}",
+                              );
 
-                                  return Text(
-                                    'Make your post Highlight with $coins coins for 1 day',
-                                    style: TextStyle(
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff666666),
-                                      fontSize: 14,
+                              if (val == null) return;
+                              _isHighlighted.value = val;
+                              if (val && !enough_coins) {
+                                AppLogger.info(
+                                  "Info  Enoug :${val},${enough_coins}",
+                                );
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                  );
-                                } else if (state
-                                    is GetHighlightedCoinsFailure) {
-                                  return Text(state.msg);
-                                }
-                                return const Text("No Data");
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Image.asset(
-                        'assets/images/GoldCoins.png',
-                        width: 16,
-                        height: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      FutureBuilder<String?>(
-                        future: AuthService.getCoins(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text(
-                              "Loading...",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          }
-                          final coins = int.tryParse(snapshot.data ?? "0") ?? 0;
-                          return RichText(
-                            text: TextSpan(
+                                    title: Text(
+                                      "Insufficient Coins",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                    content: const Text(
+                                      "You don’t have enough coins to post this.\n\nPlease purchase more coins to continue.",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text(
+                                          "Cancel",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          context.push("/buy_coins_screens");
+                                          Navigator.pop(context);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text("Purchase Coins"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                _isHighlighted.value = false;
+                                enoughBalance.value = false;
+                              }
+                            },
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const TextSpan(
-                                  text: "Available coins ",
+                                Text(
+                                  'Highlight Post',
                                   style: TextStyle(
                                     fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
                                     color: Color(0xff333333),
+                                    fontSize: 14,
                                   ),
                                 ),
-                                TextSpan(
-                                  text: coins.toString(),
-                                  style: const TextStyle(
-                                    fontFamily: 'segeo',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Color(0xff333333),
-                                  ),
+                                SizedBox(height: 8),
+                                BlocBuilder<
+                                  HighlightedCoinsCubit,
+                                  HighlightedCoinsState
+                                >(
+                                  builder: (context, state) {
+                                    if (state is GetHighlightedCoinsLoading) {
+                                      return Center(
+                                        child: DottedProgressWithLogo(),
+                                      );
+                                    } else if (state
+                                        is GetHighlightedCoinsLoaded) {
+                                      final coins =
+                                          (state.highlightedCoinsModel.data !=
+                                                  null &&
+                                              state
+                                                  .highlightedCoinsModel
+                                                  .data!
+                                                  .isNotEmpty)
+                                          ? state
+                                                .highlightedCoinsModel
+                                                .data!
+                                                .first
+                                                .coins
+                                          : "0";
+                                      highlitedCoinValue.value = coins ?? "";
+                                      return Text(
+                                        'Make your post Highlight with $coins coins for 1 day',
+                                        style: TextStyle(
+                                          fontFamily: 'segeo',
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xff666666),
+                                          fontSize: 14,
+                                        ),
+                                      );
+                                    } else if (state
+                                        is GetHighlightedCoinsFailure) {
+                                      return Text(state.msg);
+                                    }
+                                    return const Text("No Data");
+                                  },
                                 ),
                               ],
                             ),
-                          );
-                        },
-                      ),
-                    ],
+                          ),
+                          const SizedBox(width: 8),
+                          Image.asset(
+                            'assets/images/GoldCoins.png',
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          FutureBuilder<String?>(
+                            future: AuthService.getCoins(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                // if (AvailableCoins.value >= highlitedCoinValue.value) {
+                                //   enoughBalance.value = true;
+                                // } else {
+                                //   enoughBalance.value = false;
+                                // }
+                                return const Text(
+                                  "Loading...",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                              AvailableCoins.value =
+                                  int.tryParse(snapshot.data ?? "0") ?? 0;
+                              return RichText(
+                                text: TextSpan(
+                                  children: [
+                                    const TextSpan(
+                                      text: "Available coins ",
+                                      style: TextStyle(
+                                        fontFamily: 'segeo',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                        color: Color(0xff333333),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          AvailableCoins.value.toString() ??
+                                          "0",
+                                      style: const TextStyle(
+                                        fontFamily: 'segeo',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: Color(0xff333333),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               ),
@@ -715,124 +758,97 @@ class _AddPostScreenState extends State<AddPostScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 36),
-          child: ValueListenableBuilder<bool>(
-            valueListenable: enoughBalance,
-            builder: (context, enough_coins, _) {
-              AppLogger.info("enough_coins:$enough_coins");
-              return BlocConsumer<
-                AddCommunityPostCubit,
-                AddCommunityPostStates
-              >(
-                listener: (context, state) async {
-                  if (state is AddCommunityPostSuccess) {
-                    if (_isHighlighted.value) {
-                      final requiredCoins =
-                          int.tryParse(highlitedCoinValue.value) ?? 0;
-                      await context
-                          .read<MenteeProfileCubit>()
-                          .fetchMenteeProfile();
-                      enoughBalance.value =
-                          AppState.coinsNotifier.value >= requiredCoins;
-                    }
-                    context.read<CommunityPostsCubit>().getCommunityPosts(
-                      "",
-                      "${widget.type}",
-                    );
-                    CustomSnackBar1.show(
-                      context,
-                      "Your post is under review. Once it’s approved, it will be visible to the community",
-                    );
-                    Future.microtask(() => context.pop());
-                  } else if (state is AddCommunityPostFailure) {
-                    CustomSnackBar1.show(context, state.error);
-                  }
-                },
-                builder: (context, state) {
-                  final isLoading = state is AddCommunityPostLoading;
+          child: BlocConsumer<AddCommunityPostCubit, AddCommunityPostStates>(
+            listener: (context, state) async {
+              if (state is AddCommunityPostSuccess) {
+                if (_isHighlighted.value) {
+                  final requiredCoins =
+                      int.tryParse(highlitedCoinValue.value) ?? 0;
+                  await context.read<MenteeProfileCubit>().fetchMenteeProfile();
+                  enoughBalance.value =
+                      AppState.coinsNotifier.value >= requiredCoins;
+                }
 
-                  return CustomAppButton1(
-                    text: "Post It",
-                    isLoading: isLoading,
-                    onPlusTap: () {
-                      if (!enough_coins) {
-                        // show insufficient coins dialog
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            title: const Text(
-                              "Insufficient Coins",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.redAccent,
-                              ),
-                            ),
-                            content: const Text(
-                              "You don’t have enough coins to post this.\n\nPlease purchase more coins to continue.",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  context.push("/buy_coins_screens");
-                                  Navigator.pop(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orange,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text("Purchase Coins"),
-                              ),
-                            ],
+                context.read<CommunityPostsCubit>().getCommunityPosts(
+                  "",
+                  "${widget.type}",
+                );
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      title: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Lottie.asset(
+                            'assets/lottie/successfully.json',
+                            width: 160,
+                            height: 120,
+                            repeat: true,
                           ),
-                        );
-                        return;
-                      }
-                      FocusScope.of(context).unfocus();
-                      if (!(_formKey.currentState?.validate() ?? false)) return;
-                      final isHighlighted = _isHighlighted.value;
-                      final anonymous = _anonymousNotifier.value;
-                      final file = _imageFile.value;
+                          const Text(
+                            "Your post is under review. Once it’s approved, it will be visible to the community",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontFamily: 'segeo',
+                            ),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        CustomAppButton1(
+                          text: "Okay",
+                          onPlusTap: () {
+                            Navigator.of(context).pop(); // close the dialog
+                            context.pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else if (state is AddCommunityPostFailure) {
+                CustomSnackBar1.show(context, state.error);
+              }
+            },
 
-                      final Map<String, dynamic> data = {
-                        "heading": _headingController.text.trim(),
-                        "description": _describeController.text.trim(),
-                        "anonymous": anonymous ? 1 : 0,
-                        "popular": isHighlighted ? 1 : 0,
-                        "tags[]": _selectedTags,
-                      };
+            builder: (context, state) {
+              final isLoading = state is AddCommunityPostLoading;
 
-                      if (file != null) {
-                        data["image"] = file.path;
-                      }
-                      if (isHighlighted) {
-                        data["coins"] =
-                            double.tryParse(
-                              highlitedCoinValue.value,
-                            )?.toInt() ??
-                            0;
-                      }
+              return CustomAppButton1(
+                text: "Post It",
+                isLoading: isLoading,
+                onPlusTap: () {
+                  FocusScope.of(context).unfocus();
+                  if (!(_formKey.currentState?.validate() ?? false)) return;
+                  final isHighlighted = _isHighlighted.value;
+                  final anonymous = _anonymousNotifier.value;
+                  final file = _imageFile.value;
 
-                      context.read<AddCommunityPostCubit>().addCommunityPost(
-                        data,
-                      );
-                    },
-                  );
+                  final Map<String, dynamic> data = {
+                    "heading": _headingController.text.trim(),
+                    "description": _describeController.text.trim(),
+                    "anonymous": anonymous ? 1 : 0,
+                    "popular": isHighlighted ? 1 : 0,
+                    // "tags[]": _selectedTags,
+                  };
+
+                  if (file != null) {
+                    data["image"] = file.path;
+                  }
+                  if (isHighlighted) {
+                    data["coins"] =
+                        double.tryParse(highlitedCoinValue.value)?.toInt() ?? 0;
+                  }
+
+                  context.read<AddCommunityPostCubit>().addCommunityPost(data);
                 },
               );
             },

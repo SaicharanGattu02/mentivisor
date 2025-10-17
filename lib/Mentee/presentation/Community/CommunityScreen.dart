@@ -26,8 +26,8 @@ class Communityscreen extends StatefulWidget {
 class _CommunityScreenState extends State<Communityscreen> {
   final ValueNotifier<bool> _onCampus = ValueNotifier<bool>(true);
   final ValueNotifier<int> _selectedFilter = ValueNotifier<int>(0);
-  final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true); // NEW
-  final List<String> _filters = ['All', 'Upcoming', 'Highlighted'];
+  final ValueNotifier<bool> _fabVisible = ValueNotifier<bool>(true);
+  final List<String> _filters = ['All', 'Recent', 'Trending', 'Highlighted'];
   String selectedFilter = 'On Campuses';
 
   @override

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
@@ -551,24 +552,58 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         ),
       ),
       bottomNavigationBar: BlocConsumer<AddResourceCubit, AddResourceStates>(
-        listener: (context, state) {
-          if (state is AddResourceSuccess) {
-            context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
-              "",
-              "",
-              "",
-            );
-            CustomSnackBar1.show(
-              context,
-              "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
-            );
+          listener: (context, state) {
+            if (state is AddResourceSuccess) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    title: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Lottie.asset(
+                          'assets/lottie/successfully.json',
+                          width: 160,
+                          height: 120,
+                          repeat: true,
+                        ),
+                        Text(
+                          "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontFamily: 'segeo',
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      CustomAppButton1(
+                        text: "Okay",
+                        onPlusTap: () {
+                          Navigator.of(context).pop(); // Closes the dialog
+                          context.pop(); // Now pop the page AFTER user taps Okay
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
 
-            context.pop();
-          } else if (state is AddResourceFailure) {
-            CustomSnackBar1.show(context, state.error);
-          }
-        },
-        builder: (context, state) {
+              context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "",);
+
+            } else if (state is AddResourceFailure) {
+              CustomSnackBar1.show(context, state.error);
+            }
+          },
+
+          builder: (context, state) {
           final isLoading = state is AddResourceLoading;
           return SafeArea(
             child: Padding(

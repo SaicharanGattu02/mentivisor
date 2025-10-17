@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportState.dart';
+import 'package:mentivisor/utils/constants.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
@@ -115,9 +116,8 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // About Course
-                          const Text(
-                            'About Course',
+                          Text(
+                            capitalize('${resourceData?.name ?? ''}'),
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'segeo',
@@ -199,32 +199,107 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors
-                                            .black, // inner bg behind image
+                                            .black, // background behind image or text
                                       ),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            resourceData
-                                                ?.uploader
-                                                ?.profilePic ??
-                                            "",
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(
-                                          child: spinkits
-                                              .getSpinningLinespinkit(),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const ColoredBox(
-                                              color: Color(0xffF8FAFE),
-                                              child: Center(
-                                                child: Icon(
-                                                  Icons.broken_image,
-                                                  size: 40,
-                                                  color: Colors.grey,
-                                                ),
+                                      alignment: Alignment.center,
+                                      child:
+                                          (resourceData
+                                                  ?.uploader
+                                                  ?.profilePicUrl
+                                                  ?.isEmpty ??
+                                              true)
+                                          ? Text(
+                                              (resourceData
+                                                          ?.uploader
+                                                          ?.name
+                                                          ?.isNotEmpty ??
+                                                      false)
+                                                  ? resourceData!
+                                                        .uploader!
+                                                        .name![0]
+                                                        .toUpperCase()
+                                                  : '',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                context.push(
+                                                  "/common_profile/${resourceData?.uploader?.id}",
+                                                );
+                                              },
+                                              child: CircleAvatar(
+                                                radius:
+                                                    30, // Adjust the size as needed
+                                                backgroundColor: Colors
+                                                    .black, // Background behind image or initials
+                                                child:
+                                                    (resourceData
+                                                            ?.uploader
+                                                            ?.profilePicUrl
+                                                            ?.isEmpty ??
+                                                        true)
+                                                    ? Text(
+                                                        (resourceData
+                                                                    ?.uploader
+                                                                    ?.name
+                                                                    ?.isNotEmpty ??
+                                                                false)
+                                                            ? resourceData!
+                                                                  .uploader!
+                                                                  .name![0]
+                                                                  .toUpperCase()
+                                                            : '',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 24,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      )
+                                                    : ClipOval(
+                                                        child: CachedNetworkImage(
+                                                          imageUrl: resourceData!
+                                                              .uploader!
+                                                              .profilePicUrl!,
+                                                          fit: BoxFit.cover,
+                                                          width:
+                                                              60, // Match CircleAvatar diameter
+                                                          height: 60,
+                                                          placeholder:
+                                                              (
+                                                                context,
+                                                                url,
+                                                              ) => Center(
+                                                                child: spinkits
+                                                                    .getSpinningLinespinkit(),
+                                                              ),
+                                                          errorWidget:
+                                                              (
+                                                                context,
+                                                                url,
+                                                                error,
+                                                              ) => const ColoredBox(
+                                                                color: Color(
+                                                                  0xffF8FAFE,
+                                                                ),
+                                                                child: Center(
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .broken_image,
+                                                                    size: 40,
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                        ),
+                                                      ),
                                               ),
                                             ),
-                                      ),
                                     ),
 
                                     SizedBox(width: 12),
@@ -233,7 +308,9 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          resourceData?.uploader?.name ?? "",
+                                          capitalize(
+                                            resourceData?.uploader?.name ?? "",
+                                          ),
                                           style: const TextStyle(
                                             fontSize: 14,
                                             fontFamily: 'segeo',
@@ -241,11 +318,29 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                           ),
                                         ),
                                         Text(
-                                          resourceData?.uploader?.email ?? "",
-                                          style: const TextStyle(
-                                            fontSize: 10,
+                                          // overflow: TextOverflow.ellipsis,
+                                          // maxLines: 1,
+                                          '${resourceData?.uploader?.college?.name ?? ""}',
+
+                                          // ' ${resourceData?.uploader?.yearRelation?.name ?? ""} year\n${resourceData?.uploader?.stream ?? ""}'
+                                          style: TextStyle(
+                                            fontSize: 12,
                                             fontFamily: 'segeo',
+                                            fontWeight: FontWeight.w500,
                                             color: Color(0xff666666),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: SizeConfig.screenWidth * 0.65,
+                                          child: Text(
+                                            maxLines: 2,
+                                            resourceData?.uploader?.bio ?? "",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontFamily: 'segeo',
+                                              color: Color(0xff666666),
+                                            ),
                                           ),
                                         ),
                                       ],

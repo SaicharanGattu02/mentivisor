@@ -1,28 +1,26 @@
 class ResourceDetailsModel {
   bool? status;
   String? message;
-  Data? data;
+  ResourceData? data;
 
-  ResourceDetailsModel({this.status, this.data,this.message});
+  ResourceDetailsModel({this.status, this.message, this.data});
 
   ResourceDetailsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? ResourceData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
+    final map = <String, dynamic>{};
+    map['status'] = status;
+    map['message'] = message;
+    if (data != null) map['data'] = data!.toJson();
+    return map;
   }
 }
 
-class Data {
+class ResourceData {
   int? id;
   String? name;
   String? image;
@@ -31,71 +29,73 @@ class Data {
   String? description;
   int? uploadedBy;
   int? downloadsCount;
+  String? active;
   int? collegeId;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  dynamic deletedAt;
   bool? isReportedStudyZone;
   Uploader? uploader;
 
-  Data(
-      {this.id,
-        this.name,
-        this.image,
-        this.tag,
-        this.filePdf,
-        this.description,
-        this.uploadedBy,
-        this.downloadsCount,
-        this.collegeId,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.isReportedStudyZone,
-        this.uploader});
+  ResourceData({
+    this.id,
+    this.name,
+    this.image,
+    this.tag,
+    this.filePdf,
+    this.description,
+    this.uploadedBy,
+    this.downloadsCount,
+    this.active,
+    this.collegeId,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.isReportedStudyZone,
+    this.uploader,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ResourceData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     image = json['image'];
-    if (json['tag'] != null) {
-      tag = List<String>.from(json['tag']);
+    if (json['tag'] is List) {
+      tag = List<String>.from(json['tag'].map((e) => e.toString()));
     } else {
-      tag = []; // or null, depending on your need
+      tag = [];
     }
     filePdf = json['file_pdf'];
     description = json['description'];
     uploadedBy = json['uploaded_by'];
     downloadsCount = json['downloads_count'];
+    active = json['active'];
     collegeId = json['college_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
+    deletedAt = json['deleted_at']; // can be null or string
     isReportedStudyZone = json['is_reported_study_zone'];
-    uploader = json['uploader'] != null
-        ? new Uploader.fromJson(json['uploader'])
-        : null;
+    uploader =
+    json['uploader'] != null ? Uploader.fromJson(json['uploader']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['image'] = this.image;
-    data['tag'] = this.tag;
-    data['file_pdf'] = this.filePdf;
-    data['description'] = this.description;
-    data['uploaded_by'] = this.uploadedBy;
-    data['downloads_count'] = this.downloadsCount;
-    data['college_id'] = this.collegeId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['is_reported_study_zone'] = this.isReportedStudyZone;
-    if (this.uploader != null) {
-      data['uploader'] = this.uploader!.toJson();
-    }
-    return data;
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['name'] = name;
+    map['image'] = image;
+    map['tag'] = tag;
+    map['file_pdf'] = filePdf;
+    map['description'] = description;
+    map['uploaded_by'] = uploadedBy;
+    map['downloads_count'] = downloadsCount;
+    map['active'] = active;
+    map['college_id'] = collegeId;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    map['deleted_at'] = deletedAt;
+    map['is_reported_study_zone'] = isReportedStudyZone;
+    if (uploader != null) map['uploader'] = uploader!.toJson();
+    return map;
   }
 }
 
@@ -104,66 +104,73 @@ class Uploader {
   String? name;
   String? email;
   int? contact;
-  Null? emailVerifiedAt;
+  dynamic emailVerifiedAt;
   String? refreshToken;
-  String? webFcmToken;
+  dynamic webFcmToken;
   String? deviceFcmToken;
   String? role;
-  Null? designation;
-  Null? exp;
+  dynamic designation;
+  dynamic exp;
   String? bio;
   int? collegeId;
   String? year;
   String? stream;
-  Null? gender;
+  dynamic gender;
   String? status;
   String? profilePic;
-  Null? state;
-  Null? city;
-  Null? country;
+  dynamic state;
+  dynamic city;
+  dynamic country;
   String? saasId;
-  Null? emailOtp;
-  Null? expiredTime;
+  dynamic emailOtp;
+  dynamic expiredTime;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  dynamic deletedAt;
   int? activeStatus;
   String? lastLoginAt;
   String? mentorStatus;
+  dynamic topMentorRank;
   String? profilePicUrl;
+  College? college;
+  YearRelation? yearRelation;
 
-  Uploader(
-      {this.id,
-        this.name,
-        this.email,
-        this.contact,
-        this.emailVerifiedAt,
-        this.refreshToken,
-        this.webFcmToken,
-        this.deviceFcmToken,
-        this.role,
-        this.designation,
-        this.exp,
-        this.bio,
-        this.collegeId,
-        this.year,
-        this.stream,
-        this.gender,
-        this.status,
-        this.profilePic,
-        this.state,
-        this.city,
-        this.country,
-        this.saasId,
-        this.emailOtp,
-        this.expiredTime,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus,
-        this.lastLoginAt,
-        this.mentorStatus,
-        this.profilePicUrl});
+  Uploader({
+    this.id,
+    this.name,
+    this.email,
+    this.contact,
+    this.emailVerifiedAt,
+    this.refreshToken,
+    this.webFcmToken,
+    this.deviceFcmToken,
+    this.role,
+    this.designation,
+    this.exp,
+    this.bio,
+    this.collegeId,
+    this.year,
+    this.stream,
+    this.gender,
+    this.status,
+    this.profilePic,
+    this.state,
+    this.city,
+    this.country,
+    this.saasId,
+    this.emailOtp,
+    this.expiredTime,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+    this.lastLoginAt,
+    this.mentorStatus,
+    this.topMentorRank,
+    this.profilePicUrl,
+    this.college,
+    this.yearRelation,
+  });
 
   Uploader.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -196,42 +203,143 @@ class Uploader {
     activeStatus = json['active_status'];
     lastLoginAt = json['last_login_at'];
     mentorStatus = json['mentor_status'];
+    topMentorRank = json['top_mentor_rank'];
     profilePicUrl = json['profile_pic_url'];
+    college =
+    json['college'] != null ? College.fromJson(json['college']) : null;
+    yearRelation = json['year_relation'] != null
+        ? YearRelation.fromJson(json['year_relation'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['contact'] = this.contact;
-    data['email_verified_at'] = this.emailVerifiedAt;
-    data['refresh_token'] = this.refreshToken;
-    data['web_fcm_token'] = this.webFcmToken;
-    data['device_fcm_token'] = this.deviceFcmToken;
-    data['role'] = this.role;
-    data['designation'] = this.designation;
-    data['exp'] = this.exp;
-    data['bio'] = this.bio;
-    data['college_id'] = this.collegeId;
-    data['year'] = this.year;
-    data['stream'] = this.stream;
-    data['gender'] = this.gender;
-    data['status'] = this.status;
-    data['profile_pic'] = this.profilePic;
-    data['state'] = this.state;
-    data['city'] = this.city;
-    data['country'] = this.country;
-    data['saas_id'] = this.saasId;
-    data['email_otp'] = this.emailOtp;
-    data['expired_time'] = this.expiredTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['active_status'] = this.activeStatus;
-    data['last_login_at'] = this.lastLoginAt;
-    data['mentor_status'] = this.mentorStatus;
-    data['profile_pic_url'] = this.profilePicUrl;
-    return data;
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['name'] = name;
+    map['email'] = email;
+    map['contact'] = contact;
+    map['email_verified_at'] = emailVerifiedAt;
+    map['refresh_token'] = refreshToken;
+    map['web_fcm_token'] = webFcmToken;
+    map['device_fcm_token'] = deviceFcmToken;
+    map['role'] = role;
+    map['designation'] = designation;
+    map['exp'] = exp;
+    map['bio'] = bio;
+    map['college_id'] = collegeId;
+    map['year'] = year;
+    map['stream'] = stream;
+    map['gender'] = gender;
+    map['status'] = status;
+    map['profile_pic'] = profilePic;
+    map['state'] = state;
+    map['city'] = city;
+    map['country'] = country;
+    map['saas_id'] = saasId;
+    map['email_otp'] = emailOtp;
+    map['expired_time'] = expiredTime;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    map['deleted_at'] = deletedAt;
+    map['active_status'] = activeStatus;
+    map['last_login_at'] = lastLoginAt;
+    map['mentor_status'] = mentorStatus;
+    map['top_mentor_rank'] = topMentorRank;
+    map['profile_pic_url'] = profilePicUrl;
+    if (college != null) map['college'] = college!.toJson();
+    if (yearRelation != null) map['year_relation'] = yearRelation!.toJson();
+    return map;
+  }
+}
+
+class College {
+  int? id;
+  String? name;
+  String? state;
+  String? city;
+  String? dist;
+  String? pincode;
+  String? createdAt;
+  String? updatedAt;
+  dynamic deletedAt;
+  int? activeStatus;
+
+  College({
+    this.id,
+    this.name,
+    this.state,
+    this.city,
+    this.dist,
+    this.pincode,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+  });
+
+  College.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['Name'] ?? json['name'];
+    state = json['State'] ?? json['state'];
+    city = json['City'] ?? json['city'];
+    dist = json['Dist'] ?? json['dist'];
+    pincode = json['pincode'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
+    activeStatus = json['active_status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['Name'] = name;
+    map['State'] = state;
+    map['City'] = city;
+    map['Dist'] = dist;
+    map['pincode'] = pincode;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    map['deleted_at'] = deletedAt;
+    map['active_status'] = activeStatus;
+    return map;
+  }
+}
+
+class YearRelation {
+  int? id;
+  String? name;
+  String? createdAt;
+  dynamic updatedAt;
+  dynamic deletedAt;
+  int? activeStatus;
+
+  YearRelation({
+    this.id,
+    this.name,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+  });
+
+  YearRelation.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
+    activeStatus = json['active_status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['name'] = name;
+    map['created_at'] = createdAt;
+    map['updated_at'] = updatedAt;
+    map['deleted_at'] = deletedAt;
+    map['active_status'] = activeStatus;
+    return map;
   }
 }

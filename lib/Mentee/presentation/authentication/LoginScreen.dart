@@ -371,35 +371,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: Checkbox(
-                                value: _rememberMe,
-                                onChanged: (v) {
-                                  setState(() => _rememberMe = v ?? false);
-                                },
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                activeColor: primarycolor,
-                                side: BorderSide(color: primarycolor, width: 1),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Remember me',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF000000),
-                                fontFamily: 'segeo',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
                         BlocConsumer<LoginCubit, LoginState>(
                           listener: (context, state) async {
                             if (state is LoginSucess) {
@@ -418,11 +389,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 emailController.text.trim(),
                                 passwordController.text.trim(),
                               );
-                              if (data.role == "Both") {
-                                context.pushReplacement('/selected_screen');
-                              } else if (data.role == "Mentee") {
-                                context.pushReplacement('/dashboard');
-                              }
+                              // if (data.role == "Both") {
+                              //   context.pushReplacement('/selected_screen');
+                              // } else
+                              //   if (data.role == "Mentee") {
+                              context.pushReplacement('/dashboard');
+                              // }
                             } else if (state is LoginFailure) {
                               CustomSnackBar.show(context, state.message);
                             }

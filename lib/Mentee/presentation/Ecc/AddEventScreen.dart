@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -902,11 +903,50 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             "${widget.type}",
                             "",
                           );
-                          CustomSnackBar1.show(
-                            context,
-                            "Your event is under review. Once it’s approved, it will be visible in the ECC section",
+
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                title: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Lottie.asset(
+                                      'assets/lottie/successfully.json',
+                                      width: 160,
+                                      height: 120,
+                                      repeat: true,
+                                    ),
+                                    const Text(
+                                      "Your event is under review. Once it’s approved, it will be visible in the ECC section",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                        fontFamily: 'segeo',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  CustomAppButton1(
+                                    text: "Okay",
+                                    onPlusTap: () {
+                                      Navigator.of(
+                                        context,
+                                      ).pop(); // Closes the dialog
+                                      context.pop(); // Now safely pop the page
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                          Future.microtask(() => context.pop());
                         } else if (state is AddEccFailure) {
                           CustomSnackBar1.show(context, state.error);
                         }
