@@ -215,12 +215,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         titleSpacing: 8,
         title: Row(
           children: [
-            CircleAvatar(
-              backgroundColor: const Color(0xFFCBD5E1),
-              radius: 18,
-              child: const Icon(Icons.school, color: Colors.white),
-            ),
-            const SizedBox(width: 10),
+            // CircleAvatar(
+            //   backgroundColor: const Color(0xFFCBD5E1),
+            //   radius: 18,
+            //   child: const Icon(Icons.school, color: Colors.white),
+            // ),
+            // const SizedBox(width: 10),
             Expanded(
               child: Text(
                 widget.groupName,

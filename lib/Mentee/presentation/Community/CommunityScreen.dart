@@ -443,10 +443,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                       if (isGuest) {
                         // Do guest action
                       } else {
-                        CustomSnackBar1.show(
-                          context,
-                          "Unable to Running Test Server",
-                        );
+                        context.push('/group_chat');
                       }
                     },
                     backgroundColor: Colors.transparent, // Keep transparent
