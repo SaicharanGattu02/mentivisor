@@ -46,12 +46,14 @@ class GroupChatScreen extends StatefulWidget {
   final String currentUserId;
   final String collegeId;
   final String groupName;
+  final String campus_type;
 
   const GroupChatScreen({
     super.key,
     required this.currentUserId,
     required this.collegeId,
     required this.groupName,
+    required this.campus_type,
   });
 
   @override
@@ -87,7 +89,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   void initState() {
     super.initState();
     // history load
-    context.read<GroupChatMessagesCubit>().fetch();
+    if (widget.campus_type == "On Campus Chat") {
+      context.read<GroupChatMessagesCubit>().fetch("same");
+    } else {
+      context.read<GroupChatMessagesCubit>().fetch("");
+    }
     // join socket room already handled in GroupRoomCubit constructor.
     _ipl.itemPositions.addListener(() {
       final positions = _ipl.itemPositions.value;
@@ -132,7 +138,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       final nearTop = positions.any((p) => p.index >= _cache.length - 3);
       if (nearTop && !_isLoadingMore && _hasMore) {
         setState(() => _isLoadingMore = true);
-        context.read<GroupChatMessagesCubit>().loadMore();
+        if (widget.campus_type == "On Campus Chat") {
+          context.read<GroupChatMessagesCubit>().loadMore("scope");
+        } else {
+          context.read<GroupChatMessagesCubit>().loadMore("");
+        }
       }
     });
   }
@@ -223,7 +233,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             // const SizedBox(width: 10),
             Expanded(
               child: Text(
-                widget.groupName,
+                widget.campus_type,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(

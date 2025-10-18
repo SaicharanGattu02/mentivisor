@@ -443,7 +443,11 @@ class _CommunityScreenState extends State<Communityscreen> {
                       if (isGuest) {
                         // Do guest action
                       } else {
-                        context.push('/group_chat');
+                        if(_onCampus.value){
+                          context.push('/group_chat?campus_type=On Campus Chat');
+                        }else{
+                          context.push('/group_chat?campus_type=Beyond Campus Chat');
+                        }
                       }
                     },
                     backgroundColor: Colors.transparent, // Keep transparent

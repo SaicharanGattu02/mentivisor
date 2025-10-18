@@ -6,8 +6,9 @@ class GroupChatMessagesModel {
 
   GroupChatMessagesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    message =
-    json['message'] != null ? new Message.fromJson(json['message']) : null;
+    message = json['message'] != null
+        ? new Message.fromJson(json['message'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -35,20 +36,21 @@ class Message {
   int? to;
   int? total;
 
-  Message(
-      {this.currentPage,
-        this.groupMessages,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  Message({
+    this.currentPage,
+    this.groupMessages,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
   Message.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
@@ -110,16 +112,17 @@ class GroupMessages {
   String? updatedAt;
   Sender? sender;
 
-  GroupMessages(
-      {this.id,
-        this.collegeId,
-        this.senderId,
-        this.message,
-        this.url,
-        this.type,
-        this.createdAt,
-        this.updatedAt,
-        this.sender});
+  GroupMessages({
+    this.id,
+    this.collegeId,
+    this.senderId,
+    this.message,
+    this.url,
+    this.type,
+    this.createdAt,
+    this.updatedAt,
+    this.sender,
+  });
 
   GroupMessages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -130,8 +133,9 @@ class GroupMessages {
     type = json['type'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    sender =
-    json['sender'] != null ? new Sender.fromJson(json['sender']) : null;
+    sender = json['sender'] != null
+        ? new Sender.fromJson(json['sender'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {

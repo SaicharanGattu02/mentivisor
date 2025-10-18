@@ -22,12 +22,12 @@ class GroupChatMessagesCubit extends Cubit<GroupMessagesState> {
       (m?.nextPageUrl != null && (m?.currentPage ?? 1) < (m?.lastPage ?? 1));
 
   // NEWEST → OLDEST list in memory (for reverse:true)
-  Future<void> fetch() async {
+  Future<void> fetch(String Scope) async {
     emit(GroupMessagesLoading());
     _currentPage = 1;
 
     try {
-      final res = await repo.getGroupChatMessages(_currentPage);
+      final res = await repo.getGroupChatMessages(_currentPage,Scope);
       if (res != null && (res.status ?? false) && res.message != null) {
         final pageAsc = res.message!.groupMessages ?? const <GroupMessages>[];
         final newestFirst = List<GroupMessages>.from(pageAsc.reversed);
@@ -62,14 +62,14 @@ class GroupChatMessagesCubit extends Cubit<GroupMessagesState> {
     }
   }
 
-  Future<void> loadMore() async {
+  Future<void> loadMore(String Scope) async {
     if (_isLoadingMore || !_hasNextPage) return;
     _isLoadingMore = true;
     emit(GroupMessagesLoadingMore(_model, _hasNextPage));
 
     try {
       final nextPage = _currentPage + 1;
-      final res = await repo.getGroupChatMessages(nextPage);
+      final res = await repo.getGroupChatMessages(nextPage,Scope);
       final pageAsc = res?.message?.groupMessages ?? const <GroupMessages>[];
 
       if (res != null && (res.status ?? false) && pageAsc.isNotEmpty) {

@@ -141,20 +141,31 @@ final GoRouter appRouter = GoRouter(
                 body: Center(child: CircularProgressIndicator()),
               );
             }
-            // snapshot.data is a List<dynamic> from Future.wait
+
             final collegeID = snapshot.data?[0] as String? ?? "";
             final currentUserId = snapshot.data?[1] as String? ?? "";
-            final college_name = snapshot.data?[2] as String? ?? "";
+            final collegeName = snapshot.data?[2] as String? ?? "";
+            final campusType = state.uri.queryParameters['campus_type'] ?? "";
+
+            // 👇 logic: if Beyond Campus, use 0 as college ID
+            final effectiveCollegeId = (campusType == 'On Campus Chat')
+                ? collegeID
+                : "0";
+
+            debugPrint(
+              "📍 [ROUTE] Navigating to Group Chat => campusType: $campusType | collegeId: $effectiveCollegeId",
+            );
 
             return BlocProvider(
               create: (_) => GroupRoomCubit(
                 currentUserId: currentUserId,
-                collegeId: collegeID,
+                collegeId: effectiveCollegeId,
               ),
               child: GroupChatScreen(
                 currentUserId: currentUserId,
-                groupName: college_name,
-                collegeId: collegeID,
+                groupName: collegeName,
+                collegeId: effectiveCollegeId,
+                campus_type: campusType,
               ),
             );
           },

@@ -148,7 +148,7 @@ abstract class RemoteDataSource {
     String scope,
   );
   Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
-  Future<GroupChatMessagesModel?> getGroupChatMessages(int page);
+  Future<GroupChatMessagesModel?> getGroupChatMessages(int page, String Scope);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
   Future<ViewEccDetailsModel?> viewEccDetails(int eventId, String scope);
   Future<TagsModel?> getEccTagsSearch(String query);
@@ -244,15 +244,28 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<GroupChatMessagesModel?> getGroupChatMessages(int page) async {
+  Future<GroupChatMessagesModel?> getGroupChatMessages(
+    int page,
+    String scope,
+  ) async {
     try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.get_group_messages}",
-      );
-      AppLogger.log('getGroupChatMessages: ${res.data}');
+      // Build base URL
+      String url = "${APIEndpointUrls.get_group_messages}";
+
+      // Append scope only if it's not empty
+      if (scope.isNotEmpty) {
+        url += "?scope=$scope";
+      }
+
+      AppLogger.log('getGroupChatMessages → Request URL: $url');
+
+      // Make the GET request
+      Response res = await ApiClient.get(url);
+
+      AppLogger.log('getGroupChatMessages → Response: ${res.data}');
       return GroupChatMessagesModel.fromJson(res.data);
-    } catch (e) {
-      AppLogger.error('getGroupChatMessages:${e}');
+    } catch (e, st) {
+      AppLogger.error('getGroupChatMessages → Error: $e\n$st');
       return null;
     }
   }
