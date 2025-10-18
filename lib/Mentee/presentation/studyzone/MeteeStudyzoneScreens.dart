@@ -315,7 +315,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       } else {
                                         _selectedTagIndex.value = index;
 
-                                        // Convert "All" tag to an empty string
                                         final selectedTag =
                                             (tagItem.toLowerCase() == "all")
                                             ? ""

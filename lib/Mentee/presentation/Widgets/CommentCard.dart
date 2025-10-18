@@ -137,7 +137,7 @@ class CommentCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: 16),
                           TextButton(
                             onPressed: onReply,
                             style: TextButton.styleFrom(

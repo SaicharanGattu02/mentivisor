@@ -420,7 +420,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         alignment: Alignment.center,
                         children: [
                           CachedNetworkImage(
-                            imageUrl: menteeProfile.user?.profilePicUrl ?? "",
+                            imageUrl:
+                                menteeProfile.data?.user?.profilePicUrl ?? "",
                             imageBuilder: (context, imageProvider) => Container(
                               padding: EdgeInsets.all(12),
                               width: 120,
@@ -457,7 +458,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             ),
                           ),
 
-                          if (menteeProfile?.user?.mentorStatus ==
+                          if (menteeProfile.data?.user?.mentorStatus ==
                               "approval") ...[
                             Positioned(
                               right: 0,
@@ -512,7 +513,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     SizedBox(height: 8),
 
                     Text(
-                      capitalize(menteeProfile.user?.name ?? "UnKnown"),
+                      capitalize(menteeProfile.data?.user?.name ?? "UnKnown"),
                       style: TextStyle(
                         color: Color(0xff121212),
                         fontSize: 18,
@@ -522,7 +523,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '${menteeProfile.user?.name ?? ""} ${menteeProfile.user?.year ?? ""} year\n${menteeProfile.user?.stream ?? ""}',
+                      '${menteeProfile.data?.user?.collegeName ?? ""} ${menteeProfile.data?.user?.yearName ?? ""} year\n${menteeProfile.data?.user?.stream ?? ""}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xff666666),
@@ -550,9 +551,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           //   ),
                           // ),
                           Text(
-                            (menteeProfile?.user?.bio?.length ?? 0) > 100
-                                ? "${menteeProfile?.user?.bio?.substring(0, 100)}..."
-                                : (menteeProfile?.user?.bio ?? ""),
+                            (menteeProfile.data?.user?.bio?.length ?? 0) > 100
+                                ? "${menteeProfile.data?.user?.bio?.substring(0, 100)}..."
+                                : (menteeProfile.data?.user?.bio ?? ""),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Color(0xff666666),
@@ -603,7 +604,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         // const SizedBox(width: 16),
                         OutlinedButton.icon(
                           onPressed: () {
-                            final profileId = menteeProfile?.user?.id;
+                            final profileId = menteeProfile.data?.user?.id;
                             final shareUrl =
                                 "https://mentivisor.com/profile/$profileId";
                             Share.share(
@@ -639,619 +640,616 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         ),
                       ],
                     ),
-                    // const SizedBox(height: 12),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                    //   child: ValueListenableBuilder<bool>(
-                    //     valueListenable: isPost,
-                    //     builder: (context, value, _) {
-                    //       return Row(
-                    //         children: [
-                    //           Expanded(
-                    //             child: GestureDetector(
-                    //               onTap: () => isPost.value = true,
-                    //               child: Container(
-                    //                 padding: const EdgeInsets.symmetric(
-                    //                   vertical: 12,
-                    //                 ),
-                    //                 decoration: BoxDecoration(
-                    //                   border: Border(
-                    //                     bottom: BorderSide(
-                    //                       color: value
-                    //                           ? primarycolor
-                    //                           : Colors.transparent,
-                    //                       width: 2,
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //                 child: Text(
-                    //                   "Post",
-                    //                   textAlign: TextAlign.center,
-                    //                   style: TextStyle(
-                    //                     fontWeight: FontWeight.w400,
-                    //                     fontFamily: 'segeo',
-                    //                     color: Color(0xff444444),
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //           ),
-                    //           Expanded(
-                    //             child: GestureDetector(
-                    //               onTap: () => isPost.value = false,
-                    //               child: Container(
-                    //                 padding: const EdgeInsets.symmetric(
-                    //                   vertical: 12,
-                    //                 ),
-                    //                 decoration: BoxDecoration(
-                    //                   border: Border(
-                    //                     bottom: BorderSide(
-                    //                       color: !value
-                    //                           ? primarycolor
-                    //                           : Colors.transparent,
-                    //                       width: 2,
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //                 child: Text(
-                    //                   "Resources",
-                    //                   textAlign: TextAlign.center,
-                    //                   style: TextStyle(
-                    //                     fontWeight: FontWeight.w400,
-                    //                     fontFamily: 'segeo',
-                    //                     color: Color(0xff444444),
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    // Expanded(
-                    //   child: ValueListenableBuilder<bool>(
-                    //     valueListenable: isPost,
-                    //     builder: (context, value, _) {
-                    //       if (value) {
-                    //         if (state
-                    //                 .mentorProfileModel.user
-                    //                 ?.communityPost
-                    //                 ?.length ==
-                    //             0) {
-                    //           return Center(
-                    //             child: Column(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: [
-                    //                 Image.asset(
-                    //                   "assets/nodata/no_data.png",
-                    //                   height: 120,
-                    //                 ),
-                    //                 const SizedBox(height: 16),
-                    //                 const Text(
-                    //                   "No Posts Available",
-                    //                   style: TextStyle(
-                    //                     color: Colors.grey,
-                    //                     fontSize: 16,
-                    //                     fontWeight: FontWeight.w500,
-                    //                     fontFamily: 'segeo',
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           );
-                    //         }
-                    //         return CustomScrollView(
-                    //           slivers: [
-                    //             SliverList(
-                    //               delegate: SliverChildBuilderDelegate(
-                    //                 (context, index) {
-                    //                   final menteePosts = state
-                    //                       .mentorProfileModel
-                    //                       .data
-                    //                       ?.user
-                    //                       ?.communityPost?[index];
-                    //                   return Container(
-                    //                     padding: EdgeInsets.symmetric(
-                    //                       horizontal: 12,
-                    //                       vertical: 10,
-                    //                     ),
-                    //                     margin: EdgeInsets.symmetric(
-                    //                       horizontal: 16,
-                    //                       vertical: 10,
-                    //                     ),
-                    //                     decoration: BoxDecoration(
-                    //                       borderRadius: BorderRadius.circular(
-                    //                         8,
-                    //                       ),
-                    //                       color: Colors.white,
-                    //                     ),
-                    //                     child: Column(
-                    //                       crossAxisAlignment:
-                    //                           CrossAxisAlignment.start,
-                    //                       children: [
-                    //                         ClipRRect(
-                    //                           borderRadius:
-                    //                               BorderRadius.circular(8),
-                    //                           child: CachedNetworkImage(
-                    //                             height: 160,
-                    //                             imageUrl:
-                    //                                 menteePosts?.image ?? "",
-                    //                             fit: BoxFit.cover,
-                    //                             width: double.infinity,
-                    //                             placeholder: (context, url) =>
-                    //                                 spinkits
-                    //                                     .getSpinningLinespinkit(),
-                    //                             errorWidget:
-                    //                                 (context, url, error) =>
-                    //                                     Container(
-                    //                                       height: 160,
-                    //                                       color: Colors
-                    //                                           .grey
-                    //                                           .shade100,
-                    //                                       child: const Icon(
-                    //                                         Icons.broken_image,
-                    //                                         size: 40,
-                    //                                         color: Colors.grey,
-                    //                                       ),
-                    //                                     ),
-                    //                           ),
-                    //                         ),
-                    //                         Column(
-                    //                           crossAxisAlignment:
-                    //                               CrossAxisAlignment.start,
-                    //                           children: [
-                    //                             SizedBox(height: 4),
-                    //                             Text(
-                    //                               menteePosts?.title ?? "",
-                    //                               maxLines: 2,
-                    //                               overflow:
-                    //                                   TextOverflow.ellipsis,
-                    //                               style: TextStyle(
-                    //                                 fontFamily: 'segeo',
-                    //                                 fontWeight: FontWeight.bold,
-                    //                                 fontSize: 16,
-                    //                                 color: Color(0xFF222222),
-                    //                               ),
-                    //                             ),
-                    //                             SizedBox(height: 4),
-                    //                             Text(
-                    //                               menteePosts?.content ?? "",
-                    //                               maxLines: 2,
-                    //                               overflow:
-                    //                                   TextOverflow.ellipsis,
-                    //                               style: TextStyle(
-                    //                                 fontFamily: 'segeo',
-                    //                                 fontWeight: FontWeight.w400,
-                    //                                 fontSize: 14,
-                    //                                 color: Color(0xFF666666),
-                    //                               ),
-                    //                             ),
-                    //                             const SizedBox(height: 8),
-                    //                             Row(
-                    //                               children: [
-                    //                                 IconButton(
-                    //                                   visualDensity:
-                    //                                       VisualDensity.compact,
-                    //                                   padding: EdgeInsets.zero,
-                    //                                   onPressed: () {
-                    //                                     final data = {
-                    //                                       "community_id":
-                    //                                           menteePosts?.id,
-                    //                                     };
-                    //                                     context
-                    //                                         .read<
-                    //                                           PostCommentCubit
-                    //                                         >()
-                    //                                         .postLike(
-                    //                                           data,
-                    //                                           CommunityPosts(),
-                    //                                         );
-                    //                                   },
-                    //                                   icon: Icon(
-                    //                                     (menteePosts?.isLike ??
-                    //                                             false)
-                    //                                         ? Icons.favorite
-                    //                                         : Icons
-                    //                                               .favorite_border,
-                    //                                     size: 16,
-                    //                                     color:
-                    //                                         (menteePosts
-                    //                                                 ?.isLike ??
-                    //                                             false)
-                    //                                         ? Colors.red
-                    //                                         : Colors.black26,
-                    //                                   ),
-                    //                                 ),
-                    //                                 Text(
-                    //                                   menteePosts?.likesCount
-                    //                                           .toString() ??
-                    //                                       "0",
-                    //                                   style: TextStyle(
-                    //                                     color: Color(
-                    //                                       0xff666666,
-                    //                                     ),
-                    //                                     fontSize: 14,
-                    //                                     fontFamily: 'segeo',
-                    //                                     fontWeight:
-                    //                                         FontWeight.w400,
-                    //                                   ),
-                    //                                 ),
-                    //                                 IconButton(
-                    //                                   visualDensity:
-                    //                                       VisualDensity.compact,
-                    //                                   padding: EdgeInsets.zero,
-                    //                                   onPressed: () {
-                    //                                     showModalBottomSheet(
-                    //                                       context: context,
-                    //                                       isScrollControlled:
-                    //                                           true,
-                    //                                       useRootNavigator:
-                    //                                           true,
-                    //                                       backgroundColor:
-                    //                                           Colors
-                    //                                               .transparent,
-                    //                                       builder: (context) {
-                    //                                         return DraggableScrollableSheet(
-                    //                                           initialChildSize:
-                    //                                               0.8,
-                    //                                           minChildSize: 0.4,
-                    //                                           maxChildSize:
-                    //                                               0.95,
-                    //                                           expand: false,
-                    //                                           builder:
-                    //                                               (
-                    //                                                 _,
-                    //                                                 scrollController,
-                    //                                               ) => Container(
-                    //                                                 decoration: const BoxDecoration(
-                    //                                                   color: Color(
-                    //                                                     0xffF4F8FD,
-                    //                                                   ),
-                    //                                                   borderRadius:
-                    //                                                       BorderRadius.vertical(
-                    //                                                         top: Radius.circular(
-                    //                                                           16,
-                    //                                                         ),
-                    //                                                       ),
-                    //                                                 ),
-                    //                                                 padding: const EdgeInsets.symmetric(
-                    //                                                   horizontal:
-                    //                                                       16,
-                    //                                                   vertical:
-                    //                                                       12,
-                    //                                                 ),
-                    //                                                 child: CommentBottomSheet(
-                    //                                                   communityPost: CommunityPosts(
-                    //                                                     id: menteePosts
-                    //                                                         ?.id,
-                    //                                                     heading:
-                    //                                                         menteePosts?.title,
-                    //                                                     description:
-                    //                                                         menteePosts?.content,
-                    //                                                   ),
-                    //                                                   scrollController:
-                    //                                                       scrollController,
-                    //                                                 ),
-                    //                                               ),
-                    //                                         );
-                    //                                       },
-                    //                                     );
-                    //                                   },
-                    //                                   icon: Image.asset(
-                    //                                     "assets/icons/Chat.png",
-                    //                                     width: 18,
-                    //                                     height: 18,
-                    //                                   ),
-                    //                                 ),
-                    //                                 Text(
-                    //                                   menteePosts?.commentsCount
-                    //                                           .toString() ??
-                    //                                       "0",
-                    //                                   style: TextStyle(
-                    //                                     color: Color(
-                    //                                       0xff666666,
-                    //                                     ),
-                    //                                     fontWeight:
-                    //                                         FontWeight.w400,
-                    //                                     fontSize: 14,
-                    //                                   ),
-                    //                                 ),
-                    //                               ],
-                    //                             ),
-                    //                           ],
-                    //                         ),
-                    //                       ],
-                    //                     ),
-                    //                   );
-                    //                 },
-                    //                 childCount: menteeProfile
-                    //                     ?.user
-                    //                     ?.communityPost
-                    //                     ?.length,
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         );
-                    //       } else {
-                    //         if (menteeProfile?.user?.studyZoneBooks?.length ==
-                    //             0) {
-                    //           return Center(
-                    //             child: Column(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: [
-                    //                 Image.asset(
-                    //                   "assets/nodata/no_data.png",
-                    //                   height: 120,
-                    //                 ),
-                    //                 const SizedBox(height: 16),
-                    //                 const Text(
-                    //                   "No Resources Available",
-                    //                   style: TextStyle(
-                    //                     color: Colors.grey,
-                    //                     fontSize: 16,
-                    //                     fontWeight: FontWeight.w500,
-                    //                     fontFamily: 'segeo',
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           );
-                    //         }
-                    //         return CustomScrollView(
-                    //           slivers: [
-                    //             SliverPadding(
-                    //               padding: EdgeInsets.only(top: 16),
-                    //               sliver: SliverList(
-                    //                 delegate: SliverChildBuilderDelegate(
-                    //                   (context, index) {
-                    //                     final campusList = menteeProfile
-                    //                         ?.user
-                    //                         ?.studyZoneBooks?[index];
-                    //                     return Container(
-                    //                       margin: EdgeInsets.only(
-                    //                         bottom: 16,
-                    //                         left: 16,
-                    //                         right: 16,
-                    //                       ),
-                    //                       decoration: BoxDecoration(
-                    //                         borderRadius: BorderRadius.circular(
-                    //                           24,
-                    //                         ),
-                    //                         color: Colors.white,
-                    //                       ),
-                    //
-                    //                       child: Row(
-                    //                         mainAxisAlignment:
-                    //                             MainAxisAlignment.start,
-                    //                         children: [
-                    //                           Padding(
-                    //                             padding: EdgeInsets.only(
-                    //                               left: 10,
-                    //                               top: 16,
-                    //                               bottom: 16,
-                    //                             ),
-                    //                             child: ClipRRect(
-                    //                               borderRadius:
-                    //                                   BorderRadius.circular(4),
-                    //                               child: CachedNetworkImage(
-                    //                                 width:
-                    //                                     MediaQuery.of(
-                    //                                       context,
-                    //                                     ).size.width *
-                    //                                     0.25,
-                    //                                 height: 130,
-                    //                                 imageUrl:
-                    //                                     campusList?.image ?? "",
-                    //                                 fit: BoxFit.cover,
-                    //                                 placeholder:
-                    //                                     (
-                    //                                       context,
-                    //                                       url,
-                    //                                     ) => SizedBox(
-                    //                                       width: 120,
-                    //                                       height: 120,
-                    //                                       child: Center(
-                    //                                         child: spinkits
-                    //                                             .getSpinningLinespinkit(),
-                    //                                       ),
-                    //                                     ),
-                    //                                 errorWidget:
-                    //                                     (
-                    //                                       context,
-                    //                                       url,
-                    //                                       error,
-                    //                                     ) => Container(
-                    //                                       width: 120,
-                    //                                       height: 120,
-                    //                                       color: const Color(
-                    //                                         0xffF8FAFE,
-                    //                                       ),
-                    //                                       child: const Icon(
-                    //                                         Icons.broken_image,
-                    //                                         size: 40,
-                    //                                         color: Colors.grey,
-                    //                                       ),
-                    //                                     ),
-                    //                               ),
-                    //                             ),
-                    //                           ),
-                    //                           Expanded(
-                    //                             child: Padding(
-                    //                               padding: const EdgeInsets.all(
-                    //                                 8.0,
-                    //                               ),
-                    //                               child: Column(
-                    //                                 crossAxisAlignment:
-                    //                                     CrossAxisAlignment
-                    //                                         .start,
-                    //                                 children: [
-                    //                                   Text(
-                    //                                     campusList?.title ?? "",
-                    //                                     overflow: TextOverflow
-                    //                                         .ellipsis,
-                    //                                     style: TextStyle(
-                    //                                       fontFamily: 'segeo',
-                    //                                       fontWeight:
-                    //                                           FontWeight.w700,
-                    //                                       fontSize: 12,
-                    //                                       height: 1,
-                    //                                       letterSpacing: 0.5,
-                    //                                     ),
-                    //                                   ),
-                    //                                   const SizedBox(height: 8),
-                    //                                   Text(
-                    //                                     campusList
-                    //                                             ?.description ??
-                    //                                         "",
-                    //                                     maxLines: 3,
-                    //                                     style: const TextStyle(
-                    //                                       fontFamily: 'segeo',
-                    //                                       fontWeight:
-                    //                                           FontWeight.w400,
-                    //                                       fontSize: 11,
-                    //                                       height: 1,
-                    //                                     ),
-                    //                                   ),
-                    //                                   SizedBox(height: 12),
-                    //                                   if (campusList
-                    //                                           ?.tags
-                    //                                           ?.isNotEmpty ??
-                    //                                       false)
-                    //                                     Wrap(
-                    //                                       spacing: 8,
-                    //                                       runSpacing: 8,
-                    //                                       children: campusList!.tags!.map((
-                    //                                         tag,
-                    //                                       ) {
-                    //                                         return Container(
-                    //                                           padding:
-                    //                                               EdgeInsets.symmetric(
-                    //                                                 horizontal:
-                    //                                                     12,
-                    //                                                 vertical: 6,
-                    //                                               ),
-                    //                                           decoration:
-                    //                                               BoxDecoration(
-                    //                                                 color: Colors
-                    //                                                     .white,
-                    //                                                 borderRadius:
-                    //                                                     BorderRadius.circular(
-                    //                                                       20,
-                    //                                                     ),
-                    //                                               ),
-                    //                                           child: Text(
-                    //                                             tag,
-                    //                                             style: const TextStyle(
-                    //                                               fontFamily:
-                    //                                                   'segeo',
-                    //                                               fontSize: 12,
-                    //                                               fontWeight:
-                    //                                                   FontWeight
-                    //                                                       .w600,
-                    //                                             ),
-                    //                                           ),
-                    //                                         );
-                    //                                       }).toList(),
-                    //                                     ),
-                    //                                   SizedBox(height: 16),
-                    //                                   Row(
-                    //                                     spacing: 3,
-                    //                                     children: [
-                    //                                       Expanded(
-                    //                                         child: CustomOutlinedButton(
-                    //                                           radius: 24,
-                    //                                           height: 38,
-                    //                                           text: "View",
-                    //                                           onTap: () {
-                    //                                             context.push(
-                    //                                               "/pdf_viewer?file_url=${campusList?.filePdf ?? ""}",
-                    //                                             );
-                    //                                           },
-                    //                                         ),
-                    //                                       ),
-                    //
-                    //                                       BlocConsumer<
-                    //                                         AddResourceCubit,
-                    //                                         AddResourceStates
-                    //                                       >(
-                    //                                         listener: (context, state) {
-                    //                                           if (state
-                    //                                               is AddResourceLoaded) {
-                    //                                             CustomSnackBar1.show(
-                    //                                               context,
-                    //                                               "Downloaded Successfully",
-                    //                                             );
-                    //                                           } else if (state
-                    //                                               is AddResourceFailure) {
-                    //                                             CustomSnackBar1.show(
-                    //                                               context,
-                    //                                               state
-                    //                                                       .error
-                    //                                                       .isNotEmpty
-                    //                                                   ? state
-                    //                                                         .error
-                    //                                                   : "Download Failed",
-                    //                                             );
-                    //                                           }
-                    //                                         },
-                    //                                         builder: (context, state) {
-                    //                                           final currentId =
-                    //                                               campusList?.id
-                    //                                                   .toString() ??
-                    //                                               "";
-                    //                                           final isLoading =
-                    //                                               state
-                    //                                                   is AddResourceLoading &&
-                    //                                               state.resourceId ==
-                    //                                                   currentId;
-                    //
-                    //                                           return Expanded(
-                    //                                             child: CustomAppButton1(
-                    //                                               radius: 24,
-                    //                                               height: 38,
-                    //                                               isLoading:
-                    //                                                   isLoading,
-                    //                                               text:
-                    //                                                   "Download",
-                    //                                               textSize: 14,
-                    //                                               onPlusTap: () {
-                    //                                                 context
-                    //                                                     .read<
-                    //                                                       AddResourceCubit
-                    //                                                     >()
-                    //                                                     .resourceDownload(
-                    //                                                       currentId,
-                    //                                                     );
-                    //                                               },
-                    //                                             ),
-                    //                                           );
-                    //                                         },
-                    //                                       ),
-                    //                                     ],
-                    //                                   ),
-                    //                                 ],
-                    //                               ),
-                    //                             ),
-                    //                           ),
-                    //                         ],
-                    //                       ),
-                    //                     );
-                    //                   },
-                    //                   childCount: menteeProfile
-                    //                       ?.user
-                    //                       ?.studyZoneBooks
-                    //                       ?.length,
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         );
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isPost,
+                        builder: (context, value, _) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => isPost.value = true,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: value
+                                              ? primarycolor
+                                              : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Post",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'segeo',
+                                        color: Color(0xff444444),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => isPost.value = false,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: !value
+                                              ? primarycolor
+                                              : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Resources",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'segeo',
+                                        color: Color(0xff444444),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isPost,
+                        builder: (context, value, _) {
+                          if (value) {
+                            if (state
+                                    .mentorProfileModel.data?.user
+                                    ?.communityPost
+                                    ?.length ==
+                                0) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/nodata/no_data.png",
+                                      height: 120,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      "No Posts Available",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'segeo',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            return CustomScrollView(
+                              slivers: [
+                                SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      final menteePosts = state
+                                          .mentorProfileModel
+                                          .data
+                                          ?.user
+                                          ?.communityPost?[index];
+                                      return Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
+                                        ),
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: CachedNetworkImage(
+                                                height: 160,
+                                                imageUrl:
+                                                    menteePosts?.image ?? "",
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                                placeholder: (context, url) =>
+                                                    spinkits
+                                                        .getSpinningLinespinkit(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Container(
+                                                          height: 160,
+                                                          color: Colors
+                                                              .grey
+                                                              .shade100,
+                                                          child: const Icon(
+                                                            Icons.broken_image,
+                                                            size: 40,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                              ),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  menteePosts?.title ?? "",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontFamily: 'segeo',
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: Color(0xFF222222),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  menteePosts?.content ?? "",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontFamily: 'segeo',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 14,
+                                                    color: Color(0xFF666666),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Row(
+                                                  children: [
+                                                    IconButton(
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                      padding: EdgeInsets.zero,
+                                                      onPressed: () {
+                                                        final data = {
+                                                          "community_id":
+                                                              menteePosts?.id,
+                                                        };
+                                                        context
+                                                            .read<
+                                                              PostCommentCubit
+                                                            >()
+                                                            .postLike(
+                                                              data,
+                                                              CommunityPosts(),
+                                                            );
+                                                      },
+                                                      icon: Icon(
+                                                        (menteePosts?.isLike ??
+                                                                false)
+                                                            ? Icons.favorite
+                                                            : Icons
+                                                                  .favorite_border,
+                                                        size: 16,
+                                                        color:
+                                                            (menteePosts
+                                                                    ?.isLike ??
+                                                                false)
+                                                            ? Colors.red
+                                                            : Colors.black26,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      menteePosts?.likesCount
+                                                              .toString() ??
+                                                          "0",
+                                                      style: TextStyle(
+                                                        color: Color(
+                                                          0xff666666,
+                                                        ),
+                                                        fontSize: 14,
+                                                        fontFamily: 'segeo',
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                      padding: EdgeInsets.zero,
+                                                      onPressed: () {
+                                                        showModalBottomSheet(
+                                                          context: context,
+                                                          isScrollControlled:
+                                                              true,
+                                                          useRootNavigator:
+                                                              true,
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .transparent,
+                                                          builder: (context) {
+                                                            return DraggableScrollableSheet(
+                                                              initialChildSize:
+                                                                  0.8,
+                                                              minChildSize: 0.4,
+                                                              maxChildSize:
+                                                                  0.95,
+                                                              expand: false,
+                                                              builder:
+                                                                  (
+                                                                    _,
+                                                                    scrollController,
+                                                                  ) => Container(
+                                                                    decoration: const BoxDecoration(
+                                                                      color: Color(
+                                                                        0xffF4F8FD,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.vertical(
+                                                                            top: Radius.circular(
+                                                                              16,
+                                                                            ),
+                                                                          ),
+                                                                    ),
+                                                                    padding: const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          16,
+                                                                      vertical:
+                                                                          12,
+                                                                    ),
+                                                                    child: CommentBottomSheet(
+                                                                      communityPost: CommunityPosts(
+                                                                        id: menteePosts
+                                                                            ?.id,
+                                                                        heading:
+                                                                            menteePosts?.title,
+                                                                        description:
+                                                                            menteePosts?.content,
+                                                                      ),
+                                                                      scrollController:
+                                                                          scrollController,
+                                                                    ),
+                                                                  ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      icon: Image.asset(
+                                                        "assets/icons/Chat.png",
+                                                        width: 18,
+                                                        height: 18,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      menteePosts?.commentsCount
+                                                              .toString() ??
+                                                          "0",
+                                                      style: TextStyle(
+                                                        color: Color(
+                                                          0xff666666,
+                                                        ),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    childCount: menteeProfile.data?.user?.communityPost?.length,
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            if (menteeProfile.data?.user?.studyZoneBooks?.length ==
+                                0) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/nodata/no_data.png",
+                                      height: 120,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      "No Resources Available",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'segeo',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            return CustomScrollView(
+                              slivers: [
+                                SliverPadding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  sliver: SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                      (context, index) {
+                                        final campusList = menteeProfile
+                                            .data?.user
+                                            ?.studyZoneBooks?[index];
+                                        return Container(
+                                          margin: EdgeInsets.only(
+                                            bottom: 16,
+                                            left: 16,
+                                            right: 16,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              24,
+                                            ),
+                                            color: Colors.white,
+                                          ),
+
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                  left: 10,
+                                                  top: 16,
+                                                  bottom: 16,
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  child: CachedNetworkImage(
+                                                    width:
+                                                        MediaQuery.of(
+                                                          context,
+                                                        ).size.width *
+                                                        0.25,
+                                                    height: 130,
+                                                    imageUrl:
+                                                        campusList?.image ?? "",
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => SizedBox(
+                                                          width: 120,
+                                                          height: 120,
+                                                          child: Center(
+                                                            child: spinkits
+                                                                .getSpinningLinespinkit(),
+                                                          ),
+                                                        ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => Container(
+                                                          width: 120,
+                                                          height: 120,
+                                                          color: const Color(
+                                                            0xffF8FAFE,
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.broken_image,
+                                                            size: 40,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        campusList?.title ?? "",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          fontFamily: 'segeo',
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontSize: 12,
+                                                          height: 1,
+                                                          letterSpacing: 0.5,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Text(
+                                                        campusList
+                                                                ?.description ??
+                                                            "",
+                                                        maxLines: 3,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'segeo',
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 11,
+                                                          height: 1,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 12),
+                                                      if (campusList
+                                                              ?.tags
+                                                              ?.isNotEmpty ??
+                                                          false)
+                                                        Wrap(
+                                                          spacing: 8,
+                                                          runSpacing: 8,
+                                                          children: campusList!.tags!.map((
+                                                            tag,
+                                                          ) {
+                                                            return Container(
+                                                              padding:
+                                                                  EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical: 6,
+                                                                  ),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          20,
+                                                                        ),
+                                                                  ),
+                                                              child: Text(
+                                                                tag,
+                                                                style: const TextStyle(
+                                                                  fontFamily:
+                                                                      'segeo',
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      SizedBox(height: 16),
+                                                      Row(
+                                                        spacing: 3,
+                                                        children: [
+                                                          Expanded(
+                                                            child: CustomOutlinedButton(
+                                                              radius: 24,
+                                                              height: 38,
+                                                              text: "View",
+                                                              onTap: () {
+                                                                context.push(
+                                                                  "/pdf_viewer?file_url=${campusList?.filePdf ?? ""}",
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+
+                                                          BlocConsumer<
+                                                            AddResourceCubit,
+                                                            AddResourceStates
+                                                          >(
+                                                            listener: (context, state) {
+                                                              if (state
+                                                                  is AddResourceLoaded) {
+                                                                CustomSnackBar1.show(
+                                                                  context,
+                                                                  "Downloaded Successfully",
+                                                                );
+                                                              } else if (state
+                                                                  is AddResourceFailure) {
+                                                                CustomSnackBar1.show(
+                                                                  context,
+                                                                  state
+                                                                          .error
+                                                                          .isNotEmpty
+                                                                      ? state
+                                                                            .error
+                                                                      : "Download Failed",
+                                                                );
+                                                              }
+                                                            },
+                                                            builder: (context, state) {
+                                                              final currentId =
+                                                                  campusList?.id
+                                                                      .toString() ??
+                                                                  "";
+                                                              final isLoading =
+                                                                  state
+                                                                      is AddResourceLoading &&
+                                                                  state.resourceId ==
+                                                                      currentId;
+
+                                                              return Expanded(
+                                                                child: CustomAppButton1(
+                                                                  radius: 24,
+                                                                  height: 38,
+                                                                  isLoading:
+                                                                      isLoading,
+                                                                  text:
+                                                                      "Download",
+                                                                  textSize: 14,
+                                                                  onPlusTap: () {
+                                                                    context
+                                                                        .read<
+                                                                          AddResourceCubit
+                                                                        >()
+                                                                        .resourceDownload(
+                                                                          currentId,
+                                                                        );
+                                                                  },
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      childCount: menteeProfile
+                                          .data?.user
+                                          ?.studyZoneBooks
+                                          ?.length,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 );
               } else if (state is CommonProfileFailure) {

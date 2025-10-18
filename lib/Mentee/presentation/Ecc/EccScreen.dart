@@ -199,38 +199,58 @@ class _EccScreenState extends State<EccScreen> {
                     controller: _searchController,
                     cursorColor: primarycolor,
                     onChanged: (query) {
+                      // Cancel any active debounce
                       if (_debounce?.isActive ?? false) _debounce!.cancel();
+
                       _debounce = Timer(const Duration(milliseconds: 300), () {
-                        {
-                          final tagsState = context.read<EccTagsCubit>().state;
-                          String selectedTag = "";
+                        final tagsState = context.read<EccTagsCubit>().state;
+                        String selectedTag = "";
 
-                          if (tagsState is EccTagsLoaded &&
-                              _selectedTagIndex.value >= 0 &&
-                              _selectedTagIndex.value <
-                                  (tagsState.tagsModel.data?.length ?? 0)) {
-                            selectedTag = tagsState
-                                .tagsModel
-                                .data![_selectedTagIndex.value];
-                          }
+                        // 🔹 Get currently selected tag
+                        if (tagsState is EccTagsLoaded &&
+                            _selectedTagIndex.value >= 0 &&
+                            _selectedTagIndex.value <
+                                (tagsState.tagsModel.data?.length ?? 0)) {
+                          selectedTag = tagsState
+                              .tagsModel
+                              .data![_selectedTagIndex.value];
+                        }
 
+                        // 🔹 CASE 1: When search query is empty → fetch initial data
+                        if (query.trim().isEmpty) {
                           if (onCampusNotifier.value) {
                             context.read<ECCCubit>().getECC(
                               "",
                               selectedTag,
-                              query,
+                              "",
                             );
                           } else {
                             context.read<ECCCubit>().getECC(
                               "beyond",
                               selectedTag,
-                              query,
+                              "",
                             );
                           }
+                          return;
+                        }
+
+                        // 🔹 CASE 2: When user types something → perform filtered search
+                        if (onCampusNotifier.value) {
+                          context.read<ECCCubit>().getECC(
+                            "",
+                            selectedTag,
+                            query,
+                          );
+                        } else {
+                          context.read<ECCCubit>().getECC(
+                            "beyond",
+                            selectedTag,
+                            query,
+                          );
                         }
                       });
                     },
-                    style: TextStyle(fontFamily: "Poppins", fontSize: 15),
+                    style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
                     decoration: InputDecoration(
                       hoverColor: Colors.white,
                       hintText: 'Search by name or location',
@@ -245,9 +265,14 @@ class _EccScreenState extends State<EccScreen> {
                         right: 33,
                         left: 20,
                       ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 12),
                 BlocBuilder<EccTagsCubit, EccTagsState>(
                   builder: (context, state) {
@@ -308,7 +333,10 @@ class _EccScreenState extends State<EccScreen> {
                                       _selectedTagIndex.value = index;
 
                                       // Check if tagItem is "All", then use an empty string instead
-                                      final selectedTag = (tagItem.toLowerCase() == "all") ? "" : tagItem;
+                                      final selectedTag =
+                                          (tagItem.toLowerCase() == "all")
+                                          ? ""
+                                          : tagItem;
 
                                       if (onCampusNotifier.value) {
                                         context.read<ECCCubit>().getECC(

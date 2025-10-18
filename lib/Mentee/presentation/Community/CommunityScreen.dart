@@ -38,7 +38,7 @@ class _CommunityScreenState extends State<Communityscreen> {
 
   @override
   void dispose() {
-    _fabVisible.dispose(); // NEW
+    _fabVisible.dispose();
     super.dispose();
   }
 

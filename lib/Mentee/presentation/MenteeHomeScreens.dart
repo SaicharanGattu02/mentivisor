@@ -315,6 +315,95 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         child: ListView(
                           padding: EdgeInsets.zero,
                           children: [
+                            Row(
+                              spacing: 10,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.menu,
+                                    color: Colors.black,
+                                    size: 36,
+                                  ),
+                                  onPressed: () {
+                                    context.pop();
+                                  },
+                                ),
+                                BlocBuilder<
+                                  MenteeProfileCubit,
+                                  MenteeProfileState
+                                >(
+                                  builder: (context, menteeProfilestate) {
+                                    if (menteeProfilestate
+                                        is MenteeProfileLoaded) {
+                                      final menteeProfile = menteeProfilestate
+                                          .menteeProfileModel
+                                          .data;
+                                      _mentorStatus.value =
+                                          menteeProfile?.user?.mentorStatus ??
+                                          "none";
+                                      _mentorProfileUrl.value =
+                                          menteeProfile?.user?.profilePicUrl ??
+                                          "";
+                                      _mentorProfileName.value =
+                                          menteeProfile?.user?.name ?? "";
+                                      final coins =
+                                          menteeProfile
+                                              ?.user
+                                              ?.availabilityCoins ??
+                                          0;
+                                      AuthService.saveCoins(coins);
+                                      AuthService.saveRole(
+                                        menteeProfile?.user?.role ?? "",
+                                      );
+                                      AuthService.saveCollegeID(
+                                        menteeProfile?.user?.collegeId ?? 0,
+                                      );
+                                      AuthService.saveCollegeName(
+                                        menteeProfile?.user?.college_name ?? "",
+                                      );
+                                      AppState.updateCoins(
+                                        menteeProfile
+                                                ?.user
+                                                ?.availabilityCoins ??
+                                            0,
+                                      );
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Hello!',
+                                            style: TextStyle(
+                                              color: Color(0xff666666),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width:
+                                                SizeConfig.screenWidth * 0.45,
+                                            child: Text(
+                                              overflow: TextOverflow.ellipsis,
+                                              capitalize(
+                                                menteeProfile?.user?.name ??
+                                                    "User",
+                                              ),
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    return SizedBox.shrink();
+                                  },
+                                ),
+                              ],
+                            ),
+
                             Container(
                               margin: EdgeInsets.symmetric(vertical: 10),
                               padding: EdgeInsets.symmetric(
@@ -779,7 +868,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   )
                                 : SizedBox.shrink(),
                             SizedBox(height: 10),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

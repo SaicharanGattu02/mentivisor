@@ -3,6 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:simple_pdf_compression/simple_pdf_compression.dart';
+
+import '../../../utils/AppLogger.dart';
 
 class FileImagePicker {
   static final ImagePicker _picker = ImagePicker();
@@ -11,12 +14,49 @@ class FileImagePicker {
   static Future<File?> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'], // Restrict to PDF files only
+      allowedExtensions: ['pdf'],
     );
 
     if (result != null && result.files.single.path != null) {
       return File(result.files.single.path!);
     }
+    return null;
+  }
+
+  static Future<File?> pickPdfFile({
+    int thresholdSizeInKB = 500,
+    int quality = 60,
+  }) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ["pdf"],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final pickedFile = File(result.files.single.path!);
+
+        if (pickedFile.path.toLowerCase().endsWith('.pdf')) {
+          final compressor = PDFCompression();
+          final compressedPdf = await compressor.compressPdf(
+            pickedFile,
+            thresholdSize: thresholdSizeInKB * 1024,
+            quality: quality,
+          );
+
+          AppLogger.info(
+            "Compressed size: ${compressedPdf.lengthSync() / 1024} KB",
+          );
+
+          return compressedPdf;
+        } else {
+          return pickedFile;
+        }
+      }
+    } catch (e) {
+      AppLogger.error("Error picking PDF file: $e");
+    }
+
     return null;
   }
 
@@ -52,16 +92,20 @@ class FileImagePicker {
                   leading: const Icon(Icons.photo_library, color: Colors.blue),
                   title: const Text('Choose from Gallery'),
                   onTap: () async {
-                    Navigator.pop(context,
-                        await _pickAndResize(ImageSource.gallery));
+                    Navigator.pop(
+                      context,
+                      await _pickAndResize(ImageSource.gallery),
+                    );
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.camera_alt, color: Colors.green),
                   title: const Text('Take a Photo'),
                   onTap: () async {
-                    Navigator.pop(context,
-                        await _pickAndResize(ImageSource.camera));
+                    Navigator.pop(
+                      context,
+                      await _pickAndResize(ImageSource.camera),
+                    );
                   },
                 ),
               ],
@@ -83,16 +127,22 @@ class FileImagePicker {
   }
 
   /// Resize image to avoid huge px size
-  static Future<File?> _resizeImage(File file,
-      {int maxWidth = 1080, int maxHeight = 1080}) async {
+  static Future<File?> _resizeImage(
+    File file, {
+    int maxWidth = 1080,
+    int maxHeight = 1080,
+  }) async {
     try {
       final bytes = await file.readAsBytes();
       final img.Image? image = img.decodeImage(bytes);
 
       if (image == null) return file;
 
-      final img.Image resized =
-      img.copyResize(image, width: maxWidth, height: maxHeight);
+      final img.Image resized = img.copyResize(
+        image,
+        width: maxWidth,
+        height: maxHeight,
+      );
 
       final newPath = file.path.replaceAll(
         RegExp(r'\.(jpg|jpeg|png)$'),
@@ -109,3 +159,56 @@ class FileImagePicker {
     }
   }
 }
+
+// class PdfFileImagePicker {
+//   static Future<File?> pickFile() async {
+//     try {
+//       // 1️⃣ Pick file
+//       FilePickerResult? result = await FilePicker.platform.pickFiles(
+//         type: FileType.custom,
+//         allowedExtensions: ['pdf'],
+//       );
+//
+//       if (result == null || result.files.single.path == null) return null;
+//
+//       File file = File(result.files.single.path!);
+//       final int sizeInBytes = await file.length();
+//       final double sizeInMB = sizeInBytes / (1024 * 1024);
+//       print('📄 Picked file size: ${sizeInMB.toStringAsFixed(2)} MB');
+//
+//       // 2️⃣ If already under 5MB, no need to compress
+//       if (sizeInMB <= 5.0) return file;
+//
+//       // 3️⃣ Compress file
+//       final Directory tempDir = await getTemporaryDirectory();
+//       final String outPath =
+//           '${tempDir.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.pdf';
+//
+//       print('🔧 Compressing PDF...');
+//       await PdfCompressor.compressPdfFile(
+//         file.path,
+//         outPath,
+//         CompressQuality.LOW,
+//       );
+//
+//       // 4️⃣ Verify new size
+//       final File compressed = File(outPath);
+//       final int newSize = await compressed.length();
+//       final double newSizeMB = newSize / (1024 * 1024);
+//
+//       print('✅ Compressed size: ${newSizeMB.toStringAsFixed(2)} MB');
+//
+//       if (newSizeMB > 5.0) {
+//         print(
+//           '⚠️ File still too large (${newSizeMB.toStringAsFixed(2)} MB). Please choose a smaller file.',
+//         );
+//         return null;
+//       }
+//
+//       return compressed;
+//     } catch (e) {
+//       print('❌ Error compressing PDF: $e');
+//       return null;
+//     }
+//   }
+// }

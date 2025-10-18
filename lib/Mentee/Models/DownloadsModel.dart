@@ -6,12 +6,12 @@ class DownloadsModel {
 
   DownloadsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -27,34 +27,35 @@ class Data {
   int? lastPage;
   String? lastPageUrl;
   List<Links>? links;
-  Null? nextPageUrl;
+  String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
-  Data(
-      {this.currentPage,
-        this.downloads,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  Data({
+    this.currentPage,
+    this.downloads,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
       downloads = <Downloads>[];
       json['data'].forEach((v) {
-        downloads!.add(new Downloads.fromJson(v));
+        downloads!.add(Downloads.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -64,7 +65,7 @@ class Data {
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
+        links!.add(Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -76,24 +77,24 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.downloads != null) {
-      data['data'] = this.downloads!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = {};
+    data['current_page'] = currentPage;
+    if (downloads != null) {
+      data['data'] = downloads!.map((v) => v.toJson()).toList();
     }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
+    data['first_page_url'] = firstPageUrl;
+    data['from'] = from;
+    data['last_page'] = lastPage;
+    data['last_page_url'] = lastPageUrl;
+    if (links != null) {
+      data['links'] = links!.map((v) => v.toJson()).toList();
     }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
+    data['next_page_url'] = nextPageUrl;
+    data['path'] = path;
+    data['per_page'] = perPage;
+    data['prev_page_url'] = prevPageUrl;
+    data['to'] = to;
+    data['total'] = total;
     return data;
   }
 }
@@ -107,19 +108,29 @@ class Downloads {
   String? image;
   String? downloadedAt;
 
-  Downloads(
-      {this.downloadId,
-        this.description,
-        this.tag,
-        this.title,
-        this.filePath,
-        this.image,
-        this.downloadedAt});
+  Downloads({
+    this.downloadId,
+    this.description,
+    this.tag,
+    this.title,
+    this.filePath,
+    this.image,
+    this.downloadedAt,
+  });
 
   Downloads.fromJson(Map<String, dynamic> json) {
     downloadId = json['download_id'];
     description = json['description'];
-    tag = json['tag'].cast<String>();
+    if (json['tag'] != null) {
+      // If tag is a single string, wrap it in a list; else cast it safely
+      if (json['tag'] is List) {
+        tag = List<String>.from(json['tag']);
+      } else if (json['tag'] is String) {
+        tag = [json['tag']];
+      }
+    } else {
+      tag = []; // Default empty list when null
+    }
     title = json['title'];
     filePath = json['file_path'];
     image = json['image'];
@@ -127,14 +138,14 @@ class Downloads {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['download_id'] = this.downloadId;
-    data['description'] = this.description;
-    data['tag'] = this.tag;
-    data['title'] = this.title;
-    data['file_path'] = this.filePath;
-    data['image'] = this.image;
-    data['downloaded_at'] = this.downloadedAt;
+    final Map<String, dynamic> data = {};
+    data['download_id'] = downloadId;
+    data['description'] = description;
+    data['tag'] = tag;
+    data['title'] = title;
+    data['file_path'] = filePath;
+    data['image'] = image;
+    data['downloaded_at'] = downloadedAt;
     return data;
   }
 }
@@ -153,10 +164,10 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['label'] = label;
+    data['active'] = active;
     return data;
   }
 }

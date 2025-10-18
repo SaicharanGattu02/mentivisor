@@ -46,7 +46,7 @@ class MentorGridGuest extends StatelessWidget {
           if (screenWidth < 400) {
             aspectRatio = screenWidth / (screenHeight * 0.54);
           } else if (screenWidth < 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.45);
+            aspectRatio = screenWidth / (screenHeight * 0.5);
           } else if (screenWidth < 800) {
             aspectRatio = screenWidth / (screenHeight * 0.4);
           } else {

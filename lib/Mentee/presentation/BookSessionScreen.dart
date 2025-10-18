@@ -749,7 +749,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                               .read<MenteeProfileCubit>()
                               .fetchMenteeProfile();
                           context.pushReplacement(
-                            '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/dashboard&selectedIndex=0',
+                            '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/upcoming_session',
                           );
                         } else if (state is SessionBookingFailure) {
                           CustomSnackBar1.show(context, state.error ?? "");

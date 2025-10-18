@@ -45,9 +45,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   List<String> _customTags = [];
 
   Future<void> _selectFile() async {
-    final file = await FileImagePicker.pickFile();
+    final file = await FileImagePicker.pickPdfFile();
     if (file != null) {
-      setState(() => _pickedFile.value = file);
+      setState(() {
+        _pickedFile.value = file;
+      });
     }
   }
 
@@ -550,58 +552,61 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         ),
       ),
       bottomNavigationBar: BlocConsumer<AddResourceCubit, AddResourceStates>(
-          listener: (context, state) {
-            if (state is AddResourceSuccess) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    title: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Lottie.asset(
-                          'assets/lottie/successfully.json',
-                          width: 160,
-                          height: 120,
-                          repeat: true,
+        listener: (context, state) {
+          if (state is AddResourceSuccess) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  title: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Lottie.asset(
+                        'assets/lottie/successfully.json',
+                        width: 160,
+                        height: 120,
+                        repeat: true,
+                      ),
+                      Text(
+                        "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontFamily: 'segeo',
                         ),
-                        Text(
-                          "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                            fontFamily: 'segeo',
-                          ),
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      CustomAppButton1(
-                        text: "Okay",
-                        onPlusTap: () {
-                          Navigator.of(context).pop(); // Closes the dialog
-                          context.pop(); // Now pop the page AFTER user taps Okay
-                        },
                       ),
                     ],
-                  );
-                },
-              );
+                  ),
+                  actions: [
+                    CustomAppButton1(
+                      text: "Okay",
+                      onPlusTap: () {
+                        Navigator.of(context).pop(); // Closes the dialog
+                        context.pop(); // Now pop the page AFTER user taps Okay
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
 
-              context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "",);
+            context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus(
+              "",
+              "",
+              "",
+            );
+          } else if (state is AddResourceFailure) {
+            CustomSnackBar1.show(context, state.error);
+          }
+        },
 
-            } else if (state is AddResourceFailure) {
-              CustomSnackBar1.show(context, state.error);
-            }
-          },
-
-          builder: (context, state) {
+        builder: (context, state) {
           final isLoading = state is AddResourceLoading;
           return SafeArea(
             child: Padding(
