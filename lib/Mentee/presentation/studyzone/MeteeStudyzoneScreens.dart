@@ -315,12 +315,18 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       } else {
                                         _selectedTagIndex.value = index;
 
+                                        // Convert "All" tag to an empty string
+                                        final selectedTag =
+                                            (tagItem.toLowerCase() == "all")
+                                            ? ""
+                                            : tagItem;
+
                                         if (onCampusNotifier.value) {
                                           context
                                               .read<StudyZoneCampusCubit>()
                                               .fetchStudyZoneCampus(
                                                 "",
-                                                tagItem,
+                                                selectedTag,
                                                 searchController.text,
                                               );
                                         } else {
@@ -328,7 +334,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               .read<StudyZoneCampusCubit>()
                                               .fetchStudyZoneCampus(
                                                 "beyond",
-                                                tagItem,
+                                                selectedTag,
                                                 searchController.text,
                                               );
                                         }

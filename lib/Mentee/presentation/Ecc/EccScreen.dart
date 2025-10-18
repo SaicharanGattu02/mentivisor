@@ -307,16 +307,19 @@ class _EccScreenState extends State<EccScreen> {
                                     } else {
                                       _selectedTagIndex.value = index;
 
+                                      // Check if tagItem is "All", then use an empty string instead
+                                      final selectedTag = (tagItem.toLowerCase() == "all") ? "" : tagItem;
+
                                       if (onCampusNotifier.value) {
                                         context.read<ECCCubit>().getECC(
                                           "",
-                                          tagItem,
+                                          selectedTag,
                                           _searchController.text,
                                         );
                                       } else {
                                         context.read<ECCCubit>().getECC(
                                           "beyond",
-                                          tagItem,
+                                          selectedTag,
                                           _searchController.text,
                                         );
                                       }

@@ -140,7 +140,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                             double aspectRatio =
                                 screenWidth / (screenHeight * 0.5);
                             if (screenWidth < 400) {
-                              aspectRatio = screenWidth / (screenHeight * 0.6);
+                              aspectRatio = screenWidth / (screenHeight * 0.63);
                             } else if (screenWidth < 600) {
                               aspectRatio = screenWidth / (screenHeight * 0.59);
                             } else if (screenWidth < 800) {

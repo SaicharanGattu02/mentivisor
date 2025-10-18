@@ -11,15 +11,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mentivisor/services/ApiClient.dart';
-import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/services/SecureStorageService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
-import 'package:mentivisor/utils/CrashlyticsBlocObserver.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'StateInjector.dart';
 import 'app_routes/router.dart';
 import 'package:provider/provider.dart';
-
 import 'firebase_options.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
