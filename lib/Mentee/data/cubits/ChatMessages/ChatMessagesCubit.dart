@@ -22,11 +22,15 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
       (m?.nextPageUrl != null && (m?.currentPage ?? 1) < (m?.lastPage ?? 1));
 
   // Fetch initial chat messages (newest-first for reverse:true lists)
-  Future<void> fetchMessages(String userId) async {
+  Future<void> fetchMessages(String userId, String sessionId) async {
     emit(ChatMessagesLoading());
     _currentPage = 1;
     try {
-      final res = await chatMessagesRepository.getChatMessages(userId, _currentPage);
+      final res = await chatMessagesRepository.getChatMessages(
+        userId,
+        _currentPage,
+        sessionId,
+      );
 
       if (res != null && (res.status ?? false) && res.message != null) {
         final pageAsc = res.message!.messages ?? const <Messages>[];
@@ -35,6 +39,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
         // write back newest-first into the model
         chatMessagesModel = ChatMessagesModel(
           status: res.status,
+          receiverDetails: res.receiverDetails,
           message: Message(
             currentPage: res.message!.currentPage,
             lastPage: res.message!.lastPage,
@@ -64,7 +69,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
   }
 
   // Load older messages: APPEND at end because list is newest-first
-  Future<void> getMoreMessages(String userId) async {
+  Future<void> getMoreMessages(String userId, String sessionId) async {
     if (_isLoadingMore || !_hasNextPage) return;
 
     _isLoadingMore = true;
@@ -72,7 +77,11 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
 
     try {
       final nextPage = (_currentPage) + 1;
-      final newRes = await chatMessagesRepository.getChatMessages(userId, nextPage);
+      final newRes = await chatMessagesRepository.getChatMessages(
+        userId,
+        nextPage,
+        sessionId,
+      );
 
       final pageAsc = newRes?.message?.messages ?? const <Messages>[];
       if (newRes != null && (newRes.status ?? false) && pageAsc.isNotEmpty) {
@@ -103,7 +112,8 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
               m.type ?? '',
               m.message ?? '',
               m.url ?? '',
-              _parseIso(m.createdAt).millisecondsSinceEpoch ~/ 1000, // second precision
+              _parseIso(m.createdAt).millisecondsSinceEpoch ~/
+                  1000, // second precision
             ].join('|');
             if (seenComposite.add(key)) deduped.add(m);
           }
@@ -111,6 +121,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
 
         chatMessagesModel = ChatMessagesModel(
           status: newRes.status,
+          receiverDetails: newRes.receiverDetails,
           message: Message(
             currentPage: newRes.message?.currentPage ?? nextPage,
             lastPage: newRes.message?.lastPage,
@@ -142,4 +153,3 @@ class ChatMessagesCubit extends Cubit<ChatMessagesStates> {
     }
   }
 }
-

@@ -1,20 +1,24 @@
 class ChatMessagesModel {
   bool? status;
   Message? message;
+  ReceiverDetails? receiverDetails;
 
-  ChatMessagesModel({this.status, this.message});
+  ChatMessagesModel({this.status, this.message, this.receiverDetails});
 
   ChatMessagesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    message =
-    json['message'] != null ? new Message.fromJson(json['message']) : null;
+    message = json['message'] != null ? Message.fromJson(json['message']) : null;
+    receiverDetails = json['reciever_details'] != null
+        ? ReceiverDetails.fromJson(json['reciever_details'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.message != null) {
-      data['message'] = this.message!.toJson();
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
+    if (message != null) data['message'] = message!.toJson();
+    if (receiverDetails != null) {
+      data['reciever_details'] = receiverDetails!.toJson();
     }
     return data;
   }
@@ -35,27 +39,28 @@ class Message {
   int? to;
   int? total;
 
-  Message(
-      {this.currentPage,
-        this.messages,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  Message({
+    this.currentPage,
+    this.messages,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
   Message.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
       messages = <Messages>[];
       json['data'].forEach((v) {
-        messages!.add(new Messages.fromJson(v));
+        messages!.add(Messages.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -65,7 +70,7 @@ class Message {
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
+        links!.add(Links.fromJson(v));
       });
     }
     nextPageUrl = json['next_page_url'];
@@ -77,24 +82,24 @@ class Message {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.messages != null) {
-      data['data'] = this.messages!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = {};
+    data['current_page'] = currentPage;
+    if (messages != null) {
+      data['data'] = messages!.map((v) => v.toJson()).toList();
     }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
+    data['first_page_url'] = firstPageUrl;
+    data['from'] = from;
+    data['last_page'] = lastPage;
+    data['last_page_url'] = lastPageUrl;
+    if (links != null) {
+      data['links'] = links!.map((v) => v.toJson()).toList();
     }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
+    data['next_page_url'] = nextPageUrl;
+    data['path'] = path;
+    data['per_page'] = perPage;
+    data['prev_page_url'] = prevPageUrl;
+    data['to'] = to;
+    data['total'] = total;
     return data;
   }
 }
@@ -112,51 +117,48 @@ class Messages {
   Sender? sender;
   Sender? receiver;
 
-  Messages(
-      {this.id,
-        this.senderId,
-        this.receiverId,
-        this.message,
-        this.url,
-        this.createdAt,
-        this.updatedAt,
-        this.type,
-        this.sender,
-        this.receiver});
+  Messages({
+    this.id,
+    this.senderId,
+    this.receiverId,
+    this.sessionId,
+    this.message,
+    this.url,
+    this.createdAt,
+    this.updatedAt,
+    this.type,
+    this.sender,
+    this.receiver,
+  });
 
   Messages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     senderId = json['sender_id'];
     receiverId = json['receiver_id'];
-    sessionId = json['sessionId'];
+    sessionId = json['session_id']; // ✅ corrected key (was sessionId before)
     message = json['message'];
     url = json['url'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     type = json['type'];
-    sender =
-    json['sender'] != null ? new Sender.fromJson(json['sender']) : null;
+    sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
     receiver =
-    json['receiver'] != null ? new Sender.fromJson(json['receiver']) : null;
+    json['receiver'] != null ? Sender.fromJson(json['receiver']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['sender_id'] = this.senderId;
-    data['receiver_id'] = this.receiverId;
-    data['sessionId'] = this.sessionId;
-    data['message'] = this.message;
-    data['url'] = this.url;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['type'] = this.type;
-    if (this.sender != null) {
-      data['sender'] = this.sender!.toJson();
-    }
-    if (this.receiver != null) {
-      data['receiver'] = this.receiver!.toJson();
-    }
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['sender_id'] = senderId;
+    data['receiver_id'] = receiverId;
+    data['session_id'] = sessionId;
+    data['message'] = message;
+    data['url'] = url;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['type'] = type;
+    if (sender != null) data['sender'] = sender!.toJson();
+    if (receiver != null) data['receiver'] = receiver!.toJson();
     return data;
   }
 }
@@ -177,11 +179,36 @@ class Sender {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['profile_pic'] = this.profilePic;
-    data['profile_pic_url'] = this.profilePicUrl;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['profile_pic'] = profilePic;
+    data['profile_pic_url'] = profilePicUrl;
+    return data;
+  }
+}
+
+class ReceiverDetails {
+  int? id;
+  String? name;
+  String? profilePic;
+  String? profilePicUrl;
+
+  ReceiverDetails({this.id, this.name, this.profilePic, this.profilePicUrl});
+
+  ReceiverDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    profilePic = json['profile_pic'];
+    profilePicUrl = json['profile_pic_url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['profile_pic'] = profilePic;
+    data['profile_pic_url'] = profilePicUrl;
     return data;
   }
 }
@@ -200,10 +227,10 @@ class Links {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['label'] = label;
+    data['active'] = active;
     return data;
   }
 }

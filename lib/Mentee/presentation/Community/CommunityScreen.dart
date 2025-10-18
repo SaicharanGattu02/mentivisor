@@ -384,7 +384,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                                 );
                               },
                             ),
-
                             if (state is CommunityPostsLoadingMore)
                               SliverToBoxAdapter(
                                 child: Padding(
@@ -443,10 +442,14 @@ class _CommunityScreenState extends State<Communityscreen> {
                       if (isGuest) {
                         // Do guest action
                       } else {
-                        if(_onCampus.value){
-                          context.push('/group_chat?campus_type=On Campus Chat');
-                        }else{
-                          context.push('/group_chat?campus_type=Beyond Campus Chat');
+                        if (_onCampus.value) {
+                          context.push(
+                            '/group_chat?campus_type=On Campus Chat',
+                          );
+                        } else {
+                          context.push(
+                            '/group_chat?campus_type=Beyond Campus Chat',
+                          );
                         }
                       }
                     },

@@ -147,7 +147,11 @@ abstract class RemoteDataSource {
     int communityId,
     String scope,
   );
-  Future<ChatMessagesModel?> getChatMessages(String user_id, int page);
+  Future<ChatMessagesModel?> getChatMessages(
+    String user_id,
+    int page,
+    String sessionId,
+  );
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page, String Scope);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
   Future<ViewEccDetailsModel?> viewEccDetails(int eventId, String scope);
@@ -271,10 +275,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ChatMessagesModel?> getChatMessages(String user_id, int page) async {
+  Future<ChatMessagesModel?> getChatMessages(
+    String user_id,
+    int page,
+    String sessionId,
+  ) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.get_messages}/$user_id",
+        "${APIEndpointUrls.get_messages}/$user_id?session_id=${sessionId}",
       );
       AppLogger.log('getChatMessages: ${res.data}');
       return ChatMessagesModel.fromJson(res.data);

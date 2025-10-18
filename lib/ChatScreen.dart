@@ -77,7 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
   String _stickyDateLabel = '';
   List<_ListItem> _lastItems = const [];
 
-  final ValueNotifier<String?> receiverName = ValueNotifier<String?>("User");
+  final ValueNotifier<String?> receiverName = ValueNotifier<String?>("");
+  final ValueNotifier<String?> receiverProfile = ValueNotifier<String?>("");
 
   // "show while scrolling" state
   Timer? _scrollIdleTimer;
@@ -99,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
     getUserId();
     try {
       AppLogger.info("receiverId:${widget.receiverId}");
-      context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId);
+      context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId, "37");
     } catch (_) {}
 
     _positionsListener.itemPositions.addListener(() {
@@ -148,12 +149,13 @@ class _ChatScreenState extends State<ChatScreen> {
       final nearTop = positions.any((p) => p.index >= _lastItems.length - 3);
       if (nearTop && !_isLoadingMore && _hasMoreMessages) {
         setState(() => _isLoadingMore = true);
-        context.read<ChatMessagesCubit>().getMoreMessages(widget.receiverId);
+        context.read<ChatMessagesCubit>().getMoreMessages(
+          widget.receiverId,
+          "37",
+        );
       }
     });
   }
-
-
 
   Future<void> getUserId() async {
     final userId = await AuthService.getUSerId();
@@ -262,24 +264,40 @@ class _ChatScreenState extends State<ChatScreen> {
     return '$first$second';
   }
 
-  Widget _avatar({double size = 36}) {
-    final initials = _initials(receiverName.value ?? "User");
+  Widget _avatar({
+    double size = 36,
+    String? profileUrl, // 👈 Add optional image URL
+  }) {
+    final initials = _initials(receiverName.value ?? "");
+    final hasImage = profileUrl != null && profileUrl.trim().isNotEmpty;
+
     return Container(
       width: size,
       height: size,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Color(0xFFCBD5E1),
+        color: const Color(0xFFCBD5E1),
+        image: hasImage
+            ? DecorationImage(
+                image: NetworkImage(profileUrl),
+                fit: BoxFit.cover,
+                onError: (error, stackTrace) {
+                  debugPrint("⚠️ Avatar image failed to load: $error");
+                },
+              )
+            : null,
       ),
       alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-        ),
-      ),
+      child: !hasImage
+          ? Text(
+              initials.isNotEmpty ? initials[0].toUpperCase() : "?",
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            )
+          : null,
     );
   }
 
@@ -297,14 +315,14 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Row(
               children: [
-                _avatar(size: 36),
+                _avatar(size: 36, profileUrl: receiverProfile.value),
                 const SizedBox(width: 10),
                 Expanded(
                   child: ValueListenableBuilder(
                     valueListenable: receiverName,
                     builder: (context, value, _) {
                       return Text(
-                        value ?? "User",
+                        value ?? "",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -391,7 +409,6 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           ),
         ],
-        iconTheme: IconThemeData(color: _text),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -409,9 +426,20 @@ class _ChatScreenState extends State<ChatScreen> {
                   BlocListener<ChatMessagesCubit, ChatMessagesStates>(
                     listener: (ctx, state) {
                       if (state is ChatMessagesLoaded) {
-                        _hasMoreMessages = state.hasNextPage;
-                        // receiverName.value = state.chatMessages.message?.friend?.name ?? "User";
-                        // mobileNotifier.value = state.chatMessages.message?.friend?.mobile ?? "";
+                        setState(() {
+                          _hasMoreMessages = state.hasNextPage;
+                          receiverName.value =
+                              state.chatMessages.receiverDetails?.name ?? "";
+                          AppLogger.info(
+                            "receiverName.value:${receiverName.value} ${state.chatMessages.receiverDetails?.name}",
+                          );
+                          receiverProfile.value =
+                              state
+                                  .chatMessages
+                                  .receiverDetails
+                                  ?.profilePicUrl ??
+                              "";
+                        });
                         setState(() => _isLoadingMore = false);
                       } else if (state is ChatMessagesLoadingMore) {
                         _hasMoreMessages = state.hasNextPage;
