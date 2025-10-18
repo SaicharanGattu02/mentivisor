@@ -36,6 +36,7 @@ class CommunityDetails extends StatefulWidget {
 }
 
 class _CommunityDetailsState extends State<CommunityDetails> {
+
   @override
   void initState() {
     super.initState();

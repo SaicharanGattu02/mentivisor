@@ -215,7 +215,7 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
     final payload = {
       'room': _room,
       'senderId': currentUserId,
-      's_id': int.parse(sessionId),
+      'session_id': int.parse(sessionId),
       'receiverId': receiverId,
       'message': message,
       'type': type,

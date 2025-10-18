@@ -7,6 +7,9 @@ import 'package:mentivisor/Mentor/data/Cubits/MentorProfile/mentor_profile_state
 import 'package:mentivisor/Mentor/presentation/widgets/AppDrawer.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Mentee/presentation/Community/CommunityScreen.dart';
+import '../../services/AuthService.dart';
+import '../../services/SocketService.dart';
+import '../../utils/AppLogger.dart';
 import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'CouponsHomeScreen.dart';
 import 'MentorHomeScreen.dart';
@@ -32,6 +35,13 @@ class _MentorDashboardState extends State<MentorDashboard> {
     _selectedIndex = widget.selectedIndex ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
     context.read<MentorProfileCubit1>().getMentorProfile();
+    getUserId();
+  }
+
+  Future<void> getUserId() async {
+    final userId = await AuthService.getUSerId();
+    AppLogger.info("userId: ${userId}");
+    SocketService.connect(userId.toString());
   }
 
   void _onItemTapped(int index) {

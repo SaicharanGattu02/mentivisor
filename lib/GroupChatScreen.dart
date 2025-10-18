@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/services/SocketService.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -88,6 +91,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   @override
   void initState() {
     super.initState();
+    getUserId();
     // history load
     if (widget.campus_type == "On Campus Chat") {
       context.read<GroupChatMessagesCubit>().fetch("same");
@@ -145,6 +149,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         }
       }
     });
+  }
+
+  Future<void> getUserId() async {
+    final userId = await AuthService.getUSerId();
+    AppLogger.info("userId: ${userId}");
+    SocketService.connect(userId.toString());
   }
 
   @override

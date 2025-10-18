@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatStates.dart';
+import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/services/SocketService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/ImageUtils.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -94,6 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    getUserId();
     try {
       AppLogger.info("receiverId:${widget.receiverId}");
       context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId);
@@ -148,6 +151,14 @@ class _ChatScreenState extends State<ChatScreen> {
         context.read<ChatMessagesCubit>().getMoreMessages(widget.receiverId);
       }
     });
+  }
+
+
+
+  Future<void> getUserId() async {
+    final userId = await AuthService.getUSerId();
+    AppLogger.info("userId: ${userId}");
+    SocketService.connect(userId.toString());
   }
 
   File? _file;
