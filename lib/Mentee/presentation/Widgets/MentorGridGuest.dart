@@ -45,7 +45,10 @@ class MentorGridGuest extends StatelessWidget {
           double aspectRatio = screenWidth / (screenHeight * 0.5);
           if (screenWidth < 400) {
             aspectRatio = screenWidth / (screenHeight * 0.48);
-          } else if (screenWidth < 800) {
+          } else if (screenWidth < 600) {
+            aspectRatio = screenWidth / (screenHeight * 0.45);
+
+        } else if (screenWidth < 800) {
             aspectRatio = screenWidth / (screenHeight * 0.4);
           } else {
             aspectRatio = screenWidth / (screenHeight * 0.35);
@@ -64,7 +67,7 @@ class MentorGridGuest extends StatelessWidget {
             stream: m.stream,
             year: m.year,
             name: m.name ?? '',
-            // designation: m.bio ?? '',
+            designation: m.bio ?? '',
             collegeName: m.college?.name ?? '',
             image: url,
             rating: (m.ratingsReceivedCount ?? 0).toDouble(),
@@ -113,7 +116,7 @@ class MentorGridCampus extends StatelessWidget {
           if (screenWidth < 400) {
             aspectRatio = screenWidth / (screenHeight * 0.5);
           } else if (screenWidth < 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.45);
+            aspectRatio = screenWidth / (screenHeight * 0.5);
           } else if (screenWidth < 800) {
             aspectRatio = screenWidth / (screenHeight * 0.4);
           } else {
@@ -129,7 +132,7 @@ class MentorGridCampus extends StatelessWidget {
           onTap: () => onTapMentor(m!),
           child: _MentorCard(
             name: m?.user?.name ?? '',
-            // designation: m?.user?.bio ?? '',
+            designation: m?.user?.bio ?? '',
             collegeName: m?.user?.college?.name ?? '',
             year: m?.user?.year ?? '',
             stream: m?.user?.stream ?? '',
@@ -146,7 +149,7 @@ class MentorGridCampus extends StatelessWidget {
 
 class _MentorCard extends StatelessWidget {
   final String name;
-  // final String designation;
+  final String designation;
   final String image;
   final double rating;
   final int ratingCount;
@@ -157,7 +160,7 @@ class _MentorCard extends StatelessWidget {
 
   const _MentorCard({
     required this.name,
-    // required this.designation,
+    required this.designation,
     required this.image,
     required this.rating,
     required this.ratingCount,
@@ -220,23 +223,23 @@ class _MentorCard extends StatelessWidget {
               color: Color(0xff555555),
             ),
           ),
-          SizedBox(height: 8),
-          // SizedBox(
-          //   width: SizeConfig.screenWidth * 0.4,
-          //   child: Center(
-          //     child: Text(
-          //       designation,
-          //       textAlign: TextAlign.center,
-          //       maxLines: 1,
-          //       overflow: TextOverflow.ellipsis,
-          //       style: const TextStyle(
-          //         color: Color(0xff555555),
-          //         fontFamily: 'segeo',
-          //         fontWeight: FontWeight.w400,
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          SizedBox(height: 4),
+          SizedBox(
+            width: SizeConfig.screenWidth * 0.4,
+            child: Center(
+              child: Text(
+                designation,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xff555555),
+                  fontFamily: 'segeo',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
 
           // SizedBox(height: 5),
           Row(

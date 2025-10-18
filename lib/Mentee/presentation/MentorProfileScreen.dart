@@ -135,7 +135,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "${mentorData?.user?.year ?? ''} year student in ${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
+                                "${mentorData?.yearName ?? ''} year student in ${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
