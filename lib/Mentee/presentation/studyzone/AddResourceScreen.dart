@@ -55,8 +55,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     final image = await FileImagePicker.pickImageBottomSheet(context);
     if (image != null) {
       final resizedImage = await _resizeImage(image);
-
-      // Evict old path from cache (if any)
       final prev = _imageFile.value;
       if (prev != null) {
         FileImage(prev).evict();

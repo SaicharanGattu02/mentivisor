@@ -14,18 +14,13 @@ import '../../../Components/CutomAppBar.dart';
 import '../../../services/AuthService.dart';
 import '../../../utils/AppLogger.dart';
 import '../../../utils/ImageUtils.dart';
-import '../../../utils/color_constants.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_states.dart';
 import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
-import '../../data/cubits/CommunityTags/community_tags_cubit.dart';
-import '../../data/cubits/CommunityTags/community_tags_states.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
-import '../../data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
-import '../../data/cubits/Tags/TagsSearch/tags_search_states.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -150,34 +145,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
     BuildContext context, {
     required ImageSource source,
     int targetWidth = 384,
-    double tolerancePct = 0.10, // 10% around 16:9
-    int? minSourceWidth, // e.g. 800 to avoid tiny images
+    int? minSourceWidth,
   }) async {
     final XFile? picked = await _picker.pickImage(source: source);
     if (picked == null) return null;
 
     final raw = File(picked.path);
-
-    final ok = await ImageUtils1.isAcceptable16by9(
-      raw,
-      tolerancePct: tolerancePct,
-      minWidth: minSourceWidth,
-    );
-
-    if (!ok) {
-      // Clear message explaining the constraint
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please pick a landscape photo close to 16:9. '
-            'Portrait (9:16) images are not allowed.',
-          ),
-        ),
-      );
-      return null;
-    }
-
-    // Safe to resize to true 16:9
     final resized = await ImageUtils1.resizeTo16by9(
       raw,
       targetWidth: targetWidth,
@@ -187,9 +160,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   Future<void> _pickImageFromGallery() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
     if (!mounted) return;
-
     if (pickedFile != null) {
       _imageFile.value = File(pickedFile.path);
     }
@@ -200,7 +171,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
       context,
       source: ImageSource.camera,
       targetWidth: 384,
-      tolerancePct: 0.10,
       minSourceWidth: 800,
     );
     if (!mounted) return;

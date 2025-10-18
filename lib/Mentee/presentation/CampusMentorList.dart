@@ -142,7 +142,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                             if (screenWidth < 400) {
                               aspectRatio = screenWidth / (screenHeight * 0.6);
                             } else if (screenWidth < 600) {
-                              aspectRatio = screenWidth / (screenHeight * 0.53);
+                              aspectRatio = screenWidth / (screenHeight * 0.59);
                             } else if (screenWidth < 800) {
                               aspectRatio = screenWidth / (screenHeight * 0.4);
                             } else {
@@ -199,6 +199,17 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                   Text(
                                     m.user?.college?.name ?? '',
                                     maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Color(0xff555555),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    m.user?.bio ?? '',
+                                    maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(

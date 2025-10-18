@@ -564,8 +564,9 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                       ),
                                                       Expanded(
                                                         child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                            top: 10.0,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                top: 10.0,
                                                                 bottom: 10,
                                                                 left: 5,
                                                               ),

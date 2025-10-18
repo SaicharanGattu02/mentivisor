@@ -102,26 +102,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
     final raw = File(picked.path);
 
-    final ok = await ImageUtils1.isAcceptable16by9(
-      raw,
-      tolerancePct: tolerancePct,
-      minWidth: minSourceWidth,
-    );
-
-    if (!ok) {
-      // Clear message explaining the constraint
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please pick a landscape photo close to 16:9. '
-            'Portrait (9:16) images are not allowed.',
-          ),
-        ),
-      );
-      return null;
-    }
-
-    // Safe to resize to true 16:9
     final resized = await ImageUtils1.resizeTo16by9(
       raw,
       targetWidth: targetWidth,
@@ -133,9 +113,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
     final exact = await _pickValidateAndResize(
       context,
       source: ImageSource.gallery,
-      targetWidth: 384, // outputs 384×216
-      tolerancePct: 0.10, // allow ±10% around 16:9
-      minSourceWidth: 800, // optional: block very small images
+      targetWidth: 384,
+      minSourceWidth: 800,
     );
     if (!mounted) return;
     if (exact != null) _imageFile.value = exact;
@@ -146,7 +125,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
       context,
       source: ImageSource.camera,
       targetWidth: 384,
-      tolerancePct: 0.10,
       minSourceWidth: 800,
     );
     if (!mounted) return;

@@ -7,6 +7,7 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/Shimmers.dart';
 import '../../utils/spinkittsLoader.dart';
@@ -128,7 +129,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                mentorData?.user?.name ?? 'Unknown',
+                                capitalize(mentorData?.user?.name ?? 'Unknown'),
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
