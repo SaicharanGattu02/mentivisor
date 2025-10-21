@@ -428,7 +428,6 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               child: CachedNetworkImage(
-                                                height: 160,
                                                 imageUrl:
                                                     menteePosts?.image ?? "",
                                                 fit: BoxFit.cover,

@@ -116,7 +116,6 @@ class _PostCardState extends State<PostCard>
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: CachedNetworkImage(
-                          height: 160,
                           imageUrl: widget.communityPosts.imgUrl ?? "",
                           fit: BoxFit.cover,
                           width: SizeConfig.screenWidth,

@@ -837,11 +837,17 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     int resourceId,
     String scope,
   ) async {
-    AppLogger.log('resourceId::${resourceId}');
+    AppLogger.log('resourceId::$resourceId');
+
     try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.study_zone_details}/${resourceId}?scope=${scope}",
-      );
+      // Build the URL dynamically
+      String url = "${APIEndpointUrls.study_zone_details}/$resourceId";
+      if (scope.isNotEmpty) {
+        url += "?scope=$scope";
+      }
+
+      Response res = await ApiClient.get(url);
+
       AppLogger.log('get StudyZoneDetails::${res.data}');
       return ResourceDetailsModel.fromJson(res.data);
     } catch (e) {

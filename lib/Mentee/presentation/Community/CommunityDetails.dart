@@ -680,7 +680,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
-                      height: 160,
                       width: SizeConfig.screenWidth,
                       imageUrl: communityDetails?.imgUrl ?? "",
                       fit: BoxFit.cover,

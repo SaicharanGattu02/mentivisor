@@ -310,54 +310,57 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         titleSpacing: 8,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _avatar(size: 36, profileUrl: receiverProfile.value),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ValueListenableBuilder(
-                    valueListenable: receiverName,
-                    builder: (context, value, _) {
-                      return Text(
-                        value ?? "",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xFF111827),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            BlocBuilder<PrivateChatCubit, PrivateChatState>(
-              buildWhen: (p, c) => p.isPeerTyping != c.isPeerTyping,
-              builder: (context, state) {
-                return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 180),
-                  child: state.isPeerTyping
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text(
-                            'Typing…',
-                            style: TextStyle(
-                              color: _muted,
-                              fontSize: 12,
-                              height: 1.2,
-                            ),
+        title: GestureDetector(
+          onTap: () {},
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _avatar(size: 36, profileUrl: receiverProfile.value),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ValueListenableBuilder(
+                      valueListenable: receiverName,
+                      builder: (context, value, _) {
+                        return Text(
+                          value ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Color(0xFF111827),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
                           ),
-                        )
-                      : const SizedBox(height: 16),
-                );
-              },
-            ),
-          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              BlocBuilder<PrivateChatCubit, PrivateChatState>(
+                buildWhen: (p, c) => p.isPeerTyping != c.isPeerTyping,
+                builder: (context, state) {
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 180),
+                    child: state.isPeerTyping
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              'Typing…',
+                              style: TextStyle(
+                                color: _muted,
+                                fontSize: 12,
+                                height: 1.2,
+                              ),
+                            ),
+                          )
+                        : const SizedBox(height: 16),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           PopupMenuButton<_MenuAction>(

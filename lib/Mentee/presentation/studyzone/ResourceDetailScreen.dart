@@ -83,356 +83,348 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
               return const Center(child: DottedProgressWithLogo());
             } else if (state is ResourceDetailsLoaded) {
               final resourceData = state.resourceDetailsModel.data;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadiusGeometry.circular(4),
-                    child: CachedNetworkImage(
-                      width: SizeConfig.screenWidth,
-                      height: 200,
-                      imageUrl: resourceData?.image ?? "",
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: Center(child: spinkits.getSpinningLinespinkit()),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        width: 120,
-                        height: 120,
-                        color: const Color(0xffF8FAFE),
-                        child: const Icon(
-                          Icons.broken_image,
-                          size: 40,
-                          color: Colors.grey,
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadiusGeometry.circular(4),
+                      child: CachedNetworkImage(
+                        width: SizeConfig.screenWidth,
+                        imageUrl: resourceData?.image ?? "",
+                        fit: BoxFit.fill,
+                        placeholder: (context, url) => SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: Center(child: spinkits.getSpinningLinespinkit()),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 120,
+                          height: 120,
+                          color: const Color(0xffF8FAFE),
+                          child: const Icon(
+                            Icons.broken_image,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            capitalize('${resourceData?.name ?? ''}'),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xff121212),
+                    const SizedBox(height: 16),
+                    Text(
+                      capitalize('${resourceData?.name ?? ''}'),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xff121212),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      resourceData?.description ?? "",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff666666),
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w400,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: (resourceData?.tag ?? []).map((tag) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.grey.shade300,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            resourceData?.description ?? "",
+                          child: Text(
+                            tag,
                             style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xff666666),
+                              fontSize: 12,
                               fontFamily: 'segeo',
-                              fontWeight: FontWeight.w400,
-                              height: 1.4,
+                              color: Colors.black87,
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: (resourceData?.tag ?? []).map((tag) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ),
-                                child: Text(
-                                  tag,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: 'segeo',
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                                  
+                    const SizedBox(height: 24),
+                    const Text(
+                      'About Author',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xff121212),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
                           ),
-
-                          const SizedBox(height: 24),
-                          const Text(
-                            'About Author',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'segeo',
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xff121212),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors
+                                      .black, // background behind image or text
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors
-                                            .black, // background behind image or text
-                                      ),
-                                      alignment: Alignment.center,
-                                      child:
-                                          (resourceData
-                                                  ?.uploader
-                                                  ?.profilePicUrl
-                                                  ?.isEmpty ??
-                                              true)
-                                          ? Text(
+                                alignment: Alignment.center,
+                                child:
+                                    (resourceData
+                                            ?.uploader
+                                            ?.profilePicUrl
+                                            ?.isEmpty ??
+                                        true)
+                                    ? Text(
+                                        (resourceData
+                                                    ?.uploader
+                                                    ?.name
+                                                    ?.isNotEmpty ??
+                                                false)
+                                            ? resourceData!
+                                                  .uploader!
+                                                  .name![0]
+                                                  .toUpperCase()
+                                            : '',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          context.push(
+                                            "/common_profile/${resourceData?.uploader?.id}",
+                                          );
+                                        },
+                                        child: CircleAvatar(
+                                          radius:
+                                              30, // Adjust the size as needed
+                                          backgroundColor: Colors
+                                              .black, // Background behind image or initials
+                                          child:
                                               (resourceData
-                                                          ?.uploader
-                                                          ?.name
-                                                          ?.isNotEmpty ??
-                                                      false)
-                                                  ? resourceData!
+                                                      ?.uploader
+                                                      ?.profilePicUrl
+                                                      ?.isEmpty ??
+                                                  true)
+                                              ? Text(
+                                                  (resourceData
+                                                              ?.uploader
+                                                              ?.name
+                                                              ?.isNotEmpty ??
+                                                          false)
+                                                      ? resourceData!
+                                                            .uploader!
+                                                            .name![0]
+                                                            .toUpperCase()
+                                                      : '',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 24,
+                                                    fontWeight:
+                                                        FontWeight.bold,
+                                                  ),
+                                                )
+                                              : ClipOval(
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: resourceData!
                                                         .uploader!
-                                                        .name![0]
-                                                        .toUpperCase()
-                                                  : '',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
-                                          : GestureDetector(
-                                              onTap: () {
-                                                context.push(
-                                                  "/common_profile/${resourceData?.uploader?.id}",
-                                                );
-                                              },
-                                              child: CircleAvatar(
-                                                radius:
-                                                    30, // Adjust the size as needed
-                                                backgroundColor: Colors
-                                                    .black, // Background behind image or initials
-                                                child:
-                                                    (resourceData
-                                                            ?.uploader
-                                                            ?.profilePicUrl
-                                                            ?.isEmpty ??
-                                                        true)
-                                                    ? Text(
-                                                        (resourceData
-                                                                    ?.uploader
-                                                                    ?.name
-                                                                    ?.isNotEmpty ??
-                                                                false)
-                                                            ? resourceData!
-                                                                  .uploader!
-                                                                  .name![0]
-                                                                  .toUpperCase()
-                                                            : '',
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 24,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                        .profilePicUrl!,
+                                                    fit: BoxFit.cover,
+                                                    width:
+                                                        60, // Match CircleAvatar diameter
+                                                    height: 60,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => Center(
+                                                          child: spinkits
+                                                              .getSpinningLinespinkit(),
                                                         ),
-                                                      )
-                                                    : ClipOval(
-                                                        child: CachedNetworkImage(
-                                                          imageUrl: resourceData!
-                                                              .uploader!
-                                                              .profilePicUrl!,
-                                                          fit: BoxFit.cover,
-                                                          width:
-                                                              60, // Match CircleAvatar diameter
-                                                          height: 60,
-                                                          placeholder:
-                                                              (
-                                                                context,
-                                                                url,
-                                                              ) => Center(
-                                                                child: spinkits
-                                                                    .getSpinningLinespinkit(),
-                                                              ),
-                                                          errorWidget:
-                                                              (
-                                                                context,
-                                                                url,
-                                                                error,
-                                                              ) => const ColoredBox(
-                                                                color: Color(
-                                                                  0xffF8FAFE,
-                                                                ),
-                                                                child: Center(
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .broken_image,
-                                                                    size: 40,
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
-                                                                ),
-                                                              ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => const ColoredBox(
+                                                          color: Color(
+                                                            0xffF8FAFE,
+                                                          ),
+                                                          child: Center(
+                                                            child: Icon(
+                                                              Icons
+                                                                  .broken_image,
+                                                              size: 40,
+                                                              color: Colors
+                                                                  .grey,
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                              ),
-                                            ),
-                                    ),
-
-                                    SizedBox(width: 12),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          capitalize(
-                                            resourceData?.uploader?.name ?? "",
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'segeo',
-                                            color: Colors.black87,
-                                          ),
+                                                  ),
+                                                ),
                                         ),
-                                        Text(
-                                          // overflow: TextOverflow.ellipsis,
-                                          // maxLines: 1,
-                                          '${resourceData?.uploader?.college?.name ?? ""}',
-
-                                          // ' ${resourceData?.uploader?.yearRelation?.name ?? ""} year\n${resourceData?.uploader?.stream ?? ""}'
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: 'segeo',
-                                            fontWeight: FontWeight.w500,
-                                            color: Color(0xff666666),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: SizeConfig.screenWidth * 0.65,
-                                          child: Text(
-                                            maxLines: 2,
-                                            resourceData?.uploader?.bio ?? "",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              fontFamily: 'segeo',
-                                              color: Color(0xff666666),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
+                              ),
+                                  
+                              SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    capitalize(
+                                      resourceData?.uploader?.name ?? "",
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/download.png",
-                                      width: 14,
-                                      height: 14,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'segeo',
+                                      color: Colors.black87,
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '${resourceData?.downloadsCount ?? 0} + downloads',
-                                      style: const TextStyle(
-                                        fontSize: 12,
+                                  ),
+                                  Text(
+                                    // overflow: TextOverflow.ellipsis,
+                                    // maxLines: 1,
+                                    '${resourceData?.uploader?.college?.name ?? ""}',
+                                  
+                                    // ' ${resourceData?.uploader?.yearRelation?.name ?? ""} year\n${resourceData?.uploader?.stream ?? ""}'
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xff666666),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: SizeConfig.screenWidth * 0.65,
+                                    child: Text(
+                                      maxLines: 2,
+                                      resourceData?.uploader?.bio ?? "",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 10,
                                         fontFamily: 'segeo',
-                                        color: Colors.black54,
+                                        color: Color(0xff666666),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    // const Icon(
-                                    //   Icons.calendar_today,
-                                    //   size: 16,
-                                    //   color: Colors.black54,
-                                    // ),
-                                    // const SizedBox(width: 4),
-                                    // Text(
-                                    //   'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
-                                    //   style: const TextStyle(
-                                    //     fontSize: 12,
-                                    //     fontFamily: 'segeo',
-                                    //     color: Colors.black54,
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          GestureDetector(
-                            onTap: () => _showReportSheet(context),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(0xffF5F5F5),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/icons/FileX.png",
-                                    width: 24,
-                                    height: 24,
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    'Report Resource',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black87,
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                    color: Colors.black54,
                                   ),
                                 ],
                               ),
-                            ),
+                            ],
                           ),
-                          const SizedBox(height: 80),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Image.asset(
+                                "assets/icons/download.png",
+                                width: 14,
+                                height: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${resourceData?.downloadsCount ?? 0} + downloads',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'segeo',
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              // const Icon(
+                              //   Icons.calendar_today,
+                              //   size: 16,
+                              //   color: Colors.black54,
+                              // ),
+                              // const SizedBox(width: 4),
+                              // Text(
+                              //   'Member since ${studyZoneCampusData.uploader?.year ?? 0}+ Year',
+                              //   style: const TextStyle(
+                              //     fontSize: 12,
+                              //     fontFamily: 'segeo',
+                              //     color: Colors.black54,
+                              //   ),
+                              // ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 15),
+                    GestureDetector(
+                      onTap: () => _showReportSheet(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xffF5F5F5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              "assets/icons/FileX.png",
+                              width: 24,
+                              height: 24,
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              'Report Resource',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Colors.black54,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 80),
+                  ],
+                ),
               );
             } else if (state is ResourceDetailsFailure) {
               return Center(child: Text(state.message));

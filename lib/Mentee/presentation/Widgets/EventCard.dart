@@ -42,7 +42,6 @@ class _EventCardState extends State<EventCard> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
-                      height: 160,
                       imageUrl: widget.eccList.imgUrl ?? "",
                       fit: BoxFit.cover,
                       width: double.infinity,
