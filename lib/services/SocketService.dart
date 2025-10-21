@@ -10,6 +10,9 @@ class SocketService {
       _socket = IO.io(ApiConfig.socket_url, <String, dynamic>{
         'transports': ['websocket', 'polling'],
         'autoConnect': true,
+        'query': {
+          'userId': userId, // 👈 passed here
+        },
       });
 
       _socket!.connect();
