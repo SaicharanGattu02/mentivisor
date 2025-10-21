@@ -272,13 +272,22 @@ class _CommunityScreenState extends State<Communityscreen> {
                     return Expanded(
                       child: CustomScrollView(
                         slivers: [
-                          SliverList.separated(
-                            itemCount: 5,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 16), // The separator
-                            itemBuilder: (context, index) {
-                              return CommunityPostShimmer();
-                            },
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            sliver: SliverGrid(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: _getCrossAxisCount(context), // 👈 Responsive count
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: _getChildAspectRatio(context), // 👈 Responsive ratio
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                  return const CommunityPostShimmer();
+                                },
+                                childCount: 5, // same as before
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -371,27 +380,34 @@ class _CommunityScreenState extends State<Communityscreen> {
                         },
                         child: CustomScrollView(
                           slivers: [
-                            SliverList.separated(
-                              itemCount: communityposts?.length ?? 0,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 16), // The separator
-                              itemBuilder: (context, index) {
-                                final communitypost = communityposts?[index];
-                                return PostCard(
-                                  scope: _onCampus.value ? "" : "beyond",
-                                  communityPosts:
-                                      communitypost ?? CommunityPosts(),
-                                );
-                              },
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              sliver: SliverGrid(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: _getCrossAxisCount(context),
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: _getChildAspectRatio(context),
+                                ),
+                                delegate: SliverChildBuilderDelegate(
+                                      (context, index) {
+                                    final communitypost = communityposts?[index];
+                                    return PostCard(
+                                      scope: _onCampus.value ? "" : "beyond",
+                                      communityPosts: communitypost ?? CommunityPosts(),
+                                    );
+                                  },
+                                  childCount: communityposts?.length ?? 0,
+                                ),
+                              ),
                             ),
+
                             if (state is CommunityPostsLoadingMore)
-                              SliverToBoxAdapter(
+                              const SliverToBoxAdapter(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(25.0),
+                                  padding: EdgeInsets.all(25.0),
                                   child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 0.8,
-                                    ),
+                                    child: CircularProgressIndicator(strokeWidth: 0.8),
                                   ),
                                 ),
                               ),
@@ -469,4 +485,37 @@ class _CommunityScreenState extends State<Communityscreen> {
       ),
     );
   }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 1; // Mobile
+    } else if (width < 900) {
+      return 2; // Tablet
+    } else {
+      return 3; // Larger screens
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    // base ratio derived from screen proportions
+    double baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile – taller cards
+      return baseRatio * 2.4;
+    } else if (width > 600) {
+      // Tablet – more square
+      return baseRatio * 1.6  ;
+    } else {
+      // Desktop or large tablet
+      return baseRatio * 2.2;
+    }
+  }
+
 }

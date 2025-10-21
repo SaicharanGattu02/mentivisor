@@ -35,6 +35,36 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
     );
   }
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 2; // 📱 Mobile: 2 columns
+    } else if (width > 600) {
+      return 3; // 💻 Tablet/Desktop: 3 columns
+    } else {
+      return 4;
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+    final baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile – slightly taller
+      return baseRatio * 1.75;
+    } else if (width > 600) {
+      // Tablet – balanced
+      return baseRatio * 1.55;
+    } else {
+      // Desktop – wider
+      return baseRatio * 2.1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -125,36 +155,23 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     return Expanded(
                       child: GridView.builder(
                         shrinkWrap: true,
-                        physics: AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: list.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                          crossAxisCount: _getCrossAxisCount(
+                            context,
+                          ), // 👈 2 on mobile, 3 on tab
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-                          childAspectRatio: () {
-                            final screenHeight = MediaQuery.of(
-                              context,
-                            ).size.height;
-                            final size = MediaQuery.of(context).size;
-                            final screenWidth = size.width;
-                            double aspectRatio =
-                                screenWidth / (screenHeight * 0.5);
-                            if (screenWidth < 400) {
-                              aspectRatio = screenWidth / (screenHeight * 0.63);
-                            } else if (screenWidth < 600) {
-                              aspectRatio = screenWidth / (screenHeight * 0.59);
-                            } else if (screenWidth < 800) {
-                              aspectRatio = screenWidth / (screenHeight * 0.4);
-                            } else {
-                              aspectRatio = screenWidth / (screenHeight * 0.35);
-                            }
-                            return aspectRatio;
-                          }(),
+                          childAspectRatio: _getChildAspectRatio(
+                            context,
+                          ), // 👈 dynamic ratio
                         ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
                           final url = m.user?.profilePicUrl?.trim();
                           final hasPic = url != null && url.isNotEmpty;
+
                           return GestureDetector(
                             onTap: () {
                               if (isGuest) {
@@ -164,7 +181,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               }
                             },
                             child: Container(
-                              padding: EdgeInsets.all(15),
+                              padding: const EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
@@ -185,17 +202,17 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                             color: Colors.grey,
                                           ),
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
                                   Text(
                                     m.user?.name ?? '',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                       color: Color(0xff333333),
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     m.user?.college?.name ?? '',
                                     maxLines: 2,
@@ -206,7 +223,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     m.user?.bio ?? '',
                                     maxLines: 1,
@@ -217,7 +234,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
-                                  SizedBox(height: 12),
+                                  const SizedBox(height: 12),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -244,8 +261,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                               ),
                                             ),
                                             TextSpan(
-                                              text:
-                                                  ' (${m.totalReviews ?? 0.0})',
+                                              text: ' (${m.totalReviews ?? 0})',
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 fontFamily: 'segeo',
@@ -256,21 +272,6 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                           ],
                                         ),
                                       ),
-                                      // SizedBox(width: 8),
-                                      // Image.asset(
-                                      //   "assets/images/coinsgold.png",
-                                      //   height: 16,
-                                      //   width: 16,
-                                      // ),
-                                      // const SizedBox(width: 4),
-                                      // Text(
-                                      //   '${m.coinsPerMinute ?? 0}',
-                                      //   style: const TextStyle(
-                                      //     fontSize: 12,
-                                      //     color: Color(0xff333333),
-                                      //     fontWeight: FontWeight.w700,
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                 ],

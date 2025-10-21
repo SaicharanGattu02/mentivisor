@@ -133,57 +133,43 @@ class _NotificationsState extends State<Notifications> {
                         }
                         return false;
                       },
-                      child: NotificationListener<UserScrollNotification>(
-                        onNotification: (notification) {
-                          if (notification.direction ==
-                                  ScrollDirection.reverse &&
-                              _fabVisible.value) {
-                            _fabVisible.value = false;
-                          } else if (notification.direction ==
-                                  ScrollDirection.forward &&
-                              !_fabVisible.value) {
-                            _fabVisible.value = true;
-                          }
-                          return false;
-                        },
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverPadding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              sliver: SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    final item = filtered[index];
-                                    return _buildNotificationCard(
-                                      icon: _getIconForType(item.type),
-                                      title: item.title ?? "",
-                                      subtitle:
-                                          item.remarks ?? item.message ?? "",
-                                      date: item.createdAt ?? "",
-                                    );
-                                  },
-                                  childCount: filtered.length,
-                                  addAutomaticKeepAlives: false,
-                                  addRepaintBoundaries: true,
-                                  addSemanticIndexes: false,
-                                ),
-                              ),
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverGrid(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _getCrossAxisCount(context), // 👈 1 on mobile, 2 on tab
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 0,
+                              childAspectRatio: _getChildAspectRatio(context), // 👈 based on screen ratio
                             ),
-                            if (state is NotificationsLoadingMore)
-                              const SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: EdgeInsets.all(25.0),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 1,
-                                    ),
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                final item = filtered[index];
+                                return _buildNotificationCard(
+                                  icon: _getIconForType(item.type),
+                                  title: item.title ?? "",
+                                  subtitle: item.remarks ?? item.message ?? "",
+                                  date: item.createdAt ?? "",
+                                );
+                              },
+                              childCount: filtered.length,
+                              addAutomaticKeepAlives: false,
+                              addRepaintBoundaries: true,
+                              addSemanticIndexes: false,
+                            ),
+                          ),
+                          if (state is NotificationsLoadingMore)
+                            const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.all(25.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1,
                                   ),
                                 ),
                               ),
-                          ],
-                        ),
+                            ),
+                        ],
                       ),
                     );
                   } else {
@@ -197,6 +183,39 @@ class _NotificationsState extends State<Notifications> {
       ),
     );
   }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 1; // 📱 Mobile
+    } else if (width > 600) {
+      return 2; // 💻 Tablet
+    } else {
+      return 3; // 🖥️ Desktop or large screens
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    // derive a smooth ratio that fits naturally on each device
+    final baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile – taller cards for better readability
+      return baseRatio *6.2;
+    } else if (width > 600) {
+      // Tablet – wider cards
+      return baseRatio * 4;
+    } else {
+      // Desktop – most balanced layout
+      return baseRatio * 2.2;
+    }
+  }
+
 
   // 🔹 Notification Card Widget
   Widget _buildNotificationCard({
@@ -308,17 +327,55 @@ class _NotificationsState extends State<Notifications> {
 class NotificationsListShimmer extends StatelessWidget {
   const NotificationsListShimmer({super.key});
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 1; // 📱 Mobile
+    } else if (width > 600) {
+      return 2; // 💻 Tablet
+    } else {
+      return 3; // 🖥️ Desktop or large screens
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    // derive a smooth ratio that fits naturally on each device
+    final baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile – taller cards for better readability
+      return baseRatio *6.5;
+    } else if (width > 600) {
+      // Tablet – wider cards
+      return baseRatio * 4;
+    } else {
+      // Desktop – most balanced layout
+      return baseRatio * 2.2;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       physics: const NeverScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          sliver: SliverList(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getCrossAxisCount(context), // 👈 responsive layout
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
+            ),
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const _NotificationCardShimmer(),
-              childCount: 6, // number of shimmer cards
+                  (context, index) => const _NotificationCardShimmer(),
+              childCount: 6, // number of shimmer placeholders
             ),
           ),
         ),

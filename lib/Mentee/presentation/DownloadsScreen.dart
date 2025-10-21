@@ -97,25 +97,48 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           }
                           return false;
                         },
-                        child: ListView.separated(
-                          itemCount: downloads.length + (loadingMore ? 1 : 0),
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 16),
-                          itemBuilder: (context, index) {
-                            if (loadingMore && index == downloads.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(25.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.8,
-                                  ),
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              sliver: SliverGrid(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: _getCrossAxisCount(
+                                        context,
+                                      ), // 👈 1 mobile, 2 tab
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 16,
+                                      childAspectRatio: _getChildAspectRatio(
+                                        context,
+                                      ), // 👈 responsive ratio
+                                    ),
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    if (loadingMore &&
+                                        index == downloads.length) {
+                                      return const Padding(
+                                        padding: EdgeInsets.all(25.0),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 0.8,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return DownloadCard(
+                                      downloads: downloads[index],
+                                    );
+                                  },
+                                  childCount:
+                                      downloads.length + (loadingMore ? 1 : 0),
                                 ),
-                              );
-                            }
-                            return DownloadCard(
-                              downloads: downloads[index],
-                            ); // <-- return
-                          },
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     } else {
@@ -130,21 +153,110 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       ),
     );
   }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 1; // 📱 Mobile
+    } else if (width < 900) {
+      return 2; // 💻 Tablet
+    } else {
+      return 3; // 🖥️ Desktop
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    final baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile: taller layout to fit row design
+      return baseRatio * 4.3;
+    } else if (width > 600) {
+      // Tablet: more balanced
+      return baseRatio * 2.8;
+    } else {
+      // Desktop: wider cards
+      return baseRatio * 2.2;
+    }
+  }
 }
 
 class DownloadListShimmer extends StatelessWidget {
   const DownloadListShimmer({super.key});
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 1; // 📱 Mobile
+    } else if (width < 900) {
+      return 2; // 💻 Tablet
+    } else {
+      return 3; // 🖥️ Desktop
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+    final baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile: taller layout to fit row design
+      return baseRatio * 4.3;
+    } else if (width > 600) {
+      // Tablet: more balanced
+      return baseRatio * 2.8;
+    } else {
+      // Desktop: wider cards
+      return baseRatio * 2.2;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
+    return CustomScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 6, // show 6 shimmer placeholders
-      separatorBuilder: (_, __) => const SizedBox(height: 16),
-      itemBuilder: (context, index) {
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getCrossAxisCount(context), // 👈 1 mobile, 2 tab
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
+            ),
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) => const _DownloadShimmerCard(),
+              childCount: 6, // shimmer placeholders
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+class _DownloadShimmerCard extends StatelessWidget {
+  const _DownloadShimmerCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final isCompact = width < 400;
+
         return Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(isCompact ? 10 : 12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
@@ -159,36 +271,32 @@ class DownloadListShimmer extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 🔹 Thumbnail / Preview Box
+              /// 🔹 Thumbnail shimmer
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: shimmerRectangle(100, context),
+                child: shimmerRectangle(isCompact ? 80 : 100, context),
               ),
               const SizedBox(width: 12),
 
-              /// 🔹 Text Content
+              /// 🔹 Text shimmer area
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    shimmerText(180, 16, context), // Title
+                    shimmerText(width * 0.45, 16, context), // Title
                     const SizedBox(height: 8),
-                    shimmerText(140, 12, context), // Subtitle / Description
+                    shimmerText(width * 0.35, 12, context), // Subtitle
                     const SizedBox(height: 8),
-                    shimmerText(120, 12, context), // Secondary line
-
+                    shimmerText(width * 0.3, 12, context), // Secondary
                     const SizedBox(height: 10),
-
-                    /// 🔹 Optional progress shimmer (simulate download bar)
-                    shimmerLinearProgress(8, context),
+                    shimmerLinearProgress(8, context), // Download bar
                   ],
                 ),
               ),
-
               const SizedBox(width: 10),
 
-              /// 🔹 Action Icon (Download / Play)
-              shimmerCircle(32, context),
+              /// 🔹 Action shimmer
+              shimmerCircle(isCompact ? 28 : 32, context),
             ],
           ),
         );
@@ -196,3 +304,7 @@ class DownloadListShimmer extends StatelessWidget {
     );
   }
 }
+
+
+
+

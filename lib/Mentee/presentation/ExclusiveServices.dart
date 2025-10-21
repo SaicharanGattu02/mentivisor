@@ -101,18 +101,30 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                 ),
               ),
             ),
+            SizedBox(height: 20),
             BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
               builder: (context, state) {
                 if (state is ExclusiveserviceStateLoading) {
                   return Expanded(
-                    child: ListView.separated(
-                      itemCount: 5,
-                      separatorBuilder: (_, __) => const SizedBox(height: 16),
-                      itemBuilder: (context, index) => const ServiceCardShimmer(),
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverGrid(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: _getCrossAxisCount(context),
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 0,
+                                childAspectRatio: _getChildAspectRatio(context),
+                              ),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => const ServiceCardShimmer(),
+                            childCount: 5, // shimmer count
+                          ),
+                        ),
+                      ],
                     ),
                   );
-                }
-                else if (state is ExclusiveserviceStateFailure) {
+                } else if (state is ExclusiveserviceStateFailure) {
                   return Center(child: Text(state.msg ?? 'Failed to load'));
                 } else if (state is! ExclusiveserviceStateLoaded) {
                   return const Center(child: Text('No data available'));
@@ -161,29 +173,36 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                             ),
                           )
                         else
-                          SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
-                            sliver: SliverList.separated(
-                              itemCount: list.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 16),
-                              itemBuilder: (context, index) {
-                                final serviceList = list[index];
-                                return _ServiceCard(
-                                  exclusiveServiceImageUrl:
-                                      serviceList.exclusiveService ?? '',
-                                  imageUrl: serviceList.imageUrl ?? '',
-                                  // authorName: serviceList.name ?? '',
-                                  title: serviceList.name ?? '',
-                                  description: serviceList.description ?? '',
-                                  onTap: () {
-                                    context.push(
-                                      '/service_details?id=${serviceList.id}&title=${serviceList.name ?? ''}',
-                                    ); // pass whole model (optional)
-                                  },
-                                );
-                              },
-                            ),
+                          SliverGrid(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: _getCrossAxisCount(
+                                    context,
+                                  ), // 👈 1 on mobile, 2 on tab
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 0,
+                                  childAspectRatio: _getChildAspectRatio(
+                                    context,
+                                  ), // 👈 dynamic ratio
+                                ),
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final serviceList = list[index];
+                              return _ServiceCard(
+                                exclusiveServiceImageUrl:
+                                    serviceList.exclusiveService ?? '',
+                                imageUrl: serviceList.imageUrl ?? '',
+                                title: serviceList.name ?? '',
+                                description: serviceList.description ?? '',
+                                onTap: () {
+                                  context.push(
+                                    '/service_details?id=${serviceList.id}&title=${serviceList.name ?? ''}',
+                                  );
+                                },
+                              );
+                            }, childCount: list.length),
                           ),
                         if (state is ExclusiveserviceStateLoadingMore)
                           const SliverToBoxAdapter(
@@ -206,6 +225,38 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
         ),
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 1; // Mobile
+    } else if (width < 900) {
+      return 2; // Tablet
+    } else {
+      return 3; // Larger screens
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    // base ratio derived from screen proportions
+    double baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile – taller cards
+      return baseRatio * 3.15;
+    } else if (width > 600) {
+      // Tablet – more square
+      return baseRatio * 2.2;
+    } else {
+      // Desktop or large tablet
+      return baseRatio * 2.2;
+    }
   }
 }
 
@@ -341,10 +392,8 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
-
 class ServiceCardShimmer extends StatelessWidget {
   const ServiceCardShimmer({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -376,13 +425,10 @@ class ServiceCardShimmer extends StatelessWidget {
               child: shimmerContainer(double.infinity, 140, context),
             ),
           ),
-
-          const SizedBox(height: 12),
-
+          const SizedBox(height: 6),
           // 🔹 Title shimmer
           shimmerText(150, 14, context),
           const SizedBox(height: 6),
-
           // 🔹 Description shimmer (2 lines)
           shimmerText(double.infinity, 12, context),
           const SizedBox(height: 4),

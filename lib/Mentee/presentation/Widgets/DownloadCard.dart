@@ -23,44 +23,22 @@ class DownloadCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius:
-              BorderRadiusGeometry.circular(
-                8,
-              ),
+              borderRadius: BorderRadiusGeometry.circular(8),
               child: CachedNetworkImage(
-                width: SizeConfig.screenWidth * 0.3,
+                width: SizeConfig.screenWidth * 0.28,
                 height: 144,
-                imageUrl:
-                downloads.image ?? "",
+                imageUrl: downloads.image ?? "",
                 fit: BoxFit.cover,
-                placeholder:
-                    (
-                    context,
-                    url,
-                    ) => SizedBox(
+                placeholder: (context, url) => SizedBox(
                   width: 120,
                   height: 120,
-                  child: Center(
-                    child: spinkits
-                        .getSpinningLinespinkit(),
-                  ),
+                  child: Center(child: spinkits.getSpinningLinespinkit()),
                 ),
-                errorWidget:
-                    (
-                    context,
-                    url,
-                    error,
-                    ) => Container(
+                errorWidget: (context, url, error) => Container(
                   width: 120,
                   height: 120,
-                  color: Color(
-                    0xffF8FAFE,
-                  ),
-                  child: Icon(
-                    Icons.broken_image,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
+                  color: Color(0xffF8FAFE),
+                  child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
                 ),
               ),
             ),

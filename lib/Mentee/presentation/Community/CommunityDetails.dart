@@ -686,7 +686,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                       placeholder: (context, url) =>
                           Center(child: spinkits.getSpinningLinespinkit()),
                       errorWidget: (context, url, error) => Container(
-                        height: 160,
                         color: Colors.grey.shade100,
                         child: const Icon(Icons.broken_image, size: 40),
                       ),

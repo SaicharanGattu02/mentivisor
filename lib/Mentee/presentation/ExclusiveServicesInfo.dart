@@ -113,7 +113,6 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: SizedBox(
-                                height: 170,
                                 width: double.infinity,
                                 child: exclusiveServiceImge.isEmpty
                                     ? Container(

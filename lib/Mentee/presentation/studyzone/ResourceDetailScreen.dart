@@ -70,6 +70,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
         ],
       ),
       body: Container(
+        height: SizeConfig.screenHeight,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
