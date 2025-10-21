@@ -107,7 +107,7 @@ class MenteeShimmerLoader extends StatelessWidget {
   double _getChildAspectRatio(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
     if (screenWidth < 600) {
-      return 0.75; // Taller cards on mobile for better readability
+      return 2; // Taller cards on mobile for better readability
     } else {
       return 2.2; // Slightly wider aspect on tablet/desktop for balanced layout
     }

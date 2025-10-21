@@ -28,7 +28,7 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffEFF6FF),
-      appBar: CustomAppBar1(title: "My Mentee", actions:  []),
+      appBar: CustomAppBar1(title: "My Mentee", actions: []),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
         decoration: const BoxDecoration(
@@ -41,7 +41,10 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10.0,
+                  horizontal: 16.0,
+                ),
                 child: Text(
                   "List",
                   style: TextStyle(
@@ -61,18 +64,26 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
                     return CustomScrollView(
                       slivers: [
                         SliverGrid(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: _getCrossAxisCount(context),
-                            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-                            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-                            childAspectRatio: _getChildAspectRatio(context),
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: _getCrossAxisCount(context),
+                                crossAxisSpacing: SizeConfig.screenWidth < 600
+                                    ? 12
+                                    : 16,
+                                mainAxisSpacing: SizeConfig.screenWidth < 600
+                                    ? 0
+                                    : 16,
+                                childAspectRatio: _getChildAspectRatio(context),
+                              ),
                           delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                              final menteeList = state.myMenteesModel.data?.menteeData?[index];
+                            (context, index) {
+                              final menteeList =
+                                  state.myMenteesModel.data?.menteeData?[index];
                               return MenteeCard(mentee: menteeList!);
                             },
-                            childCount: state.myMenteesModel.data?.menteeData?.length ?? 0,
+                            childCount:
+                                state.myMenteesModel.data?.menteeData?.length ??
+                                0,
                           ),
                         ),
                         if (state is MyMenteeLoadingMore)
@@ -80,7 +91,9 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(25.0),
                               child: Center(
-                                child: CircularProgressIndicator(strokeWidth: 0.8),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 0.8,
+                                ),
                               ),
                             ),
                           ),
@@ -98,6 +111,7 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
       ),
     );
   }
+
   int _getCrossAxisCount(BuildContext context) {
     final width = SizeConfig.screenWidth;
     if (width < 600) {
@@ -112,7 +126,7 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
   double _getChildAspectRatio(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
     if (screenWidth < 600) {
-      return 0.75; // Taller cards on mobile for better readability
+      return 2; // Taller cards on mobile for better readability
     } else {
       return 2.2; // Slightly wider aspect on tablet/desktop for balanced layout
     }

@@ -484,6 +484,26 @@ class _StatCard extends StatelessWidget {
 class CategoryGridShimmer extends StatelessWidget {
   const CategoryGridShimmer({super.key});
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 2; // 1 column for mobile
+    } else if (width > 600) {
+      return 3; // 2 columns for tablets and larger
+    } else {
+      return 3; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 0.85;
+    } else {
+      return 0.85;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final crossAxisCount = MediaQuery.of(context).size.width < 600 ? 2 : 3;
@@ -492,10 +512,10 @@ class CategoryGridShimmer extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
+        crossAxisCount: _getCrossAxisCount(context),
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        childAspectRatio: 1.08,
+        childAspectRatio: _getChildAspectRatio(context),
       ),
       itemCount: 8, // You can change based on how many shimmer cards you want
       itemBuilder: (context, index) {

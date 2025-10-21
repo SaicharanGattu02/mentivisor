@@ -43,8 +43,7 @@ class AuthLandingScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
-
+                       SizedBox(height: SizeConfig.screenHeight*0.08),
                       RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(

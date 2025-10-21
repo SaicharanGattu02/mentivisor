@@ -301,7 +301,7 @@ class _CouponsListState extends State<CouponsList> {
   double _getChildAspectRatio(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
     if (screenWidth < 600) {
-      return 1.6; // Taller cards on mobile for better readability
+      return 1.5; // Taller cards on mobile for better readability
     } else {
       return 4.5; // Slightly wider aspect on tablet/desktop for balanced layout
     }
@@ -349,7 +349,7 @@ class CouponGridShimmer extends StatelessWidget {
   double _getChildAspectRatio(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
     if (screenWidth < 600) {
-      return 1.6; // Taller cards on mobile for better readability
+      return 1.5; // Taller cards on mobile for better readability
     } else {
       return 4.5;
     }
