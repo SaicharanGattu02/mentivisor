@@ -496,21 +496,33 @@ class _EccScreenState extends State<EccScreen> {
                                 SliverPadding(
                                   padding: const EdgeInsets.all(8.0),
                                   sliver: SliverGrid(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 1 : 2, // 👈 Responsive layout
-                                      crossAxisSpacing: 16,
-                                      mainAxisSpacing: 16,
-                                      childAspectRatio: _getChildAspectRatio(context), // 👈 Maintains proportion
-                                    ),
-                                    delegate: SliverChildBuilderDelegate(
-                                          (context, index) {
-                                        return EventCard(
-                                          eccList: ecclist[index],
-                                          scope: onCampusNotifier.value ? "" : "beyond",
-                                        );
-                                      },
-                                      childCount: ecclist.length,
-                                    ),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount:
+                                              MediaQuery.of(
+                                                    context,
+                                                  ).size.width <
+                                                  600
+                                              ? 1
+                                              : 2, // 👈 Responsive layout
+                                          crossAxisSpacing: 16,
+                                          mainAxisSpacing: 16,
+                                          childAspectRatio:
+                                              _getChildAspectRatio(
+                                                context,
+                                              ), // 👈 Maintains proportion
+                                        ),
+                                    delegate: SliverChildBuilderDelegate((
+                                      context,
+                                      index,
+                                    ) {
+                                      return EventCard(
+                                        eccList: ecclist[index],
+                                        scope: onCampusNotifier.value
+                                            ? ""
+                                            : "beyond",
+                                      );
+                                    }, childCount: ecclist.length),
                                   ),
                                 ),
 
@@ -527,7 +539,7 @@ class _EccScreenState extends State<EccScreen> {
                                     ),
                                   ),
                               ],
-                            )
+                            ),
                           ),
                         ),
                       );
@@ -628,7 +640,7 @@ double _getChildAspectRatio(BuildContext context) {
   // Adjust a bit to avoid overly tall/narrow cards
   if (width < 600) {
     // Mobile – single column
-    return baseRatio * 2.1; // taller cards
+    return baseRatio * 1.85; // taller cards
   } else if (width > 600) {
     // Tablet – 2 columns
     return baseRatio * 1.4;
@@ -637,7 +649,6 @@ double _getChildAspectRatio(BuildContext context) {
     return baseRatio * 2.2;
   }
 }
-
 
 class ECCShimmer extends StatefulWidget {
   const ECCShimmer({super.key});
