@@ -8,6 +8,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../../services/AuthService.dart';
 import '../../../utils/color_constants.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -52,84 +53,82 @@ class AppDrawer extends StatelessWidget {
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child:
-                                  BlocBuilder<
-                                    MentorProfileCubit1,
-                                    MentorProfileStates
-                                  >(
-                                    builder: (context, state) {
-                                      final user_data =
-                                          state is MentorProfile1Loaded
-                                          ? state.mentorProfileModel
-                                          : null;
-                                      return Row(
-                                        children: [
-                                          CachedNetworkImage(
-                                            imageUrl:
-                                                user_data?.data?.profilePic ??
-                                                "",
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    CircleAvatar(
-                                                      radius: 20,
-                                                      backgroundImage:
-                                                          imageProvider,
-                                                    ),
-                                            placeholder: (context, url) =>
+                              child: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
+                                builder: (context, state) {
+                                  final user_data =
+                                      state is MentorProfile1Loaded
+                                      ? state.mentorProfileModel
+                                      : null;
+                                  final cost =
+                                      user_data?.data?.coinsPerMinute ?? "";
+                                  final parsedCost =
+                                      int.tryParse(cost.toString()) ?? 0;
+                                  AppStateMentorCostPerMinuteCoins.fetchCoins(
+                                    parsedCost,
+                                  );
+                                  return Row(
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                            user_data?.data?.profilePic ?? "",
+                                        imageBuilder:
+                                            (context, imageProvider) =>
                                                 CircleAvatar(
                                                   radius: 20,
-                                                  backgroundColor: Colors.grey,
-                                                  child: SizedBox(
-                                                    width: 16,
-                                                    height: 16,
-                                                    child: Center(
-                                                      child: spinkits
-                                                          .getSpinningLinespinkit(),
-                                                    ),
-                                                  ),
+                                                  backgroundImage:
+                                                      imageProvider,
                                                 ),
-                                            errorWidget:
-                                                (
-                                                  context,
-                                                  url,
-                                                  error,
-                                                ) => const CircleAvatar(
-                                                  radius: 20,
-                                                  backgroundImage: AssetImage(
-                                                    "assets/images/profile.png",
-                                                  ),
+                                        placeholder: (context, url) =>
+                                            CircleAvatar(
+                                              radius: 20,
+                                              backgroundColor: Colors.grey,
+                                              child: SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                                child: Center(
+                                                  child: spinkits
+                                                      .getSpinningLinespinkit(),
                                                 ),
-                                          ),
-                                          // CircleAvatar(
-                                          //   radius: 20,
-                                          //   backgroundImage:
-                                          //       (user_data?.data?.profilePic !=
-                                          //               null &&
-                                          //           user_data!
-                                          //               .data!
-                                          //               .profilePic!
-                                          //               .isNotEmpty)
-                                          //       ? CachedNetworkImageProvider(
-                                          //           user_data.data!.profilePic!,
-                                          //         )
-                                          //       : const AssetImage(
-                                          //               "images/profile.png",
-                                          //             )
-                                          //             as ImageProvider,
-                                          // ),
-                                          const SizedBox(width: 14),
-                                          Text(
-                                            user_data?.data?.name ?? "",
-                                            style: const TextStyle(
-                                              fontFamily: 'segeo',
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                        errorWidget: (context, url, error) =>
+                                            const CircleAvatar(
+                                              radius: 20,
+                                              backgroundImage: AssetImage(
+                                                "assets/images/profile.png",
+                                              ),
+                                            ),
+                                      ),
+                                      // CircleAvatar(
+                                      //   radius: 20,
+                                      //   backgroundImage:
+                                      //       (user_data?.data?.profilePic !=
+                                      //               null &&
+                                      //           user_data!
+                                      //               .data!
+                                      //               .profilePic!
+                                      //               .isNotEmpty)
+                                      //       ? CachedNetworkImageProvider(
+                                      //           user_data.data!.profilePic!,
+                                      //         )
+                                      //       : const AssetImage(
+                                      //               "images/profile.png",
+                                      //             )
+                                      //             as ImageProvider,
+                                      // ),
+                                      const SizedBox(width: 14),
+                                      Text(
+                                        user_data?.data?.name ?? "",
+                                        style: const TextStyle(
+                                          fontFamily: 'segeo',
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           _DrawerItem(

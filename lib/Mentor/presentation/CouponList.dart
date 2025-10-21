@@ -97,43 +97,11 @@ class _CouponsListState extends State<CouponsList> {
                       vertical: 12,
                     ),
                     sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 500,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: _getCrossAxisCount(context),
                         mainAxisSpacing: 12,
                         crossAxisSpacing: 12,
-                        childAspectRatio: () {
-                          final size = MediaQuery.of(context).size;
-                          final screenWidth = size.width;
-                          final screenHeight = size.height;
-
-                          // Base responsive ratio formula
-                          double aspectRatio =
-                              screenWidth / (screenHeight * 0.45);
-
-                          // Optional fine-tuning for breakpoints
-                          if (screenWidth < 400) {
-                            aspectRatio =
-                                screenWidth /
-                                (screenHeight *
-                                    0.32); // tighter cards on small phones
-                          } else if (screenWidth < 600) {
-                            aspectRatio =
-                                screenWidth /
-                                (screenHeight *
-                                    0.28); // balanced cards for tablets
-                          } else if (screenWidth > 600) {
-                            aspectRatio =
-                                screenWidth /
-                                (screenHeight *
-                                    0.45); // balanced cards for tablets
-                          } else {
-                            aspectRatio =
-                                screenWidth /
-                                (screenHeight * 0.35); // wider for desktop
-                          }
-
-                          return aspectRatio;
-                        }(),
+                        childAspectRatio: _getChildAspectRatio(context),
                       ),
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final coupon = coupons[index];
@@ -318,6 +286,26 @@ class _CouponsListState extends State<CouponsList> {
       ),
     );
   }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 1.6; // Taller cards on mobile for better readability
+    } else {
+      return 4.5; // Slightly wider aspect on tablet/desktop for balanced layout
+    }
+  }
 }
 
 class CouponGridShimmer extends StatelessWidget {
@@ -331,38 +319,11 @@ class CouponGridShimmer extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 500,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getCrossAxisCount(context),
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: () {
-                final size = MediaQuery.of(context).size;
-                final screenWidth = size.width;
-                final screenHeight = size.height;
-
-                // Base responsive ratio formula
-                double aspectRatio = screenWidth / (screenHeight * 0.45);
-
-                // Optional fine-tuning for breakpoints
-                if (screenWidth < 400) {
-                  aspectRatio =
-                      screenWidth /
-                      (screenHeight * 0.32); // tighter cards on small phones
-                } else if (screenWidth < 600) {
-                  aspectRatio =
-                      screenWidth /
-                      (screenHeight * 0.28); // balanced cards for tablets
-                } else if (screenWidth > 600) {
-                  aspectRatio =
-                      screenWidth /
-                      (screenHeight * 0.45); // balanced cards for tablets
-                } else {
-                  aspectRatio =
-                      screenWidth / (screenHeight * 0.35); // wider for desktop
-                }
-
-                return aspectRatio;
-              }(),
+              childAspectRatio: _getChildAspectRatio(context),
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) => const _CouponCardShimmer(),
@@ -372,6 +333,26 @@ class CouponGridShimmer extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 1.6; // Taller cards on mobile for better readability
+    } else {
+      return 4.5;
+    }
   }
 }
 

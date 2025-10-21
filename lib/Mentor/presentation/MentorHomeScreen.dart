@@ -280,7 +280,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
   double _getChildAspectRatio(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
     if (screenWidth < 600) {
-      return 1.9;
+      return 1.7;
     } else {
       return 1.8; // Slightly wider aspect for balanced layout
     }

@@ -272,21 +272,18 @@ class _CommunityScreenState extends State<Communityscreen> {
                     return Expanded(
                       child: CustomScrollView(
                         slivers: [
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            sliver: SliverGrid(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(context), // 👈 Responsive count
-                                mainAxisSpacing: 16,
-                                crossAxisSpacing: 16,
-                                childAspectRatio: _getChildAspectRatio(context), // 👈 Responsive ratio
-                              ),
-                              delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                  return const CommunityPostShimmer();
-                                },
-                                childCount: 5, // same as before
-                              ),
+                          SliverGrid(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _getCrossAxisCount(context), // 👈 Responsive count
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childAspectRatio: _getChildAspectRatio(context), // 👈 Responsive ratio
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                return const CommunityPostShimmer();
+                              },
+                              childCount: 5, // same as before
                             ),
                           ),
                         ],
@@ -508,7 +505,7 @@ class _CommunityScreenState extends State<Communityscreen> {
 
     if (width < 600) {
       // Mobile – taller cards
-      return baseRatio * 2.4;
+      return baseRatio * 2.05;
     } else if (width > 600) {
       // Tablet – more square
       return baseRatio * 1.6  ;

@@ -710,7 +710,7 @@ class SessionCard extends StatelessWidget {
                                   status != 'cancelled' &&
                                   status != 'completed') ...[
                                 SizedBox(
-                                  width: SizeConfig.screenWidth * 0.3,
+                                  width: SizeConfig.screenWidth>600?SizeConfig.screenWidth * 0.3:SizeConfig.screenWidth * 0.35,
                                   child: CustomAppButton1(
                                     height: 31,
                                     text: "Join Session",
