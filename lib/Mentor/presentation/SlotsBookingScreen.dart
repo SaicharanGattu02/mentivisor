@@ -9,6 +9,7 @@ import '../../Components/CustomSnackBar.dart';
 import '../../Components/Shimmers.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
+import '../../utils/constants.dart';
 import '../Models/AvailableSlotsModel.dart';
 import '../data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
 import '../data/Cubits/AvailabilitySlots/AvailabilitySlotsStates.dart';
@@ -57,6 +58,8 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   DateTime visibleMonth = DateTime.now();
   DateTime selectedDate = DateTime.now();
   final TextEditingController _taskNameController = TextEditingController();
+  TimeOfDay? from;
+  TimeOfDay? to;
 
   bool keepForWeek = true;
 
@@ -864,11 +867,307 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
   //   return out;
   // }
 
+  // Future<void> _showAddSlotDialog() async {
+  //   TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
+  //   TimeOfDay to = const TimeOfDay(hour: 10, minute: 0);
+  //   final coinsCtl = TextEditingController(text: "00");
+  //   String? errorText;
+  //
+  //   await showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (ctx) {
+  //       return StatefulBuilder(
+  //         builder: (ctx, setLocal) {
+  //           Future<void> pickFrom() async {
+  //             final p = await _pickTime(ctx, from);
+  //             if (p != null) setLocal(() => from = p);
+  //           }
+  //
+  //           Future<void> pickTo() async {
+  //             final p = await _pickTime(ctx, to);
+  //             if (p != null) setLocal(() => to = p);
+  //           }
+  //
+  //           void onAdd() async {
+  //             // basic validation
+  //             final d = _diffOnDay(from, to, selectedDate);
+  //             if (d.inMinutes < 0) {
+  //               setLocal(
+  //                 () => errorText = "End time must be after start time.",
+  //               );
+  //               return;
+  //             }
+  //             if (d.inMinutes < 30) {
+  //               setLocal(() => errorText = "Minimum slot is 30 minutes.");
+  //               return;
+  //             }
+  //             if (d.inMinutes > 180) {
+  //               setLocal(() => errorText = "Maximum slot is 3 hours.");
+  //               return;
+  //             }
+  //
+  //             // build API data map (24-hour format)
+  //             String fmtTime(TimeOfDay t) =>
+  //                 "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
+  //
+  //             final mapData = {
+  //               "date": DateFormat("yyyy-MM-dd").format(selectedDate),
+  //               "start_time": fmtTime(from), // e.g. 11:35
+  //               "end_time": fmtTime(to), // e.g. 12:35
+  //               "repeat_weekly": keepForWeek ? "1" : "0",
+  //             };
+  //
+  //             // call cubit
+  //             final response = await context
+  //                 .read<MentorAvailabilityCubit>()
+  //                 .addMentorAvailability(mapData);
+  //
+  //             Navigator.of(ctx).pop(); // close dialog
+  //           }
+  //
+  //           return Dialog(
+  //             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(18),
+  //             ),
+  //             child: Container(
+  //               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 borderRadius: BorderRadius.circular(18),
+  //               ),
+  //               child: Column(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   // Title
+  //                   const Text(
+  //                     "Add Slot",
+  //                     style: TextStyle(
+  //                       fontFamily: 'segeo',
+  //                       fontSize: 16,
+  //                       fontWeight: FontWeight.w700,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 6),
+  //                   Text(
+  //                     DateFormat('d MMM yy').format(selectedDate),
+  //                     style: const TextStyle(
+  //                       fontFamily: 'segeo',
+  //                       fontSize: 12,
+  //                       color: Color(0xFF7C8596),
+  //                       fontWeight: FontWeight.w600,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 12),
+  //
+  //                   SizedBox(
+  //                     height: 40,
+  //                     child: Row(
+  //                       children: [
+  //                         // From
+  //                         Expanded(
+  //                           child: GestureDetector(
+  //                             onTap: pickFrom,
+  //                             child: _timeFieldPill(Icons.schedule, _fmt(from)),
+  //                           ),
+  //                         ),
+  //                         SizedBox(width: 12),
+  //                         Text(
+  //                           "to",
+  //                           style: TextStyle(
+  //                             fontFamily: 'segeo',
+  //                             fontSize: 16,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: Color(0xff666666),
+  //                           ),
+  //                         ),
+  //                         const SizedBox(width: 12),
+  //                         Expanded(
+  //                           child: GestureDetector(
+  //                             onTap: pickTo,
+  //                             child: _timeFieldPill(
+  //                               Icons.access_time_filled_rounded,
+  //                               _fmt(to),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         const SizedBox(width: 12),
+  //                         Container(
+  //                           height: 40,
+  //                           padding: EdgeInsets.all(8),
+  //                           decoration: BoxDecoration(
+  //                             color: Color(0xffFFEACE),
+  //                             borderRadius: BorderRadius.circular(8),
+  //                           ),
+  //                           child: Row(
+  //                             spacing: 4,
+  //                             mainAxisAlignment: MainAxisAlignment.center,
+  //                             children: [
+  //                               Image.asset(
+  //                                 "assets/images/GoldCoins.png",
+  //                                 height: 24,
+  //                                 width: 24,
+  //                                 color: Color(0xffFFCC00),
+  //                               ),
+  //                               ValueListenableBuilder<int>(
+  //                                 valueListenable:
+  //                                     AppStateMentorCostPerMinuteCoins
+  //                                         .mentorCoinsNotifier,
+  //                                 builder: (context, coins, _) {
+  //                                   return Text(
+  //                                     "$coins",
+  //                                     style: TextStyle(
+  //                                       fontFamily: 'segeo',
+  //                                       fontWeight: FontWeight.w600,
+  //                                       fontSize: 16,
+  //                                       color: Color(0xFF000000),
+  //                                     ),
+  //                                   );
+  //                                 },
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //
+  //                   if (errorText != null) ...[
+  //                     const SizedBox(height: 8),
+  //                     Text(
+  //                       errorText!,
+  //                       style: const TextStyle(
+  //                         color: Colors.red,
+  //                         fontSize: 12,
+  //                         fontFamily: 'segeo',
+  //                         fontWeight: FontWeight.w600,
+  //                       ),
+  //                     ),
+  //                   ],
+  //
+  //                   const SizedBox(height: 14),
+  //                   const SizedBox(height: 10),
+  //
+  //                   Row(
+  //                     children: [
+  //                       Expanded(
+  //                         child: Row(
+  //                           children: [
+  //                             const Text(
+  //                               "Want to keep this timing for the full week",
+  //                               style: TextStyle(
+  //                                 fontFamily: 'segeo',
+  //                                 fontSize: 13,
+  //                                 fontWeight: FontWeight.w600,
+  //                               ),
+  //                             ),
+  //                             const SizedBox(width: 8),
+  //                             SizedBox(
+  //                               width: 22,
+  //                               height: 13,
+  //                               child: FittedBox(
+  //                                 fit: BoxFit.fill,
+  //                                 child: Switch(
+  //                                   value: keepForWeek, // <- same variable
+  //                                   onChanged: (v) => setLocal(() {
+  //                                     // <- use setLocal, not setState
+  //                                     keepForWeek = v;
+  //                                   }),
+  //                                   activeColor: Color(0xFF4076ED),
+  //                                   materialTapTargetSize:
+  //                                       MaterialTapTargetSize.shrinkWrap,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //
+  //                   const SizedBox(height: 6),
+  //                   const Text.rich(
+  //                     TextSpan(
+  //                       children: [
+  //                         TextSpan(
+  //                           text: "Note: ",
+  //                           style: TextStyle(
+  //                             fontFamily: 'segeo',
+  //                             fontSize: 12,
+  //                             fontWeight: FontWeight.w700,
+  //                             color: Colors.red,
+  //                           ),
+  //                         ),
+  //                         TextSpan(
+  //                           text:
+  //                               "The minimum time is half an hour and the maximum is three hours.",
+  //                           style: TextStyle(
+  //                             fontFamily: 'segeo',
+  //                             fontSize: 12,
+  //                             color: Color(0xFF5F6473),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 10),
+  //                   SizedBox(
+  //                     width: double.infinity,
+  //                     child:
+  //                         BlocConsumer<
+  //                           MentorAvailabilityCubit,
+  //                           MentorAvailabilityStates
+  //                         >(
+  //                           listener: (context, state) {
+  //                             if (state is MentorAvailabilityLoaded) {
+  //                               _showSuccessDialog();
+  //                               context
+  //                                   .read<AvailableSlotsCubit>()
+  //                                   .getAvailableSlots("this_week");
+  //                             } else if (state is MentorAvailabilityFailure) {
+  //                               CustomSnackBar1.show(context, state.error);
+  //                             }
+  //                           },
+  //                           builder: (context, state) {
+  //                             final isLoading =
+  //                                 state is MentorAvailabilityLoading;
+  //                             return CustomAppButton1(
+  //                               text: "Add",
+  //                               isLoading: isLoading,
+  //                               onPlusTap: onAdd,
+  //                             );
+  //                           },
+  //                         ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
   Future<void> _showAddSlotDialog() async {
     TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
     TimeOfDay to = const TimeOfDay(hour: 10, minute: 0);
-    final coinsCtl = TextEditingController(text: "00");
     String? errorText;
+    final ValueNotifier<int> totalSessionCoinsNotifier = ValueNotifier<int>(0);
+
+    Future<void> _updateCoinCost() async {
+      final fromMinutes = from.hour * 60 + from.minute;
+      final toMinutes = to.hour * 60 + to.minute;
+
+      int difference = toMinutes - fromMinutes;
+      if (difference < 0) difference += 24 * 60;
+
+      final coinsPerMinute =
+          AppStateMentorCostPerMinuteCoins.mentorCoinsNotifier.value;
+
+      totalSessionCoinsNotifier.value = difference * coinsPerMinute;
+    }
 
     await showDialog(
       context: context,
@@ -878,16 +1177,23 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
           builder: (ctx, setLocal) {
             Future<void> pickFrom() async {
               final p = await _pickTime(ctx, from);
-              if (p != null) setLocal(() => from = p);
+              if (p != null) {
+                from = p;
+                await _updateCoinCost();
+                setLocal(() {});
+              }
             }
 
             Future<void> pickTo() async {
               final p = await _pickTime(ctx, to);
-              if (p != null) setLocal(() => to = p);
+              if (p != null) {
+                to = p;
+                await _updateCoinCost();
+                setLocal(() {});
+              }
             }
 
             void onAdd() async {
-              // basic validation
               final d = _diffOnDay(from, to, selectedDate);
               if (d.inMinutes < 0) {
                 setLocal(
@@ -904,23 +1210,22 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                 return;
               }
 
-              // build API data map (24-hour format)
               String fmtTime(TimeOfDay t) =>
                   "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
 
               final mapData = {
                 "date": DateFormat("yyyy-MM-dd").format(selectedDate),
-                "start_time": fmtTime(from), // e.g. 11:35
-                "end_time": fmtTime(to), // e.g. 12:35
+                "start_time": fmtTime(from),
+                "end_time": fmtTime(to),
                 "repeat_weekly": keepForWeek ? "1" : "0",
+                "coins": totalSessionCoinsNotifier.value.toString(),
               };
 
-              // call cubit
               final response = await context
                   .read<MentorAvailabilityCubit>()
                   .addMentorAvailability(mapData);
 
-              Navigator.of(ctx).pop(); // close dialog
+              Navigator.of(ctx).pop();
             }
 
             return Dialog(
@@ -938,7 +1243,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
                     const Text(
                       "Add Slot",
                       style: TextStyle(
@@ -959,72 +1263,73 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Time row (From - To - Coins)
+                    // ⏰ Time Row with Coin Calculation
                     Row(
                       children: [
-                        // From
                         Expanded(
                           child: GestureDetector(
                             onTap: pickFrom,
-                            child: _timeFieldPill(Icons.schedule, _fmt(from)),
+                            child: _timeFieldPill(
+                              Icons.schedule,
+                              formatTime(from),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         const Text(
                           "to",
-                          style: TextStyle(fontFamily: 'segeo', fontSize: 13),
+                          style: TextStyle(
+                            fontFamily: 'segeo',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff666666),
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        // To
                         Expanded(
                           child: GestureDetector(
                             onTap: pickTo,
                             child: _timeFieldPill(
                               Icons.access_time_filled_rounded,
-                              _fmt(to),
+                              formatTime(to),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        // Coins
-                        // Container(
-                        //   padding: const EdgeInsets.symmetric(
-                        //     horizontal: 10,
-                        //     vertical: 8,
-                        //   ),
-                        //   decoration: BoxDecoration(
-                        //     color: kCoinBg,
-                        //     borderRadius: BorderRadius.circular(12),
-                        //   ),
-                        //   child: Row(
-                        //     mainAxisSize: MainAxisSize.min,
-                        //     crossAxisAlignment: CrossAxisAlignment.center,
-                        //     children: [
-                        //       Image.asset(
-                        //         "assets/images/GoldCoins.png", // make sure path matches your pubspec
-                        //         height: 19,
-                        //         width: 19,
-                        //       ),
-                        //       const SizedBox(width: 6),
-                        //       // keep a stable width so 9/99/100 don't shift layout
-                        //       SizedBox(
-                        //         width: 36,
-                        //         child: Text(
-                        //           "0", // e.g. "00"
-                        //           textAlign:
-                        //               TextAlign.left, // or TextAlign.center
-                        //           style: const TextStyle(
-                        //             fontFamily: 'segeo',
-                        //             fontWeight: FontWeight.w700,
-                        //             fontSize: 14,
-                        //             height:
-                        //                 1.2, // nicer vertical alignment with the icon
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        Container(
+                          height: 40,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffFFEACE),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            spacing: 4,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/GoldCoins.png",
+                                height: 24,
+                                width: 24,
+                                color: const Color(0xffFFCC00),
+                              ),
+                              ValueListenableBuilder<int>(
+                                valueListenable: totalSessionCoinsNotifier,
+                                builder: (context, totalCoins, _) {
+                                  return Text(
+                                    "$totalCoins",
+                                    style: const TextStyle(
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Color(0xFF000000),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
 
@@ -1042,8 +1347,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                     ],
 
                     const SizedBox(height: 14),
-                    const SizedBox(height: 10),
-
                     Row(
                       children: [
                         Expanded(
@@ -1064,12 +1367,11 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                                 child: FittedBox(
                                   fit: BoxFit.fill,
                                   child: Switch(
-                                    value: keepForWeek, // <- same variable
+                                    value: keepForWeek,
                                     onChanged: (v) => setLocal(() {
-                                      // <- use setLocal, not setState
                                       keepForWeek = v;
                                     }),
-                                    activeColor: Color(0xFF4076ED),
+                                    activeColor: const Color(0xFF4076ED),
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
@@ -1080,7 +1382,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 6),
                     const Text.rich(
                       TextSpan(
@@ -1106,7 +1407,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
+
+                    // ✅ Add Slot Button
                     SizedBox(
                       width: double.infinity,
                       child:
@@ -1143,6 +1446,8 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         );
       },
     );
+
+    totalSessionCoinsNotifier.dispose(); // ✅ cleanup
   }
 
   Future<void> _showSuccessDialog() async {
@@ -1231,23 +1536,23 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
   // small pill used inside dialog (matches your style)
   Widget _timeFieldPill(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    return Container(height: 40,
+      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 4),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 18, color: const Color(0xFF6C6F7B)),
-          const SizedBox(width: 8),
+           SizedBox(width: 8),
           Text(
             text,
-            style: const TextStyle(
+            style:  TextStyle(
               fontFamily: 'segeo',
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

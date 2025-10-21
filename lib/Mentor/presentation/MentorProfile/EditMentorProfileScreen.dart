@@ -135,38 +135,50 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                           children: [
                             CircleAvatar(
                               radius: 50,
-                              backgroundColor: Colors
-                                  .grey[200], // optional background color during loading
-                              child: CachedNetworkImage(
-                                imageUrl: imagePath ?? "",
-                                imageBuilder: (context, imageProvider) =>
-                                    CircleAvatar(
-                                      radius: 50,
-                                      backgroundImage: imageProvider,
-                                    ),
-                                placeholder: (context, url) => CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.grey[200],
-                                  child: SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    CircleAvatar(
-                                      radius: 50,
-                                      backgroundImage: const AssetImage(
-                                        'assets/images/profile.png',
-                                      ),
-                                    ),
-                              ),
+                              backgroundColor: Colors.grey[200],
+                              backgroundImage: _image != null
+                                  ? FileImage(_image!)
+                                  : (imagePath?.startsWith('http') ?? false)
+                                  ? CachedNetworkImageProvider(imagePath!)
+                                  : const AssetImage(
+                                          'assets/images/profile.png',
+                                        )
+                                        as ImageProvider,
                             ),
 
+                            // CircleAvatar(
+                            //   radius: 50,
+                            //   backgroundColor: Colors
+                            //       .grey[200], // optional background color during loading
+                            //   child: CachedNetworkImage(
+                            //     imageUrl: imagePath ?? "",
+                            //     imageBuilder: (context, imageProvider) =>
+                            //         CircleAvatar(
+                            //           radius: 50,
+                            //           backgroundImage: imageProvider,
+                            //         ),
+                            //     placeholder: (context, url) => CircleAvatar(
+                            //       radius: 50,
+                            //       backgroundColor: Colors.grey[200],
+                            //       child: SizedBox(
+                            //         width: 24,
+                            //         height: 24,
+                            //         child: Center(
+                            //           child: CircularProgressIndicator(
+                            //             strokeWidth: 2,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     errorWidget: (context, url, error) =>
+                            //         CircleAvatar(
+                            //           radius: 50,
+                            //           backgroundImage: const AssetImage(
+                            //             'assets/images/profile.png',
+                            //           ),
+                            //         ),
+                            //   ),
+                            // ),
                             Positioned(
                               bottom: 4,
                               right: 4,
@@ -212,7 +224,7 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                           color: Color(0xff374151),
                         ),
                       ),
-                      SizedBox(height: 8,),
+                      SizedBox(height: 8),
                       TextFormField(
                         readOnly: true,
                         controller: _streamController,
@@ -229,7 +241,7 @@ class _EditMentorProfileScreenState extends State<EditMentorProfileScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16,),
+                      SizedBox(height: 16),
                       Text(
                         "Year",
                         textAlign: TextAlign.left,

@@ -177,8 +177,6 @@ class ImageUtils1 {
 
 class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
-
-  /// Show bottom sheet for choosing camera or gallery
   static Future<File?> pickImage(
     BuildContext context, {
     Color? iconColor,

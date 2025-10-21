@@ -119,7 +119,6 @@ String capitalize(String value) {
 }
 
 class DateHelper {
-
   static String formatDateTime(String? rawTime) {
     if (rawTime == null || rawTime.isEmpty) return "";
     try {
@@ -169,6 +168,14 @@ class AppState {
   }
 }
 
+class AppStateMentorCostPerMinuteCoins {
+  static final ValueNotifier<int> mentorCoinsNotifier = ValueNotifier<int>(0);
+
+  static void fetchCoins(int newCoins) {
+    mentorCoinsNotifier.value = newCoins;
+  }
+}
+
 String formatDate(String? rawDate) {
   if (rawDate == null || rawDate.isEmpty) return "";
   try {
@@ -177,6 +184,13 @@ String formatDate(String? rawDate) {
   } catch (e) {
     return rawDate;
   }
+}
+
+String formatTime(TimeOfDay time) {
+  final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+  final minute = time.minute.toString().padLeft(2, '0');
+  final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+  return '$hour:$minute $period';
 }
 
 String formatTimeRange(String? rawTime) {
@@ -196,6 +210,7 @@ String formatTimeRange(String? rawTime) {
     return rawTime;
   }
 }
+
 String _parseAndFormatTime(String raw) {
   try {
     // Try parsing strict HH:mm:ss
@@ -209,8 +224,4 @@ String _parseAndFormatTime(String raw) {
   } catch (_) {
     return raw; // fallback to raw string
   }
-}
-
-String _fmt(DateTime time) {
-  return DateFormat('h:mm a').format(time); // e.g., "2:30 PM"
 }

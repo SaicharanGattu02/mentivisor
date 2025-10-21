@@ -280,6 +280,16 @@ class _EccScreenState extends State<EccScreen> {
                       return Center(child: Text(state.error));
                     } else if (state is EccTagsLoaded) {
                       final tags = state.tagsModel.data;
+                      if (_selectedTagIndex.value == -1 &&
+                          tags != null &&
+                          tags.isNotEmpty) {
+                        final allIndex = tags.indexWhere(
+                          (tag) => tag.toLowerCase() == "all",
+                        );
+                        if (allIndex != -1) {
+                          _selectedTagIndex.value = allIndex;
+                        }
+                      }
                       return SizedBox(
                         height: 30,
                         child: ValueListenableBuilder<int>(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 
+import '../../../Components/Shimmers.dart';
 import '../../../utils/constants.dart';
 import '../../Models/MentorProfileModel.dart';
 import '../../data/Cubits/MentorProfile/mentor_profile_cubit.dart';
@@ -49,7 +50,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
               builder: (context, state) {
                 if (state is MentorProfileLoading ||
                     state is MentorProfileInitially) {
-                  return const Center(child: DottedProgressWithLogo());
+                  return MentorProfileShimmer();
                 }
                 if (state is MentorProfileFailure) {
                   return Center(child: Text(state.error));
@@ -80,6 +81,8 @@ class _ProfileBody extends StatelessWidget {
     final bio = data.reasonForBecomeMentor ?? data.bio ?? '';
     final cost = data.coinsPerMinute ?? '0';
     final langs = (data.languages ?? []).map(_titleCase).toList();
+    final parsedCost = int.tryParse(cost.toString()) ?? 0;
+    AppStateMentorCostPerMinuteCoins.fetchCoins(parsedCost);
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
@@ -373,4 +376,142 @@ String _toOrdinalYear(String? yearRaw) {
 String _titleCase(String s) {
   if (s.isEmpty) return s;
   return s[0].toUpperCase() + s.substring(1).toLowerCase();
+}
+
+class MentorProfileShimmer extends StatelessWidget {
+  const MentorProfileShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 12),
+
+        // 🔹 Profile Image with edit icon
+        Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: shimmerCircle(100, context),
+            ),
+            Positioned(
+              right: 50,
+              top: 10,
+              child: shimmerContainer(50, 20, context),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 14),
+
+        // 🔹 Name
+        shimmerText(160, 18, context),
+
+        const SizedBox(height: 6),
+
+        // 🔹 Email
+        shimmerText(180, 16, context),
+
+        const SizedBox(height: 10),
+
+        // 🔹 Bio (2–3 lines)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              shimmerText(double.infinity, 12, context),
+              const SizedBox(height: 6),
+              shimmerText(240, 12, context),
+              const SizedBox(height: 6),
+              shimmerText(180, 12, context),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 🔹 Per Minute Cost row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            shimmerText(160, 16, context),
+            const SizedBox(width: 8),
+            shimmerCircle(24, context),
+          ],
+        ),
+
+        const SizedBox(height: 30),
+
+        // 🔹 "Languages" title
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: shimmerText(120, 18, context),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 🔹 Language Chips
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: List.generate(
+              4,
+              (index) =>
+                  shimmerContainer(70 + (index * 15).toDouble(), 30, context),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        // 🔹 Expertise Section Title (optional)
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: shimmerText(140, 18, context),
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        // 🔹 Expertise List
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(
+              2,
+              (i) => Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerText(120 + (i * 40).toDouble(), 16, context),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: List.generate(
+                        3,
+                        (j) => shimmerContainer(
+                          60 + (j * 20).toDouble(),
+                          28,
+                          context,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
