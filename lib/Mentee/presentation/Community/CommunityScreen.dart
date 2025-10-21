@@ -377,25 +377,22 @@ class _CommunityScreenState extends State<Communityscreen> {
                         },
                         child: CustomScrollView(
                           slivers: [
-                            SliverPadding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              sliver: SliverGrid(
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: _getCrossAxisCount(context),
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
-                                  childAspectRatio: _getChildAspectRatio(context),
-                                ),
-                                delegate: SliverChildBuilderDelegate(
-                                      (context, index) {
-                                    final communitypost = communityposts?[index];
-                                    return PostCard(
-                                      scope: _onCampus.value ? "" : "beyond",
-                                      communityPosts: communitypost ?? CommunityPosts(),
-                                    );
-                                  },
-                                  childCount: communityposts?.length ?? 0,
-                                ),
+                            SliverGrid(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: _getCrossAxisCount(context),
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: _getChildAspectRatio(context),
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                  final communitypost = communityposts?[index];
+                                  return PostCard(
+                                    scope: _onCampus.value ? "" : "beyond",
+                                    communityPosts: communitypost ?? CommunityPosts(),
+                                  );
+                                },
+                                childCount: communityposts?.length ?? 0,
                               ),
                             ),
 
@@ -505,7 +502,7 @@ class _CommunityScreenState extends State<Communityscreen> {
 
     if (width < 600) {
       // Mobile – taller cards
-      return baseRatio * 2.05;
+      return baseRatio * 2;
     } else if (width > 600) {
       // Tablet – more square
       return baseRatio * 1.6  ;
