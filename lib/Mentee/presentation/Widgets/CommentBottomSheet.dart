@@ -11,6 +11,7 @@ import '../../Models/CommentsModel.dart';
 import '../../Models/CommunityPostsModel.dart' hide Data;
 import '../../data/cubits/Comments/FetchCommentsCubit.dart';
 import '../../data/cubits/Comments/FetchCommentsStates.dart';
+import '../Community/CommunityDetails.dart';
 import 'CommentCard.dart';
 
 class CommentBottomSheet extends StatefulWidget {
@@ -119,7 +120,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                         curr is PostCommentFailure,
                     builder: (context, postState) {
                       if (fetchState is FetchCommentsLoading) {
-                        return const Center(child: DottedProgressWithLogo());
+                        return const CommentsListShimmer();
                       }
                       if (fetchState is FetchCommentsFailure) {
                         return Center(

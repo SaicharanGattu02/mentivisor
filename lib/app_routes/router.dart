@@ -42,7 +42,7 @@ import '../Mentee/presentation/Notifications.dart';
 import '../Mentee/presentation/PaymentSuccessfully.dart';
 import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
-import '../Mentee/presentation/Profile/ProfileDetails.dart';
+import '../Mentee/presentation/Profile/CommonProfile.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';

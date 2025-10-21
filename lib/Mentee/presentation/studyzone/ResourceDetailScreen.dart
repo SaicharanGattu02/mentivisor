@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
+import '../../../Components/Shimmers.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../data/cubits/AddResource/add_resource_cubit.dart';
@@ -80,7 +81,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
         child: BlocBuilder<Resourcedetailscubit, ResourceDetailsState>(
           builder: (context, state) {
             if (state is ResourceDetailsLoading) {
-              return const Center(child: DottedProgressWithLogo());
+              return ResourceDetailsShimmer();
             } else if (state is ResourceDetailsLoaded) {
               final resourceData = state.resourceDetailsModel.data;
               return SingleChildScrollView(
@@ -96,7 +97,9 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                         placeholder: (context, url) => SizedBox(
                           width: 120,
                           height: 120,
-                          child: Center(child: spinkits.getSpinningLinespinkit()),
+                          child: Center(
+                            child: spinkits.getSpinningLinespinkit(),
+                          ),
                         ),
                         errorWidget: (context, url, error) => Container(
                           width: 120,
@@ -144,9 +147,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                            ),
+                            border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Text(
                             tag,
@@ -159,7 +160,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                         );
                       }).toList(),
                     ),
-                                  
+
                     const SizedBox(height: 24),
                     const Text(
                       'About Author',
@@ -209,9 +210,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                                     ?.name
                                                     ?.isNotEmpty ??
                                                 false)
-                                            ? resourceData!
-                                                  .uploader!
-                                                  .name![0]
+                                            ? resourceData!.uploader!.name![0]
                                                   .toUpperCase()
                                             : '',
                                         style: const TextStyle(
@@ -251,8 +250,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                                   style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 24,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 )
                                               : ClipOval(
@@ -286,8 +284,8 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                                               Icons
                                                                   .broken_image,
                                                               size: 40,
-                                                              color: Colors
-                                                                  .grey,
+                                                              color:
+                                                                  Colors.grey,
                                                             ),
                                                           ),
                                                         ),
@@ -296,11 +294,10 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                         ),
                                       ),
                               ),
-                                  
+
                               SizedBox(width: 12),
                               Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     capitalize(
@@ -316,7 +313,7 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                     // overflow: TextOverflow.ellipsis,
                                     // maxLines: 1,
                                     '${resourceData?.uploader?.college?.name ?? ""}',
-                                  
+
                                     // ' ${resourceData?.uploader?.yearRelation?.name ?? ""} year\n${resourceData?.uploader?.stream ?? ""}'
                                     style: TextStyle(
                                       fontSize: 12,
@@ -621,6 +618,150 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class ResourceDetailsShimmer extends StatelessWidget {
+  const ResourceDetailsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 🔹 Header Image
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: shimmerContainer(double.infinity, 200, context),
+        ),
+        const SizedBox(height: 16),
+
+        // 🔹 Scrollable content
+        Expanded(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 🔹 Title
+                  shimmerText(200, 16, context),
+                  const SizedBox(height: 8),
+
+                  // 🔹 Description (3 lines)
+                  shimmerText(double.infinity, 12, context),
+                  const SizedBox(height: 6),
+                  shimmerText(250, 12, context),
+                  const SizedBox(height: 6),
+                  shimmerText(180, 12, context),
+
+                  const SizedBox(height: 16),
+
+                  // 🔹 Tags
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(
+                      4,
+                      (i) => shimmerContainer(
+                        80 + (i * 10).toDouble(),
+                        26,
+                        context,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // 🔹 "About Author" Title
+                  shimmerText(120, 14, context),
+                  const SizedBox(height: 8),
+
+                  // 🔹 Author Card
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Avatar + Name
+                        Row(
+                          children: [
+                            shimmerCircle(60, context),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                shimmerText(120, 14, context), // name
+                                const SizedBox(height: 4),
+                                shimmerText(100, 12, context), // college
+                                const SizedBox(height: 4),
+                                shimmerText(180, 10, context), // bio line
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Downloads
+                        Row(
+                          children: [
+                            shimmerContainer(20, 20, context),
+                            const SizedBox(width: 6),
+                            shimmerText(100, 12, context),
+                          ],
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Optional date info
+                        shimmerText(120, 12, context),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // 🔹 Report Resource button
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF5F5F5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        shimmerContainer(24, 24, context),
+                        const SizedBox(width: 10),
+                        shimmerText(140, 14, context),
+                        const Spacer(),
+                        shimmerContainer(14, 14, context),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 80),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
