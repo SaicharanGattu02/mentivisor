@@ -157,13 +157,17 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                         width: 20,
                                         height: 20,
                                       ),
-                                      label: Text(
-                                        "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: "segeo",
-                                          color: Color(0xff666666),
+                                      label: SizedBox(
+                                        width: SizeConfig.screenWidth * 0.28,
+                                        child: Text(
+                                          "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: "segeo",
+                                            color: Color(0xff666666),
+                                          ),
                                         ),
                                       ),
                                       style: OutlinedButton.styleFrom(

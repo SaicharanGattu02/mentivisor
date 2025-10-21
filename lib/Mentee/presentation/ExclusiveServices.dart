@@ -133,11 +133,6 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                   return Expanded(
                     child: CustomScrollView(
                       slivers: [
-                        const SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
-                          ),
-                        ),
                         if (list.isEmpty)
                           SliverToBoxAdapter(
                             child: Padding(

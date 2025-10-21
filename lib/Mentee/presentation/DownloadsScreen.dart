@@ -99,43 +99,37 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                         },
                         child: CustomScrollView(
                           slivers: [
-                            SliverPadding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              sliver: SliverGrid(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: _getCrossAxisCount(
-                                        context,
-                                      ), // 👈 1 mobile, 2 tab
-                                      crossAxisSpacing: 16,
-                                      mainAxisSpacing: 16,
-                                      childAspectRatio: _getChildAspectRatio(
-                                        context,
-                                      ), // 👈 responsive ratio
-                                    ),
-                                delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    if (loadingMore &&
-                                        index == downloads.length) {
-                                      return const Padding(
-                                        padding: EdgeInsets.all(25.0),
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 0.8,
-                                          ),
+                            SliverGrid(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: _getCrossAxisCount(
+                                      context,
+                                    ), // 👈 1 mobile, 2 tab
+                                    crossAxisSpacing: 16,
+                                    mainAxisSpacing: 16,
+                                    childAspectRatio: _getChildAspectRatio(
+                                      context,
+                                    ), // 👈 responsive ratio
+                                  ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  if (loadingMore &&
+                                      index == downloads.length) {
+                                    return const Padding(
+                                      padding: EdgeInsets.all(25.0),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.8,
                                         ),
-                                      );
-                                    }
-                                    return DownloadCard(
-                                      downloads: downloads[index],
+                                      ),
                                     );
-                                  },
-                                  childCount:
-                                      downloads.length + (loadingMore ? 1 : 0),
-                                ),
+                                  }
+                                  return DownloadCard(
+                                    downloads: downloads[index],
+                                  );
+                                },
+                                childCount:
+                                    downloads.length + (loadingMore ? 1 : 0),
                               ),
                             ),
                           ],
@@ -224,19 +218,16 @@ class DownloadListShimmer extends StatelessWidget {
     return CustomScrollView(
       physics: const NeverScrollableScrollPhysics(),
       slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _getCrossAxisCount(context), // 👈 1 mobile, 2 tab
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
-            ),
-            delegate: SliverChildBuilderDelegate(
-                  (context, index) => const _DownloadShimmerCard(),
-              childCount: 6, // shimmer placeholders
-            ),
+        SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getCrossAxisCount(context), // 👈 1 mobile, 2 tab
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
+          ),
+          delegate: SliverChildBuilderDelegate(
+                (context, index) => const _DownloadShimmerCard(),
+            childCount: 6, // shimmer placeholders
           ),
         ),
       ],

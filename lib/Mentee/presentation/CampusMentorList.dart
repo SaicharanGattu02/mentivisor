@@ -55,7 +55,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
 
     if (width < 600) {
       // Mobile – slightly taller
-      return baseRatio * 1.75;
+      return baseRatio * 1.65;
     } else if (width > 600) {
       // Tablet – balanced
       return baseRatio * 1.55;
@@ -295,6 +295,35 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
 class MentorGridShimmer extends StatelessWidget {
   const MentorGridShimmer({super.key});
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < 600) {
+      return 2; // 📱 Mobile: 2 columns
+    } else {
+      return 3; // 💻 Tablet/Desktop: 3 columns
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    final baseRatio = width / height;
+
+    if (width < 600) {
+      // Mobile – slightly taller
+      return baseRatio * 1.75;
+    } else if (width > 600) {
+      // Tablet – balanced
+      return baseRatio * 1.55;
+    } else {
+      // Desktop – wider
+      return baseRatio * 2.1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -302,11 +331,13 @@ class MentorGridShimmer extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 6, // number of shimmer placeholders
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _getCrossAxisCount(
+            context,
+          ), // 👈 responsive (2 mobile, 3 tab)
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 0.85,
+          childAspectRatio: _getChildAspectRatio(context), // 👈 adaptive ratio
         ),
         itemBuilder: (ctx, i) {
           return Container(
@@ -321,11 +352,9 @@ class MentorGridShimmer extends StatelessWidget {
                 const SizedBox(height: 8),
                 shimmerText(100, 16, context),
                 const SizedBox(height: 6),
-
                 shimmerText(120, 12, context),
                 const SizedBox(height: 4),
                 shimmerText(80, 12, context),
-
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
