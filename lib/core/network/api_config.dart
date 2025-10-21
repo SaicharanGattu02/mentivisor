@@ -10,3 +10,5 @@ class ApiConfig {
   /// Auth URls
   static const String login = '${apiUrl}user-login';
 }
+
+
