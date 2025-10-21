@@ -14,15 +14,20 @@ class ECCCubit extends Cubit<ECCStates> {
   bool _hasNextPage = true;
   bool _isLoadingMore = false;
 
-  Future<void> getECC(String scope,String updates,String search,) async {
+  Future<void> getECC(String scope, String updates, String search) async {
     emit(ECCLoading());
     _currentPage = 1;
     try {
-      final response = await eccRepository.getEcc( scope, updates,search,_currentPage);
+      final response = await eccRepository.getEcc(
+        scope,
+        updates,
+        search,
+        _currentPage,
+      );
       if (response != null && response.status == true) {
         eccModel = response;
         _hasNextPage = response.data?.nextPageUrl != null;
-        // emit(ECCLoaded(eccModel, _hasNextPage));
+        emit(ECCLoaded(eccModel, _hasNextPage));
       } else {
         emit(ECCFailure("Something went wrong"));
       }
@@ -31,13 +36,18 @@ class ECCCubit extends Cubit<ECCStates> {
     }
   }
 
-  Future<void> fetchMoreECC(String scope,String updates,String search,) async {
+  Future<void> fetchMoreECC(String scope, String updates, String search) async {
     if (_isLoadingMore || !_hasNextPage) return;
     _isLoadingMore = true;
     _currentPage++;
     emit(ECCLoadingMore(eccModel, _hasNextPage));
     try {
-      final newData = await eccRepository.getEcc( scope, updates,search,_currentPage);
+      final newData = await eccRepository.getEcc(
+        scope,
+        updates,
+        search,
+        _currentPage,
+      );
       if (newData != null && newData.data?.ecclist?.isNotEmpty == true) {
         final combinedList = List<ECCList>.from(eccModel.data?.ecclist ?? [])
           ..addAll(newData.data!.ecclist!);

@@ -664,12 +664,12 @@ class _ECCShimmerState extends State<ECCShimmer> {
           final size = MediaQuery.of(context).size;
           final screenWidth = size.width;
           double aspectRatio = screenWidth / (screenHeight * 0.5);
-          if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.52);
+          if (screenWidth < 600) {
+            aspectRatio = screenWidth / (screenHeight * 0.42);
           } else if (screenWidth > 600) {
             aspectRatio = screenWidth / (screenHeight * 0.6);
           } else {
-            aspectRatio = screenWidth / (screenHeight * 0.35);
+            aspectRatio = screenWidth / (screenHeight * 0.6);
           }
           return aspectRatio;
         }(),
