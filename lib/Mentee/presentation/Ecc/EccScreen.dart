@@ -493,21 +493,31 @@ class _EccScreenState extends State<EccScreen> {
                             },
                             child: CustomScrollView(
                               slivers: [
-                                SliverList.separated(
-                                  itemCount: ecclist.length,
-                                  separatorBuilder: (_, __) =>
-                                      const SizedBox(height: 16),
-                                  itemBuilder: (context, index) => EventCard(
-                                    eccList: ecclist[index],
-                                    scope: onCampusNotifier.value
-                                        ? ""
-                                        : "beyond",
+                                SliverPadding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  sliver: SliverGrid(
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 1 : 2, // 👈 Responsive layout
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 16,
+                                      childAspectRatio: _getChildAspectRatio(context), // 👈 Maintains proportion
+                                    ),
+                                    delegate: SliverChildBuilderDelegate(
+                                          (context, index) {
+                                        return EventCard(
+                                          eccList: ecclist[index],
+                                          scope: onCampusNotifier.value ? "" : "beyond",
+                                        );
+                                      },
+                                      childCount: ecclist.length,
+                                    ),
                                   ),
                                 ),
+
                                 if (state is ECCLoadingMore)
-                                  SliverToBoxAdapter(
+                                  const SliverToBoxAdapter(
                                     child: Padding(
-                                      padding: const EdgeInsets.all(25.0),
+                                      padding: EdgeInsets.all(25.0),
                                       child: Center(
                                         child: CircularProgressIndicator(
                                           strokeWidth: 0.8,
@@ -517,7 +527,7 @@ class _EccScreenState extends State<EccScreen> {
                                     ),
                                   ),
                               ],
-                            ),
+                            )
                           ),
                         ),
                       );
@@ -606,6 +616,29 @@ class _EccScreenState extends State<EccScreen> {
   }
 }
 
+double _getChildAspectRatio(BuildContext context) {
+  final size = MediaQuery.of(context).size;
+  final width = size.width;
+  final height = size.height;
+
+  // You can tweak this formula to your layout preference
+  // This keeps the card roughly proportional to screen width
+  double baseRatio = width / height;
+
+  // Adjust a bit to avoid overly tall/narrow cards
+  if (width < 600) {
+    // Mobile – single column
+    return baseRatio * 2.1; // taller cards
+  } else if (width > 600) {
+    // Tablet – 2 columns
+    return baseRatio * 1.4;
+  } else {
+    // Desktop – 3+ columns maybe
+    return baseRatio * 2.2;
+  }
+}
+
+
 class ECCShimmer extends StatefulWidget {
   const ECCShimmer({super.key});
   @override
@@ -632,9 +665,9 @@ class _ECCShimmerState extends State<ECCShimmer> {
           final screenWidth = size.width;
           double aspectRatio = screenWidth / (screenHeight * 0.5);
           if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.48);
-          } else if (screenWidth < 800) {
-            aspectRatio = screenWidth / (screenHeight * 0.4);
+            aspectRatio = screenWidth / (screenHeight * 0.52);
+          } else if (screenWidth > 600) {
+            aspectRatio = screenWidth / (screenHeight * 0.6);
           } else {
             aspectRatio = screenWidth / (screenHeight * 0.35);
           }

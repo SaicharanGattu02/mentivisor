@@ -22,7 +22,7 @@ class ECCCubit extends Cubit<ECCStates> {
       if (response != null && response.status == true) {
         eccModel = response;
         _hasNextPage = response.data?.nextPageUrl != null;
-        emit(ECCLoaded(eccModel, _hasNextPage));
+        // emit(ECCLoaded(eccModel, _hasNextPage));
       } else {
         emit(ECCFailure("Something went wrong"));
       }
