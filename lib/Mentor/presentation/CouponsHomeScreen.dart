@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/constants.dart';
 import '../../Components/Shimmers.dart';
+import '../../utils/media_query_helper.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../data/Cubits/Coupons/CategoryCouponsCubit.dart';
 import '../data/Cubits/Coupons/CouponsCategoryStates.dart';
@@ -254,34 +255,30 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                                     context,
                                   ).size.width;
 
-                                  // Dynamically decide how many columns to show
-                                  int crossAxisCount = screenWidth < 500
-                                      ? 2
-                                      : screenWidth < 900
-                                      ? 3
-                                      : 4;
-
-                                  // Adjust childAspectRatio based on screen width
-                                  double childAspectRatio = screenWidth < 400
-                                      ? 0.9
-                                      : screenWidth < 800
-                                      ? 1.0
-                                      : 1.1;
-
                                   return GridView.builder(
                                     shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    physics: NeverScrollableScrollPhysics(),
                                     gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: crossAxisCount,
+                                          crossAxisCount: _getCrossAxisCount(
+                                            context,
+                                          ),
                                           mainAxisSpacing: 12,
                                           crossAxisSpacing: 12,
-                                          childAspectRatio: childAspectRatio,
+                                          childAspectRatio:
+                                              _getChildAspectRatio(context),
                                         ),
                                     itemCount: categories.length,
                                     itemBuilder: (context, index) {
                                       final item = categories[index];
+                                      final itemWidth =
+                                          screenWidth /
+                                              _getCrossAxisCount(context) -
+                                          24; // Adjusted for spacing (12px each side)
+                                      final itemHeight =
+                                          itemWidth /
+                                          _getChildAspectRatio(context);
+                                      final imageSize = itemWidth - 24;
 
                                       return GestureDetector(
                                         onTap: () {
@@ -315,14 +312,8 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                                 child: CachedNetworkImage(
-                                                  width:
-                                                      screenWidth /
-                                                          crossAxisCount -
-                                                      72,
-                                                  height:
-                                                      screenWidth /
-                                                          crossAxisCount -
-                                                      72,
+                                                  width: imageSize,
+                                                  height: imageSize,
                                                   imageUrl: item.image ?? "",
                                                   fit: BoxFit.cover,
                                                   placeholder: (context, url) =>
@@ -342,10 +333,10 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                                                       ) => Container(
                                                         width: 120,
                                                         height: 120,
-                                                        color: const Color(
+                                                        color: Color(
                                                           0xffF8FAFE,
                                                         ),
-                                                        child: const Icon(
+                                                        child: Icon(
                                                           Icons.broken_image,
                                                           size: 40,
                                                           color: Colors.grey,
@@ -395,6 +386,26 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
         ),
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 2; // 1 column for mobile
+    } else if (width > 600) {
+      return 3; // 2 columns for tablets and larger
+    } else {
+      return 3; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 0.85;
+    } else {
+      return 0.85;
+    }
   }
 }
 

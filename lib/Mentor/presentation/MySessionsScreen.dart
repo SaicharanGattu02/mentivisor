@@ -6,6 +6,7 @@ import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart
 import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/FilterButton.dart';
 import '../../utils/constants.dart';
+import '../../utils/media_query_helper.dart';
 import '../data/Cubits/Sessions/SessionsCubit.dart';
 import '../data/Cubits/Sessions/SessionsStates.dart';
 
@@ -176,7 +177,48 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                     }
                     return CustomScrollView(
                       slivers: [
-                        SliverList(
+                        // SliverList(
+                        //   delegate: SliverChildBuilderDelegate((
+                        //     context,
+                        //     index,
+                        //   ) {
+                        //     final session = Sessions?[index];
+                        //     final duration = calculateDuration(
+                        //       session?.startTime ?? "",
+                        //       session?.endTime ?? "",
+                        //     );
+                        //     return SessionCard(
+                        //       attachment: session?.attachment ?? "",
+                        //       menteeId: session?.mentee?.id ?? 0,
+                        //       sessionId: session?.id ?? 0,
+                        //       status: selectedFilter,
+                        //       sessionStartTime: '${session?.startTime ?? ""}',
+                        //       sessionEndTime: '${session?.endTime ?? ""}',
+                        //       sessionDate: formatDate(session?.date ?? ""),
+                        //       sessionTime: '${duration} to go',
+                        //       sessionName:
+                        //           'Zoom Meet with ${session?.mentee?.name}',
+                        //       sessionImage:
+                        //           session?.mentee?.menteeProfile ??
+                        //           "", // Image for upcoming sessions
+                        //       sessionTopics: session?.topics ?? "",
+                        //       reason: session?.cancelledReason ?? "",
+                        //       buttonText:
+                        //           'Message from ${session?.mentee?.name ?? ""}',
+                        //       buttonIcon: "assets/icons/ChatCircle.png",
+                        //       remainingTime: '${duration} Minutes to go',
+                        //       cancelreason: session?.cancelledReason ?? "",
+                        //     );
+                        //   }, childCount: Sessions?.length),
+                        // ),
+                        SliverGrid(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: _getCrossAxisCount(context),
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: _getChildAspectRatio(context),
+                              ),
                           delegate: SliverChildBuilderDelegate((
                             context,
                             index,
@@ -222,5 +264,25 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
         ),
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 1.8;
+    } else {
+      return 1.8; // Slightly wider aspect for balanced layout
+    }
   }
 }

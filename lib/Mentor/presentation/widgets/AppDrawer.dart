@@ -8,6 +8,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../../services/AuthService.dart';
 import '../../../utils/color_constants.dart';
+import '../../../utils/spinkittsLoader.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -63,23 +64,59 @@ class AppDrawer extends StatelessWidget {
                                           : null;
                                       return Row(
                                         children: [
-                                          CircleAvatar(
-                                            radius: 20,
-                                            backgroundImage:
-                                                (user_data?.data?.profilePic !=
-                                                        null &&
-                                                    user_data!
-                                                        .data!
-                                                        .profilePic!
-                                                        .isNotEmpty)
-                                                ? CachedNetworkImageProvider(
-                                                    user_data.data!.profilePic!,
-                                                  )
-                                                : const AssetImage(
-                                                        "images/profile.png",
-                                                      )
-                                                      as ImageProvider,
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                user_data?.data?.profilePic ??
+                                                "",
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    CircleAvatar(
+                                                      radius: 20,
+                                                      backgroundImage:
+                                                          imageProvider,
+                                                    ),
+                                            placeholder: (context, url) =>
+                                                CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundColor: Colors.grey,
+                                                  child: SizedBox(
+                                                    width: 16,
+                                                    height: 16,
+                                                    child: Center(
+                                                      child: spinkits
+                                                          .getSpinningLinespinkit(),
+                                                    ),
+                                                  ),
+                                                ),
+                                            errorWidget:
+                                                (
+                                                  context,
+                                                  url,
+                                                  error,
+                                                ) => const CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: AssetImage(
+                                                    "assets/images/profile.png",
+                                                  ),
+                                                ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 20,
+                                          //   backgroundImage:
+                                          //       (user_data?.data?.profilePic !=
+                                          //               null &&
+                                          //           user_data!
+                                          //               .data!
+                                          //               .profilePic!
+                                          //               .isNotEmpty)
+                                          //       ? CachedNetworkImageProvider(
+                                          //           user_data.data!.profilePic!,
+                                          //         )
+                                          //       : const AssetImage(
+                                          //               "images/profile.png",
+                                          //             )
+                                          //             as ImageProvider,
+                                          // ),
                                           const SizedBox(width: 14),
                                           Text(
                                             user_data?.data?.name ?? "",

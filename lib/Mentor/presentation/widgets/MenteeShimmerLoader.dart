@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../Components/Shimmers.dart';
+import '../../../utils/media_query_helper.dart';
 
 class MenteeShimmerLoader extends StatelessWidget {
   final int itemCount;
@@ -10,14 +11,16 @@ class MenteeShimmerLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-              child: shimmerMenteeCard(context),
-            ),
-            childCount: itemCount,
+        SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getCrossAxisCount(context),
+            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+            childAspectRatio: _getChildAspectRatio(context),
           ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return shimmerMenteeCard(context);
+          }, childCount: itemCount),
         ),
       ],
     );
@@ -26,7 +29,7 @@ class MenteeShimmerLoader extends StatelessWidget {
   /// 🟣 Builds a single shimmer card replicating [MenteeCard]
   Widget shimmerMenteeCard(BuildContext context) {
     return Card(
-      margin:  EdgeInsets.zero,
+      margin: EdgeInsets.zero,
       elevation: 2,
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -88,5 +91,25 @@ class MenteeShimmerLoader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 0.75; // Taller cards on mobile for better readability
+    } else {
+      return 2.2; // Slightly wider aspect on tablet/desktop for balanced layout
+    }
   }
 }

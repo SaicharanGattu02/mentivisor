@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../Components/Shimmers.dart';
+import '../../../utils/media_query_helper.dart';
 
 class SessionShimmerLoader extends StatelessWidget {
   final int itemCount;
@@ -9,12 +10,15 @@ class SessionShimmerLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverList(
+        SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getCrossAxisCount(context),
+            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+            childAspectRatio: _getChildAspectRatio(context),
+          ),
           delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-              child: shimmerSessionCard(context),
-            ),
+            (context, index) => shimmerSessionCard(context),
             childCount: itemCount,
           ),
         ),
@@ -82,5 +86,24 @@ class SessionShimmerLoader extends StatelessWidget {
       ),
     );
   }
-}
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 1.5;
+    } else {
+      return 1.6; // Slightly wider aspect for balanced layout
+    }
+  }
+}

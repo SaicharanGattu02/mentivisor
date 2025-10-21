@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../Components/Shimmers.dart';
 import '../data/Cubits/CouponsList/CouponsListCubit.dart';
@@ -47,7 +48,28 @@ class _CouponsListState extends State<CouponsList> {
             final coupons = model.couponsList?.data ?? [];
 
             if (coupons.isEmpty) {
-              return const Center(child: Text("No Coupons Available"));
+              return Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: SizeConfig.screenHeight * 0.2),
+                    Image.asset(
+                      "assets/nodata/no_data.png",
+                      width: 200,
+                      height: 200,
+                    ),
+                    Text(
+                      "No Coupons Available",
+                      style: TextStyle(
+                        color: Color(0xff333333),
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
             }
 
             final hasNextPage = (state is CouponsListLoaded)
@@ -99,11 +121,11 @@ class _CouponsListState extends State<CouponsList> {
                                 screenWidth /
                                 (screenHeight *
                                     0.28); // balanced cards for tablets
-                          } else if (screenWidth < 800) {
+                          } else if (screenWidth > 600) {
                             aspectRatio =
                                 screenWidth /
                                 (screenHeight *
-                                    0.4); // balanced cards for tablets
+                                    0.45); // balanced cards for tablets
                           } else {
                             aspectRatio =
                                 screenWidth /
@@ -330,10 +352,10 @@ class CouponGridShimmer extends StatelessWidget {
                   aspectRatio =
                       screenWidth /
                       (screenHeight * 0.28); // balanced cards for tablets
-                } else if (screenWidth < 800) {
+                } else if (screenWidth > 600) {
                   aspectRatio =
                       screenWidth /
-                      (screenHeight * 0.4); // balanced cards for tablets
+                      (screenHeight * 0.45); // balanced cards for tablets
                 } else {
                   aspectRatio =
                       screenWidth / (screenHeight * 0.35); // wider for desktop

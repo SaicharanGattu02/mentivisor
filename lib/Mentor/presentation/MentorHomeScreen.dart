@@ -204,7 +204,18 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                           )
                         : CustomScrollView(
                             slivers: [
-                              SliverList(
+                              SliverGrid(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: _getCrossAxisCount(
+                                        context,
+                                      ),
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 16,
+                                      childAspectRatio: _getChildAspectRatio(
+                                        context,
+                                      ),
+                                    ),
                                 delegate: SliverChildBuilderDelegate((
                                   context,
                                   index,
@@ -253,5 +264,25 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         ),
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 1.9;
+    } else {
+      return 1.8; // Slightly wider aspect for balanced layout
+    }
   }
 }

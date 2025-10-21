@@ -223,8 +223,8 @@ class _CancelSessionScreenState extends State<CancelSessionScreen> {
               BlocConsumer<MentorSessionCancelCubit, MentorSessionCancleStates>(
                 listener: (context, state) {
                   if (state is MentorsessionCancelSuccess) {
-                    context.pop();
                     context.read<MentorDashboardCubit>().fetchDashboard();
+                    context.pop();
                   } else if (state is MentorsessioncancleFailure) {
                     CustomSnackBar1.show(context, state.error);
                   }

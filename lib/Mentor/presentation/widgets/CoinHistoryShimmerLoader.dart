@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../Components/Shimmers.dart';
+import '../../../utils/media_query_helper.dart';
 
 class CoinHistoryShimmerLoader extends StatelessWidget {
   final int itemCount;
@@ -10,14 +11,16 @@ class CoinHistoryShimmerLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-              (context, index) => Padding(
-            padding: EdgeInsets.only(bottom: index == itemCount - 1 ? 0 : 12),
-            child: shimmerCoinRowCard(context),
-          ),
-          childCount: itemCount,
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _getCrossAxisCount(context),
+          crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+          mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+          childAspectRatio: _getChildAspectRatio(context),
         ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return shimmerCoinRowCard(context);
+        }, childCount: itemCount),
       ),
     );
   }
@@ -69,5 +72,25 @@ class CoinHistoryShimmerLoader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 4.4; // Taller cards on mobile for better readability
+    } else {
+      return 4.5; // Slightly wider aspect on tablet/desktop for balanced layout
+    }
   }
 }

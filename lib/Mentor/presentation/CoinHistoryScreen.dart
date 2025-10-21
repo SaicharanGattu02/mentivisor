@@ -112,28 +112,25 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
 
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      sliver: SliverList(
+                      sliver:SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: _getCrossAxisCount(context),
+                          crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                          mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                          childAspectRatio: _getChildAspectRatio(context),
+                        ),
                         delegate: SliverChildBuilderDelegate((context, index) {
                           final item = items[index];
 
                           // Map your dynamic fields here:
-                          final title = _titleOf(
-                            item,
-                          ); // prefers item['activity']
-                          final dateLabel = _dateLabelOf(
-                            item,
-                          ); // prefers item['date']
+                          final title = _titleOf(item); // prefers item['activity']
+                          final dateLabel = _dateLabelOf(item); // prefers item['date']
                           final coins = _coinsOf(item); // prefers item['coins']
 
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              bottom: index == items.length - 1 ? 0 : 12,
-                            ),
-                            child: _CoinRowCard(
-                              title: title,
-                              dateLabel: dateLabel,
-                              coinsText: coins,
-                            ),
+                          return _CoinRowCard(
+                            title: title,
+                            dateLabel: dateLabel,
+                            coinsText: coins,
                           );
                         }, childCount: items.length),
                       ),
@@ -149,6 +146,26 @@ class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
         ),
       ),
     );
+
+  }
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 4.4; // Taller cards on mobile for better readability
+    } else {
+      return 4.5; // Slightly wider aspect on tablet/desktop for balanced layout
+    }
   }
 
   /// Opens bottom sheet that returns an API key: all | week | month | quarter

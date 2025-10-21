@@ -6,6 +6,7 @@ import 'package:mentivisor/Mentor/presentation/widgets/MenteeCard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/MenteeShimmerLoader.dart';
 
 import '../../Components/CutomAppBar.dart';
+import '../../utils/media_query_helper.dart';
 import '../data/Cubits/MyMentees/mymentees_cubit.dart';
 import '../data/Cubits/MyMentees/mymentees_states.dart';
 
@@ -27,7 +28,7 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffEFF6FF),
-      appBar: CustomAppBar1(title: "My Mentee", actions: const []),
+      appBar: CustomAppBar1(title: "My Mentee", actions:  []),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
         decoration: const BoxDecoration(
@@ -59,15 +60,19 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
                   } else if (state is MyMenteeLoaded) {
                     return CustomScrollView(
                       slivers: [
-                        SliverList(
+                        SliverGrid(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: _getCrossAxisCount(context),
+                            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                            childAspectRatio: _getChildAspectRatio(context),
+                          ),
                           delegate: SliverChildBuilderDelegate(
                                 (context, index) {
-                              final menteeList =
-                              state.myMenteesModel.data?.menteeData?[index];
+                              final menteeList = state.myMenteesModel.data?.menteeData?[index];
                               return MenteeCard(mentee: menteeList!);
                             },
-                            childCount:
-                            state.myMenteesModel.data?.menteeData?.length ?? 0,
+                            childCount: state.myMenteesModel.data?.menteeData?.length ?? 0,
                           ),
                         ),
                         if (state is MyMenteeLoadingMore)
@@ -92,5 +97,24 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
         ),
       ),
     );
+  }
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // 1 column for mobile
+    } else if (width > 600) {
+      return 2; // 2 columns for tablets and larger
+    } else {
+      return 2; // For exactly 600px (edge case), treat as tablet layout
+    }
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    final screenWidth = SizeConfig.screenWidth;
+    if (screenWidth < 600) {
+      return 0.75; // Taller cards on mobile for better readability
+    } else {
+      return 2.2; // Slightly wider aspect on tablet/desktop for balanced layout
+    }
   }
 }
