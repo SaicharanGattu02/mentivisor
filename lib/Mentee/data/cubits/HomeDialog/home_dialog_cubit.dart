@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/tags_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Tags/tags_states.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 
 import 'home_dialog_repository.dart';
 import 'home_dialog_states.dart';
@@ -14,8 +15,10 @@ class HomeDialogCubit extends Cubit<HomeDialogState> {
     try {
       final response = await homeDialogRepository.getHomeDialog();
       if (response != null && response.status == true) {
+        AppLogger.info("DialogNotify::trueeeee");
         emit(HomeDialogLoaded(response));
       } else {
+        AppLogger.info("DialogNotify::falseeee");
         emit(HomeDialogFailure("Something went wrong"));
       }
     } catch (e) {

@@ -807,7 +807,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<GetHomeDilogModel?> homeDiolog() async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.home_diolog}}");
+      Response res = await ApiClient.get("${APIEndpointUrls.home_diolog}");
       AppLogger.log('get homeDiolog::${res.data}');
       return GetHomeDilogModel.fromJson(res.data);
     } catch (e) {
