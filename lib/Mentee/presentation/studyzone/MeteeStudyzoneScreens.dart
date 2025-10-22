@@ -23,6 +23,7 @@ import '../../../Components/Shimmers.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 
+import '../../Models/StudyZoneTagsModel.dart';
 import '../Widgets/FilterButton.dart';
 
 class MenteeStudyZone extends StatefulWidget {
@@ -44,7 +45,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
   @override
   void initState() {
     super.initState();
-    context.read<TagsCubit>().getStudyZoneTags();
+    context.read<TagsCubit>().getStudyZoneTags("");
     context.read<StudyZoneCampusCubit>().fetchStudyZoneCampus("", "", "");
   }
 
@@ -121,31 +122,66 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                       onPressed: () {
                                         searchController.clear();
                                         onCampusNotifier.value = true;
+
                                         final tagsState = context
                                             .read<TagsCubit>()
                                             .state;
                                         String tag = "";
-                                        if (tagsState is TagsLoaded &&
-                                            _selectedTagIndex.value >= 0 &&
-                                            _selectedTagIndex.value <
-                                                (tagsState
-                                                        .tagsModel
-                                                        .data
-                                                        ?.length ??
-                                                    0)) {
-                                          tag = tagsState
-                                              .tagsModel
-                                              .data![_selectedTagIndex.value];
+
+                                        if (tagsState is TagsLoaded) {
+                                          _selectedTagIndex.value = 0;
+
+                                          final modifiedTags = [
+                                            StudyZone(id: -1, tags: "All"),
+                                            ...?tagsState.tagsModel.data,
+                                          ];
+
+                                          tag = modifiedTags.first.tags ?? "";
                                         }
 
                                         context
                                             .read<StudyZoneCampusCubit>()
                                             .fetchStudyZoneCampus(
                                               "",
-                                              tag,
+                                              tag.toLowerCase() == "all"
+                                                  ? ""
+                                                  : tag,
                                               searchController.text,
                                             );
                                       },
+
+                                      // onPressed: () {
+                                      //   searchController.clear();
+                                      //   onCampusNotifier.value = true;
+                                      //   final tagsState = context
+                                      //       .read<TagsCubit>()
+                                      //       .state;
+                                      //   String tag = "";
+                                      //   if (tagsState is TagsLoaded &&
+                                      //       _selectedTagIndex.value >= 0 &&
+                                      //       _selectedTagIndex.value <
+                                      //           (tagsState
+                                      //                   .tagsModel
+                                      //                   .data
+                                      //                   ?.length ??
+                                      //               0)) {
+                                      //     tag =
+                                      //         tagsState
+                                      //             .tagsModel
+                                      //             .data![_selectedTagIndex
+                                      //                 .value]
+                                      //             .tags ??
+                                      //         "";
+                                      //   }
+                                      //
+                                      //   context
+                                      //       .read<StudyZoneCampusCubit>()
+                                      //       .fetchStudyZoneCampus(
+                                      //         "",
+                                      //         tag,
+                                      //         searchController.text,
+                                      //       );
+                                      // },
                                     ),
                                   ),
                                   Expanded(
@@ -168,9 +204,13 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                         .data
                                                         ?.length ??
                                                     0)) {
-                                          tag = tagsState
-                                              .tagsModel
-                                              .data![_selectedTagIndex.value];
+                                          tag =
+                                              tagsState
+                                                  .tagsModel
+                                                  .data![_selectedTagIndex
+                                                      .value]
+                                                  .tags ??
+                                              "";
                                         }
 
                                         context
@@ -212,9 +252,12 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                 _selectedTagIndex.value >= 0 &&
                                 _selectedTagIndex.value <
                                     (tagsState.tagsModel.data?.length ?? 0)) {
-                              selectedTag = tagsState
-                                  .tagsModel
-                                  .data![_selectedTagIndex.value];
+                              selectedTag =
+                                  tagsState
+                                      .tagsModel
+                                      .data![_selectedTagIndex.value]
+                                      .tags ??
+                                  "";
                             }
 
                             if (onCampusNotifier.value) {
@@ -257,13 +300,26 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       if (state is TagsFailure) {
                         return Center(child: Text(state.error));
                       } else if (state is TagsLoaded) {
-                        final tags = state.tagsModel.data;
-                        if (_selectedTagIndex.value == -1 && tags != null && tags.isNotEmpty) {
-                          final allIndex = tags.indexWhere(
-                                (tag) => tag.toLowerCase() == "all",
+                        final tags = state.tagsModel.data ?? [];
+
+                        final modifiedTags = [
+                          StudyZone(
+                            id: -1,
+                            tags: "All",
+                          ), // 👈 manually added All tag
+                          ...tags,
+                        ];
+
+                        // ✅ Select "All" initially if no tag is selected
+                        if (_selectedTagIndex.value == -1 &&
+                            modifiedTags.isNotEmpty) {
+                          final allIndex = modifiedTags.indexWhere(
+                            (tagItem) => tagItem.tags?.toLowerCase() == "all",
                           );
                           if (allIndex != -1) {
                             _selectedTagIndex.value = allIndex;
+                          } else {
+                            _selectedTagIndex.value = 0;
                           }
                         }
 
@@ -272,7 +328,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                           child: ValueListenableBuilder<int>(
                             valueListenable: _selectedTagIndex,
                             builder: (context, selectedIndex, _) {
-                              if (tags == null || tags.isEmpty) {
+                              if (modifiedTags.isEmpty) {
                                 return Container(
                                   height: 40,
                                   alignment: Alignment.center,
@@ -287,23 +343,25 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   ),
                                 );
                               }
+
                               return ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
-                                itemCount: tags.length,
+                                itemCount: modifiedTags.length,
                                 separatorBuilder: (_, __) =>
                                     const SizedBox(width: 8),
                                 itemBuilder: (context, index) {
-                                  final tagItem = tags[index];
+                                  final tagItem = modifiedTags[index];
                                   final isSelected = index == selectedIndex;
 
                                   return GestureDetector(
                                     onTap: () {
                                       if (isSelected) {
                                         _selectedTagIndex.value = -1;
+                                        // reset to fetch without any tag
                                         if (onCampusNotifier.value) {
                                           context
                                               .read<StudyZoneCampusCubit>()
@@ -325,16 +383,16 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                         _selectedTagIndex.value = index;
 
                                         final selectedTag =
-                                            (tagItem.toLowerCase() == "all")
+                                            tagItem.tags?.toLowerCase() == "all"
                                             ? ""
-                                            : tagItem;
+                                            : tagItem.tags;
 
                                         if (onCampusNotifier.value) {
                                           context
                                               .read<StudyZoneCampusCubit>()
                                               .fetchStudyZoneCampus(
                                                 "",
-                                                selectedTag,
+                                                selectedTag ?? "",
                                                 searchController.text,
                                               );
                                         } else {
@@ -342,7 +400,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               .read<StudyZoneCampusCubit>()
                                               .fetchStudyZoneCampus(
                                                 "beyond",
-                                                selectedTag,
+                                                selectedTag ?? "",
                                                 searchController.text,
                                               );
                                         }
@@ -360,7 +418,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                         borderRadius: BorderRadius.circular(24),
                                       ),
                                       child: Text(
-                                        capitalize(tagItem),
+                                        capitalize(tagItem.tags ?? ""),
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12,
@@ -377,6 +435,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                           ),
                         );
                       }
+
                       return SizedBox.shrink();
                     },
                   ),
@@ -636,41 +695,50 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                       ?.tag
                                                                       ?.isNotEmpty ??
                                                                   false))
-                                                                Wrap(
-                                                                  spacing: 8,
-                                                                  runSpacing: 8,
-                                                                  children: campusList!.tag!.map((
-                                                                    tag,
-                                                                  ) {
-                                                                    return Container(
-                                                                      padding: const EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            12,
-                                                                        vertical:
-                                                                            6,
-                                                                      ),
-                                                                      decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                              20,
-                                                                            ),
-                                                                      ),
-                                                                      child: Text(
-                                                                        tag,
-                                                                        style: const TextStyle(
-                                                                          fontFamily:
-                                                                              'segeo',
-                                                                          fontSize:
+                                                                SingleChildScrollView(
+                                                                  scrollDirection:
+                                                                      Axis.horizontal,
+                                                                  physics:
+                                                                      const BouncingScrollPhysics(), // 👈 gives you the smooth bounce
+                                                                  child: Wrap(
+                                                                    direction: Axis
+                                                                        .horizontal,
+                                                                    spacing: 8,
+                                                                    runSpacing:
+                                                                        8,
+                                                                    children: campusList!.tag!.map((
+                                                                      tag,
+                                                                    ) {
+                                                                      return Container(
+                                                                        padding: const EdgeInsets.symmetric(
+                                                                          horizontal:
                                                                               12,
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
+                                                                          vertical:
+                                                                              6,
                                                                         ),
-                                                                      ),
-                                                                    );
-                                                                  }).toList(),
+                                                                        decoration: BoxDecoration(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          borderRadius: BorderRadius.circular(
+                                                                            20,
+                                                                          ),
+                                                                        ),
+                                                                        child: Text(
+                                                                          tag,
+                                                                          style: const TextStyle(
+                                                                            fontFamily:
+                                                                                'segeo',
+                                                                            fontSize:
+                                                                                12,
+                                                                            fontWeight:
+                                                                                FontWeight.w600,
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    }).toList(),
+                                                                  ),
                                                                 ),
+
                                                               const SizedBox(
                                                                 height: 16,
                                                               ),

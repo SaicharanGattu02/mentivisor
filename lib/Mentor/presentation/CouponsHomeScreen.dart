@@ -59,6 +59,13 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                 BlocBuilder<MentorEarningsCubit, MentorEarningsStates>(
                   builder: (context, mentorEarning) {
                     if (mentorEarning is MentorEarningsLoaded) {
+                      final coins =
+                          mentorEarning
+                              .mentorEarningsModel
+                              .data
+                              ?.currentBalance ??
+                          "";
+                      AppState.updateCoins(coins);
                       return Row(
                         children: [
                           Expanded(

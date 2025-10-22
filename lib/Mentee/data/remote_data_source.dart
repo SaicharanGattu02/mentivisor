@@ -27,6 +27,7 @@ import '../Models/CompletedSessionModel.dart';
 import '../Models/CreatePaymentModel.dart';
 import '../Models/DailySlotsModel.dart';
 import '../Models/GetExpertiseModel.dart';
+import '../Models/GetHomeDilogModel.dart';
 import '../Models/GroupChatMessagesModel.dart';
 import '../Models/GuestMentorsModel.dart';
 import '../Models/HighlatedCoinsModel.dart';
@@ -133,8 +134,6 @@ abstract class RemoteDataSource {
     String filter,
     int page,
   );
-
-  Future<TagsModel?> getTagSearch(String query);
   Future<SuccessModel?> forgotPassword(Map<String, dynamic> data);
   Future<SuccessModel?> resetPassword(Map<String, dynamic> data);
   Future<SuccessModel?> forgotVerify(Map<String, dynamic> data);
@@ -155,11 +154,11 @@ abstract class RemoteDataSource {
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page, String Scope);
   Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
   Future<ViewEccDetailsModel?> viewEccDetails(int eventId, String scope);
-  Future<TagsModel?> getEccTagsSearch(String query);
-  Future<TagsModel?> getEccTags();
-  Future<TagsModel?> getStudyZoneTags();
+  Future<TagsModel?> getEccTags(String searchQuery);
+  Future<StudyZoneTagsModel?> getStudyZoneTags(String searchQuery);
   Future<CoinsAchievementModel?> getcoinsAchievements(int page);
   Future<checkInModel?> dailyCheckins();
+  Future<GetHomeDilogModel?> homeDiolog();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -806,6 +805,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<GetHomeDilogModel?> homeDiolog() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.home_diolog}}");
+      AppLogger.log('get homeDiolog::${res.data}');
+      return GetHomeDilogModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('homeDiolog::${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
     String scope,
     String tag,
@@ -1251,16 +1262,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<TagsModel?> getStudyZoneTags() async {
+  Future<StudyZoneTagsModel?> getStudyZoneTags(String searchQuery) async {
     try {
-      final isGuest = await AuthService.isGuest;
-      final endpoint = isGuest
-          ? APIEndpointUrls.guest_study_zone_tags
-          : APIEndpointUrls.study_zone_tags;
-
-      Response res = await ApiClient.get(endpoint);
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.study_zone_tags}?search=${searchQuery}",
+      );
       AppLogger.log('get Tags :: ${res.data}');
-      return TagsModel.fromJson(res.data);
+      return StudyZoneTagsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Tags :: $e');
       return null;
@@ -1268,46 +1276,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<TagsModel?> getEccTags() async {
+  Future<TagsModel?> getEccTags(String searchQuery) async {
     try {
       final isGuest = await AuthService.isGuest;
       final endpoint = isGuest
           ? APIEndpointUrls.guestTags
-          : APIEndpointUrls.ecc_tags;
+          : "${APIEndpointUrls.ecc_tags}?search=${searchQuery}";
 
       Response res = await ApiClient.get(endpoint);
       AppLogger.log('get Ecc Tags :: ${res.data}');
       return TagsModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Ecc Tags :: $e');
-      return null;
-    }
-  }
-
-  @override
-  Future<TagsModel?> getTagSearch(String query) async {
-    try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.tag_search}?keyword=${query}",
-      );
-      AppLogger.log('get Tags Search ::${res.data}');
-      return TagsModel.fromJson(res.data);
-    } catch (e) {
-      AppLogger.error('Tags Search::${e}');
-      return null;
-    }
-  }
-
-  @override
-  Future<TagsModel?> getEccTagsSearch(String query) async {
-    try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.ecc_tag_Search}?keyword=${query}",
-      );
-      AppLogger.log('get Ecc Tags Search ::${res.data}');
-      return TagsModel.fromJson(res.data);
-    } catch (e) {
-      AppLogger.error('Ecc Tags Search::${e}');
       return null;
     }
   }

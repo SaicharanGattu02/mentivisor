@@ -173,7 +173,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '${menteeProfile?.user?.college_name ?? ""} ${menteeProfile?.user?.yearName ?? ""} year\n${menteeProfile?.user?.stream ?? ""}',
+                      '${menteeProfile?.user?.yearName ?? ""} year student in ${menteeProfile?.user?.stream ?? ""} from ${menteeProfile?.user?.college_name ?? ""}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xff666666),
@@ -182,7 +182,6 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-
                     SizedBox(height: 12),
 
                     Padding(

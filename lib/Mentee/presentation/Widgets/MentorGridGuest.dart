@@ -192,9 +192,20 @@ class _MentorCard extends StatelessWidget {
                 child: Center(child: spinkits.getSpinningLinespinkit()),
               ),
             ),
-            errorWidget: (context, url, error) => const CircleAvatar(
+            errorWidget: (context, url, error) => CircleAvatar(
               radius: 36,
-              backgroundImage: AssetImage("assets/images/profile.png"),
+              backgroundColor: Colors.grey.shade300,
+              child: Text(
+                (name != null && name.trim().isNotEmpty)
+                    ? name.trim()[0].toUpperCase()
+                    : 'U',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xff333333),
+                  fontFamily: 'segeo',
+                ),
+              ),
             ),
           ),
           SizedBox(height: 3),

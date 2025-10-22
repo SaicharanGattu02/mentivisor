@@ -1,4 +1,5 @@
-import 'package:mentivisor/Mentee/Models/TagsModel.dart';
+
+import '../../../Models/StudyZoneTagsModel.dart';
 
 abstract class TagsState {}
 
@@ -7,7 +8,7 @@ class TagsInitially extends TagsState {}
 class TagsLoading extends TagsState {}
 
 class TagsLoaded extends TagsState {
-  TagsModel tagsModel;
+  StudyZoneTagsModel tagsModel;
   TagsLoaded( this.tagsModel);
 }
 

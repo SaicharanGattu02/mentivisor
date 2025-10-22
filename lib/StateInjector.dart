@@ -32,6 +32,7 @@ import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_cubit.d
 import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/HomeDialog/home_dialog_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Payment/payment_cubit.dart';
@@ -82,7 +83,6 @@ import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsCubit.dart';
 import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsRepo.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
-import 'Mentee/data/cubits/EccTags/TagsSearch/tags_search_cubit.dart';
 import 'Mentee/data/cubits/EccTags/tags_cubit.dart';
 import 'Mentee/data/cubits/EccTags/tags_repository.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
@@ -92,6 +92,7 @@ import 'Mentee/data/cubits/Expertise/ExpertiseSubCategory/expertise_sub_category
 import 'Mentee/data/cubits/Expertise/expertise_repository.dart';
 import 'Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
 import 'Mentee/data/cubits/GetBanners/GetBannersRepository.dart';
+import 'Mentee/data/cubits/HomeDialog/home_dialog_cubit.dart';
 import 'Mentee/data/cubits/Login/LoginCubit.dart';
 import 'Mentee/data/cubits/Login/LoginRepository.dart';
 import 'Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
@@ -115,7 +116,6 @@ import 'Mentee/data/cubits/StudyZoneCampus/StudyZoneCampusRepository.dart';
 import 'Mentee/data/cubits/StudyZoneReport/StudyZoneReportCubit.dart';
 
 import 'Mentee/data/cubits/SubmitReview/submit_review_cubit.dart';
-import 'Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
 import 'Mentee/data/cubits/Tags/tags_cubit.dart';
 import 'Mentee/data/cubits/Tags/tags_repository.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
@@ -321,6 +321,10 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<HomeDialogRepository>(
+      create: (context) =>
+          HomeDialogImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
     RepositoryProvider<CommonProfileRepository>(
       create: (context) => CommonProfileRepositoryImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
@@ -456,6 +460,10 @@ class StateInjector {
     BlocProvider<CampusesCubit>(
       create: (context) => CampusesCubit(context.read<CampusesRepository>()),
     ),
+    BlocProvider<HomeDialogCubit>(
+      create: (context) =>
+          HomeDialogCubit(context.read<HomeDialogRepository>()),
+    ),
     BlocProvider<LoginCubit>(
       create: (context) => LoginCubit(context.read<LoginRepository>()),
     ),
@@ -476,10 +484,6 @@ class StateInjector {
 
     BlocProvider<EccTagsCubit>(
       create: (context) => EccTagsCubit(context.read<EccTagsRepository>()),
-    ),
-    BlocProvider<EccTagsSearchCubit>(
-      create: (context) =>
-          EccTagsSearchCubit(context.read<EccTagsRepository>()),
     ),
     BlocProvider<MentorProfileCubit>(
       create: (context) =>
@@ -630,9 +634,7 @@ class StateInjector {
     BlocProvider<TagsCubit>(
       create: (context) => TagsCubit(context.read<TagsRepository>()),
     ),
-    BlocProvider<TagsSearchCubit>(
-      create: (context) => TagsSearchCubit(context.read<TagsRepository>()),
-    ),
+
     BlocProvider<ForgotPassswordCubit>(
       create: (context) =>
           ForgotPassswordCubit(context.read<ForgotPassswordRepository>()),

@@ -8,7 +8,7 @@ class EccTagsLoading extends EccTagsState {}
 
 class EccTagsLoaded extends EccTagsState {
   TagsModel tagsModel;
-  EccTagsLoaded( this.tagsModel);
+  EccTagsLoaded(this.tagsModel);
 }
 
 class EccTagsFailure extends EccTagsState {

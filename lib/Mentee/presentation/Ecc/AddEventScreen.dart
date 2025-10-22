@@ -12,6 +12,7 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddECC/add_ecc_states.dart';
+import 'package:mentivisor/Mentee/data/cubits/EccTags/tags_states.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
@@ -21,9 +22,8 @@ import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/ECC/ecc_cubit.dart';
-import '../../data/cubits/EccTags/TagsSearch/tags_search_cubit.dart';
-import '../../data/cubits/EccTags/TagsSearch/tags_search_states.dart';
-import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+
+import '../../data/cubits/EccTags/tags_cubit.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddEventScreen extends StatefulWidget {
@@ -138,7 +138,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   @override
   void initState() {
     searchController.clear();
-    context.read<EccTagsSearchCubit>().reset();
+    context.read<EccTagsCubit>().getEccTags("");
     context.read<HighlightedCoinsCubit>().highlitedCoins("ecc");
     super.initState();
   }
@@ -264,9 +264,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   onChanged: (query) {
                     if (_debounce?.isActive ?? false) _debounce!.cancel();
                     _debounce = Timer(const Duration(milliseconds: 300), () {
-                      context.read<EccTagsSearchCubit>().getEccTagsSearch(
-                        query,
-                      );
+                      context.read<EccTagsCubit>().getEccTags(query);
                     });
                   },
                   style: TextStyle(fontFamily: "segeo", fontSize: 15),
@@ -284,11 +282,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
               const SizedBox(height: 8),
 
-              BlocBuilder<EccTagsSearchCubit, EccTagsSearchState>(
+              BlocBuilder<EccTagsCubit, EccTagsState>(
                 builder: (context, state) {
-                  if (state is EccTagsSearchLoading) {
+                  if (state is EccTagsLoading) {
                     return const Center(child: DottedProgressWithLogo());
-                  } else if (state is EccTagsSearchLoaded) {
+                  } else if (state is EccTagsLoaded) {
                     final allTags = [...state.tagsModel.data!, ..._customTags];
                     if (allTags.isEmpty) {
                       return Center(child: Text("No Ecc Tags Found!"));
@@ -350,7 +348,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         ],
                       ),
                     );
-                  } else if (state is EccTagsSearchFailure) {
+                  } else if (state is EccTagsFailure) {
                     return Center(child: Text("No Data"));
                   } else {
                     return const SizedBox.shrink();
@@ -899,8 +897,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                       height: 120,
                                       repeat: true,
                                     ),
-                                    const Text(
-                                      "Your event is under review. Once it’s approved, it will be visible in the ECC section",
+                                    Text(
+                                      state.successModel.message ??
+                                          "Your event is under review. Once it’s approved, it will be visible in the ECC section",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 16,
@@ -915,6 +914,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                   CustomAppButton1(
                                     text: "Okay",
                                     onPlusTap: () {
+                                      context.read<EccTagsCubit>().getEccTags(
+                                        "",
+                                      );
                                       Navigator.of(
                                         context,
                                       ).pop(); // Closes the dialog

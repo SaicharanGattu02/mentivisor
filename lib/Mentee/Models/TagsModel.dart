@@ -7,7 +7,6 @@ class TagsModel {
   TagsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
 
-    // Handle both 'data' and 'tags' keys
     if (json['data'] != null) {
       data = (json['data'] as List<dynamic>?)?.cast<String>();
     } else if (json['tags'] != null) {

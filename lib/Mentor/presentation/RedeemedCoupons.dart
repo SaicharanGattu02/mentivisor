@@ -182,7 +182,7 @@ class _RedeemedCouponsScreenState extends State<RedeemedCouponsScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          coupon.coupon?.actualValue ?? "0",
+                                          coupon.coins ?? "0",
                                           style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,

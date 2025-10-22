@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/Shimmers.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import 'package:share_plus/share_plus.dart';
@@ -162,17 +163,31 @@ class _PostCardState extends State<PostCard>
                       Row(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              // if (widget.communityPosts.anonymous == 1) {
-                              //   CustomSnackBar1.show(
-                              //     context,
-                              //     "Anonymous post user profile cannot be visited.",
-                              //   );
-                              // } else {
-                              context.push(
-                                "/common_profile/${widget.communityPosts.uploader?.id}",
+                            onTap: () async {
+                              final userIdStr =
+                                  await AuthService.getUSerId(); // String? like "107"
+                              final userId = int.tryParse(
+                                userIdStr ?? '',
+                              ); // Parse to int, default 0 if null/invalid
+                              AppLogger.info(
+                                "userId::$userId (parsed as int: $userId)",
                               );
-                              // }
+
+                              final uploaderId =
+                                  widget.communityPosts.uploader?.id;
+                              if (userId == uploaderId) {
+                                context.push("/profile");
+                                AppLogger.info(
+                                  "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                                );
+                                AppLogger.info("profile::true");
+                              } else {
+                                context.push("/common_profile/$uploaderId");
+                                AppLogger.info(
+                                  "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                                );
+                                AppLogger.info("profile::false...$uploaderId");
+                              }
                             },
                             child: widget.communityPosts.imgUrl?.isEmpty == true
                                 ? CircleAvatar(
@@ -656,7 +671,7 @@ class CommunityPostShimmer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: shimmerContainer(SizeConfig.screenWidth, 110, context),
+              child: shimmerContainer(SizeConfig.screenWidth, 140, context),
             ),
           ),
           SizedBox(height: 12),

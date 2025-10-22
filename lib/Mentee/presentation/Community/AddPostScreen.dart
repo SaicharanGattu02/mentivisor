@@ -510,6 +510,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           ).primaryColor, // ✅ primary color
                           onChanged: (val) {
                             _anonymousNotifier.value = val;
+                            if (val == true) {
+                              _isHighlighted.value = false;
+                            }
                           },
                         ),
                       ),
@@ -543,6 +546,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               AppLogger.info(
                                 "Info  Enoug:${val},${enoughBalance.value}",
                               );
+                              if (val == true) {
+                                _anonymousNotifier.value = false;
+                              }
 
                               if (val == null) return;
                               _isHighlighted.value = val;

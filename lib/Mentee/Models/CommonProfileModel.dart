@@ -160,8 +160,9 @@ class User {
     data['availability_coins'] = availabilityCoins;
 
     if (studyZoneBooks != null) {
-      data['study_zone_books'] =
-          studyZoneBooks!.map((v) => v.toJson()).toList();
+      data['study_zone_books'] = studyZoneBooks!
+          .map((v) => v.toJson())
+          .toList();
     }
     if (communityPost != null) {
       data['community_post'] = communityPost!.map((v) => v.toJson()).toList();

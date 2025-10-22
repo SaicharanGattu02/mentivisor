@@ -237,7 +237,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                 ? ((savings / actualValue) * 100).round().toInt()
                 : 0;
             final requiredCoins = couponsDetails?.coinsRequired ?? 0;
-            context.read<MenteeProfileCubit>().fetchMenteeProfile();
             enoughBalance.value = AppState.coinsNotifier.value >= requiredCoins;
 
             return SingleChildScrollView(

@@ -10,6 +10,7 @@ import '../../Mentee/presentation/Community/CommunityScreen.dart';
 import '../../services/AuthService.dart';
 import '../../services/SocketService.dart';
 import '../../utils/AppLogger.dart';
+import '../../utils/constants.dart';
 import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import 'CouponsHomeScreen.dart';
 import 'MentorHomeScreen.dart';
@@ -92,6 +93,9 @@ class _MentorDashboardState extends State<MentorDashboard> {
               final user_data = state is MentorProfile1Loaded
                   ? state.mentorProfileModel.data
                   : null;
+              final cost = user_data?.coinsPerMinute ?? "";
+              final parsedCost = int.tryParse(cost.toString()) ?? 0;
+              AppStateMentorCostPerMinuteCoins.fetchCoins(parsedCost);
               return Row(
                 // FIX: Row has no `spacing`; using SizedBox keeps the same look.
                 children: [

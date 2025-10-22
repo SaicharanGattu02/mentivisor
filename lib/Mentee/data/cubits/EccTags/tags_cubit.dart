@@ -6,10 +6,10 @@ class EccTagsCubit extends Cubit<EccTagsState> {
   EccTagsRepository eccTagsRepository;
   EccTagsCubit(this.eccTagsRepository) : super(EccTagsInitially());
 
-  Future<void> getEccTags() async {
+  Future<void> getEccTags(String searchQuery) async {
     emit(EccTagsLoading());
     try {
-      final response = await eccTagsRepository.getEccTags();
+      final response = await eccTagsRepository.getEccTags(searchQuery);
       if (response != null && response.status == true) {
         emit(EccTagsLoaded(response));
       } else {

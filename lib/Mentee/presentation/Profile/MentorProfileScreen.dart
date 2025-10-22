@@ -9,11 +9,11 @@ import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
-import '../../Components/Shimmers.dart';
-import '../../utils/spinkittsLoader.dart';
-import '../data/cubits/MentorProfile/MentorProfileCubit.dart';
-import '../data/cubits/MentorProfile/MentorProfileState.dart';
-import 'Widgets/ReviewCard.dart';
+import '../../../Components/Shimmers.dart';
+import '../../../utils/spinkittsLoader.dart';
+import '../../data/cubits/MentorProfile/MentorProfileCubit.dart';
+import '../../data/cubits/MentorProfile/MentorProfileState.dart';
+import '../Widgets/ReviewCard.dart';
 
 class MentorProfileScreen extends StatefulWidget {
   final int id;
@@ -62,6 +62,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               return Center(child: Text(state.message));
             } else if (state is MentorProfileLoaded) {
               final mentorData = state.mentorProfileModel.data;
+              final name = mentorData?.user?.name ?? "";
               AppLogger.info(
                 "hasTodaySlots:$hasTodaySlots, hasTomorrowSlots:$hasTomorrowSlots, hasRemainingSlots:$hasRemainingSlots",
               );
@@ -80,32 +81,38 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: mentorData?.user?.profilePicUrl ?? "",
-                              width: 150, // Set a fixed width for the image
-                              height:
-                                  150, // Set a fixed height to maintain the circle shape
-                              fit: BoxFit
-                                  .cover, // Ensures the image scales correctly to fit within the circle
-                              placeholder: (context, url) => CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Colors.grey,
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: Center(
-                                    child: spinkits.getSpinningLinespinkit(),
-                                  ),
+                          child: CachedNetworkImage(
+                            imageUrl: mentorData?.user?.profilePicUrl ?? "",
+                            width: 150, // Set a fixed width for the image
+                            height:
+                                150, // Set a fixed height to maintain the circle shape
+                            fit: BoxFit
+                                .cover, // Ensures the image scales correctly to fit within the circle
+                            placeholder: (context, url) => CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.grey,
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: Center(
+                                  child: spinkits.getSpinningLinespinkit(),
                                 ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: AssetImage(
-                                      "assets/images/profile.png",
-                                    ),
-                                  ),
+                            ),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              radius: 36,
+                              backgroundColor: Colors.grey.shade300,
+                              child: Text(
+                                (name != null && name.trim().isNotEmpty)
+                                    ? name.trim()[0].toUpperCase()
+                                    : 'U',
+                                style: TextStyle(
+                                  fontSize: 68,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff333333),
+                                  fontFamily: 'segeo',
+                                ),
+                              ),
                             ),
                           ),
                         ),

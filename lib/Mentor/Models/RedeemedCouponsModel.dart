@@ -108,6 +108,7 @@ class Data {
   int? couponId;
   String? title;
   String? code;
+  String? coins;
   String? vendor;
   String? website;
   String? createdAt;
@@ -122,6 +123,7 @@ class Data {
     this.code,
     this.vendor,
     this.website,
+    this.coins,
     this.createdAt,
     this.updatedAt,
     this.coupon,
@@ -135,6 +137,7 @@ class Data {
     code = json['code'];
     vendor = json['vendor'];
     website = json['website'];
+    coins = json['coins'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     coupon = json['coupon'] != null
@@ -150,6 +153,7 @@ class Data {
     data['title'] = this.title;
     data['code'] = this.code;
     data['vendor'] = this.vendor;
+    data['coins'] = this.coins;
     data['website'] = this.website;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;

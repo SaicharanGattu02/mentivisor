@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsCubit.dart';
@@ -273,14 +274,19 @@ class _CommunityScreenState extends State<Communityscreen> {
                       child: CustomScrollView(
                         slivers: [
                           SliverGrid(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: _getCrossAxisCount(context), // 👈 Responsive count
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
-                              childAspectRatio: _getChildAspectRatio(context), // 👈 Responsive ratio
-                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: _getCrossAxisCount(
+                                    context,
+                                  ), // 👈 Responsive count
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: _getChildAspectRatio(
+                                    context,
+                                  ), // 👈 Responsive ratio
+                                ),
                             delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
+                              (context, index) {
                                 return const CommunityPostShimmer();
                               },
                               childCount: 5, // same as before
@@ -377,31 +383,53 @@ class _CommunityScreenState extends State<Communityscreen> {
                         },
                         child: CustomScrollView(
                           slivers: [
-                            SliverGrid(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(context),
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 0,
+                              ),
+                              sliver: SliverMasonryGrid.count(
+                                crossAxisCount: _getCrossAxisCount(
+                                  context,
+                                ), // 👈 dynamic responsive logic
                                 mainAxisSpacing: 16,
                                 crossAxisSpacing: 16,
-                                childAspectRatio: _getChildAspectRatio(context),
-                              ),
-                              delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
+                                childCount: communityposts?.length ?? 0,
+                                itemBuilder: (context, index) {
                                   final communitypost = communityposts?[index];
                                   return PostCard(
                                     scope: _onCampus.value ? "" : "beyond",
-                                    communityPosts: communitypost ?? CommunityPosts(),
+                                    communityPosts:
+                                        communitypost ?? CommunityPosts(),
                                   );
                                 },
-                                childCount: communityposts?.length ?? 0,
                               ),
                             ),
-
+                            // SliverGrid(
+                            //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            //     crossAxisCount: _getCrossAxisCount(context),
+                            //     mainAxisSpacing: 16,
+                            //     crossAxisSpacing: 16,
+                            //     childAspectRatio: _getChildAspectRatio(context),
+                            //   ),
+                            //   delegate: SliverChildBuilderDelegate(
+                            //         (context, index) {
+                            //       final communitypost = communityposts?[index];
+                            //       return PostCard(
+                            //         scope: _onCampus.value ? "" : "beyond",
+                            //         communityPosts: communitypost ?? CommunityPosts(),
+                            //       );
+                            //     },
+                            //     childCount: communityposts?.length ?? 0,
+                            //   ),
+                            // ),
                             if (state is CommunityPostsLoadingMore)
                               const SliverToBoxAdapter(
                                 child: Padding(
                                   padding: EdgeInsets.all(25.0),
                                   child: Center(
-                                    child: CircularProgressIndicator(strokeWidth: 0.8),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 0.8,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -505,11 +533,10 @@ class _CommunityScreenState extends State<Communityscreen> {
       return baseRatio * 2;
     } else if (width > 600) {
       // Tablet – more square
-      return baseRatio * 1.6  ;
+      return baseRatio * 1.6;
     } else {
       // Desktop or large tablet
       return baseRatio * 2.2;
     }
   }
-
 }

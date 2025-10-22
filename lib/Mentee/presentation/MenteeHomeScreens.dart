@@ -315,126 +315,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         child: ListView(
                           padding: EdgeInsets.zero,
                           children: [
-                            Row(
-                              spacing: 10,
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.menu,
-                                    color: Colors.black,
-                                    size: 36,
-                                  ),
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                ),
-                                BlocBuilder<
-                                  MenteeProfileCubit,
-                                  MenteeProfileState
-                                >(
-                                  builder: (context, menteeProfilestate) {
-                                    if (menteeProfilestate
-                                        is MenteeProfileLoaded) {
-                                      final menteeProfile = menteeProfilestate
-                                          .menteeProfileModel
-                                          .data;
-                                      _mentorStatus.value =
-                                          menteeProfile?.user?.mentorStatus ??
-                                          "none";
-                                      _mentorProfileUrl.value =
-                                          menteeProfile?.user?.profilePicUrl ??
-                                          "";
-                                      _mentorProfileName.value =
-                                          menteeProfile?.user?.name ?? "";
-                                      final coins =
-                                          menteeProfile
-                                              ?.user
-                                              ?.availabilityCoins ??
-                                          0;
-                                      AuthService.saveCoins(coins);
-                                      AuthService.saveRole(
-                                        menteeProfile?.user?.role ?? "",
-                                      );
-                                      AuthService.saveCollegeID(
-                                        menteeProfile?.user?.collegeId ?? 0,
-                                      );
-                                      AuthService.saveCollegeName(
-                                        menteeProfile?.user?.college_name ?? "",
-                                      );
-                                      AppState.updateCoins(
-                                        menteeProfile
-                                                ?.user
-                                                ?.availabilityCoins ??
-                                            0,
-                                      );
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Hello!',
-                                            style: TextStyle(
-                                              color: Color(0xff666666),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width:
-                                                SizeConfig.screenWidth * 0.45,
-                                            child: Text(
-                                              overflow: TextOverflow.ellipsis,
-                                              capitalize(
-                                                menteeProfile?.user?.name ??
-                                                    "User",
-                                              ),
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }
-                                    return SizedBox.shrink();
-                                  },
-                                ),
-                              ],
-                            ),
-
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              padding: EdgeInsets.symmetric(
-                                // vertical: 12,
-                                horizontal: 14,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(0xffFFF7CE),
-                              ),
-                              child: Column(
-                                children: [
-                                  if (role == "Both") ...[
-                                    _DrawerItem(
-                                      icon: Image.asset(
-                                        "assets/icons/ArrowCircleleft.png",
-                                        fit: BoxFit.cover,
-                                        width: SizeConfig.screenWidth * 0.082,
-                                        height: SizeConfig.screenHeight * 0.065,
-                                      ),
-                                      title: 'Switch to Mentor',
-                                      onTap: () {
-                                        context.pop();
-                                        context.pushReplacement(
-                                          '/mentor_dashboard',
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
                             Container(
                               padding: const EdgeInsets.all(16),
                               color: Colors.white,
@@ -450,40 +330,83 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         ValueListenableBuilder<String?>(
                                           valueListenable: _mentorProfileUrl,
                                           builder: (context, url, _) {
-                                            return CachedNetworkImage(
-                                              imageUrl: url ?? "",
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      CircleAvatar(
+                                            return ValueListenableBuilder<
+                                              String?
+                                            >(
+                                              valueListenable:
+                                                  _mentorProfileName,
+                                              builder: (context, name, _) {
+                                                final hasImage =
+                                                    url != null &&
+                                                    url.trim().isNotEmpty;
+                                                final initials =
+                                                    (name != null &&
+                                                        name.trim().isNotEmpty)
+                                                    ? name
+                                                          .trim()[0]
+                                                          .toUpperCase()
+                                                    : 'U';
+
+                                                return hasImage
+                                                    ? CachedNetworkImage(
+                                                        imageUrl: url,
+                                                        imageBuilder:
+                                                            (
+                                                              context,
+                                                              imageProvider,
+                                                            ) => CircleAvatar(
+                                                              radius: 20,
+                                                              backgroundImage:
+                                                                  imageProvider,
+                                                            ),
+                                                        placeholder:
+                                                            (
+                                                              context,
+                                                              url,
+                                                            ) => CircleAvatar(
+                                                              radius: 20,
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .grey
+                                                                      .shade300,
+                                                              child: SizedBox(
+                                                                width: 16,
+                                                                height: 16,
+                                                                child: Center(
+                                                                  child: spinkits
+                                                                      .getSpinningLinespinkit(),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                        errorWidget:
+                                                            (
+                                                              context,
+                                                              url,
+                                                              error,
+                                                            ) => CircleAvatar(
+                                                              radius: 20,
+                                                              backgroundImage:
+                                                                  AssetImage(
+                                                                    "assets/images/profile.png",
+                                                                  ),
+                                                            ),
+                                                      )
+                                                    : CircleAvatar(
                                                         radius: 20,
-                                                        backgroundImage:
-                                                            imageProvider,
-                                                      ),
-                                              placeholder: (context, url) =>
-                                                  CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundColor:
-                                                        Colors.grey,
-                                                    child: SizedBox(
-                                                      width: 16,
-                                                      height: 16,
-                                                      child: Center(
-                                                        child: spinkits
-                                                            .getSpinningLinespinkit(),
-                                                      ),
-                                                    ),
-                                                  ),
-                                              errorWidget:
-                                                  (
-                                                    context,
-                                                    url,
-                                                    error,
-                                                  ) => const CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundImage: AssetImage(
-                                                      "assets/images/profile.png",
-                                                    ),
-                                                  ),
+                                                        backgroundColor: Colors
+                                                            .grey
+                                                            .shade300,
+                                                        child: Text(
+                                                          initials,
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      );
+                                              },
                                             );
                                           },
                                         ),
@@ -495,8 +418,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                               width:
                                                   SizeConfig.screenWidth * 0.5,
                                               child: Text(
-                                                overflow: TextOverflow.ellipsis,
                                                 capitalize(name ?? "User"),
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16,
@@ -509,7 +432,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 16),
 
                                   _buildDrawerItem(
                                     assetpath: "assets/icons/Wallet.png",
@@ -665,6 +588,33 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 return const SizedBox.shrink();
                               },
                             ),
+                            if (role == "Both") ...[
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(
+                                  // vertical: 12,
+                                  horizontal: 14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffFFF7CE),
+                                ),
+                                child: _DrawerItem(
+                                  icon: Image.asset(
+                                    "assets/icons/ArrowCircleleft.png",
+                                    fit: BoxFit.cover,
+                                    width: SizeConfig.screenWidth * 0.082,
+                                    height: SizeConfig.screenHeight * 0.065,
+                                  ),
+                                  title: 'Switch to Mentor',
+                                  onTap: () {
+                                    context.pop();
+                                    context.pushReplacement(
+                                      '/mentor_dashboard',
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
 
                             SizedBox(height: 20),
                             Container(

@@ -7,8 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/AddResource/add_resource_states.dart';
-import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_cubit.dart';
-import 'package:mentivisor/Mentee/data/cubits/Tags/TagsSearch/tags_search_states.dart';
+import 'package:mentivisor/Mentee/data/cubits/Tags/tags_states.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
@@ -16,8 +15,9 @@ import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../utils/AppLogger.dart';
 import '../../../utils/color_constants.dart';
-
+import '../../Models/StudyZoneTagsModel.dart';
 import '../../data/cubits/StudyZoneCampus/StudyZoneCampusCubit.dart';
+import '../../data/cubits/Tags/tags_cubit.dart';
 import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
 import 'package:image/image.dart' as img;
@@ -38,18 +38,34 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _useDefaultImage = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
 
   final searchController = TextEditingController();
   Timer? _debounce;
   List<String> _selectedTags = [];
   List<String> _customTags = [];
 
+  // Future<void> _selectFile() async {
+  //   final file = await FileImagePicker.pickPdfFile();
+  //   if (file != null) {
+  //     setState(() {
+  //       _pickedFile.value = file;
+  //     });
+  //   }
+  // }
   Future<void> _selectFile() async {
-    final file = await FileImagePicker.pickPdfFile();
-    if (file != null) {
-      setState(() {
+    _isLoading.value = true; // start loading
+
+    try {
+      final file = await FileImagePicker.pickPdfFile();
+
+      if (file != null) {
         _pickedFile.value = file;
-      });
+      }
+    } catch (e) {
+      debugPrint('File selection error: $e');
+    } finally {
+      _isLoading.value = false;
     }
   }
 
@@ -96,8 +112,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
     searchController.clear();
-    context.read<TagsSearchCubit>().reset();
-    context.read<TagsSearchCubit>().getTagsSearch("");
+    context.read<TagsCubit>().getStudyZoneTags("");
     super.initState();
   }
 
@@ -314,7 +329,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   onChanged: (query) {
                     if (_debounce?.isActive ?? false) _debounce!.cancel();
                     _debounce = Timer(const Duration(milliseconds: 300), () {
-                      context.read<TagsSearchCubit>().getTagsSearch(query);
+                      context.read<TagsCubit>().getStudyZoneTags(query);
                     });
                   },
                   style: TextStyle(fontFamily: "segeo", fontSize: 15),
@@ -332,11 +347,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
               const SizedBox(height: 8),
 
-              BlocBuilder<TagsSearchCubit, TagsSearchState>(
+              BlocBuilder<TagsCubit, TagsState>(
                 builder: (context, state) {
-                  if (state is TagsSearchLoading) {
+                  if (state is TagsLoading) {
                     return const Center(child: DottedProgressWithLogo());
-                  } else if (state is TagsSearchLoaded) {
+                  } else if (state is TagsLoaded) {
                     final allTags = [...state.tagsModel.data!, ..._customTags];
                     if (allTags.isEmpty) {
                       return Center(child: Text("No Tags Found!"));
@@ -364,11 +379,17 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                             spacing: 5,
                             runSpacing: 0,
                             children: allTags.map((tag) {
-                              final isSelected = _selectedTags.contains(tag);
+                              final zone =
+                                  tag as StudyZone; // 👈 explicitly cast
+                              final tagText = zone.tags ?? "";
+                              final isSelected = _selectedTags.contains(
+                                tagText,
+                              );
+
                               return ChoiceChip(
                                 label: Text(
-                                  tag,
-                                  style: TextStyle(
+                                  tagText,
+                                  style: const TextStyle(
                                     color: Color(0xff333333),
                                     fontFamily: 'segeo',
                                     fontWeight: FontWeight.w400,
@@ -379,9 +400,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                 onSelected: (selected) {
                                   setState(() {
                                     if (selected) {
-                                      _selectedTags.add(tag);
+                                      _selectedTags.add(tagText);
                                     } else {
-                                      _selectedTags.remove(tag);
+                                      _selectedTags.remove(tagText);
                                     }
                                   });
                                 },
@@ -468,86 +489,115 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               ValueListenableBuilder<File?>(
                 valueListenable: _pickedFile,
                 builder: (context, file, _) {
-                  return GestureDetector(
-                    onTap: file == null ? _selectFile : null,
-                    child: DottedBorder(
-                      borderType: BorderType.RRect,
-                      radius: const Radius.circular(8),
-                      color: const Color(0xff4B5462),
-                      strokeWidth: 1,
-                      dashPattern: const [6, 3],
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          color: Colors.white,
-                          child: file == null
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/upload.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      const Text(
-                                        "Upload your Resources here",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff9CA3AF),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Stack(
-                                  children: [
-                                    Container(
+                  return ValueListenableBuilder<bool>(
+                    valueListenable: _isLoading,
+                    builder: (context, isLoading, __) {
+                      return GestureDetector(
+                        onTap: (!isLoading && file == null)
+                            ? _selectFile
+                            : null,
+                        child: DottedBorder(
+                          borderType: BorderType.RRect,
+                          radius: const Radius.circular(8),
+                          color: const Color(0xff4B5462),
+                          strokeWidth: 1,
+                          dashPattern: const [6, 3],
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              color: Colors.white,
+                              child: isLoading
+                                  ? const SizedBox(
                                       height: 100,
-                                      alignment: Alignment.center,
-                                      color: const Color(0xffF8FAFE),
-                                      child: Text(
-                                        file.path.split('/').last,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black87,
+                                      child: Center(
+                                        child: Column(
+                                          spacing: 10,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.blue,
+                                            ),
+                                            Text("Uploading...."),
+                                          ],
                                         ),
-                                        textAlign: TextAlign.center,
                                       ),
-                                    ),
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: GestureDetector(
-                                        onTap: _cancelFile,
-                                        child: const CircleAvatar(
-                                          backgroundColor: Colors.black54,
-                                          radius: 16,
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 18,
-                                            color: Colors.white,
+                                    )
+                                  : file == null
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                        horizontal: 16,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            "assets/icons/upload.png",
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          const Text(
+                                            "Upload your Resources here",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Color(0xff9CA3AF),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Stack(
+                                      children: [
+                                        Container(
+                                          height: 100,
+                                          alignment: Alignment.center,
+                                          color: const Color(0xffF8FAFE),
+                                          child: Text(
+                                            file.path.split('/').last,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black87,
+                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
-                                      ),
+                                        Positioned(
+                                          top: 8,
+                                          right: 8,
+                                          child: GestureDetector(
+                                            onTap: _cancelFile,
+                                            child: const CircleAvatar(
+                                              backgroundColor: Colors.black54,
+                                              radius: 16,
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 18,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -573,7 +623,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                         repeat: true,
                       ),
                       Text(
-                        "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
+                        state.successModel.message ??
+                            "Your resource is under review. Once it’s approved, it will be available in the Study Zone.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -588,7 +639,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     CustomAppButton1(
                       text: "Okay",
                       onPlusTap: () {
-                        Navigator.of(context).pop(); // Closes the dialog
+                        context.read<TagsCubit>().getStudyZoneTags("");
+                        Navigator.of(context).pop();
                         context.pop(); // Now pop the page AFTER user taps Okay
                       },
                     ),
@@ -619,27 +671,60 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   if (_formKey.currentState!.validate()) {
                     final imagefile = _imageFile.value;
                     final file = _pickedFile.value;
-                    final isHighlighted = _isHighlighted.value;
-                    final anonymous = _anonymousNotifier.value;
 
-                    if (imagefile == null && file == null) {
+                    if (file == null) {
+                      CustomSnackBar1.show(
+                        context,
+                        "Please upload a resource file.",
+                      );
                       return;
                     }
+
+                    final isHighlighted = _isHighlighted.value;
+                    final anonymous = _anonymousNotifier.value;
 
                     Map<String, dynamic> data = {
                       "name": _resourceNameController.text,
                       "description": _aboutController.text,
                       "tag[]": _selectedTags,
                     };
+
                     if (imagefile != null) {
                       data["image"] = imagefile.path;
                     }
                     if (file != null) {
                       data["file_pdf"] = file.path;
                     }
+
                     context.read<AddResourceCubit>().addResource(data, "");
                   }
                 },
+
+                // onPlusTap: () {
+                //   if (_formKey.currentState!.validate()) {
+                //     final imagefile = _imageFile.value;
+                //     final file = _pickedFile.value;
+                //     final isHighlighted = _isHighlighted.value;
+                //     final anonymous = _anonymousNotifier.value;
+                //
+                //     if (imagefile == null && file == null) {
+                //       return;
+                //     }
+                //
+                //     Map<String, dynamic> data = {
+                //       "name": _resourceNameController.text,
+                //       "description": _aboutController.text,
+                //       "tag[]": _selectedTags,
+                //     };
+                //     if (imagefile != null) {
+                //       data["image"] = imagefile.path;
+                //     }
+                //     if (file != null) {
+                //       data["file_pdf"] = file.path;
+                //     }
+                //     context.read<AddResourceCubit>().addResource(data, "");
+                //   }
+                // },
               ),
             ),
           );

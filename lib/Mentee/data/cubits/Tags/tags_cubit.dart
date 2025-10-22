@@ -6,10 +6,10 @@ class TagsCubit extends Cubit<TagsState> {
   TagsRepository tagsRepository;
   TagsCubit(this.tagsRepository) : super(TagsInitially());
 
-  Future<void> getStudyZoneTags() async {
+  Future<void> getStudyZoneTags(String searchQuery) async {
     emit(TagsLoading());
     try {
-      final response = await tagsRepository.getStudyZoneTags();
+      final response = await tagsRepository.getStudyZoneTags(searchQuery);
       if (response != null && response.status == true) {
         emit(TagsLoaded(response));
       } else {

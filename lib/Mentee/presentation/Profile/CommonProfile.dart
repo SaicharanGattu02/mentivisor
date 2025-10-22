@@ -25,357 +25,6 @@ class ProfileDetails extends StatefulWidget {
   State<ProfileDetails> createState() => _ProfileDetailsState();
 }
 
-// class _ProfileDetailsState extends State<ProfileDetails> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     context.read<MentorProfileCubit>().fetchMentorProfile(widget.id);
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: CustomAppBar1(title: 'Profile Details', actions: []),
-//       body: Background(
-//         child: BlocConsumer<MentorProfileCubit, MentorProfileState>(
-//           listener: (context, state) {
-//             if (state is MentorProfileLoaded) {
-//               final d = state.mentorProfileModel.data;
-//               final t1 = (d?.todaySlots ?? []).isNotEmpty;
-//               final t2 = (d?.tomorrowSlots ?? []).isNotEmpty;
-//               final t3 = (d?.remainingSlots ?? 0) > 0;
-//               // if (t1 != hasTodaySlots || t2 != hasTomorrowSlots || t3 != hasRemainingSlots) {
-//               //   setState(() {
-//               //     hasTodaySlots = t1;
-//               //     hasTomorrowSlots = t2;
-//               //     hasRemainingSlots = t3;
-//               //   });
-//               // }
-//             }
-//           },
-//           builder: (context, state) {
-//             if (state is MentorProfileLoading) {
-//               return const Center(child: DottedProgressWithLogo());
-//             } else if (state is MentorProfileFailure) {
-//               return Center(child: Text(state.message));
-//             } else if (state is MentorProfileLoaded) {
-//               final mentorData = state.mentorProfileModel.data;
-//
-//               return Container(
-//                 padding: EdgeInsets.all(16),
-//                 decoration: const BoxDecoration(
-//                   gradient: LinearGradient(
-//                     colors: [Color(0xfff6faff), Color(0xffe0f2fe)],
-//                     begin: Alignment.centerLeft,
-//                     end: Alignment.centerRight,
-//                   ),
-//                 ),
-//                 child: SafeArea(
-//                   child: SingleChildScrollView(
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Center(
-//                           child: ClipOval(
-//                             child: CachedNetworkImage(
-//                               imageUrl: mentorData?.user?.profilePicUrl ?? "",
-//                               width: 150, // Set a fixed width for the image
-//                               height:
-//                                   150, // Set a fixed height to maintain the circle shape
-//                               fit: BoxFit
-//                                   .cover, // Ensures the image scales correctly to fit within the circle
-//                               placeholder: (context, url) => CircleAvatar(
-//                                 radius: 20,
-//                                 backgroundColor: Colors.grey,
-//                                 child: SizedBox(
-//                                   width: 16,
-//                                   height: 16,
-//                                   child: Center(
-//                                     child: spinkits.getSpinningLinespinkit(),
-//                                   ),
-//                                 ),
-//                               ),
-//                               errorWidget: (context, url, error) =>
-//                                   const CircleAvatar(
-//                                     radius: 20,
-//                                     backgroundImage: AssetImage(
-//                                       "assets/images/profile.png",
-//                                     ),
-//                                   ),
-//                             ),
-//                           ),
-//                         ),
-//                         SizedBox(height: 12),
-//                         Container(
-//                           padding: EdgeInsets.all(16),
-//                           margin: EdgeInsets.only(bottom: 16),
-//                           decoration: BoxDecoration(
-//                             color: Colors.white,
-//                             borderRadius: BorderRadius.circular(12),
-//                             boxShadow: [
-//                               BoxShadow(
-//                                 color: Colors.black.withOpacity(0.05),
-//                                 blurRadius: 10,
-//                                 offset: Offset(0, 2),
-//                               ),
-//                             ],
-//                           ),
-//                           child: Column(
-//                             spacing: 8,
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 mentorData?.user?.name ?? 'Unknown',
-//                                 style: TextStyle(
-//                                   fontSize: 20,
-//                                   fontWeight: FontWeight.bold,
-//                                 ),
-//                               ),
-//                               Text(
-//                                 "${mentorData?.user?.stream ?? ''} from ${mentorData?.user?.college?.name ?? ''}",
-//                                 style: TextStyle(
-//                                   fontSize: 14,
-//                                   fontWeight: FontWeight.w400,
-//                                   color: Color(0xff444444),
-//                                   fontFamily: "segeo",
-//                                 ),
-//                               ),
-//                               Text(
-//                                 "${mentorData?.user?.email ?? ''}",
-//                                 style: TextStyle(
-//                                   fontSize: 14,
-//                                   fontWeight: FontWeight.w400,
-//                                   color: Color(0xff444444),
-//                                   fontFamily: "segeo",
-//                                 ),
-//                               ),
-//                               Row(
-//                                 children: [
-//                                   Image.asset(
-//                                     "assets/icons/language.png",
-//                                     width: 18,
-//                                     height: 18,
-//                                   ),
-//                                   SizedBox(width: 6),
-//                                   Text(
-//                                     (mentorData?.langages ?? []).join(
-//                                       ', ',
-//                                     ), // Languages from data
-//                                     style: TextStyle(fontFamily: "Inter"),
-//                                   ),
-//                                 ],
-//                               ),
-//                               if ((mentorData?.totalReviews ?? 0) > 0)
-//                                 Row(
-//                                   children: [
-//                                     Icon(
-//                                       Icons.star,
-//                                       color: Colors.yellow[700],
-//                                       size: 16,
-//                                     ),
-//                                     SizedBox(width: 4),
-//                                     Text(
-//                                       '${mentorData?.averageRating ?? 0} (${mentorData?.totalReviews ?? 0} reviews)',
-//                                       style: TextStyle(fontFamily: "Inter"),
-//                                     ),
-//                                   ],
-//                                 ),
-//                             ],
-//                           ),
-//                         ),
-//                         _buildSection(
-//                           title: 'About',
-//                           child: Text(
-//                             mentorData?.user?.bio ??
-//                                 'No information available', // About text from data
-//                             style: TextStyle(
-//                               fontSize: 14,
-//                               fontFamily: "Inter",
-//                               height: 1.8,
-//                             ),
-//                           ),
-//                         ),
-//
-//                         _buildSection(
-//                           title: 'Expertise',
-//                           child: Wrap(
-//                             runSpacing: 10,
-//                             spacing: 8,
-//                             children: (mentorData?.expertises ?? [])
-//                                 .expand<Widget>(
-//                                   (e) => [
-//                                     _buildChip(e.name ?? ""),
-//                                     ...(e.subExpertises ?? []).map(
-//                                       (sub) => _buildChip(sub.name ?? ""),
-//                                     ),
-//                                   ],
-//                                 )
-//                                 .toList(),
-//                           ),
-//                         ),
-//
-//                         // if (hasTodaySlots ||
-//                         //     hasTomorrowSlots ||
-//                         //     hasRemainingSlots)
-//                         //   _buildSection(
-//                         //     title: 'Available Slots',
-//                         //     child: Column(
-//                         //       crossAxisAlignment: CrossAxisAlignment.start,
-//                         //       children: [
-//                         //         if (hasTodaySlots) ...[
-//                         //           Text(
-//                         //             'Today',
-//                         //             style: TextStyle(
-//                         //               fontWeight: FontWeight.bold,
-//                         //             ),
-//                         //           ),
-//                         //           SizedBox(height: 8),
-//                         //           Wrap(
-//                         //             runSpacing: 10,
-//                         //             spacing: 8,
-//                         //             children: (mentorData?.todaySlots ?? [])
-//                         //                 .map(
-//                         //                   (slot) => _buildTimeSlot(
-//                         //                 "${slot.startTime} - ${slot.endTime}",
-//                         //                 Color(0xFFdcfce7),
-//                         //               ),
-//                         //             )
-//                         //                 .toList(),
-//                         //           ),
-//                         //           SizedBox(height: 16),
-//                         //         ],
-//                         //         if (hasTomorrowSlots) ...[
-//                         //           Text(
-//                         //             'Tomorrow',
-//                         //             style: TextStyle(
-//                         //               fontWeight: FontWeight.bold,
-//                         //             ),
-//                         //           ),
-//                         //           SizedBox(height: 8),
-//                         //           Wrap(
-//                         //             runSpacing: 10,
-//                         //             spacing: 8,
-//                         //             children: (mentorData?.tomorrowSlots ?? [])
-//                         //                 .map(
-//                         //                   (slot) => _buildTimeSlot(
-//                         //                 "${slot.startTime} - ${slot.endTime}",
-//                         //                 Color(0xFFdbeafe),
-//                         //               ),
-//                         //             )
-//                         //                 .toList(),
-//                         //           ),
-//                         //           SizedBox(height: 20),
-//                         //         ],
-//                         //         if (hasRemainingSlots)
-//                         //           Text(
-//                         //             'More ${mentorData?.remainingSlots} Slots available within the week',
-//                         //             style: TextStyle(
-//                         //               color: Color(0xff666666),
-//                         //               fontWeight: FontWeight.w400,
-//                         //               fontFamily: 'segeo',
-//                         //               fontSize: 16,
-//                         //             ),
-//                         //           ),
-//                         //       ],
-//                         //     ),
-//                         //   ),
-//                         if ((mentorData?.ratings ?? []).isNotEmpty)
-//                           _buildSection(
-//                             title: 'Recent Reviews',
-//                             child: Column(
-//                               children: (mentorData!.ratings!).map<Widget>((
-//                                 review,
-//                               ) {
-//                                 return ReviewCard(
-//                                   name: review.user?.name ?? "",
-//                                   rating: review.rating ?? 0,
-//                                   createdAt: review.createdAt ?? "",
-//                                   review: review.feedback ?? "",
-//                                   imgeUrl: review.user?.profilePicUrl ?? "",
-//                                 );
-//                               }).toList(),
-//                             ),
-//                           ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               );
-//             }
-//             return SizedBox.shrink();
-//           },
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _buildSection({required String title, required Widget child}) {
-//     return Container(
-//       width: double.infinity,
-//       padding: EdgeInsets.all(16),
-//       margin: EdgeInsets.only(bottom: 16),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.05),
-//             blurRadius: 10,
-//             offset: Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(
-//             title,
-//             style: TextStyle(
-//               fontSize: 18,
-//               fontWeight: FontWeight.w500,
-//               fontFamily: 'Inter',
-//               color: Color(0xff333333),
-//             ),
-//           ),
-//           SizedBox(height: 10),
-//           child,
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildTimeSlot(String time, Color color) {
-//     return Container(
-//       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-//       decoration: BoxDecoration(
-//         color: color,
-//         borderRadius: BorderRadius.circular(36),
-//       ),
-//       child: Text(time, style: TextStyle(color: Color(0xFF15803d))),
-//     );
-//   }
-//
-//   Widget _buildChip(String label) {
-//     return Chip(
-//       label: Text(
-//         label,
-//         style: TextStyle(
-//           fontSize: 12,
-//           fontWeight: FontWeight.w400,
-//           fontFamily: "Inter",
-//         ),
-//       ),
-//       side: BorderSide(color: Color(0xFFf3e8ff)),
-//       backgroundColor: Color(0xFFf3e8ff),
-//       labelStyle: TextStyle(color: Color(0xFF7e22ce), fontFamily: "Inter"),
-//       padding: EdgeInsets.symmetric(horizontal: 10),
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(36), // change 12 to your need
-//       ),
-//     );
-//   }
-// }
-
 class _ProfileDetailsState extends State<ProfileDetails> {
   final ValueNotifier<bool> isPost = ValueNotifier<bool>(true);
 
@@ -465,36 +114,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               bottom: 0,
                               child: GestureDetector(
                                 onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        title: Text(
-                                          "🎉 Hi! Great 🎉\nYou Achieved Mentor Badge 🏅",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xffA258F7),
-                                            fontFamily: 'segeo',
-                                            height: 1.3,
-                                          ),
-                                        ),
-
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: Text("OK"),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                  context.push(
+                                    '/mentor_profile?id=${menteeProfile.data?.user?.id ?? ""}',
                                   );
                                 },
                                 child: Image.asset(
@@ -523,7 +144,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '${menteeProfile.data?.user?.collegeName ?? ""} ${menteeProfile.data?.user?.yearName ?? ""} year\n${menteeProfile.data?.user?.stream ?? ""}',
+                      '${menteeProfile.data?.user?.yearName ?? ""} year student in ${menteeProfile.data?.user?.stream ?? ""} from ${menteeProfile.data?.user?.collegeName ?? ""}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xff666666),
@@ -754,7 +375,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                           .mentorProfileModel
                                           .data
                                           ?.user
-                                          ?.communityPost?[index];
+                                          ?.communityPost![index];
                                       return GestureDetector(
                                         onTap: () {
                                           context.push(
@@ -1035,7 +656,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                             ?.user
                                             ?.studyZoneBooks?[index];
                                         return GestureDetector(
-                                          onTap: (){
+                                          onTap: () {
                                             context.push(
                                               '/resource_details_screen/${campusList?.id}',
                                             );
@@ -1047,9 +668,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                               right: 16,
                                             ),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(
-                                                24,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(24),
                                               color: Colors.white,
                                             ),
 
@@ -1065,7 +685,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                   ),
                                                   child: ClipRRect(
                                                     borderRadius:
-                                                        BorderRadius.circular(4),
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
                                                     child: CachedNetworkImage(
                                                       width:
                                                           MediaQuery.of(
@@ -1074,7 +696,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                           0.25,
                                                       height: 130,
                                                       imageUrl:
-                                                          campusList?.image ?? "",
+                                                          campusList?.image ??
+                                                          "",
                                                       fit: BoxFit.cover,
                                                       placeholder:
                                                           (
@@ -1100,9 +723,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                               0xffF8FAFE,
                                                             ),
                                                             child: const Icon(
-                                                              Icons.broken_image,
+                                                              Icons
+                                                                  .broken_image,
                                                               size: 40,
-                                                              color: Colors.grey,
+                                                              color:
+                                                                  Colors.grey,
                                                             ),
                                                           ),
                                                     ),
@@ -1110,16 +735,18 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                 ),
                                                 Expanded(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.all(
-                                                      8.0,
-                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          8.0,
+                                                        ),
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          campusList?.title ?? "",
+                                                          campusList?.title ??
+                                                              "",
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style: TextStyle(
@@ -1131,19 +758,24 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                             letterSpacing: 0.5,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 8),
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
                                                         Text(
                                                           campusList
                                                                   ?.description ??
                                                               "",
                                                           maxLines: 3,
-                                                          style: const TextStyle(
-                                                            fontFamily: 'segeo',
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 11,
-                                                            height: 1,
-                                                          ),
+                                                          style:
+                                                              const TextStyle(
+                                                                fontFamily:
+                                                                    'segeo',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 11,
+                                                                height: 1,
+                                                              ),
                                                         ),
                                                         SizedBox(height: 12),
                                                         if (campusList
@@ -1161,23 +793,24 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                                     EdgeInsets.symmetric(
                                                                       horizontal:
                                                                           12,
-                                                                      vertical: 6,
+                                                                      vertical:
+                                                                          6,
                                                                     ),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                            20,
-                                                                          ),
-                                                                    ),
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        20,
+                                                                      ),
+                                                                ),
                                                                 child: Text(
                                                                   tag,
                                                                   style: const TextStyle(
                                                                     fontFamily:
                                                                         'segeo',
-                                                                    fontSize: 12,
+                                                                    fontSize:
+                                                                        12,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w600,
@@ -1229,7 +862,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                               },
                                                               builder: (context, state) {
                                                                 final currentId =
-                                                                    campusList?.id
+                                                                    campusList
+                                                                        ?.id
                                                                         .toString() ??
                                                                     "";
                                                                 final isLoading =
@@ -1246,7 +880,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                                         isLoading,
                                                                     text:
                                                                         "Download",
-                                                                    textSize: 14,
+                                                                    textSize:
+                                                                        14,
                                                                     onPlusTap: () {
                                                                       context
                                                                           .read<

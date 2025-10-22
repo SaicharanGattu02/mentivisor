@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_states.dart';
@@ -12,6 +13,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/Shimmers.dart';
 import '../../../services/AuthService.dart';
+import '../../Models/TagsModel.dart';
 import '../../data/cubits/EccTags/tags_cubit.dart';
 import '../../data/cubits/EccTags/tags_states.dart';
 import '../Widgets/CommonChoiceChip.dart';
@@ -37,7 +39,7 @@ class _EccScreenState extends State<EccScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<EccTagsCubit>().getEccTags();
+    context.read<EccTagsCubit>().getEccTags("");
     context.read<ECCCubit>().getECC("", "", "");
   }
 
@@ -280,10 +282,13 @@ class _EccScreenState extends State<EccScreen> {
                       return Center(child: Text(state.error));
                     } else if (state is EccTagsLoaded) {
                       final tags = state.tagsModel.data;
+
+                      final modifiedTags = ["All", ...?tags];
+
                       if (_selectedTagIndex.value == -1 &&
-                          tags != null &&
-                          tags.isNotEmpty) {
-                        final allIndex = tags.indexWhere(
+                          modifiedTags != null &&
+                          modifiedTags.isNotEmpty) {
+                        final allIndex = modifiedTags.indexWhere(
                           (tag) => tag.toLowerCase() == "all",
                         );
                         if (allIndex != -1) {
@@ -295,7 +300,7 @@ class _EccScreenState extends State<EccScreen> {
                         child: ValueListenableBuilder<int>(
                           valueListenable: _selectedTagIndex,
                           builder: (context, selectedIndex, _) {
-                            if (tags == null || tags.isEmpty) {
+                            if (modifiedTags == null || modifiedTags.isEmpty) {
                               return Container(
                                 height: 40,
                                 alignment: Alignment.center,
@@ -316,11 +321,11 @@ class _EccScreenState extends State<EccScreen> {
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              itemCount: tags.length,
+                              itemCount: modifiedTags.length,
                               separatorBuilder: (_, __) =>
                                   const SizedBox(width: 8),
                               itemBuilder: (context, index) {
-                                final tagItem = tags[index];
+                                final tagItem = modifiedTags[index];
                                 final isSelected = index == selectedIndex;
                                 return GestureDetector(
                                   onTap: () {
@@ -493,35 +498,51 @@ class _EccScreenState extends State<EccScreen> {
                             },
                             child: CustomScrollView(
                               slivers: [
-                                SliverGrid(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount:
-                                            MediaQuery.of(
-                                                  context,
-                                                ).size.width <
-                                                600
-                                            ? 1
-                                            : 2, // 👈 Responsive layout
-                                        crossAxisSpacing: 16,
-                                        mainAxisSpacing: 16,
-                                        childAspectRatio:
-                                            _getChildAspectRatio(
-                                              context,
-                                            ), // 👈 Maintains proportion
-                                      ),
-                                  delegate: SliverChildBuilderDelegate((
-                                    context,
-                                    index,
-                                  ) {
-                                    return EventCard(
-                                      eccList: ecclist[index],
-                                      scope: onCampusNotifier.value
-                                          ? ""
-                                          : "beyond",
-                                    );
-                                  }, childCount: ecclist.length),
+                                SliverPadding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  sliver: SliverMasonryGrid.count(
+                                    crossAxisCount: SizeConfig.screenWidth < 600
+                                        ? 1
+                                        : 2, // responsive
+                                    mainAxisSpacing: 16,
+                                    crossAxisSpacing: 16,
+                                    childCount: ecclist.length,
+                                    itemBuilder: (context, index) {
+                                      return EventCard(
+                                        eccList: ecclist[index],
+                                        scope: onCampusNotifier.value
+                                            ? ""
+                                            : "beyond",
+                                      );
+                                    },
+                                  ),
                                 ),
+                                // SliverGrid(
+                                //   gridDelegate:
+                                //   SliverGridDelegateWithFixedCrossAxisCount(
+                                //     crossAxisCount:
+                                //     MediaQuery.of(context).size.width <
+                                //         600
+                                //         ? 1
+                                //         : 2, // 👈 Responsive layout
+                                //     crossAxisSpacing: 16,
+                                //     mainAxisSpacing: 16,
+                                //     childAspectRatio: _getChildAspectRatio(
+                                //       context,
+                                //     ), // 👈 Maintains proportion
+                                //   ),
+                                //   delegate: SliverChildBuilderDelegate((
+                                //       context,
+                                //       index,
+                                //       ) {
+                                //     return EventCard(
+                                //       eccList: ecclist[index],
+                                //       scope: onCampusNotifier.value
+                                //           ? ""
+                                //           : "beyond",
+                                //     );
+                                //   }, childCount: ecclist.length),
+                                // ),
 
                                 if (state is ECCLoadingMore)
                                   const SliverToBoxAdapter(

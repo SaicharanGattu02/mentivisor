@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
+import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/Shimmers.dart';
 import '../../utils/color_constants.dart';
+import '../../utils/spinkittsLoader.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
 
@@ -169,8 +171,9 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                         ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
-                          final url = m.user?.profilePicUrl?.trim();
-                          final hasPic = url != null && url.isNotEmpty;
+                          // final url = m.user?.profilePicUrl?.trim();
+                          // final hasPic = url != null && url.isNotEmpty;
+                          final name = m.user?.name ?? "";
 
                           return GestureDetector(
                             onTap: () {
@@ -188,23 +191,46 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                               ),
                               child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundColor: Colors.grey.shade200,
-                                    backgroundImage: hasPic
-                                        ? CachedNetworkImageProvider(url)
-                                        : null,
-                                    child: hasPic
-                                        ? null
-                                        : const Icon(
-                                            Icons.person,
-                                            size: 60,
-                                            color: Colors.grey,
+                                  CachedNetworkImage(
+                                    imageUrl: m.user?.profilePicUrl ?? "",
+                                    imageBuilder: (context, imageProvider) =>
+                                        CircleAvatar(
+                                          radius: 36,
+                                          backgroundImage: imageProvider,
+                                        ),
+                                    placeholder: (context, url) => CircleAvatar(
+                                      radius: 36,
+                                      backgroundColor: Colors.grey,
+                                      child: SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: Center(
+                                          child: spinkits
+                                              .getSpinningLinespinkit(),
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        CircleAvatar(
+                                          radius: 36,
+                                          backgroundColor: Colors.grey.shade300,
+                                          child: Text(
+                                            (name != null &&
+                                                    name.trim().isNotEmpty)
+                                                ? name.trim()[0].toUpperCase()
+                                                : 'U',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xff333333),
+                                              fontFamily: 'segeo',
+                                            ),
                                           ),
+                                        ),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    m.user?.name ?? '',
+                                    capitalize(m.user?.name ?? ''),
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       fontSize: 16,

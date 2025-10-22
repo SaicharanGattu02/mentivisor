@@ -70,18 +70,17 @@ class APIEndpointUrls {
   static const String comment_like = "${userUrl}comments/";
   static const String community_zone_report = "${userUrl}community-zone-report";
   static const String ecc_tags = "${userUrl}ecctags";
-  static const String study_zone_tags = "${userUrl}/study-zone/tags";
-  static const String tag_search = "${userUrl}tags/search";
-  static const String ecc_tag_Search = "${userUrl}ecctags/search";
+  static const String study_zone_tags = "${apiUrl}/study-zone/tags";
   static const String forgot_password = "${apiUrl}forget-password";
   static const String forgot_verify_otp = "${apiUrl}verify-otp";
   static const String resetPassword = "${apiUrl}reset-password";
   static const String coins_achievements = "${userUrl}achivements";
   static const String daily_checkins = "${userUrl}checkin";
   static const String common_profile = "${userUrl}common-profile";
+  static const String home_diolog = "${userUrl}get-notification";
 
   ///Guest urls
-  static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
+  // static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";
   static const String guest_mentors = "${apiUrl}top-mentors";
   static const String guest_study_zone = "${apiUrl}study-zone/top-downloads";
   static const String guest_list_ecc = "${apiUrl}guest-list-ecc";
