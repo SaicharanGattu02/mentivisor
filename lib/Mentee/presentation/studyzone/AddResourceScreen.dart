@@ -97,6 +97,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   void initState() {
     searchController.clear();
     context.read<TagsSearchCubit>().reset();
+    context.read<TagsSearchCubit>().getTagsSearch("");
     super.initState();
   }
 
