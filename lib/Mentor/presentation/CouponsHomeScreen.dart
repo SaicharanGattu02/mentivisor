@@ -517,7 +517,7 @@ class CategoryGridShimmer extends StatelessWidget {
         crossAxisSpacing: 12,
         childAspectRatio: _getChildAspectRatio(context),
       ),
-      itemCount: 8, // You can change based on how many shimmer cards you want
+      itemCount: 8,
       itemBuilder: (context, index) {
         return Container(
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
