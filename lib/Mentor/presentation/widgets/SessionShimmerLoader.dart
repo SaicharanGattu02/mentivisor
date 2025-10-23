@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../Components/Shimmers.dart';
 import '../../../utils/media_query_helper.dart';
 
@@ -10,17 +11,14 @@ class SessionShimmerLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _getCrossAxisCount(context),
-            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-            childAspectRatio: _getChildAspectRatio(context),
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => shimmerSessionCard(context),
-            childCount: itemCount,
-          ),
+        SliverMasonryGrid.count(
+          crossAxisCount: _getCrossAxisCount(context),
+          mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+          crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+          childCount: itemCount,
+          itemBuilder: (context, index) {
+            return shimmerSessionCard(context);
+          },
         ),
       ],
     );

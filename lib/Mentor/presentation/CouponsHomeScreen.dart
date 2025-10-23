@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/constants.dart';
 import '../../Components/Shimmers.dart';
@@ -257,34 +258,24 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                             children: [
                               LayoutBuilder(
                                 builder: (context, constraints) {
-                                  // Get screen width
                                   double screenWidth = MediaQuery.of(
                                     context,
                                   ).size.width;
 
-                                  return GridView.builder(
+                                  return MasonryGridView.count(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: _getCrossAxisCount(
-                                            context,
-                                          ),
-                                          mainAxisSpacing: 12,
-                                          crossAxisSpacing: 12,
-                                          childAspectRatio:
-                                              _getChildAspectRatio(context),
-                                        ),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    crossAxisCount: _getCrossAxisCount(context),
+                                    mainAxisSpacing: 12,
+                                    crossAxisSpacing: 12,
                                     itemCount: categories.length,
                                     itemBuilder: (context, index) {
                                       final item = categories[index];
                                       final itemWidth =
                                           screenWidth /
                                               _getCrossAxisCount(context) -
-                                          24; // Adjusted for spacing (12px each side)
-                                      final itemHeight =
-                                          itemWidth /
-                                          _getChildAspectRatio(context);
+                                          24; // spacing
                                       final imageSize = itemWidth - 24;
 
                                       return GestureDetector(
@@ -340,10 +331,10 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                                                       ) => Container(
                                                         width: 120,
                                                         height: 120,
-                                                        color: Color(
+                                                        color: const Color(
                                                           0xffF8FAFE,
                                                         ),
-                                                        child: Icon(
+                                                        child: const Icon(
                                                           Icons.broken_image,
                                                           size: 40,
                                                           color: Colors.grey,
@@ -381,6 +372,135 @@ class _CouponsHomeScreenState extends State<CouponsHomeScreen> {
                             ],
                           ),
                         ),
+                        // SingleChildScrollView(
+                        //   child: Column(
+                        //     children: [
+                        //       LayoutBuilder(
+                        //         builder: (context, constraints) {
+                        //           // Get screen width
+                        //           double screenWidth = MediaQuery.of(
+                        //             context,
+                        //           ).size.width;
+                        //
+                        //           return GridView.builder(
+                        //             shrinkWrap: true,
+                        //             physics: NeverScrollableScrollPhysics(),
+                        //             gridDelegate:
+                        //                 SliverGridDelegateWithFixedCrossAxisCount(
+                        //                   crossAxisCount: _getCrossAxisCount(
+                        //                     context,
+                        //                   ),
+                        //                   mainAxisSpacing: 12,
+                        //                   crossAxisSpacing: 12,
+                        //                   childAspectRatio:
+                        //                       _getChildAspectRatio(context),
+                        //                 ),
+                        //             itemCount: categories.length,
+                        //             itemBuilder: (context, index) {
+                        //               final item = categories[index];
+                        //               final itemWidth =
+                        //                   screenWidth /
+                        //                       _getCrossAxisCount(context) -
+                        //                   24; // Adjusted for spacing (12px each side)
+                        //               final itemHeight =
+                        //                   itemWidth /
+                        //                   _getChildAspectRatio(context);
+                        //               final imageSize = itemWidth - 24;
+                        //
+                        //               return GestureDetector(
+                        //                 onTap: () {
+                        //                   context.push(
+                        //                     '/coupon_list?categoryId=${item.id ?? ""}',
+                        //                   );
+                        //                 },
+                        //                 child: Container(
+                        //                   padding: const EdgeInsets.fromLTRB(
+                        //                     12,
+                        //                     12,
+                        //                     12,
+                        //                     10,
+                        //                   ),
+                        //                   decoration: BoxDecoration(
+                        //                     color: Colors.white,
+                        //                     borderRadius: BorderRadius.circular(
+                        //                       16,
+                        //                     ),
+                        //                     boxShadow: const [
+                        //                       BoxShadow(
+                        //                         color: Color(0x0F0E1240),
+                        //                         blurRadius: 14,
+                        //                         offset: Offset(0, 6),
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                   child: Column(
+                        //                     children: [
+                        //                       ClipRRect(
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(8),
+                        //                         child: CachedNetworkImage(
+                        //                           width: imageSize,
+                        //                           height: imageSize,
+                        //                           imageUrl: item.image ?? "",
+                        //                           fit: BoxFit.cover,
+                        //                           placeholder: (context, url) =>
+                        //                               SizedBox(
+                        //                                 width: 120,
+                        //                                 height: 120,
+                        //                                 child: Center(
+                        //                                   child: spinkits
+                        //                                       .getSpinningLinespinkit(),
+                        //                                 ),
+                        //                               ),
+                        //                           errorWidget:
+                        //                               (
+                        //                                 context,
+                        //                                 url,
+                        //                                 error,
+                        //                               ) => Container(
+                        //                                 width: 120,
+                        //                                 height: 120,
+                        //                                 color: Color(
+                        //                                   0xffF8FAFE,
+                        //                                 ),
+                        //                                 child: Icon(
+                        //                                   Icons.broken_image,
+                        //                                   size: 40,
+                        //                                   color: Colors.grey,
+                        //                                 ),
+                        //                               ),
+                        //                         ),
+                        //                       ),
+                        //                       const SizedBox(height: 8),
+                        //                       Text(
+                        //                         capitalize(item.name ?? ""),
+                        //                         maxLines: 1,
+                        //                         overflow: TextOverflow.ellipsis,
+                        //                         style: const TextStyle(
+                        //                           fontFamily: 'segeo',
+                        //                           fontSize: 14,
+                        //                           fontWeight: FontWeight.w600,
+                        //                           color: Color(0xFF555555),
+                        //                         ),
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               );
+                        //             },
+                        //           );
+                        //         },
+                        //       ),
+                        //       if (state is CouponsCategoryLoadingMore)
+                        //         const Padding(
+                        //           padding: EdgeInsets.symmetric(vertical: 20),
+                        //           child: CircularProgressIndicator(
+                        //             strokeWidth: 0.8,
+                        //           ),
+                        //         ),
+                        //     ],
+                        //   ),
+                        // ),
                       );
                     } else {
                       return const SizedBox.shrink();
@@ -502,28 +622,14 @@ class CategoryGridShimmer extends StatelessWidget {
     }
   }
 
-  double _getChildAspectRatio(BuildContext context) {
-    final screenWidth = SizeConfig.screenWidth;
-    if (screenWidth < 600) {
-      return 0.85;
-    } else {
-      return 0.85;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final crossAxisCount = MediaQuery.of(context).size.width < 600 ? 2 : 3;
-
-    return GridView.builder(
+    return MasonryGridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: _getCrossAxisCount(context),
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: _getChildAspectRatio(context),
-      ),
+      crossAxisCount: _getCrossAxisCount(context),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
       itemCount: 8,
       itemBuilder: (context, index) {
         return Container(
@@ -542,7 +648,7 @@ class CategoryGridShimmer extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Image shimmer
+              // Image shimmer (fixed height like before)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: shimmerContainer(120, 120, context),

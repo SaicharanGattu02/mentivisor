@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorDashboardCubit/mentor_dashbaord_states.dart';
@@ -13,6 +14,7 @@ import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart';
 import 'package:mentivisor/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../Components/Shimmers.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersState.dart';
 import '../../utils/color_constants.dart';
@@ -80,7 +82,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         child: BlocBuilder<MentorDashboardCubit, MentorDashBoardState>(
           builder: (context, state) {
             if (state is MentorDashBoardLoading) {
-              return const SessionShimmerLoader(itemCount: 5);
+              return const MentorDashboardShimmer();
             } else if (state is MentorDashBoardLoaded) {
               final banners_data = state.getBannersRespModel;
               final session_data = state.sessionsModel;
@@ -204,54 +206,98 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                           )
                         : CustomScrollView(
                             slivers: [
-                              SliverGrid(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: _getCrossAxisCount(
-                                        context,
+                              SliverPadding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                ),
+                                sliver: SliverMasonryGrid.count(
+                                  crossAxisCount: _getCrossAxisCount(context),
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childCount: session_data?.data?.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    final session = session_data?.data?[index];
+                                    final duration = calculateDuration(
+                                      session?.startTime ?? "",
+                                      session?.endTime ?? "",
+                                    );
+                                    return SessionCard(
+                                      menteeId: session?.mentee?.id,
+                                      attachment: session?.attachment ?? "",
+                                      sessionLink: session?.zoomLink ?? "",
+                                      sessionId: session?.id ?? 0,
+                                      status: 'upcoming',
+                                      sessionDate: formatDate(
+                                        session?.date ?? "",
                                       ),
-                                      crossAxisSpacing: 16,
-                                      mainAxisSpacing: 16,
-                                      childAspectRatio: _getChildAspectRatio(
-                                        context,
-                                      ),
-                                    ),
-                                delegate: SliverChildBuilderDelegate((
-                                  context,
-                                  index,
-                                ) {
-                                  final session = session_data?.data?[index];
-                                  final duration = calculateDuration(
-                                    session?.startTime ?? "",
-                                    session?.endTime ?? "",
-                                  );
-                                  return SessionCard(
-                                    menteeId: session?.mentee?.id,
-                                    attachment: session?.attachment ?? "",
-                                    sessionLink: session?.zoomLink ?? "",
-                                    sessionId: session?.id ?? 0,
-                                    status: 'upcoming',
-                                    sessionDate: formatDate(
-                                      session?.date ?? "",
-                                    ),
-                                    sessionStartTime:
-                                        '${session?.startTime ?? ""}',
-                                    sessionEndTime: '${session?.endTime ?? ""}',
-                                    sessionTime: '${duration}  to go',
-                                    sessionName:
-                                        'Zoom Meet with ${session?.mentee?.name}',
-                                    sessionImage:
-                                        session?.mentee?.menteeProfile ?? "",
-                                    sessionTopics: session?.topics ?? "",
-                                    reason: '',
-                                    buttonText:
-                                        'Message from ${session?.mentee?.name ?? ""}',
-                                    buttonIcon: "assets/icons/ChatCircle.png",
-                                    remainingTime:
-                                        '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
-                                  );
-                                }, childCount: session_data?.data?.length),
+                                      sessionStartTime:
+                                          '${session?.startTime ?? ""}',
+                                      sessionEndTime:
+                                          '${session?.endTime ?? ""}',
+                                      sessionTime: '$duration to go',
+                                      sessionName:
+                                          'Zoom Meet with ${session?.mentee?.name}',
+                                      sessionImage:
+                                          session?.mentee?.menteeProfile ?? "",
+                                      sessionTopics: session?.topics ?? "",
+                                      reason: '',
+                                      buttonText:
+                                          'Message from ${session?.mentee?.name ?? ""}',
+                                      buttonIcon: "assets/icons/ChatCircle.png",
+                                      remainingTime:
+                                          '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
+                                    );
+                                  },
+                                ),
                               ),
+                              // SliverGrid(
+                              //   gridDelegate:
+                              //       SliverGridDelegateWithFixedCrossAxisCount(
+                              //         crossAxisCount: _getCrossAxisCount(
+                              //           context,
+                              //         ),
+                              //         crossAxisSpacing: 16,
+                              //         mainAxisSpacing: 16,
+                              //         childAspectRatio: _getChildAspectRatio(
+                              //           context,
+                              //         ),
+                              //       ),
+                              //   delegate: SliverChildBuilderDelegate((
+                              //     context,
+                              //     index,
+                              //   ) {
+                              //     final session = session_data?.data?[index];
+                              //     final duration = calculateDuration(
+                              //       session?.startTime ?? "",
+                              //       session?.endTime ?? "",
+                              //     );
+                              //     return SessionCard(
+                              //       menteeId: session?.mentee?.id,
+                              //       attachment: session?.attachment ?? "",
+                              //       sessionLink: session?.zoomLink ?? "",
+                              //       sessionId: session?.id ?? 0,
+                              //       status: 'upcoming',
+                              //       sessionDate: formatDate(
+                              //         session?.date ?? "",
+                              //       ),
+                              //       sessionStartTime:
+                              //           '${session?.startTime ?? ""}',
+                              //       sessionEndTime: '${session?.endTime ?? ""}',
+                              //       sessionTime: '${duration}  to go',
+                              //       sessionName:
+                              //           'Zoom Meet with ${session?.mentee?.name}',
+                              //       sessionImage:
+                              //           session?.mentee?.menteeProfile ?? "",
+                              //       sessionTopics: session?.topics ?? "",
+                              //       reason: '',
+                              //       buttonText:
+                              //           'Message from ${session?.mentee?.name ?? ""}',
+                              //       buttonIcon: "assets/icons/ChatCircle.png",
+                              //       remainingTime:
+                              //           '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
+                              //     );
+                              //   }, childCount: session_data?.data?.length),
+                              // ),
                             ],
                           ),
                   ),
@@ -276,13 +322,157 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
       return 2; // For exactly 600px (edge case), treat as tablet layout
     }
   }
+}
 
-  double _getChildAspectRatio(BuildContext context) {
-    final screenWidth = SizeConfig.screenWidth;
-    if (screenWidth < 600) {
-      return 1.7;
-    } else {
-      return 1.8; // Slightly wider aspect for balanced layout
-    }
+class MentorDashboardShimmer extends StatelessWidget {
+  const MentorDashboardShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 180,
+          width: double.infinity,
+          child: PageView.builder(
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: shimmerContainer(
+                    double.infinity,
+                    double.infinity,
+                    context,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 🟣 Banner indicator shimmer
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(3, (index) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              height: 8,
+              width: index == 0 ? 32 : 12,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(100),
+              ),
+            );
+          }),
+        ),
+
+        const SizedBox(height: 24),
+        Text(
+          'Upcoming Session',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'segeo',
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // 🟣 Session shimmer grid
+        Expanded(
+          child: CustomScrollView(
+            slivers: [
+              SliverMasonryGrid.count(
+                crossAxisCount: _getCrossAxisCount(context),
+                mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                childCount: 6,
+                itemBuilder: (context, index) {
+                  return shimmerSessionCard(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 🟣 Shimmer for individual session cards
+  Widget shimmerSessionCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F0E1240),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Top Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  shimmerText(100, 16, context),
+                  const SizedBox(height: 8),
+                  shimmerText(180, 16, context),
+                  const SizedBox(height: 8),
+                  shimmerContainer(120, 28, context, isButton: true),
+                ],
+              ),
+              shimmerRectangle(70, context),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // 🔹 Session Topics
+          shimmerText(80, 14, context),
+          const SizedBox(height: 8),
+          shimmerText(220, 12, context),
+          const SizedBox(height: 4),
+          shimmerText(180, 12, context),
+
+          const SizedBox(height: 16),
+
+          // 🔹 Bottom Buttons
+          Row(
+            children: [
+              Expanded(
+                child: shimmerContainer(
+                  MediaQuery.of(context).size.width * 0.5,
+                  48,
+                  context,
+                  isButton: true,
+                ),
+              ),
+              const SizedBox(width: 12),
+              shimmerContainer(80, 48, context, isButton: true),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 🟣 Responsive helpers
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) return 1;
+    if (width < 900) return 2;
+    return 3;
   }
 }

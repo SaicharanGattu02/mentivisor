@@ -110,26 +110,26 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                                 width: double.infinity,
                                 child: exclusiveServiceImge.isNotEmpty
                                     ? CachedNetworkImage(
-                                  imageUrl: exclusiveServiceImge,
-                                  fit: BoxFit.cover,
-                                  placeholder: (c, _) => const Center(
-                                    child: SizedBox(
-                                      width: 22,
-                                      height: 22,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 1.8,
+                                        imageUrl: exclusiveServiceImge,
+                                        fit: BoxFit.cover,
+                                        placeholder: (c, _) => const Center(
+                                          child: SizedBox(
+                                            width: 22,
+                                            height: 22,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 1.8,
+                                            ),
+                                          ),
+                                        ),
+                                        errorWidget: (c, _, __) => const Icon(
+                                          Icons.broken_image_outlined,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.broken_image_outlined,
+                                        color: Colors.grey,
                                       ),
-                                    ),
-                                  ),
-                                  errorWidget: (c, _, __) => const Icon(
-                                    Icons.broken_image_outlined,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                                    : const Icon(
-                                  Icons.broken_image_outlined,
-                                  color: Colors.grey,
-                                ),
                               ),
                             ),
                           ),

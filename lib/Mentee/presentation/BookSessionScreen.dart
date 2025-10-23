@@ -662,8 +662,10 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             final sessionCoins = wallet?.sessionCoins ?? 0;
                             final availableCoins = wallet?.availableCoins ?? 0;
                             final balanceCoins = wallet?.balanceCoins ?? 0;
-                            final enough = wallet?.enoughBalance ?? false;
-                            enoughBalance.value = enough; // or false
+                            enoughBalance.value = balanceCoins > 0;
+                            AppLogger.info(
+                              "EnoughBalance Updated After Frame :: ${enoughBalance.value}.",
+                            );
                             Row _row(String label, int coins) => Row(
                               children: [
                                 Text(label),
@@ -737,8 +739,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                 padding: EdgeInsets.all(16),
                 child: ValueListenableBuilder<bool>(
                   valueListenable: enoughBalance,
-                  builder: (context, value, child) {
-                    final enough_coins = value ?? false;
+                  builder: (context, enough_coins, child) {
                     return BlocConsumer<
                       SessionBookingCubit,
                       SessionBookingStates
@@ -785,7 +786,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(16),
                                       ),
-                                      title: const Text(
+                                      title: Text(
                                         "Insufficient Coins",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,

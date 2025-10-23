@@ -80,180 +80,191 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                     padding: const EdgeInsets.all(16.0),
                     sliver: SliverGrid(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: _getCrossAxisCount(context), // 👈 2 on mobile, 3 on tab
+                        crossAxisCount: _getCrossAxisCount(
+                          context,
+                        ), // 👈 2 on mobile, 3 on tab
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
+                        childAspectRatio: _getChildAspectRatio(
+                          context,
+                        ), // 👈 responsive ratio
                       ),
-                      delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                          final completeSessions = sessions[index];
-                          if (completeSessions == null) {
-                            return const SizedBox.shrink();
-                          }
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final completeSessions = sessions[index];
+                        if (completeSessions == null) {
+                          return const SizedBox.shrink();
+                        }
 
-                          return Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // 🔹 Left side: Session details
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            completeSessions.topics?.isNotEmpty ?? false
-                                                ? completeSessions.topics!
-                                                : "No topics specified",
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: "segeo",
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            "With ${capitalize(completeSessions.mentor?.name ?? "Unknown Mentor")}",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: "segeo",
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            "${formatDate(completeSessions.date ?? "N/A")} ${completeSessions.startTime ?? ""}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: "segeo",
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    // 🔹 Right side: Completed status
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: const [
-                                        SizedBox(height: 20),
-                                        Icon(
-                                          Icons.check_circle_outline,
-                                          color: Colors.green,
-                                          size: 24,
-                                        ),
-                                        SizedBox(height: 4),
+                        return Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // 🔹 Left side: Session details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                          "Session completed",
-                                          textAlign: TextAlign.center,
+                                          completeSessions.topics?.isNotEmpty ??
+                                                  false
+                                              ? completeSessions.topics!
+                                              : "No topics specified",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "segeo",
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "With ${capitalize(completeSessions.mentor?.name ?? "Unknown Mentor")}",
                                           style: TextStyle(
                                             fontSize: 14,
-                                            fontWeight: FontWeight.w600,
+                                            fontFamily: "segeo",
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          "${formatDate(completeSessions.date ?? "N/A")} ${completeSessions.startTime ?? ""}",
+                                          style: const TextStyle(
+                                            fontSize: 14,
                                             fontFamily: "segeo",
                                             color: Colors.black87,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
+                                  ),
 
-                                // 🔹 Action Buttons
-                                Row(
-                                  spacing: 12,
-                                  children: [
-                                    SizedBox(
-                                      height: 32,
-                                      child: OutlinedButton.icon(
-                                        onPressed: () {
-                                          _showReportSheet(
-                                            context,
-                                            completeSessions.id ?? 0,
-                                          );
-                                        },
-                                        icon: const Icon(
-                                          Icons.flag,
-                                          color: Color(0xFFA6A6A6),
-                                          size: 16,
+                                  // 🔹 Right side: Completed status
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: const [
+                                      SizedBox(height: 20),
+                                      Icon(
+                                        Icons.check_circle_outline,
+                                        color: Colors.green,
+                                        size: 24,
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Session completed",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: "segeo",
+                                          color: Colors.black87,
                                         ),
-                                        label: const Text(
-                                          "Report Session",
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: "segeo",
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xff000000),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+
+                              // 🔹 Action Buttons
+                              Row(
+                                spacing: 12,
+                                children: [
+                                  SizedBox(
+                                    height: 32,
+                                    child: OutlinedButton.icon(
+                                      onPressed: () {
+                                        _showReportSheet(
+                                          context,
+                                          completeSessions.id ?? 0,
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.flag,
+                                        color: Color(0xFFA6A6A6),
+                                        size: 16,
+                                      ),
+                                      label: const Text(
+                                        "Report Session",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: "segeo",
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xff000000),
+                                        ),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xffF5F5F5,
+                                        ),
+                                        visualDensity: VisualDensity.compact,
+                                        side: BorderSide.none,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
                                           ),
                                         ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8,
+                                          horizontal: 8,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (completeSessions.hasRating == false) ...[
+                                    SizedBox(
+                                      height: 32,
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          showReviewBottomSheet(
+                                            context: context,
+                                            sessionId: completeSessions.id ?? 0,
+                                          );
+                                        },
                                         style: OutlinedButton.styleFrom(
-                                          backgroundColor: const Color(0xffF5F5F5),
                                           visualDensity: VisualDensity.compact,
-                                          side: BorderSide.none,
+                                          side: BorderSide(
+                                            color: Colors.grey.shade300,
+                                          ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
                                           padding: const EdgeInsets.symmetric(
                                             vertical: 8,
-                                            horizontal: 8,
+                                            horizontal: 12,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Rate Us",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: "segeo",
+                                            color: Colors.black87,
                                           ),
                                         ),
                                       ),
                                     ),
-                                    if (completeSessions.hasRating == false) ...[
-                                      SizedBox(
-                                        height: 32,
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            showReviewBottomSheet(
-                                              context: context,
-                                              sessionId: completeSessions.id ?? 0,
-                                            );
-                                          },
-                                          style: OutlinedButton.styleFrom(
-                                            visualDensity: VisualDensity.compact,
-                                            side: BorderSide(
-                                              color: Colors.grey.shade300,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal: 12,
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Rate Us",
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontFamily: "segeo",
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
                                   ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        childCount: sessions.length,
-                      ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }, childCount: sessions.length),
                     ),
                   ),
                 ],
@@ -295,7 +306,6 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
       return baseRatio * 1.8;
     }
   }
-
 
   void showReviewBottomSheet({
     required BuildContext context,
@@ -477,7 +487,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          '` Report Session',
+                          'Report Session',
                           style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'segeo',
@@ -547,6 +557,11 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                     BlocConsumer<SubmitReviewCubit, SubmitReviewStates>(
                       listener: (context, state) {
                         if (state is SessionReportSuccess) {
+                          CustomSnackBar1.show(
+                            context,
+                            state.successModel.message ??
+                                'Reported Successfully',
+                          );
                           context.pop();
                         } else if (state is SubmitReportFailure) {
                           debugPrint("errorrrrr:${state.error ?? ""}");
@@ -623,13 +638,17 @@ class CompletedSessionsShimmer extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _getCrossAxisCount(context), // 👈 2 mobile, 3 tablet
+              crossAxisCount: _getCrossAxisCount(
+                context,
+              ), // 👈 2 mobile, 3 tablet
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
+              childAspectRatio: _getChildAspectRatio(
+                context,
+              ), // 👈 responsive ratio
             ),
             delegate: SliverChildBuilderDelegate(
-                  (context, index) {
+              (context, index) {
                 return Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -670,7 +689,11 @@ class CompletedSessionsShimmer extends StatelessWidget {
                               const SizedBox(height: 20),
                               shimmerCircle(24, context), // check icon
                               const SizedBox(height: 6),
-                              shimmerText(100, 12, context), // "Session completed"
+                              shimmerText(
+                                100,
+                                12,
+                                context,
+                              ), // "Session completed"
                             ],
                           ),
                         ],

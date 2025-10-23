@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart';
@@ -177,80 +178,43 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                     }
                     return CustomScrollView(
                       slivers: [
-                        // SliverList(
-                        //   delegate: SliverChildBuilderDelegate((
-                        //     context,
-                        //     index,
-                        //   ) {
-                        //     final session = Sessions?[index];
-                        //     final duration = calculateDuration(
-                        //       session?.startTime ?? "",
-                        //       session?.endTime ?? "",
-                        //     );
-                        //     return SessionCard(
-                        //       attachment: session?.attachment ?? "",
-                        //       menteeId: session?.mentee?.id ?? 0,
-                        //       sessionId: session?.id ?? 0,
-                        //       status: selectedFilter,
-                        //       sessionStartTime: '${session?.startTime ?? ""}',
-                        //       sessionEndTime: '${session?.endTime ?? ""}',
-                        //       sessionDate: formatDate(session?.date ?? ""),
-                        //       sessionTime: '${duration} to go',
-                        //       sessionName:
-                        //           'Zoom Meet with ${session?.mentee?.name}',
-                        //       sessionImage:
-                        //           session?.mentee?.menteeProfile ??
-                        //           "", // Image for upcoming sessions
-                        //       sessionTopics: session?.topics ?? "",
-                        //       reason: session?.cancelledReason ?? "",
-                        //       buttonText:
-                        //           'Message from ${session?.mentee?.name ?? ""}',
-                        //       buttonIcon: "assets/icons/ChatCircle.png",
-                        //       remainingTime: '${duration} Minutes to go',
-                        //       cancelreason: session?.cancelledReason ?? "",
-                        //     );
-                        //   }, childCount: Sessions?.length),
-                        // ),
-                        SliverGrid(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(context),
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: _getChildAspectRatio(context),
-                              ),
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            final session = Sessions?[index];
-                            final duration = calculateDuration(
-                              session?.startTime ?? "",
-                              session?.endTime ?? "",
-                            );
-                            return SessionCard(
-                              attachment: session?.attachment ?? "",
-                              menteeId: session?.mentee?.id ?? 0,
-                              sessionId: session?.id ?? 0,
-                              status: selectedFilter,
-                              sessionStartTime: '${session?.startTime ?? ""}',
-                              sessionEndTime: '${session?.endTime ?? ""}',
-                              sessionDate: formatDate(session?.date ?? ""),
-                              sessionTime: '${duration} to go',
-                              sessionName:
-                                  'Zoom Meet with ${session?.mentee?.name}',
-                              sessionImage:
-                                  session?.mentee?.menteeProfile ??
-                                  "", // Image for upcoming sessions
-                              sessionTopics: session?.topics ?? "",
-                              reason: session?.cancelledReason ?? "",
-                              buttonText:
-                                  'Message from ${session?.mentee?.name ?? ""}',
-                              buttonIcon: "assets/icons/ChatCircle.png",
-                              remainingTime: '${duration} Minutes to go',
-                              cancelreason: session?.cancelledReason ?? "",
-                            );
-                          }, childCount: Sessions?.length),
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          sliver: SliverMasonryGrid.count(
+                            crossAxisCount: _getCrossAxisCount(context),
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childCount: Sessions?.length,
+                            itemBuilder: (context, index) {
+                              final session = Sessions?[index];
+                              final duration = calculateDuration(
+                                session?.startTime ?? "",
+                                session?.endTime ?? "",
+                              );
+                              return SessionCard(
+                                attachment: session?.attachment ?? "",
+                                menteeId: session?.mentee?.id ?? 0,
+                                sessionId: session?.id ?? 0,
+                                status: selectedFilter,
+                                sessionStartTime: '${session?.startTime ?? ""}',
+                                sessionEndTime: '${session?.endTime ?? ""}',
+                                sessionDate: formatDate(session?.date ?? ""),
+                                sessionTime: '${duration} to go',
+                                sessionName:
+                                    'Zoom Meet with ${session?.mentee?.name}',
+                                sessionImage:
+                                    session?.mentee?.menteeProfile ??
+                                    "", // Image for upcoming sessions
+                                sessionTopics: session?.topics ?? "",
+                                reason: session?.cancelledReason ?? "",
+                                buttonText:
+                                    'Message from ${session?.mentee?.name ?? ""}',
+                                buttonIcon: "assets/icons/ChatCircle.png",
+                                remainingTime: '${duration} Minutes to go',
+                                cancelreason: session?.cancelledReason ?? "",
+                              );
+                            },
+                          ),
                         ),
                       ],
                     );
