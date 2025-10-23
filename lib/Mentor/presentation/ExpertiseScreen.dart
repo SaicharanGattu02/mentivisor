@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentor/data/Cubits/Expertises/ApprovedExpertise/ApprovedExpertiseState.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/ExpertiseShimmerLoader.dart';
 
 import '../Models/ExpertisesModel.dart';
-import '../data/Cubits/Expertises/ApprovedExpertiseCubit.dart';
+import '../data/Cubits/Expertises/ApprovedExpertise/ApprovedExpertiseCubit.dart';
 import '../data/Cubits/Expertises/ExpertiseState.dart';
-import '../data/Cubits/Expertises/PendingExpertiseCubit.dart';
-import '../data/Cubits/Expertises/RejectedExpertiseCubit.dart';
+import '../data/Cubits/Expertises/PendingExpertise/PendingExpertiseCubit.dart';
+import '../data/Cubits/Expertises/PendingExpertise/PendingExpertiseStates.dart';
+import '../data/Cubits/Expertises/RejectedExpertise/RejectedExpertiseCubit.dart';
+import '../data/Cubits/Expertises/RejectedExpertise/RejectedExpertiseStates.dart';
 
 class ExpertiseScreen extends StatefulWidget {
   const ExpertiseScreen({super.key});
@@ -30,26 +33,24 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
     _tab.addListener(_onTabChanged);
   }
 
-  void _onTabChanged() {
+  void _onTabChanged() async {
     if (_tab.indexIsChanging) return;
 
     if (_tab.index == 0) {
-      // final st = context.read<ApprovedExpertiseCubit>().state;
-      // if (st is ExpertiseInitially || st is ExpertiseFailure) {
+      context.read<ApprovedExpertiseCubit>().reset();
+      await Future.delayed(const Duration(milliseconds: 100));
       context.read<ApprovedExpertiseCubit>().fetch();
-      // }
     } else if (_tab.index == 1) {
-      // final st = context.read<PendingExpertiseCubit>().state;
-      // if (st is ExpertiseInitially || st is ExpertiseFailure) {
+      context.read<PendingExpertiseCubit>().reset();
+      await Future.delayed(const Duration(milliseconds: 100));
       context.read<PendingExpertiseCubit>().fetch();
-      // }
     } else if (_tab.index == 2) {
-      // final st = context.read<RejectedExpertiseCubit>().state;
-      // if (st is ExpertiseInitially || st is ExpertiseFailure) {
+      context.read<RejectedExpertiseCubit>().reset();
+      await Future.delayed(const Duration(milliseconds: 100));
       context.read<RejectedExpertiseCubit>().fetch();
-      // }
     }
   }
+
 
   @override
   void dispose() {
@@ -78,19 +79,21 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
               child: TabBarView(
                 controller: _tab,
                 children: [
-                  // APPROVED
-                  BlocBuilder<ApprovedExpertiseCubit, ExpertiseState>(
-                    builder: (context, state) {
-                      final showAddButton = state is ExpertiseLoaded
-                          ? state.model.data?.has_request
-                          : false;
+                  // ✅ APPROVED TAB
+                  BlocBuilder<ApprovedExpertiseCubit, ApprovedExpertiseState>(
+                    builder: (context, approveState) {
+                      bool showAddButton = false;
+                      if (approveState is ApprovedExpertiseLoaded) {
+                        showAddButton = !(approveState.model.data?.has_request ?? false);
+                      }
+
                       return ExpertiseTabFromState(
                         title: 'List',
                         variant: TileVariant.approved,
-                        state: state,
+                        state: approveState,
                         onRetry: () =>
                             context.read<ApprovedExpertiseCubit>().fetch(),
-                        showAddButton: !(showAddButton ?? false),
+                        showAddButton: showAddButton,
                         onItemTap: (label) {
                           context.push(
                             "/expertise_details?id=${label.id}&categoryTitle=${label.name}",
@@ -100,13 +103,13 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                     },
                   ),
 
-                  // PENDING
-                  BlocBuilder<PendingExpertiseCubit, ExpertiseState>(
-                    builder: (context, state) {
+                  // ✅ PENDING TAB
+                  BlocBuilder<PendingExpertiseCubit, PendingExpertiseState>(
+                    builder: (context, pendingState) {
                       return ExpertiseTabFromState(
                         title: 'List',
                         variant: TileVariant.pending,
-                        state: state,
+                        state: pendingState,
                         onRetry: () =>
                             context.read<PendingExpertiseCubit>().fetch(),
                         onItemTap: (label) {
@@ -118,13 +121,13 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                     },
                   ),
 
-                  // REJECTED
-                  BlocBuilder<RejectedExpertiseCubit, ExpertiseState>(
-                    builder: (context, state) {
+                  // ✅ REJECTED TAB
+                  BlocBuilder<RejectedExpertiseCubit, RejectedExpertiseState>(
+                    builder: (context, rejectedState) {
                       return ExpertiseTabFromState(
                         title: 'List',
                         variant: TileVariant.rejected,
-                        state: state,
+                        state: rejectedState,
                         onRetry: () =>
                             context.read<RejectedExpertiseCubit>().fetch(),
                         onItemTap: (label) {
@@ -138,6 +141,7 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                 ],
               ),
             ),
+
           ],
         ),
       ),
@@ -193,48 +197,70 @@ class _SegmentedTabs extends StatelessWidget {
   }
 }
 
-List<String> _expertiseNames(ExpertisesModel m) =>
-    m.data?.expertises
-        ?.map((e) => e.name ?? '')
-        .where((s) => s.isNotEmpty)
-        .toList() ??
-    const [];
-
-class ExpertiseTabFromState extends StatelessWidget {
+// List<String> _expertiseNames(ExpertisesModel m) =>
+//     m.data?.expertises
+//         ?.map((e) => e.name ?? '')
+//         .where((s) => s.isNotEmpty)
+//         .toList() ??
+//     const [];
+class ExpertiseTabFromState<T extends Object> extends StatelessWidget {
   const ExpertiseTabFromState({
     super.key,
     required this.title,
     required this.variant,
     required this.state,
     required this.onRetry,
-    required this.onItemTap, // void Function(Expertises)
+    required this.onItemTap,
     this.showAddButton = false,
     this.onAdd,
   });
 
   final String title;
   final TileVariant variant;
-  final ExpertiseState state;
+  final T state;
   final Future<void> Function() onRetry;
-  final void Function(Expertises) onItemTap; // ⬅️ changed
+  final void Function(Expertises) onItemTap;
   final bool showAddButton;
   final VoidCallback? onAdd;
 
+  bool get _isLoading =>
+      state is ApprovedExpertiseLoading ||
+          state is PendingExpertiseLoading ||
+          state is RejectedExpertiseLoading;
+
+  bool get _isInitial =>
+      state is ApprovedExpertiseInitial ||
+          state is PendingExpertiseInitial ||
+          state is RejectedExpertiseInitial;
+
+  bool get _isFailure =>
+      state is ApprovedExpertiseFailure ||
+          state is PendingExpertiseFailure ||
+          state is RejectedExpertiseFailure;
+
+  bool get _isLoaded =>
+      state is ApprovedExpertiseLoaded ||
+          state is PendingExpertiseLoaded ||
+          state is RejectedExpertiseLoaded;
+
   @override
   Widget build(BuildContext context) {
-    if (state is ExpertiseInitially || state is ExpertiseLoading) {
+    // 🌀 Shimmer for loading / initial
+    if (_isInitial || _isLoading) {
       return const ExpertiseShimmerLoader(itemCount: 6);
     }
-    if (state is ExpertiseFailure) {
-      final msg = (state as ExpertiseFailure).message;
+
+    // ❌ Error case
+    if (_isFailure) {
+      final message = (state as dynamic).message ?? 'Failed to load data';
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              msg.isNotEmpty ? msg : 'Failed to load',
-              textAlign: TextAlign.center,
+              message,
               style: const TextStyle(fontSize: 13, color: Colors.red),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
@@ -243,39 +269,121 @@ class ExpertiseTabFromState extends StatelessWidget {
       );
     }
 
-    final model = (state as ExpertiseLoaded).model;
-    final items = model.data?.expertises ?? []; // ⬅️ now objects
+    // ✅ Success case
+    if (_isLoaded) {
+      final model = (state as dynamic).model;
+      final items = model.data?.expertises ?? [];
 
-    if (items.isEmpty) {
+      if (items.isEmpty) {
+        return RefreshIndicator(
+          onRefresh: onRetry,
+          child: ListView(
+            children: const [
+              SizedBox(height: 120),
+              Center(
+                child: Text(
+                  'No items found',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
       return RefreshIndicator(
         onRefresh: onRetry,
-        child: ListView(
-          children: const [
-            SizedBox(height: 120),
-            Center(
-              child: Text(
-                'No items found',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
+        child: _ExpertiseListTab(
+          title: title,
+          items: items,
+          variant: variant,
+          showAddButton: showAddButton,
+          onAdd: onAdd,
+          onItemTap: onItemTap,
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: onRetry,
-      child: _ExpertiseListTab(
-        title: title,
-        items: items, // ⬅️ pass objects
-        variant: variant,
-        showAddButton: showAddButton,
-        onAdd: onAdd,
-        onItemTap: onItemTap, // ⬅️ callback with object
-      ),
-    );
+    return const SizedBox.shrink();
   }
 }
+
+// class ExpertiseTabFromState extends StatelessWidget {
+//   const ExpertiseTabFromState({
+//     super.key,
+//     required this.title,
+//     required this.variant,
+//     required this.state,
+//     required this.onRetry,
+//     required this.onItemTap, // void Function(Expertises)
+//     this.showAddButton = false,
+//     this.onAdd,
+//   });
+//
+//   final String title;
+//   final TileVariant variant;
+//   final ExpertiseState state;
+//   final Future<void> Function() onRetry;
+//   final void Function(Expertises) onItemTap; // ⬅️ changed
+//   final bool showAddButton;
+//   final VoidCallback? onAdd;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     if (state is ExpertiseInitially || state is ExpertiseLoading) {
+//       return const ExpertiseShimmerLoader(itemCount: 6);
+//     }
+//     if (state is ExpertiseFailure) {
+//       final msg = (state as ExpertiseFailure).message;
+//       return Center(
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Text(
+//               msg.isNotEmpty ? msg : 'Failed to load',
+//               textAlign: TextAlign.center,
+//               style: const TextStyle(fontSize: 13, color: Colors.red),
+//             ),
+//             const SizedBox(height: 10),
+//             ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+//           ],
+//         ),
+//       );
+//     }
+//
+//     final model = (state as ExpertiseLoaded).model;
+//     final items = model.data?.expertises ?? []; // ⬅️ now objects
+//
+//     if (items.isEmpty) {
+//       return RefreshIndicator(
+//         onRefresh: onRetry,
+//         child: ListView(
+//           children: const [
+//             SizedBox(height: 120),
+//             Center(
+//               child: Text(
+//                 'No items found',
+//                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+//               ),
+//             ),
+//           ],
+//         ),
+//       );
+//     }
+//
+//     return RefreshIndicator(
+//       onRefresh: onRetry,
+//       child: _ExpertiseListTab(
+//         title: title,
+//         items: items, // ⬅️ pass objects
+//         variant: variant,
+//         showAddButton: showAddButton,
+//         onAdd: onAdd,
+//         onItemTap: onItemTap, // ⬅️ callback with object
+//       ),
+//     );
+//   }
+// }
 
 enum TileVariant { approved, pending, rejected }
 

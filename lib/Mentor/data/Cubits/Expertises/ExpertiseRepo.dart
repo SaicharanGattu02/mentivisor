@@ -4,16 +4,19 @@ import 'package:mentivisor/Mentor/Models/NonAttachedExpertisesModel.dart';
 import 'package:mentivisor/Mentor/Models/PendingSubExpertisesModel.dart';
 import 'package:mentivisor/Mentor/data/MentorRemoteDataSource.dart';
 
+import '../../../../Mentee/Models/BecomeMentorSuccessModel.dart';
 import '../../../Models/ExpertisesModel.dart';
 import '../../../Models/MentorExpertiseModel.dart';
+import '../../../Models/UpdateExpertiseModel.dart';
+import '../../../Models/UpdateSubExpertiseModel.dart';
 
 abstract class ExpertisesRepo {
   Future<ExpertisesModel?> fetchApproved();
   Future<ExpertisesModel?> fetchPending();
   Future<ExpertisesModel?> fetchRejected();
   Future<MentorExpertiseModel?> getExpertiseDetails(int id);
-  Future<SuccessModel?> updateExpertise(Map<String, dynamic> data);
-  Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data);
+  Future<UpdateSubExpertiseModel?> updateExpertise(Map<String, dynamic> data);
+  Future<UpdateExpertiseModel?> newExpertiseRequest(Map<String, dynamic> data);
   Future<NonAttachedExpertisesModel?> getNonAttachedExpertises();
   Future<PendingSubExpertisesModel?> getPendingSubExpertises(int id, String status);
   Future<NonAttachedExpertiseDetailsModel?> getNonAttachedExpertiseDetails(
@@ -47,7 +50,7 @@ class ExpertisesRepoImpl implements ExpertisesRepo {
   }
 
   @override
-  Future<SuccessModel?> updateExpertise(Map<String, dynamic> data) async {
+  Future<UpdateSubExpertiseModel?> updateExpertise(Map<String, dynamic> data) async {
     return await mentorRemoteDataSource.updateExpertise(data);
   }
 
@@ -64,7 +67,7 @@ class ExpertisesRepoImpl implements ExpertisesRepo {
   }
 
   @override
-  Future<SuccessModel?> newExpertiseRequest(Map<String, dynamic> data) async {
+  Future<UpdateExpertiseModel?> newExpertiseRequest(Map<String, dynamic> data) async {
     return await mentorRemoteDataSource.newExpertiseRequest(data);
   }
 

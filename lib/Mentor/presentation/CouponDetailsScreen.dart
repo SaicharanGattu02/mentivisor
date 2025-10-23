@@ -321,7 +321,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                           onTap: () {
                             if (couponsDetails?.website != null)
                               _launchUrl(couponsDetails?.website ?? "");
-
                           },
                           child: Icon(
                             Icons.open_in_new,

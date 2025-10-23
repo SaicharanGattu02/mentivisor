@@ -102,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
     getUserId();
     try {
       AppLogger.info("receiverId:${widget.receiverId}");
-      context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId, "37");
+      context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId, widget.sessionId);
     } catch (_) {}
 
     _positionsListener.itemPositions.addListener(() {
@@ -153,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() => _isLoadingMore = true);
         context.read<ChatMessagesCubit>().getMoreMessages(
           widget.receiverId,
-          "37",
+          widget.sessionId,
         );
       }
     });
@@ -444,7 +444,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               state
                                   .chatMessages
                                   .receiverDetails
-                                  ?.profilePicUrl ??
+                                  ?.profilePic ??
                               "";
                         });
                         setState(() => _isLoadingMore = false);
@@ -472,7 +472,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     return BlocBuilder<PrivateChatCubit, PrivateChatState>(
                       builder: (context, liveState) {
-                        // Merge + dedupe
                         final all = <Messages>[];
                         final seen = <String>{};
                         void addMsg(Messages m) {

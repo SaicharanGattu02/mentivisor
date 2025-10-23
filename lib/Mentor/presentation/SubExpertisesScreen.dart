@@ -92,7 +92,7 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
         decoration: const BoxDecoration(gradient: bg),
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: BlocBuilder<MentorExpertiseCubit, MentorExpertiseStates>(
             builder: (context, state) {
               if (state is MentorExpertiseLoading) {
@@ -216,37 +216,40 @@ class _SubExpertisesScreenState extends State<SubExpertisesScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _showUnattached? SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: BlocConsumer<UpdateExpertiseCubit, UpdateExpertiseStates>(
-            listener: (context, state) {
-              if (state is UpdateExpertiseLoaded) {
-                context.push("/cost_per_minute_screen?coins=25&path=${"update_expertise"}");
-              } else if (state is UpdateExpertiseFailure) {
-                CustomSnackBar1.show(context, state.error);
-              }
-            },
-            builder: (context, state) {
-              final isLoading = state is UpdateExpertiseLoading;
-              return CustomAppButton1(
-                text: "Save",
-                isLoading: isLoading,
-                onPlusTap: () {
-                  final Map<String, dynamic> data = {
-                    "mode": "add",
-                    "sub_expertise_ids":_selectedUnattached.toList(),
-                  };
-                  context.read<UpdateExpertiseCubit>().updateExpertise(data);
-                },
-              );
-            },
-          ),
-        ),
-      ): SizedBox.shrink(),
+      bottomNavigationBar: _showUnattached
+          ? SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: BlocConsumer<UpdateExpertiseCubit, UpdateExpertiseStates>(
+                  listener: (context, state) {
+                    if (state is UpdateExpertiseLoaded) {
+                      context.push(
+                        "/cost_per_minute_screen?coins=${state.updateSubExpertiseModel.data?.coinsPerMinute ?? ""}&path=${"mentor_dashboard"}",
+                      );
+                    } else if (state is UpdateExpertiseFailure) {
+                      CustomSnackBar1.show(context, state.error);
+                    }
+                  },
+                  builder: (context, state) {
+                    final isLoading = state is UpdateExpertiseLoading;
+                    return CustomAppButton1(
+                      text: "Save",
+                      isLoading: isLoading,
+                      onPlusTap: () {
+                        final Map<String, dynamic> data = {
+                          "mode": "add",
+                          "sub_expertise_ids": _selectedUnattached.toList(),
+                        };
+                        context.read<UpdateExpertiseCubit>().updateExpertise(
+                          data,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
+          : SizedBox.shrink(),
     );
   }
 }
-
-
-

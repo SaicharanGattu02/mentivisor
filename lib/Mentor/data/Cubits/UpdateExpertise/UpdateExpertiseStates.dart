@@ -1,4 +1,5 @@
 import '../../../../Mentee/Models/SuccessModel.dart';
+import '../../../Models/UpdateSubExpertiseModel.dart';
 
 abstract class UpdateExpertiseStates {}
 
@@ -7,8 +8,8 @@ class UpdateExpertiseInitially extends UpdateExpertiseStates {}
 class UpdateExpertiseLoading extends UpdateExpertiseStates {}
 
 class UpdateExpertiseLoaded extends UpdateExpertiseStates {
-  final SuccessModel successModel;
-  UpdateExpertiseLoaded(this.successModel);
+  final UpdateSubExpertiseModel updateSubExpertiseModel;
+  UpdateExpertiseLoaded(this.updateSubExpertiseModel);
 }
 
 class UpdateExpertiseFailure extends UpdateExpertiseStates {

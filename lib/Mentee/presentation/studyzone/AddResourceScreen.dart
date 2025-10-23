@@ -45,14 +45,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   List<String> _selectedTags = [];
   List<String> _customTags = [];
 
-  // Future<void> _selectFile() async {
-  //   final file = await FileImagePicker.pickPdfFile();
-  //   if (file != null) {
-  //     setState(() {
-  //       _pickedFile.value = file;
-  //     });
-  //   }
-  // }
   Future<void> _selectFile() async {
     _isLoading.value = true; // start loading
 

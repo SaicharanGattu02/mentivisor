@@ -11,6 +11,7 @@ import 'package:mentivisor/Mentor/data/Cubits/NewExpertiseRequest/NewExpertiseRe
 
 import '../../Components/CustomAppButton.dart';
 import '../../Components/CutomAppBar.dart';
+import '../../Mentee/presentation/Widgets/CommonImgeWidget.dart';
 
 class ProofOfExpertise extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -23,8 +24,8 @@ class ProofOfExpertise extends StatefulWidget {
 class _ProofOfExpertiseState extends State<ProofOfExpertise> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _linkController = TextEditingController();
-
-  File? selectedResumeFile;
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
+  final ValueNotifier<File?> selectedResumeFile = ValueNotifier<File?>(null);
 
   @override
   void dispose() {
@@ -33,15 +34,18 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
   }
 
   Future<void> _pickResumeFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ["pdf", "doc", "docx"],
-    );
+    _isLoading.value = true; // start loading
 
-    if (result != null && result.files.single.path != null) {
-      setState(() {
-        selectedResumeFile = File(result.files.single.path!);
-      });
+    try {
+      final file = await FileImagePicker.pickPdfFile();
+
+      if (file != null) {
+        selectedResumeFile.value = file;
+      }
+    } catch (e) {
+      debugPrint('File selection error: $e');
+    } finally {
+      _isLoading.value = false;
     }
   }
 
@@ -76,7 +80,7 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
       // Pass the File/Path – your repo can convert it to multipart if needed
       if (selectedResumeFile != null) 'proof_file': selectedResumeFile, // File
       if (selectedResumeFile != null)
-        'proof_file_path': selectedResumeFile!.path, // optional
+        'proof_file_path': selectedResumeFile.value, // optional
     };
 
     // Merge with the map you’re already receiving on this screen
@@ -167,13 +171,17 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
                 ),
                 const SizedBox(height: 8),
 
-                // Link field
                 TextFormField(
                   controller: _linkController,
                   keyboardType: TextInputType.url,
                   textInputAction: TextInputAction.done,
                   cursorColor: const Color(0xFF121212),
-                  decoration: InputDecoration(hint: Text("https://")),
+                  decoration: InputDecoration(
+                    hint: Text(
+                      "https://",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 24),
@@ -217,9 +225,9 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              selectedResumeFile != null
-                                  ? selectedResumeFile!.path.split('/').last
-                                  : "Tap to select your resume (PDF, DOC, DOCX)",
+                              selectedResumeFile.value?.path.split('/').last ??
+                                  "Tap to select your resume (PDF)",
+
                               style: TextStyle(
                                 fontSize: 14,
                                 color: selectedResumeFile != null
@@ -248,26 +256,27 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(16, 12, 16, 20),
-          child:
-              BlocConsumer<NewExpertiseRequestCubit, NewExpertiseRequestStates>(
-                listener: (context, state) {
-                  if (state is NewExpertiseRequestLoaded) {
-                    context.push("/mentor_review");
-                  } else if (state is NewExpertiseRequestFailure) {
-                    CustomSnackBar1.show(context, state.error);
-                  }
+          child: BlocConsumer<NewExpertiseRequestCubit, NewExpertiseRequestStates>(
+            listener: (context, state) {
+              if (state is NewExpertiseRequestLoaded) {
+                context.go(
+                  '/cost_per_minute_screen?coins=${state.updateExpertiseModel.coins}&path=${"mentor_dashboard"}',
+                );
+              } else if (state is NewExpertiseRequestFailure) {
+                CustomSnackBar1.show(context, state.error);
+              }
+            },
+            builder: (context, state) {
+              final isLoading = state is NewExpertiseRequestLoading;
+              return CustomAppButton1(
+                text: 'Submit',
+                isLoading: isLoading,
+                onPlusTap: () {
+                  _submit();
                 },
-                builder: (context, state) {
-                  final isLoading = state is NewExpertiseRequestLoading;
-                  return CustomAppButton1(
-                    text: 'Submit',
-                    isLoading: isLoading,
-                    onPlusTap: () {
-                      _submit();
-                    },
-                  );
-                },
-              ),
+              );
+            },
+          ),
         ),
       ),
     );

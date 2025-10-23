@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/Shimmers.dart';
@@ -655,18 +656,48 @@ void _showReportSheet(BuildContext context, communityPosts) {
 }
 
 class CommunityPostShimmer extends StatelessWidget {
-  const CommunityPostShimmer({super.key});
+  final int itemCount;
+  const CommunityPostShimmer({super.key, this.itemCount = 6});
 
   @override
   Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.symmetric(
+            horizontal: SizeConfig.screenWidth < 600 ? 12 : 16,
+          ),
+          sliver: SliverMasonryGrid.count(
+            crossAxisCount: _getCrossAxisCount(context),
+            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+            childCount: itemCount,
+            itemBuilder: (context, index) {
+              return _buildShimmerCard(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShimmerCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F0E1240),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// 🖼 Image placeholder
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
             child: ClipRRect(
@@ -674,7 +705,10 @@ class CommunityPostShimmer extends StatelessWidget {
               child: shimmerContainer(SizeConfig.screenWidth, 140, context),
             ),
           ),
-          SizedBox(height: 12),
+
+          const SizedBox(height: 12),
+
+          /// 👤 Profile shimmer
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
@@ -687,6 +721,8 @@ class CommunityPostShimmer extends StatelessWidget {
           ),
 
           const SizedBox(height: 12),
+
+          /// 🏷 Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: shimmerText(180, 16, context),
@@ -694,7 +730,7 @@ class CommunityPostShimmer extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          /// 📝 Description Lines
+          /// 📝 Description
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Column(
@@ -735,5 +771,17 @@ class CommunityPostShimmer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// 🧩 Responsive Column Count
+  int _getCrossAxisCount(BuildContext context) {
+    final width = SizeConfig.screenWidth;
+    if (width < 600) {
+      return 1; // Mobile
+    } else if (width < 900) {
+      return 2; // Tablet
+    } else {
+      return 3; // Desktop
+    }
   }
 }

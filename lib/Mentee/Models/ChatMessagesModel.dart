@@ -7,10 +7,20 @@ class ChatMessagesModel {
 
   ChatMessagesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    message = json['message'] != null ? Message.fromJson(json['message']) : null;
-    receiverDetails = json['reciever_details'] != null
-        ? ReceiverDetails.fromJson(json['reciever_details'])
-        : null;
+
+    // ✅ Safely parse message (should always be a Map)
+    if (json['message'] is Map<String, dynamic>) {
+      message = Message.fromJson(json['message']);
+    } else {
+      message = null;
+    }
+
+    // ✅ Fix for "reciever_details" being "" or Map
+    if (json['reciever_details'] is Map<String, dynamic>) {
+      receiverDetails = ReceiverDetails.fromJson(json['reciever_details']);
+    } else {
+      receiverDetails = null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -67,12 +77,14 @@ class Message {
     from = json['from'];
     lastPage = json['last_page'];
     lastPageUrl = json['last_page_url'];
+
     if (json['links'] != null) {
       links = <Links>[];
       json['links'].forEach((v) {
         links!.add(Links.fromJson(v));
       });
     }
+
     nextPageUrl = json['next_page_url'];
     path = json['path'];
     perPage = json['per_page'];
@@ -135,15 +147,14 @@ class Messages {
     id = json['id'];
     senderId = json['sender_id'];
     receiverId = json['receiver_id'];
-    sessionId = json['session_id']; // ✅ corrected key (was sessionId before)
+    sessionId = json['session_id'];
     message = json['message'];
     url = json['url'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     type = json['type'];
     sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
-    receiver =
-    json['receiver'] != null ? Sender.fromJson(json['receiver']) : null;
+    receiver = json['receiver'] != null ? Sender.fromJson(json['receiver']) : null;
   }
 
   Map<String, dynamic> toJson() {

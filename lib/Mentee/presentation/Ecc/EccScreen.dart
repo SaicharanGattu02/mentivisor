@@ -633,10 +633,17 @@ class _EccScreenState extends State<EccScreen> {
                                     _selectedTagIndex.value <
                                         (tagsState.tagsModel.data?.length ??
                                             0)) {
-                                  selectedTag = tagsState
-                                      .tagsModel
-                                      .data![_selectedTagIndex.value];
+                                  final modifiedTags = [
+                                    "All",
+                                    ...?tagsState.tagsModel.data,
+                                  ];
+                                  final tagItem =
+                                      modifiedTags[_selectedTagIndex.value];
+                                  selectedTag = (tagItem.toLowerCase() == "all")
+                                      ? ""
+                                      : tagItem;
                                 }
+
                                 if (onCampusNotifier.value == true) {
                                   context.read<ECCCubit>().fetchMoreECC(
                                     "",
@@ -654,6 +661,42 @@ class _EccScreenState extends State<EccScreen> {
                             }
                             return false;
                           },
+                          // NotificationListener<ScrollNotification>(
+                          //   onNotification: (scrollInfo) {
+                          //     if (scrollInfo.metrics.pixels >=
+                          //         scrollInfo.metrics.maxScrollExtent * 0.9) {
+                          //       if (state is ECCLoaded && state.hasNextPage) {
+                          //         final tagsState = context
+                          //             .read<EccTagsCubit>()
+                          //             .state;
+                          //         String selectedTag = "";
+                          //
+                          //         if (tagsState is EccTagsLoaded &&
+                          //             _selectedTagIndex.value >= 0 &&
+                          //             _selectedTagIndex.value <
+                          //                 (tagsState.tagsModel.data?.length ??
+                          //                     0)) {
+                          //           selectedTag = tagsState
+                          //               .tagsModel
+                          //               .data![_selectedTagIndex.value];
+                          //         }
+                          //         if (onCampusNotifier.value == true) {
+                          //           context.read<ECCCubit>().fetchMoreECC(
+                          //             "",
+                          //             selectedTag,
+                          //             "",
+                          //           );
+                          //         } else {
+                          //           context.read<ECCCubit>().fetchMoreECC(
+                          //             "beyond",
+                          //             selectedTag,
+                          //             "",
+                          //           );
+                          //         }
+                          //       }
+                          //     }
+                          //     return false;
+                          //   },
                           child: NotificationListener<UserScrollNotification>(
                             onNotification: (n) {
                               if (n.direction == ScrollDirection.reverse &&
@@ -673,24 +716,21 @@ class _EccScreenState extends State<EccScreen> {
                             },
                             child: CustomScrollView(
                               slivers: [
-                                SliverPadding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  sliver: SliverMasonryGrid.count(
-                                    crossAxisCount: SizeConfig.screenWidth < 600
-                                        ? 1
-                                        : 2, // responsive
-                                    mainAxisSpacing: 16,
-                                    crossAxisSpacing: 16,
-                                    childCount: ecclist.length,
-                                    itemBuilder: (context, index) {
-                                      return EventCard(
-                                        eccList: ecclist[index],
-                                        scope: onCampusNotifier.value
-                                            ? ""
-                                            : "beyond",
-                                      );
-                                    },
-                                  ),
+                                SliverMasonryGrid.count(
+                                  crossAxisCount: SizeConfig.screenWidth < 600
+                                      ? 1
+                                      : 2, // responsive
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childCount: ecclist.length,
+                                  itemBuilder: (context, index) {
+                                    return EventCard(
+                                      eccList: ecclist[index],
+                                      scope: onCampusNotifier.value
+                                          ? ""
+                                          : "beyond",
+                                    );
+                                  },
                                 ),
 
                                 // SliverGrid(
@@ -827,28 +867,6 @@ class _EccScreenState extends State<EccScreen> {
   }
 }
 
-double _getChildAspectRatio(BuildContext context) {
-  final size = MediaQuery.of(context).size;
-  final width = size.width;
-  final height = size.height;
-
-  // You can tweak this formula to your layout preference
-  // This keeps the card roughly proportional to screen width
-  double baseRatio = width / height;
-
-  // Adjust a bit to avoid overly tall/narrow cards
-  if (width < 600) {
-    // Mobile – single column
-    return baseRatio * 1.8; // taller cards
-  } else if (width > 600) {
-    // Tablet – 2 columns
-    return baseRatio * 1.4;
-  } else {
-    // Desktop – 3+ columns maybe
-    return baseRatio * 2.2;
-  }
-}
-
 class ECCShimmer extends StatefulWidget {
   const ECCShimmer({super.key});
   @override
@@ -861,90 +879,73 @@ class _ECCShimmerState extends State<ECCShimmer> {
     final width = SizeConfig.screenWidth;
     final crossAxisCount = width < 600 ? 1 : 2;
 
-    return GridView.builder(
+    return MasonryGridView.count(
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 12,
       itemCount: 6,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 16,
-        childAspectRatio: () {
-          final screenHeight = MediaQuery.of(context).size.height;
-          final size = MediaQuery.of(context).size;
-          final screenWidth = size.width;
-          double aspectRatio = screenWidth / (screenHeight * 0.5);
-          if (screenWidth < 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.45);
-          } else if (screenWidth > 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.6);
-          } else {
-            aspectRatio = screenWidth / (screenHeight * 0.6);
-          }
-          return aspectRatio;
-        }(),
-      ),
       itemBuilder: (context, index) {
         return Container(
-          margin: EdgeInsets.symmetric(horizontal: 0),
+          margin: const EdgeInsets.symmetric(horizontal: 0),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0F0E1240),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
-          child: Stack(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 10,
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: shimmerContainer(
-                        SizeConfig.screenWidth,
-                        160,
-                        context,
-                      ),
-                    ),
-                  ),
+              // 🟣 Image shimmer
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10,
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: shimmerContainer(SizeConfig.screenWidth, 160, context),
+                ),
+              ),
 
-                  // Title
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: shimmerText(110, 12, context),
-                  ),
-                  const SizedBox(height: 10),
+              // 🟣 Title shimmer
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: shimmerText(110, 12, context),
+              ),
+              const SizedBox(height: 10),
 
-                  // Details
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        shimmerText(60, 12, context),
-                        const SizedBox(height: 8),
-                        shimmerText(SizeConfig.screenWidth, 12, context),
-                        const SizedBox(height: 8),
-                        shimmerText(60, 12, context),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 10,
-                    ),
-                    child: shimmerContainer(
-                      SizeConfig.screenWidth,
-                      40,
-                      context,
-                    ),
-                  ),
-                ],
+              // 🟣 Details shimmer
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerText(60, 12, context),
+                    const SizedBox(height: 8),
+                    shimmerText(SizeConfig.screenWidth, 12, context),
+                    const SizedBox(height: 8),
+                    shimmerText(60, 12, context),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
+              // 🟣 Bottom button shimmer
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10,
+                ),
+                child: shimmerContainer(SizeConfig.screenWidth, 40, context),
               ),
             ],
           ),
