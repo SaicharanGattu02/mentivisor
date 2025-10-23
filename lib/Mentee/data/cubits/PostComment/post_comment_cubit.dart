@@ -45,7 +45,6 @@ class PostCommentCubit extends Cubit<PostCommentStates> {
       final response = await postCommentRepository.postToggleLike(data);
       if (response != null && response.status == true) {
         emit(PostCommentLoaded(response));
-
       } else {
         // Revert changes on failure
         communityPosts.isLiked = wasLiked;

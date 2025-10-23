@@ -36,7 +36,7 @@ class MenteeCard extends StatelessWidget {
                         8,
                       ), // Adjust the radius for rounded corners
                       child: CachedNetworkImage(
-                        imageUrl: mentee.image ?? "",
+                        imageUrl: mentee.profilePic ?? "",
                         imageBuilder: (context, imageProvider) => Container(
                           width: 60,
                           height: 60,
@@ -93,7 +93,7 @@ class MenteeCard extends StatelessWidget {
                           // ),
                           SizedBox(height: 5),
                           Text(
-                            'Last interaction was ${mentee.lastSession?.date ?? "N/A"}',
+                            'last interaction was ${mentee.lastInteractedDate ?? "N/A"}',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -114,8 +114,8 @@ class MenteeCard extends StatelessWidget {
                     onTap: () {
                       _showReportSheet(
                         context,
-                        mentee.lastSession?.sessionId ?? 0,
-                        mentee.menteeId ?? 0,
+                        mentee.sessionDetails?[0].id ?? 0,
+                        mentee.id ?? 0,
                       );
                     },
                     child: Container(

@@ -22,4 +22,6 @@ class CommonProfileCubit extends Cubit<CommonProfileState> {
       emit(CommonProfileFailure(message: 'An error occurred: $e'));
     }
   }
+
+
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommonProfile/CommonProfileCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_states.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
@@ -132,9 +133,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         ],
                       ),
                     ),
-
                     SizedBox(height: 8),
-
                     Text(
                       capitalize(menteeProfile.data?.user?.name ?? "UnKnown"),
                       style: TextStyle(
@@ -155,9 +154,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-
                     SizedBox(height: 12),
-
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child:
@@ -186,7 +183,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             ),
                           ),
                     ),
-
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -368,309 +364,330 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                 ),
                               );
                             }
-                            return CustomScrollView(
-                              slivers: [
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      final menteePosts = state
-                                          .mentorProfileModel
-                                          .data
-                                          ?.user
-                                          ?.communityPost![index];
-                                      return GestureDetector(
-                                        onTap: () {
-                                          context.push(
-                                            "/community_details/${menteePosts?.id}",
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
+
+                            return BlocListener<
+                              PostCommentCubit,
+                              PostCommentStates
+                            >(
+                              listener: (context, state) {
+                                if (state is PostCommentLoaded) {}
+                              },
+                              child: CustomScrollView(
+                                slivers: [
+                                  SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                      (context, index) {
+                                        final menteePosts = state
+                                            .mentorProfileModel
+                                            .data
+                                            ?.user
+                                            ?.communityPost![index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            context.push(
+                                              "/community_details/${menteePosts?.id}",
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 10,
                                             ),
-                                            color: Colors.white,
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                child: CachedNetworkImage(
-                                                  imageUrl:
-                                                      menteePosts?.image ?? "",
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  placeholder: (context, url) =>
-                                                      spinkits
-                                                          .getSpinningLinespinkit(),
-                                                  errorWidget:
-                                                      (
-                                                        context,
-                                                        url,
-                                                        error,
-                                                      ) => Container(
-                                                        height: 160,
-                                                        color: Colors
-                                                            .grey
-                                                            .shade100,
-                                                        child: const Icon(
-                                                          Icons.broken_image,
-                                                          size: 40,
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
-                                                ),
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(height: 4),
-                                                  Text(
-                                                    menteePosts?.title ?? "",
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontFamily: 'segeo',
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16,
-                                                      color: Color(0xFF222222),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 4),
-                                                  Text(
-                                                    menteePosts?.content ?? "",
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontFamily: 'segeo',
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 14,
-                                                      color: Color(0xFF666666),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Row(
-                                                    children: [
-                                                      IconButton(
-                                                        visualDensity:
-                                                            VisualDensity
-                                                                .compact,
-                                                        padding:
-                                                            EdgeInsets.zero,
-                                                        onPressed: () {
-                                                          final data = {
-                                                            "community_id":
-                                                                menteePosts?.id,
-                                                          };
-                                                          context
-                                                              .read<
-                                                                PostCommentCubit
-                                                              >()
-                                                              .postLike(
-                                                                data,
-                                                                CommunityPosts(),
-                                                              );
-                                                        },
-                                                        icon: Icon(
-                                                          (menteePosts?.isLike ??
-                                                                  false)
-                                                              ? Icons.favorite
-                                                              : Icons
-                                                                    .favorite_border,
-                                                          size: 16,
-                                                          color:
-                                                              (menteePosts
-                                                                      ?.isLike ??
-                                                                  false)
-                                                              ? Colors.red
-                                                              : Colors.black26,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        menteePosts?.likesCount
-                                                                .toString() ??
-                                                            "0",
-                                                        style: TextStyle(
-                                                          color: Color(
-                                                            0xff666666,
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 10,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.white,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl:
+                                                        menteePosts?.image ??
+                                                        "",
+                                                    fit: BoxFit.cover,
+                                                    width: double.infinity,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => spinkits
+                                                            .getSpinningLinespinkit(),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => Container(
+                                                          height: 160,
+                                                          color: Colors
+                                                              .grey
+                                                              .shade100,
+                                                          child: const Icon(
+                                                            Icons.broken_image,
+                                                            size: 40,
+                                                            color: Colors.grey,
                                                           ),
-                                                          fontSize: 14,
-                                                          fontFamily: 'segeo',
-                                                          fontWeight:
-                                                              FontWeight.w400,
+                                                        ),
+                                                  ),
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(height: 4),
+                                                    Text(
+                                                      menteePosts?.title ?? "",
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontFamily: 'segeo',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                        color: Color(
+                                                          0xFF222222,
                                                         ),
                                                       ),
-                                                      IconButton(
-                                                        visualDensity:
-                                                            VisualDensity
-                                                                .compact,
-                                                        padding:
-                                                            EdgeInsets.zero,
-                                                        onPressed: () {
-                                                          showModalBottomSheet(
-                                                            context: context,
-                                                            isScrollControlled:
-                                                                true,
-                                                            useRootNavigator:
-                                                                true,
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            builder: (context) {
-                                                              return DraggableScrollableSheet(
-                                                                initialChildSize:
-                                                                    0.8,
-                                                                minChildSize:
-                                                                    0.4,
-                                                                maxChildSize:
-                                                                    0.95,
-                                                                expand: false,
-                                                                builder:
-                                                                    (
-                                                                      _,
-                                                                      scrollController,
-                                                                    ) => Container(
-                                                                      decoration: const BoxDecoration(
-                                                                        color: Color(
-                                                                          0xffF4F8FD,
-                                                                        ),
-                                                                        borderRadius: BorderRadius.vertical(
-                                                                          top: Radius.circular(
-                                                                            16,
+                                                    ),
+                                                    SizedBox(height: 4),
+                                                    Text(
+                                                      menteePosts?.content ??
+                                                          "",
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontFamily: 'segeo',
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                          0xFF666666,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Row(
+                                                      children: [
+                                                        IconButton(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          onPressed: () {
+                                                            final data = {
+                                                              "community_id":
+                                                                  menteePosts
+                                                                      ?.id,
+                                                            };
+                                                            context
+                                                                .read<
+                                                                  PostCommentCubit
+                                                                >()
+                                                                .postLike(
+                                                                  data,
+                                                                  CommunityPosts(),
+                                                                );
+                                                          },
+                                                          icon: Icon(
+                                                            (menteePosts?.isLike ??
+                                                                    false)
+                                                                ? Icons.favorite
+                                                                : Icons
+                                                                      .favorite_border,
+                                                            size: 16,
+                                                            color:
+                                                                (menteePosts
+                                                                        ?.isLike ??
+                                                                    false)
+                                                                ? Colors.red
+                                                                : Colors
+                                                                      .black26,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          menteePosts
+                                                                  ?.likesCount
+                                                                  .toString() ??
+                                                              "0",
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                              0xff666666,
+                                                            ),
+                                                            fontSize: 14,
+                                                            fontFamily: 'segeo',
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                        IconButton(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          onPressed: () {
+                                                            showModalBottomSheet(
+                                                              context: context,
+                                                              isScrollControlled:
+                                                                  true,
+                                                              useRootNavigator:
+                                                                  true,
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              builder: (context) {
+                                                                return DraggableScrollableSheet(
+                                                                  initialChildSize:
+                                                                      0.8,
+                                                                  minChildSize:
+                                                                      0.4,
+                                                                  maxChildSize:
+                                                                      0.95,
+                                                                  expand: false,
+                                                                  builder:
+                                                                      (
+                                                                        _,
+                                                                        scrollController,
+                                                                      ) => Container(
+                                                                        decoration: const BoxDecoration(
+                                                                          color: Color(
+                                                                            0xffF4F8FD,
+                                                                          ),
+                                                                          borderRadius: BorderRadius.vertical(
+                                                                            top: Radius.circular(
+                                                                              16,
+                                                                            ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                      padding: const EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            12,
-                                                                      ),
-                                                                      child: CommentBottomSheet(
-                                                                        communityPost: CommunityPosts(
-                                                                          id: menteePosts
-                                                                              ?.id,
-                                                                          heading:
-                                                                              menteePosts?.title,
-                                                                          description:
-                                                                              menteePosts?.content,
+                                                                        padding: const EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              12,
                                                                         ),
-                                                                        scrollController:
-                                                                            scrollController,
+                                                                        child: CommentBottomSheet(
+                                                                          communityPost: CommunityPosts(
+                                                                            id: menteePosts?.id,
+                                                                            heading:
+                                                                                menteePosts?.title,
+                                                                            description:
+                                                                                menteePosts?.content,
+                                                                          ),
+                                                                          scrollController:
+                                                                              scrollController,
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        icon: Image.asset(
-                                                          "assets/icons/Chat.png",
-                                                          width: 18,
-                                                          height: 18,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        menteePosts
-                                                                ?.commentsCount
-                                                                .toString() ??
-                                                            "0",
-                                                        style: TextStyle(
-                                                          color: Color(
-                                                            0xff666666,
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          icon: Image.asset(
+                                                            "assets/icons/Chat.png",
+                                                            width: 18,
+                                                            height: 18,
                                                           ),
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: 14,
                                                         ),
-                                                      ),
-                                                      IconButton(
-                                                        padding: EdgeInsets
-                                                            .zero, // remove default extra padding
-                                                        visualDensity:
-                                                            VisualDensity
-                                                                .compact,
-                                                        icon: Image.asset(
-                                                          'assets/icons/share.png',
-                                                          width: 16,
-                                                          height: 16,
+                                                        Text(
+                                                          menteePosts
+                                                                  ?.commentsCount
+                                                                  .toString() ??
+                                                              "0",
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                              0xff666666,
+                                                            ),
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 14,
+                                                          ),
                                                         ),
-                                                        onPressed: () async {
-                                                          final postId =
-                                                              menteePosts?.id;
-                                                          final shareUrl =
-                                                              "https://mentivisor.com/community_post/$postId";
+                                                        IconButton(
+                                                          padding: EdgeInsets
+                                                              .zero, // remove default extra padding
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          icon: Image.asset(
+                                                            'assets/icons/share.png',
+                                                            width: 16,
+                                                            height: 16,
+                                                          ),
+                                                          onPressed: () async {
+                                                            final postId =
+                                                                menteePosts?.id;
+                                                            final shareUrl =
+                                                                "https://mentivisor.com/community_post/$postId";
 
-                                                          Share.share(
-                                                            "Check out this Community Post on Mentivisor:\n$shareUrl",
-                                                            subject:
-                                                                "Mentivisor Community Post",
-                                                          );
-                                                        },
-                                                      ),
-                                                      Spacer(),
-                                                      GestureDetector(
-                                                        onTap: () =>
-                                                            _showReportSheet(
-                                                              context,
-                                                              menteePosts,
-                                                            ),
-                                                        child: Row(
-                                                          children: [
-                                                            Image.asset(
-                                                              "assets/images/ReportmenteImg.png",
-                                                              width: 16,
-                                                              height: 16,
-                                                            ),
-                                                            SizedBox(width: 5),
-                                                            Text(
-                                                              'Report',
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontFamily:
-                                                                    'segeo',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                            Share.share(
+                                                              "Check out this Community Post on Mentivisor:\n$shareUrl",
+                                                              subject:
+                                                                  "Mentivisor Community Post",
+                                                            );
+                                                          },
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                        Spacer(),
+                                                        GestureDetector(
+                                                          onTap: () =>
+                                                              _showReportSheet(
+                                                                context,
+                                                                menteePosts,
+                                                              ),
+                                                          child: Row(
+                                                            children: [
+                                                              Image.asset(
+                                                                "assets/images/ReportmenteImg.png",
+                                                                width: 16,
+                                                                height: 16,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Text(
+                                                                'Report',
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontFamily:
+                                                                      'segeo',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    childCount: menteeProfile
-                                        .data
-                                        ?.user
-                                        ?.communityPost
-                                        ?.length,
+                                        );
+                                      },
+                                      childCount: menteeProfile
+                                          .data
+                                          ?.user
+                                          ?.communityPost
+                                          ?.length,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             );
                           } else {
                             if (menteeProfile

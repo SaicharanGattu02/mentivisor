@@ -30,27 +30,28 @@ class Data {
   int? lastPage;
   String? lastPageUrl;
   List<Links>? links;
-  Null? nextPageUrl;
+  String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
-  Data(
-      {this.currentPage,
-        this.menteeData,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  Data({
+    this.currentPage,
+    this.menteeData,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
@@ -102,30 +103,90 @@ class Data {
 }
 
 class MenteeData {
+  int? id;
   String? name;
-  int? menteeId;
-  String? image;
-  LastSession? lastSession;
+  String? email;
+  String? profilePic;
+  String? status;
+  String? lastInteractedDate;
+  String? college;
+  List<SessionDetails>? sessionDetails;
 
-  MenteeData({this.name, this.menteeId, this.image, this.lastSession});
+  MenteeData({
+    this.id,
+    this.name,
+    this.email,
+    this.profilePic,
+    this.status,
+    this.lastInteractedDate,
+    this.college,
+    this.sessionDetails,
+  });
 
   MenteeData.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
-    menteeId = json['mentee_id'];
-    image = json['image'];
-    lastSession = json['last_session'] != null
-        ? new LastSession.fromJson(json['last_session'])
-        : null;
+    email = json['email'];
+    profilePic = json['profile_pic'];
+    status = json['status'];
+    lastInteractedDate = json['last_interacted_date'];
+    college = json['college'];
+    if (json['session_details'] != null) {
+      sessionDetails = <SessionDetails>[];
+      json['session_details'].forEach((v) {
+        sessionDetails!.add(new SessionDetails.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
-    data['mentee_id'] = this.menteeId;
-    data['image'] = this.image;
-    if (this.lastSession != null) {
-      data['last_session'] = this.lastSession!.toJson();
+    data['email'] = this.email;
+    data['profile_pic'] = this.profilePic;
+    data['status'] = this.status;
+    data['last_interacted_date'] = this.lastInteractedDate;
+    data['college'] = this.college;
+    if (this.sessionDetails != null) {
+      data['session_details'] = this.sessionDetails!
+          .map((v) => v.toJson())
+          .toList();
     }
+    return data;
+  }
+}
+
+class SessionDetails {
+  int? id;
+  String? sessionDate;
+  String? startTime;
+  String? endTime;
+  String? mentorName;
+
+  SessionDetails({
+    this.id,
+    this.sessionDate,
+    this.startTime,
+    this.endTime,
+    this.mentorName,
+  });
+
+  SessionDetails.fromJson(Map<String, dynamic> json) {
+    sessionDate = json['session_date'];
+    id = json['id'];
+    startTime = json['start_time'];
+    endTime = json['end_time'];
+    mentorName = json['mentor_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['session_date'] = this.sessionDate;
+    data['id'] = this.id;
+    data['start_time'] = this.startTime;
+    data['end_time'] = this.endTime;
+    data['mentor_name'] = this.mentorName;
     return data;
   }
 }

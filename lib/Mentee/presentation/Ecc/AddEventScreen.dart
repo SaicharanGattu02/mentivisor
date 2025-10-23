@@ -848,7 +848,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             "${widget.type}",
                             "",
                           );
-
                           showDialog(
                             context: context,
                             barrierDismissible: false,
@@ -900,7 +899,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                           CustomSnackBar1.show(context, state.error);
                         }
                       },
-
                       builder: (context, state) {
                         final isLoading = state is AddEccLoading;
                         return CustomAppButton1(

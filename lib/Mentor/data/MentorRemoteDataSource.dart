@@ -354,7 +354,7 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   Future<MyMenteesModel?> getMyMentees(page) async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.mymenteelist}?page=${page}",
+        "${MentorEndpointsUrls.mentees}?page=${page}",
       );
       AppLogger.log('getMyMentees: ${res.data}');
       return MyMenteesModel.fromJson(res.data);
