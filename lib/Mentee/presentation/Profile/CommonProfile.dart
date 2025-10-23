@@ -835,7 +835,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                                 },
                                                               ),
                                                             ),
-
                                                             BlocConsumer<
                                                               AddResourceCubit,
                                                               AddResourceStates

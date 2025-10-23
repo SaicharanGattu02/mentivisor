@@ -124,25 +124,28 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                             12,
                                           ),
                                         ),
-                                        title: Text(
-                                          "🎉 Hi! Great 🎉\nYou Achieved Mentor Badge 🏅",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xffA258F7),
-                                            fontFamily: 'segeo',
-                                            height: 1.3,
-                                          ),
+                                        title: Column(
+                                          children: [
+                                            Text(
+                                              "🎉 Hi! Great 🎉\nYou Achieved Mentor Badge 🏅",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xffA258F7),
+                                                fontFamily: 'segeo',
+                                                height: 1.3,
+                                              ),
+                                            ),
+                                            SizedBox(height: 15),
+                                            CustomAppButton1(
+                                              text: "OK",
+                                              onPlusTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
                                         ),
-
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: Text("OK"),
-                                          ),
-                                        ],
                                       );
                                     },
                                   );
