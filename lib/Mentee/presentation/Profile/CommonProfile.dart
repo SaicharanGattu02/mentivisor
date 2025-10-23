@@ -15,6 +15,8 @@ import '../../Models/CommunityPostsModel.dart';
 import '../../data/cubits/AddResource/add_resource_cubit.dart';
 import '../../data/cubits/AddResource/add_resource_states.dart';
 import '../../data/cubits/CommonProfile/CommonProfileState.dart';
+import '../../data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
+import '../../data/cubits/CommunityPostReport/CommunityZoneReportState.dart';
 import '../../data/cubits/PostComment/post_comment_cubit.dart';
 import '../Widgets/CommentBottomSheet.dart';
 
@@ -597,6 +599,61 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                           fontSize: 14,
                                                         ),
                                                       ),
+                                                      IconButton(
+                                                        padding: EdgeInsets
+                                                            .zero, // remove default extra padding
+                                                        visualDensity:
+                                                            VisualDensity
+                                                                .compact,
+                                                        icon: Image.asset(
+                                                          'assets/icons/share.png',
+                                                          width: 16,
+                                                          height: 16,
+                                                        ),
+                                                        onPressed: () async {
+                                                          final postId =
+                                                              menteePosts?.id;
+                                                          final shareUrl =
+                                                              "https://mentivisor.com/community_post/$postId";
+
+                                                          Share.share(
+                                                            "Check out this Community Post on Mentivisor:\n$shareUrl",
+                                                            subject:
+                                                                "Mentivisor Community Post",
+                                                          );
+                                                        },
+                                                      ),
+                                                      Spacer(),
+                                                      GestureDetector(
+                                                        onTap: () =>
+                                                            _showReportSheet(
+                                                              context,
+                                                              menteePosts,
+                                                            ),
+                                                        child: Row(
+                                                          children: [
+                                                            Image.asset(
+                                                              "assets/images/ReportmenteImg.png",
+                                                              width: 16,
+                                                              height: 16,
+                                                            ),
+                                                            SizedBox(width: 5),
+                                                            Text(
+                                                              'Report',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .black87,
+                                                                fontFamily:
+                                                                    'segeo',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ],
@@ -932,6 +989,148 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showReportSheet(BuildContext context, communityPosts) {
+    String _selected = 'False Information';
+    final TextEditingController _otherController = TextEditingController();
+    final List<String> _reportReasons = [
+      'Copied',
+      'Scam or Fraud ',
+      'Abusing Post',
+      'Other',
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext builderContext) {
+        return SafeArea(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Post Report',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Color(0xff444444),
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.grey),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: _reportReasons.map((String reason) {
+                        return RadioListTile<String>(
+                          title: Text(
+                            reason,
+                            style: const TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 16,
+                            ),
+                          ),
+                          value: reason,
+                          visualDensity: VisualDensity.compact,
+                          groupValue: _selected,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selected = value!;
+                            });
+                          },
+                          activeColor: const Color(0xFF4A00E0),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    // Custom Reason TextField
+                    if (_selected == 'Other') ...[
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _otherController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Please explain your reason',
+                          hintStyle: const TextStyle(fontFamily: 'segeo'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    BlocConsumer<
+                      CommunityZoneReportCubit,
+                      CommunityZoneReportState
+                    >(
+                      listener: (context, state) {
+                        if (state is CommunityZoneReportSuccess) {
+                          CustomSnackBar1.show(
+                            context,
+                            "Report submitted successfully.",
+                          );
+                          context.pop();
+                        } else if (state is CommunityZoneReportFailure) {
+                          return CustomSnackBar1.show(
+                            context,
+                            state.message ?? "",
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return SafeArea(
+                          child: CustomAppButton1(
+                            isLoading: state is CommunityZoneReportLoading,
+                            text: "Submit Report",
+                            onPlusTap: () {
+                              final Map<String, dynamic> data = {
+                                "content_id": communityPosts.id,
+                                "reason": _selected,
+                              };
+                              context
+                                  .read<CommunityZoneReportCubit>()
+                                  .postCommunityZoneReport(data);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -30,16 +30,14 @@ class _NotificationMentorState extends State<NotificationMentor> {
     "All",
     "Sessions",
     "Rewards",
-    "Reminders",
-    "Mentions",
+    "Expertise updates",
   ];
 
   final Map<String, String> _filterKeywordMap = {
     "All": "",
     "Sessions": "session",
     "Rewards": "reward",
-    "Reminders": "reminder",
-    "Mentions": "mention",
+    "Expertise updates": "expertise_update",
   };
 
   @override
@@ -70,11 +68,11 @@ class _NotificationMentorState extends State<NotificationMentor> {
                     onSelected: (_) {
                       setState(() => _selectedFilter = i);
                       final filterKey = _filters[i];
-                      final filterType =
-                          _filterKeywordMap[filterKey] ?? "";
-                      context
-                          .read<NotificationsCubit>()
-                          .fetchNotifications("mentee", filterType);
+                      final filterType = _filterKeywordMap[filterKey] ?? "";
+                      context.read<NotificationsCubit>().fetchNotifications(
+                        "mentee",
+                        filterType,
+                      );
                     },
                   );
                 },
@@ -102,15 +100,19 @@ class _NotificationMentorState extends State<NotificationMentor> {
 
                     final selectedLabel = _filters[_selectedFilter];
                     final keyword =
-                        _filterKeywordMap[selectedLabel]?.toLowerCase() ?? "all";
+                        _filterKeywordMap[selectedLabel]?.toLowerCase() ??
+                        "all";
 
                     // Apply filter
                     final filtered = keyword == ""
                         ? notifyData
                         : notifyData
-                        .where((n) =>
-                        (n.type ?? "").toLowerCase().contains(keyword))
-                        .toList();
+                              .where(
+                                (n) => (n.type ?? "").toLowerCase().contains(
+                                  keyword,
+                                ),
+                              )
+                              .toList();
 
                     if (filtered.isEmpty) {
                       return _noDataWidget();
@@ -132,11 +134,11 @@ class _NotificationMentorState extends State<NotificationMentor> {
                       child: NotificationListener<UserScrollNotification>(
                         onNotification: (notification) {
                           if (notification.direction ==
-                              ScrollDirection.reverse &&
+                                  ScrollDirection.reverse &&
                               _fabVisible.value) {
                             _fabVisible.value = false;
                           } else if (notification.direction ==
-                              ScrollDirection.forward &&
+                                  ScrollDirection.forward &&
                               !_fabVisible.value) {
                             _fabVisible.value = true;
                           }
@@ -145,17 +147,18 @@ class _NotificationMentorState extends State<NotificationMentor> {
                         child: CustomScrollView(
                           slivers: [
                             SliverPadding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
                               sliver: SliverList(
                                 delegate: SliverChildBuilderDelegate(
-                                      (context, index) {
+                                  (context, index) {
                                     final item = filtered[index];
                                     return _buildNotificationCard(
                                       icon: _getIconForType(item.type),
                                       title: item.title ?? "",
                                       subtitle:
-                                      item.remarks ?? item.message ?? "",
+                                          item.remarks ?? item.message ?? "",
                                       date: item.createdAt ?? "",
                                     );
                                   },

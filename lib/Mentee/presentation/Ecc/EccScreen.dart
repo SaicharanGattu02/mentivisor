@@ -105,6 +105,73 @@ class _EccScreenState extends State<EccScreen> {
                               valueListenable: onCampusNotifier,
                               builder: (context, isOnCampus, _) {
                                 return Row(
+                                  // children: [
+                                  //   Expanded(
+                                  //     child: FilterButton(
+                                  //       text: 'On Campus',
+                                  //       isSelected: isOnCampus,
+                                  //       onPressed: () {
+                                  //         _searchController.clear();
+                                  //         final tagsState = context
+                                  //             .read<EccTagsCubit>()
+                                  //             .state;
+                                  //         String selectedUpdate = "";
+                                  //         if (tagsState is EccTagsLoaded &&
+                                  //             _selectedTagIndex.value >= 0 &&
+                                  //             _selectedTagIndex.value <
+                                  //                 (tagsState
+                                  //                         .tagsModel
+                                  //                         .data
+                                  //                         ?.length ??
+                                  //                     0)) {
+                                  //           selectedUpdate = tagsState
+                                  //               .tagsModel
+                                  //               .data![_selectedTagIndex.value];
+                                  //         }
+                                  //
+                                  //         context.read<ECCCubit>().getECC(
+                                  //           "",
+                                  //           selectedUpdate,
+                                  //           _searchController.text,
+                                  //         );
+                                  //         onCampusNotifier.value =
+                                  //             true; // update state
+                                  //       },
+                                  //     ),
+                                  //   ),
+                                  //   Expanded(
+                                  //     child: FilterButton(
+                                  //       text: 'Beyond Campus',
+                                  //       isSelected: !isOnCampus,
+                                  //       onPressed: () {
+                                  //         _searchController.clear();
+                                  //         final tagsState = context
+                                  //             .read<EccTagsCubit>()
+                                  //             .state;
+                                  //         String selectedUpdate = "";
+                                  //         if (tagsState is EccTagsLoaded &&
+                                  //             _selectedTagIndex.value >= 0 &&
+                                  //             _selectedTagIndex.value <
+                                  //                 (tagsState
+                                  //                         .tagsModel
+                                  //                         .data
+                                  //                         ?.length ??
+                                  //                     0)) {
+                                  //           selectedUpdate = tagsState
+                                  //               .tagsModel
+                                  //               .data![_selectedTagIndex.value];
+                                  //         }
+                                  //         context.read<ECCCubit>().getECC(
+                                  //           "beyond",
+                                  //           selectedUpdate,
+                                  //           _searchController.text,
+                                  //         );
+                                  //         onCampusNotifier.value =
+                                  //             false; // update state
+                                  //       },
+                                  //     ),
+                                  //   ),
+                                  // ],
                                   children: [
                                     Expanded(
                                       child: FilterButton(
@@ -112,62 +179,80 @@ class _EccScreenState extends State<EccScreen> {
                                         isSelected: isOnCampus,
                                         onPressed: () {
                                           _searchController.clear();
+                                          onCampusNotifier.value =
+                                              true; // ✅ update first
+
                                           final tagsState = context
                                               .read<EccTagsCubit>()
                                               .state;
-                                          String selectedUpdate = "";
-                                          if (tagsState is EccTagsLoaded &&
-                                              _selectedTagIndex.value >= 0 &&
-                                              _selectedTagIndex.value <
-                                                  (tagsState
-                                                          .tagsModel
-                                                          .data
-                                                          ?.length ??
-                                                      0)) {
-                                            selectedUpdate = tagsState
-                                                .tagsModel
-                                                .data![_selectedTagIndex.value];
+                                          String selectedTag = "";
+
+                                          if (tagsState is EccTagsLoaded) {
+                                            final modifiedTags = [
+                                              "All",
+                                              ...?tagsState.tagsModel.data,
+                                            ];
+
+                                            if (_selectedTagIndex.value >= 0 &&
+                                                _selectedTagIndex.value <
+                                                    modifiedTags.length) {
+                                              selectedTag =
+                                                  modifiedTags[_selectedTagIndex
+                                                      .value];
+                                            } else {
+                                              selectedTag = "All"; // fallback
+                                            }
                                           }
 
                                           context.read<ECCCubit>().getECC(
                                             "",
-                                            selectedUpdate,
+                                            selectedTag.toLowerCase() == "all"
+                                                ? ""
+                                                : selectedTag,
                                             _searchController.text,
                                           );
-                                          onCampusNotifier.value =
-                                              true; // update state
                                         },
                                       ),
                                     ),
+
                                     Expanded(
                                       child: FilterButton(
                                         text: 'Beyond Campus',
                                         isSelected: !isOnCampus,
                                         onPressed: () {
                                           _searchController.clear();
+                                          onCampusNotifier.value =
+                                              false; // ✅ update first
+
                                           final tagsState = context
                                               .read<EccTagsCubit>()
                                               .state;
-                                          String selectedUpdate = "";
-                                          if (tagsState is EccTagsLoaded &&
-                                              _selectedTagIndex.value >= 0 &&
-                                              _selectedTagIndex.value <
-                                                  (tagsState
-                                                          .tagsModel
-                                                          .data
-                                                          ?.length ??
-                                                      0)) {
-                                            selectedUpdate = tagsState
-                                                .tagsModel
-                                                .data![_selectedTagIndex.value];
+                                          String selectedTag = "";
+
+                                          if (tagsState is EccTagsLoaded) {
+                                            final modifiedTags = [
+                                              "All",
+                                              ...?tagsState.tagsModel.data,
+                                            ];
+
+                                            if (_selectedTagIndex.value >= 0 &&
+                                                _selectedTagIndex.value <
+                                                    modifiedTags.length) {
+                                              selectedTag =
+                                                  modifiedTags[_selectedTagIndex
+                                                      .value];
+                                            } else {
+                                              selectedTag = "All";
+                                            }
                                           }
+
                                           context.read<ECCCubit>().getECC(
                                             "beyond",
-                                            selectedUpdate,
+                                            selectedTag.toLowerCase() == "all"
+                                                ? ""
+                                                : selectedTag,
                                             _searchController.text,
                                           );
-                                          onCampusNotifier.value =
-                                              false; // update state
                                         },
                                       ),
                                     ),
@@ -208,45 +293,56 @@ class _EccScreenState extends State<EccScreen> {
                         final tagsState = context.read<EccTagsCubit>().state;
                         String selectedTag = "";
 
-                        // 🔹 Get currently selected tag
-                        if (tagsState is EccTagsLoaded &&
-                            _selectedTagIndex.value >= 0 &&
-                            _selectedTagIndex.value <
-                                (tagsState.tagsModel.data?.length ?? 0)) {
-                          selectedTag = tagsState
-                              .tagsModel
-                              .data![_selectedTagIndex.value];
+                        // ✅ Include "All" as 0th index in tags
+                        if (tagsState is EccTagsLoaded) {
+                          final modifiedTags = [
+                            "All",
+                            ...?tagsState.tagsModel.data,
+                          ];
+
+                          // ✅ Safely get the selected tag
+                          if (_selectedTagIndex.value >= 0 &&
+                              _selectedTagIndex.value < modifiedTags.length) {
+                            selectedTag = modifiedTags[_selectedTagIndex.value];
+                          } else {
+                            selectedTag = "All";
+                          }
                         }
 
-                        // 🔹 CASE 1: When search query is empty → fetch initial data
+                        // ✅ Convert "All" to empty string for API
+                        final normalizedTag = selectedTag.toLowerCase() == "all"
+                            ? ""
+                            : selectedTag;
+
+                        // ✅ CASE 1: Empty query → fetch initial results
                         if (query.trim().isEmpty) {
                           if (onCampusNotifier.value) {
                             context.read<ECCCubit>().getECC(
                               "",
-                              selectedTag,
+                              normalizedTag,
                               "",
                             );
                           } else {
                             context.read<ECCCubit>().getECC(
                               "beyond",
-                              selectedTag,
+                              normalizedTag,
                               "",
                             );
                           }
                           return;
                         }
 
-                        // 🔹 CASE 2: When user types something → perform filtered search
+                        // ✅ CASE 2: Search query entered → fetch filtered results
                         if (onCampusNotifier.value) {
                           context.read<ECCCubit>().getECC(
                             "",
-                            selectedTag,
+                            normalizedTag,
                             query,
                           );
                         } else {
                           context.read<ECCCubit>().getECC(
                             "beyond",
-                            selectedTag,
+                            normalizedTag,
                             query,
                           );
                         }
@@ -275,6 +371,85 @@ class _EccScreenState extends State<EccScreen> {
                   ),
                 ),
 
+                // SizedBox(
+                //   height: 48,
+                //   child: TextField(
+                //     controller: _searchController,
+                //     cursorColor: primarycolor,
+                //     onChanged: (query) {
+                //       // Cancel any active debounce
+                //       if (_debounce?.isActive ?? false) _debounce!.cancel();
+                //
+                //       _debounce = Timer(const Duration(milliseconds: 300), () {
+                //         final tagsState = context.read<EccTagsCubit>().state;
+                //         String selectedTag = "";
+                //
+                //         // 🔹 Get currently selected tag
+                //         if (tagsState is EccTagsLoaded &&
+                //             _selectedTagIndex.value >= 0 &&
+                //             _selectedTagIndex.value <
+                //                 (tagsState.tagsModel.data?.length ?? 0)) {
+                //           selectedTag = tagsState
+                //               .tagsModel
+                //               .data![_selectedTagIndex.value];
+                //         }
+                //
+                //         // 🔹 CASE 1: When search query is empty → fetch initial data
+                //         if (query.trim().isEmpty) {
+                //           if (onCampusNotifier.value) {
+                //             context.read<ECCCubit>().getECC(
+                //               "",
+                //               selectedTag,
+                //               "",
+                //             );
+                //           } else {
+                //             context.read<ECCCubit>().getECC(
+                //               "beyond",
+                //               selectedTag,
+                //               "",
+                //             );
+                //           }
+                //           return;
+                //         }
+                //
+                //         // 🔹 CASE 2: When user types something → perform filtered search
+                //         if (onCampusNotifier.value) {
+                //           context.read<ECCCubit>().getECC(
+                //             "",
+                //             selectedTag,
+                //             query,
+                //           );
+                //         } else {
+                //           context.read<ECCCubit>().getECC(
+                //             "beyond",
+                //             selectedTag,
+                //             query,
+                //           );
+                //         }
+                //       });
+                //     },
+                //     style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
+                //     decoration: InputDecoration(
+                //       hoverColor: Colors.white,
+                //       hintText: 'Search by name or location',
+                //       hintStyle: const TextStyle(color: Colors.grey),
+                //       prefixIcon: const Icon(
+                //         Icons.search,
+                //         color: Color(0xff666666),
+                //       ),
+                //       fillColor: Colors.white,
+                //       filled: true,
+                //       contentPadding: const EdgeInsets.only(
+                //         right: 33,
+                //         left: 20,
+                //       ),
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(8),
+                //         borderSide: BorderSide.none,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(height: 12),
                 BlocBuilder<EccTagsCubit, EccTagsState>(
                   builder: (context, state) {
@@ -517,6 +692,7 @@ class _EccScreenState extends State<EccScreen> {
                                     },
                                   ),
                                 ),
+
                                 // SliverGrid(
                                 //   gridDelegate:
                                 //   SliverGridDelegateWithFixedCrossAxisCount(
@@ -543,7 +719,6 @@ class _EccScreenState extends State<EccScreen> {
                                 //     );
                                 //   }, childCount: ecclist.length),
                                 // ),
-
                                 if (state is ECCLoadingMore)
                                   const SliverToBoxAdapter(
                                     child: Padding(
@@ -598,17 +773,23 @@ class _EccScreenState extends State<EccScreen> {
                                 .read<EccTagsCubit>()
                                 .state;
                             String selectedTag = "";
-
-                            if (tagsState is EccTagsLoaded &&
-                                _selectedTagIndex.value >= 0 &&
-                                _selectedTagIndex.value <
-                                    (tagsState.tagsModel.data?.length ?? 0)) {
-                              selectedTag = tagsState
-                                  .tagsModel
-                                  .data![_selectedTagIndex.value];
+                            if (tagsState is EccTagsLoaded) {
+                              final modifiedTags = [
+                                "All",
+                                ...?tagsState.tagsModel.data,
+                              ];
+                              if (_selectedTagIndex.value >= 0 &&
+                                  _selectedTagIndex.value <
+                                      modifiedTags.length) {
+                                selectedTag =
+                                    modifiedTags[_selectedTagIndex.value];
+                              }
                             }
-
-                            context.push("/addeventscreen?type=$selectedTag");
+                            final normalizedTag =
+                                selectedTag.toLowerCase() == "all"
+                                ? ""
+                                : selectedTag;
+                            context.push("/addeventscreen?type=$normalizedTag");
                           }
                         },
                         backgroundColor: Colors.transparent,

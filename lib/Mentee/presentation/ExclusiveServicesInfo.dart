@@ -98,56 +98,41 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                         ),
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF5F6FA),
+                              color: const Color(0xFFD9DEE7),
                               borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
                             ),
+                            padding: const EdgeInsets.all(12),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                               child: SizedBox(
+                                height: 140,
                                 width: double.infinity,
-                                child: exclusiveServiceImge.isEmpty
-                                    ? Container(
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(
-                                          Icons.broken_image_outlined,
-                                          color: Colors.grey,
-                                          size: 40,
-                                        ),
-                                      )
-                                    : CachedNetworkImage(
-                                        imageUrl: exclusiveServiceImge,
-                                        fit: BoxFit.cover,
-                                        placeholder: (c, _) => const Center(
-                                          child: SizedBox(
-                                            width: 22,
-                                            height: 22,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 1.8,
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (c, _, __) => Container(
-                                          color: Colors.grey.shade200,
-                                          child: const Icon(
-                                            Icons.broken_image_outlined,
-                                            color: Colors.grey,
-                                            size: 40,
-                                          ),
-                                        ),
+                                child: exclusiveServiceImge.isNotEmpty
+                                    ? CachedNetworkImage(
+                                  imageUrl: exclusiveServiceImge,
+                                  fit: BoxFit.cover,
+                                  placeholder: (c, _) => const Center(
+                                    child: SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 1.8,
                                       ),
+                                    ),
+                                  ),
+                                  errorWidget: (c, _, __) => const Icon(
+                                    Icons.broken_image_outlined,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                                    : const Icon(
+                                  Icons.broken_image_outlined,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ),
-
                           const SizedBox(height: 16),
 
                           Row(

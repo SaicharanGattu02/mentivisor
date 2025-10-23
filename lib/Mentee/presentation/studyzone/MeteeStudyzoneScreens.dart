@@ -115,13 +115,15 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                             builder: (context, isOnCampus, _) {
                               return Row(
                                 children: [
+                                  // 🟢 ON CAMPUS BUTTON
                                   Expanded(
                                     child: FilterButton(
                                       text: 'On Campus',
                                       isSelected: isOnCampus,
                                       onPressed: () {
                                         searchController.clear();
-                                        onCampusNotifier.value = true;
+                                        onCampusNotifier.value =
+                                            true; // ✅ update first
 
                                         final tagsState = context
                                             .read<TagsCubit>()
@@ -129,14 +131,24 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                         String tag = "";
 
                                         if (tagsState is TagsLoaded) {
-                                          _selectedTagIndex.value = 0;
-
+                                          // ✅ Include "All" manually
                                           final modifiedTags = [
                                             StudyZone(id: -1, tags: "All"),
                                             ...?tagsState.tagsModel.data,
                                           ];
 
-                                          tag = modifiedTags.first.tags ?? "";
+                                          // ✅ Keep the previously selected tag
+                                          if (_selectedTagIndex.value >= 0 &&
+                                              _selectedTagIndex.value <
+                                                  modifiedTags.length) {
+                                            tag =
+                                                modifiedTags[_selectedTagIndex
+                                                        .value]
+                                                    .tags ??
+                                                "";
+                                          } else {
+                                            tag = "All";
+                                          }
                                         }
 
                                         context
@@ -149,81 +161,137 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               searchController.text,
                                             );
                                       },
-
-                                      // onPressed: () {
-                                      //   searchController.clear();
-                                      //   onCampusNotifier.value = true;
-                                      //   final tagsState = context
-                                      //       .read<TagsCubit>()
-                                      //       .state;
-                                      //   String tag = "";
-                                      //   if (tagsState is TagsLoaded &&
-                                      //       _selectedTagIndex.value >= 0 &&
-                                      //       _selectedTagIndex.value <
-                                      //           (tagsState
-                                      //                   .tagsModel
-                                      //                   .data
-                                      //                   ?.length ??
-                                      //               0)) {
-                                      //     tag =
-                                      //         tagsState
-                                      //             .tagsModel
-                                      //             .data![_selectedTagIndex
-                                      //                 .value]
-                                      //             .tags ??
-                                      //         "";
-                                      //   }
-                                      //
-                                      //   context
-                                      //       .read<StudyZoneCampusCubit>()
-                                      //       .fetchStudyZoneCampus(
-                                      //         "",
-                                      //         tag,
-                                      //         searchController.text,
-                                      //       );
-                                      // },
                                     ),
                                   ),
+
+                                  // 🟣 BEYOND CAMPUS BUTTON
                                   Expanded(
                                     child: FilterButton(
                                       text: 'Beyond Campus',
                                       isSelected: !isOnCampus,
                                       onPressed: () {
                                         searchController.clear();
-                                        onCampusNotifier.value = false;
+                                        onCampusNotifier.value =
+                                            false; // ✅ update first
 
                                         final tagsState = context
                                             .read<TagsCubit>()
                                             .state;
                                         String tag = "";
-                                        if (tagsState is TagsLoaded &&
-                                            _selectedTagIndex.value >= 0 &&
-                                            _selectedTagIndex.value <
-                                                (tagsState
-                                                        .tagsModel
-                                                        .data
-                                                        ?.length ??
-                                                    0)) {
-                                          tag =
-                                              tagsState
-                                                  .tagsModel
-                                                  .data![_selectedTagIndex
-                                                      .value]
-                                                  .tags ??
-                                              "";
+
+                                        if (tagsState is TagsLoaded) {
+                                          final modifiedTags = [
+                                            StudyZone(id: -1, tags: "All"),
+                                            ...?tagsState.tagsModel.data,
+                                          ];
+
+                                          // ✅ Keep the same selected tag (don’t reset)
+                                          if (_selectedTagIndex.value >= 0 &&
+                                              _selectedTagIndex.value <
+                                                  modifiedTags.length) {
+                                            tag =
+                                                modifiedTags[_selectedTagIndex
+                                                        .value]
+                                                    .tags ??
+                                                "";
+                                          } else {
+                                            tag = "All";
+                                          }
                                         }
 
                                         context
                                             .read<StudyZoneCampusCubit>()
                                             .fetchStudyZoneCampus(
                                               "beyond",
-                                              tag,
+                                              tag.toLowerCase() == "all"
+                                                  ? ""
+                                                  : tag,
                                               searchController.text,
                                             );
                                       },
                                     ),
                                   ),
                                 ],
+
+                                // children: [
+                                //   Expanded(
+                                //     child: FilterButton(
+                                //       text: 'On Campus',
+                                //       isSelected: isOnCampus,
+                                //       onPressed: () {
+                                //         searchController.clear();
+                                //         onCampusNotifier.value = true;
+                                //
+                                //         final tagsState = context
+                                //             .read<TagsCubit>()
+                                //             .state;
+                                //         String tag = "";
+                                //
+                                //         if (tagsState is TagsLoaded) {
+                                //           _selectedTagIndex.value = 0;
+                                //
+                                //           final modifiedTags = [
+                                //             StudyZone(id: -1, tags: "All"),
+                                //             ...?tagsState.tagsModel.data,
+                                //           ];
+                                //
+                                //           tag = modifiedTags.first.tags ?? "";
+                                //         }
+                                //
+                                //         context
+                                //             .read<StudyZoneCampusCubit>()
+                                //             .fetchStudyZoneCampus(
+                                //               "",
+                                //               tag.toLowerCase() == "all"
+                                //                   ? ""
+                                //                   : tag,
+                                //               searchController.text,
+                                //             );
+                                //       },
+                                //
+
+                                //     ),
+                                //   ),
+                                //   Expanded(
+                                //     child: FilterButton(
+                                //       text: 'Beyond Campus',
+                                //       isSelected: !isOnCampus,
+                                //       onPressed: () {
+                                //         searchController.clear();
+                                //         onCampusNotifier.value = false;
+                                //
+                                //         final tagsState = context
+                                //             .read<TagsCubit>()
+                                //             .state;
+                                //         String tag = "";
+                                //         if (tagsState is TagsLoaded &&
+                                //             _selectedTagIndex.value >= 0 &&
+                                //             _selectedTagIndex.value <
+                                //                 (tagsState
+                                //                         .tagsModel
+                                //                         .data
+                                //                         ?.length ??
+                                //                     0)) {
+                                //           tag =
+                                //               tagsState
+                                //                   .tagsModel
+                                //                   .data![_selectedTagIndex
+                                //                       .value]
+                                //                   .tags ??
+                                //               "";
+                                //         }
+                                //
+                                //         context
+                                //             .read<StudyZoneCampusCubit>()
+                                //             .fetchStudyZoneCampus(
+                                //               "beyond",
+                                //               tag,
+                                //               searchController.text,
+                                //             );
+                                //       },
+                                //     ),
+                                //   ),
+                                // ],
                               );
                             },
                           ),
@@ -242,44 +310,60 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       cursorColor: primarycolor,
                       onChanged: (query) {
                         if (_debounce?.isActive ?? false) _debounce!.cancel();
+
                         _debounce = Timer(
                           const Duration(milliseconds: 300),
                           () {
                             final tagsState = context.read<TagsCubit>().state;
                             String selectedTag = "";
 
-                            if (tagsState is TagsLoaded &&
-                                _selectedTagIndex.value >= 0 &&
-                                _selectedTagIndex.value <
-                                    (tagsState.tagsModel.data?.length ?? 0)) {
-                              selectedTag =
-                                  tagsState
-                                      .tagsModel
-                                      .data![_selectedTagIndex.value]
-                                      .tags ??
-                                  "";
+                            if (tagsState is TagsLoaded) {
+                              // ✅ Always prepend “All” tag
+                              final modifiedTags = [
+                                StudyZone(id: -1, tags: "All"),
+                                ...?tagsState.tagsModel.data,
+                              ];
+                              if (_selectedTagIndex.value >= 0 &&
+                                  _selectedTagIndex.value <
+                                      modifiedTags.length) {
+                                selectedTag =
+                                    modifiedTags[_selectedTagIndex.value]
+                                        .tags ??
+                                    "";
+                              } else {
+                                selectedTag = "All";
+                              }
                             }
+
+                            final normalizedTag =
+                                selectedTag.toLowerCase() == "all"
+                                ? ""
+                                : selectedTag;
 
                             if (onCampusNotifier.value) {
                               context
                                   .read<StudyZoneCampusCubit>()
-                                  .fetchStudyZoneCampus("", selectedTag, query);
+                                  .fetchStudyZoneCampus(
+                                    "",
+                                    normalizedTag,
+                                    query,
+                                  );
                             } else {
                               context
                                   .read<StudyZoneCampusCubit>()
                                   .fetchStudyZoneCampus(
                                     "beyond",
-                                    selectedTag,
+                                    normalizedTag,
                                     query,
                                   );
                             }
                           },
                         );
                       },
-                      style: TextStyle(fontFamily: "segeo", fontSize: 15),
+                      style: const TextStyle(fontFamily: "segeo", fontSize: 15),
                       decoration: InputDecoration(
                         hoverColor: Colors.white,
-                        hintText: 'Search for any thing',
+                        hintText: 'Search for anything',
                         hintStyle: const TextStyle(color: Colors.grey),
                         prefixIcon: const Icon(
                           Icons.search,
@@ -294,6 +378,66 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                       ),
                     ),
                   ),
+
+                  // SizedBox(
+                  //   height: 48,
+                  //   child: TextField(
+                  //     controller: searchController,
+                  //     cursorColor: primarycolor,
+                  //     onChanged: (query) {
+                  //       if (_debounce?.isActive ?? false) _debounce!.cancel();
+                  //       _debounce = Timer(
+                  //         const Duration(milliseconds: 300),
+                  //         () {
+                  //           final tagsState = context.read<TagsCubit>().state;
+                  //           String selectedTag = "";
+                  //
+                  //           if (tagsState is TagsLoaded &&
+                  //               _selectedTagIndex.value >= 0 &&
+                  //               _selectedTagIndex.value <
+                  //                   (tagsState.tagsModel.data?.length ?? 0)) {
+                  //             selectedTag =
+                  //                 tagsState
+                  //                     .tagsModel
+                  //                     .data![_selectedTagIndex.value]
+                  //                     .tags ??
+                  //                 "";
+                  //           }
+                  //
+                  //           if (onCampusNotifier.value) {
+                  //             context
+                  //                 .read<StudyZoneCampusCubit>()
+                  //                 .fetchStudyZoneCampus("", selectedTag, query);
+                  //           } else {
+                  //             context
+                  //                 .read<StudyZoneCampusCubit>()
+                  //                 .fetchStudyZoneCampus(
+                  //                   "beyond",
+                  //                   selectedTag,
+                  //                   query,
+                  //                 );
+                  //           }
+                  //         },
+                  //       );
+                  //     },
+                  //     style: TextStyle(fontFamily: "segeo", fontSize: 15),
+                  //     decoration: InputDecoration(
+                  //       hoverColor: Colors.white,
+                  //       hintText: 'Search for any thing',
+                  //       hintStyle: const TextStyle(color: Colors.grey),
+                  //       prefixIcon: const Icon(
+                  //         Icons.search,
+                  //         color: Color(0xff666666),
+                  //       ),
+                  //       fillColor: Colors.white,
+                  //       filled: true,
+                  //       contentPadding: const EdgeInsets.only(
+                  //         right: 33,
+                  //         left: 20,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(height: 12),
                   BlocBuilder<TagsCubit, TagsState>(
                     builder: (context, state) {

@@ -124,11 +124,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                       ],
                     ),
                   );
-                } else if (state is ExclusiveserviceStateFailure) {
-                  return Center(child: Text(state.msg ?? 'Failed to load'));
-                } else if (state is! ExclusiveserviceStateLoaded) {
-                  return const Center(child: Text('No data available'));
-                } else {
+                } else if (state is ExclusiveserviceStateLoaded) {
                   final list = state.exclusiveServicesModel.data?.data ?? [];
                   return Expanded(
                     child: CustomScrollView(
@@ -213,6 +209,10 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                       ],
                     ),
                   );
+                } else if (state is ExclusiveserviceStateFailure) {
+                  return Center(child: Text(state.msg ?? 'Failed to load'));
+                } else {
+                  return Center(child: Text("No Data"));
                 }
               },
             ),

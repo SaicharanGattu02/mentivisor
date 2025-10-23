@@ -6,14 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-
 import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../services/AuthService.dart';
 import '../../../utils/AppLogger.dart';
-import '../../../utils/ImageUtils.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_cubit.dart';
 import '../../data/cubits/AddCommunityPost/add_communitypost_states.dart';
@@ -21,6 +19,7 @@ import '../../data/cubits/CommunityPosts/CommunityPostsCubit.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import '../../data/cubits/HighlightedCoins/highlighted_coins_state.dart';
 import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
+import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -36,7 +35,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final _headingController = TextEditingController();
   final _describeController = TextEditingController();
   final _tagController = TextEditingController();
-
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
   final ValueNotifier<bool> _isHighlighted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _anonymousNotifier = ValueNotifier<bool>(false);
@@ -68,113 +66,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _anonymousNotifier.dispose();
   }
 
-  Future<void> _pickImage() async {
-    if (!mounted) return;
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF315DEA).withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () => Navigator.pop(ctx),
-                    ),
-                  ],
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.photo_library,
-                    color: Color(0xff315DEA),
-                  ),
-                  title: const Text(
-                    'Choose from Gallery',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickImageFromGallery();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.camera_alt,
-                    color: Color(0xff315DEA),
-                  ),
-                  title: const Text(
-                    'Take a Photo',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickImageFromCamera();
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  Future<void> _selectImage() async {
+    final pickedImage = await ImagePickerHelper.pickImageBottomSheet(context);
 
-  Future<File?> _pickValidateAndResize(
-    BuildContext context, {
-    required ImageSource source,
-    int targetWidth = 384,
-    int? minSourceWidth,
-  }) async {
-    final XFile? picked = await _picker.pickImage(source: source);
-    if (picked == null) return null;
-
-    final raw = File(picked.path);
-    final resized = await ImageUtils1.resizeTo16by9(
-      raw,
-      targetWidth: targetWidth,
-    );
-    return resized;
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (!mounted) return;
-    if (pickedFile != null) {
-      _imageFile.value = File(pickedFile.path);
+    if (pickedImage != null && mounted) {
+      setState(() {
+        _imageFile.value = pickedImage;
+      });
     }
-  }
-
-  Future<void> _pickImageFromCamera() async {
-    final exact = await _pickValidateAndResize(
-      context,
-      source: ImageSource.camera,
-      targetWidth: 384,
-      minSourceWidth: 800,
-    );
-    if (!mounted) return;
-    if (exact != null) _imageFile.value = exact;
   }
 
   void _cancelImage() {
@@ -414,7 +313,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 valueListenable: _imageFile,
                 builder: (context, file, _) {
                   return GestureDetector(
-                    onTap: file == null ? _pickImage : null,
+                    onTap: file == null ? _selectImage : null,
                     child: DottedBorder(
                       borderType: BorderType.RRect,
                       radius: const Radius.circular(12),
@@ -570,7 +469,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                         color: Colors.redAccent,
                                       ),
                                     ),
-                                    content: const Text(
+                                    content: Text(
                                       "You don’t have enough coins to post this.\n\nPlease purchase more coins to continue.",
                                       style: TextStyle(
                                         fontSize: 14,
@@ -766,8 +665,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             height: 120,
                             repeat: true,
                           ),
-                          const Text(
-                            "Your post is under review. Once it’s approved, it will be visible to the community",
+                          Text(
+                            "${state.successModel.message ?? "Your post is under review. Once it’s approved, it will be visible to the community"}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,

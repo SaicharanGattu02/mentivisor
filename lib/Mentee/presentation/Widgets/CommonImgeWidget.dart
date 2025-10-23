@@ -160,55 +160,134 @@ class FileImagePicker {
   }
 }
 
-// class PdfFileImagePicker {
-//   static Future<File?> pickFile() async {
-//     try {
-//       // 1️⃣ Pick file
-//       FilePickerResult? result = await FilePicker.platform.pickFiles(
-//         type: FileType.custom,
-//         allowedExtensions: ['pdf'],
-//       );
-//
-//       if (result == null || result.files.single.path == null) return null;
-//
-//       File file = File(result.files.single.path!);
-//       final int sizeInBytes = await file.length();
-//       final double sizeInMB = sizeInBytes / (1024 * 1024);
-//       print('📄 Picked file size: ${sizeInMB.toStringAsFixed(2)} MB');
-//
-//       // 2️⃣ If already under 5MB, no need to compress
-//       if (sizeInMB <= 5.0) return file;
-//
-//       // 3️⃣ Compress file
-//       final Directory tempDir = await getTemporaryDirectory();
-//       final String outPath =
-//           '${tempDir.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.pdf';
-//
-//       print('🔧 Compressing PDF...');
-//       await PdfCompressor.compressPdfFile(
-//         file.path,
-//         outPath,
-//         CompressQuality.LOW,
-//       );
-//
-//       // 4️⃣ Verify new size
-//       final File compressed = File(outPath);
-//       final int newSize = await compressed.length();
-//       final double newSizeMB = newSize / (1024 * 1024);
-//
-//       print('✅ Compressed size: ${newSizeMB.toStringAsFixed(2)} MB');
-//
-//       if (newSizeMB > 5.0) {
-//         print(
-//           '⚠️ File still too large (${newSizeMB.toStringAsFixed(2)} MB). Please choose a smaller file.',
-//         );
-//         return null;
-//       }
-//
-//       return compressed;
-//     } catch (e) {
-//       print('❌ Error compressing PDF: $e');
-//       return null;
-//     }
-//   }
-// }
+class ImagePickerHelper {
+  static final ImagePicker _picker = ImagePicker();
+
+  static Future<File?> pickImageBottomSheet(
+      BuildContext context, {
+        int maxDimension = 1080, // optional resize limit for large images
+      }) async {
+    return await showModalBottomSheet<File?>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // 🟦 Drag Handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF315DEA).withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+
+                // 📂 Choose from Gallery
+                ListTile(
+                  leading: const Icon(Icons.photo_library, color: Color(0xff315DEA)),
+                  title: const Text(
+                    'Choose from Gallery',
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                  onTap: () async {
+                    final file = await _pickAndResize(
+                      ImageSource.gallery,
+                      maxDimension: maxDimension,
+                    );
+                    Navigator.pop(context, file);
+                  },
+                ),
+
+                // 📷 Take a Photo
+                ListTile(
+                  leading: const Icon(Icons.camera_alt, color: Color(0xff315DEA)),
+                  title: const Text(
+                    'Take a Photo',
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                  onTap: () async {
+                    final file = await _pickAndResize(
+                      ImageSource.camera,
+                      maxDimension: maxDimension,
+                    );
+                    Navigator.pop(context, file);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 🖼 Pick + (optionally) resize image for optimization
+  static Future<File?> _pickAndResize(
+      ImageSource source, {
+        int maxDimension = 1080,
+      }) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile == null) return null;
+
+      final File originalFile = File(pickedFile.path);
+      return await _resizeIfTooLarge(originalFile, maxDimension: maxDimension);
+    } catch (e) {
+      debugPrint("Image picking failed: $e");
+      return null;
+    }
+  }
+
+  /// 🧩 Resize large images proportionally — but keep full height (no crop)
+  static Future<File?> _resizeIfTooLarge(
+      File file, {
+        int maxDimension = 1080,
+      }) async {
+    try {
+      final bytes = await file.readAsBytes();
+      final img.Image? image = img.decodeImage(bytes);
+      if (image == null) return file;
+
+      // if image already small, keep as-is
+      if (image.width <= maxDimension && image.height <= maxDimension) {
+        return file;
+      }
+
+      final double scale = image.width > image.height
+          ? maxDimension / image.width
+          : maxDimension / image.height;
+
+      final img.Image resized = img.copyResize(
+        image,
+        width: (image.width * scale).round(),
+        height: (image.height * scale).round(),
+      );
+
+      final newPath = file.path.replaceAll(
+        RegExp(r'\.(jpg|jpeg|png)$'),
+        '_resized.jpg',
+      );
+
+      final resizedFile = File(newPath)
+        ..writeAsBytesSync(img.encodeJpg(resized, quality: 85));
+
+      return resizedFile;
+    } catch (e) {
+      debugPrint("Resize failed: $e");
+      return file;
+    }
+  }
+}
+

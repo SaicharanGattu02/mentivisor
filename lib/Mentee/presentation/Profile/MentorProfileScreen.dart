@@ -81,42 +81,69 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: CachedNetworkImage(
-                            imageUrl: mentorData?.user?.profilePicUrl ?? "",
-                            width: 150, // Set a fixed width for the image
-                            height:
-                                150, // Set a fixed height to maintain the circle shape
-                            fit: BoxFit
-                                .cover, // Ensures the image scales correctly to fit within the circle
-                            placeholder: (context, url) => CircleAvatar(
-                              radius: 20,
-                              backgroundColor: Colors.grey,
-                              child: SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: Center(
-                                  child: spinkits.getSpinningLinespinkit(),
+                          child: SizedBox(
+                            width: 120,
+                            height: 120,
+                            child: CachedNetworkImage(
+                              imageUrl: mentorData?.user?.profilePicUrl ?? "",
+                              fadeInDuration: const Duration(milliseconds: 200),
+                              fadeOutDuration: const Duration(milliseconds: 100),
+                              imageBuilder: (context, imageProvider) => Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                            errorWidget: (context, url, error) => CircleAvatar(
-                              radius: 36,
-                              backgroundColor: Colors.grey.shade300,
-                              child: Text(
-                                (name != null && name.trim().isNotEmpty)
-                                    ? name.trim()[0].toUpperCase()
-                                    : 'U',
-                                style: TextStyle(
-                                  fontSize: 68,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xff333333),
-                                  fontFamily: 'segeo',
+                              placeholder: (context, url) => Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                decoration:  BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFFE0E0E0),
+                                ),
+                                child:  Center(
+                                  child: SizedBox(
+                                    width: 28,
+                                    height: 28,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey.shade300,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    (name != null && name.trim().isNotEmpty)
+                                        ? name.trim()[0].toUpperCase()
+                                        : 'U',
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xff333333),
+                                      fontFamily: 'segeo',
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 12),
+
+
+                    SizedBox(height: 12),
                         Container(
                           padding: EdgeInsets.all(16),
                           margin: EdgeInsets.only(bottom: 16),
@@ -442,13 +469,11 @@ class MentorProfileShimmer extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 👤 Profile Image
-              Center(child: shimmerCircle(150, context)),
-              const SizedBox(height: 16),
+              Center(child: shimmerCircle(120, context)),
+               SizedBox(height: 16),
 
-              /// 🧾 Profile Info Card
               Container(
-                padding: const EdgeInsets.all(16),
+                padding:  EdgeInsets.all(16),
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,

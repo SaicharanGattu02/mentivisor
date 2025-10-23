@@ -18,12 +18,12 @@ import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../Components/CommonLoader.dart';
-import '../../../utils/ImageUtils.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/constants.dart';
 import '../../data/cubits/ECC/ecc_cubit.dart';
 
 import '../../data/cubits/EccTags/tags_cubit.dart';
+import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
 
 class AddEventScreen extends StatefulWidget {
@@ -49,7 +49,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   final ValueNotifier<String> selectedTabIndex = ValueNotifier<String>('event');
   final ValueNotifier<File?> _imageFile = ValueNotifier<File?>(null);
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(true);
-  final ImagePicker _picker = ImagePicker();
   final searchController = TextEditingController();
   Timer? _debounce;
   List<String> _selectedTags = [];
@@ -90,45 +89,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
     }
   }
 
-  Future<File?> _pickValidateAndResize(
-    BuildContext context, {
-    required ImageSource source,
-    int targetWidth = 384,
-    double tolerancePct = 0.10, // 10% around 16:9
-    int? minSourceWidth, // e.g. 800 to avoid tiny images
-  }) async {
-    final XFile? picked = await _picker.pickImage(source: source);
-    if (picked == null) return null;
+  Future<void> _selectImage() async {
+    final pickedImage = await ImagePickerHelper.pickImageBottomSheet(context);
 
-    final raw = File(picked.path);
-
-    final resized = await ImageUtils1.resizeTo16by9(
-      raw,
-      targetWidth: targetWidth,
-    );
-    return resized;
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    final exact = await _pickValidateAndResize(
-      context,
-      source: ImageSource.gallery,
-      targetWidth: 384,
-      minSourceWidth: 800,
-    );
-    if (!mounted) return;
-    if (exact != null) _imageFile.value = exact;
-  }
-
-  Future<void> _pickImageFromCamera() async {
-    final exact = await _pickValidateAndResize(
-      context,
-      source: ImageSource.camera,
-      targetWidth: 384,
-      minSourceWidth: 800,
-    );
-    if (!mounted) return;
-    if (exact != null) _imageFile.value = exact;
+    if (pickedImage != null && mounted) {
+      setState(() {
+        _imageFile.value = pickedImage;
+      });
+    }
   }
 
   void _cancelImage() {
@@ -137,6 +105,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   @override
   void initState() {
+    AppLogger.info("tag::${widget.type}");
     searchController.clear();
     context.read<EccTagsCubit>().getEccTags("");
     context.read<HighlightedCoinsCubit>().highlitedCoins("ecc");
@@ -437,7 +406,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
                       return GestureDetector(
                         onTap: (!isDisabled && file == null)
-                            ? _pickImage
+                            ? _selectImage
                             : null,
                         child: Opacity(
                           opacity: isDisabled ? 0.5 : 1.0,
@@ -915,7 +884,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                     text: "Okay",
                                     onPlusTap: () {
                                       context.read<EccTagsCubit>().getEccTags(
-                                        "",
+                                        "${widget.type}",
                                       );
                                       Navigator.of(
                                         context,
@@ -972,78 +941,78 @@ class _AddEventScreenState extends State<AddEventScreen> {
     );
   }
 
-  Future<void> _pickImage() async {
-    if (!mounted) return;
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (BuildContext ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF315DEA).withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () => Navigator.pop(ctx),
-                    ),
-                  ],
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.photo_library,
-                    color: Color(0xff315DEA),
-                  ),
-                  title: const Text(
-                    'Choose from Gallery',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickImageFromGallery();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.camera_alt,
-                    color: Color(0xff315DEA),
-                  ),
-                  title: const Text(
-                    'Take a Photo',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickImageFromCamera();
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // Future<void> _pickImage() async {
+  //   if (!mounted) return;
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+  //     ),
+  //     backgroundColor: Colors.white,
+  //     builder: (BuildContext ctx) {
+  //       return SafeArea(
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.stretch,
+  //             children: [
+  //               Center(
+  //                 child: Container(
+  //                   width: 40,
+  //                   height: 4,
+  //                   margin: const EdgeInsets.symmetric(vertical: 8),
+  //                   decoration: BoxDecoration(
+  //                     color: const Color(0xFF315DEA).withOpacity(0.3),
+  //                     borderRadius: BorderRadius.circular(2),
+  //                   ),
+  //                 ),
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.end,
+  //                 children: [
+  //                   IconButton(
+  //                     icon: const Icon(Icons.close, color: Colors.red),
+  //                     onPressed: () => Navigator.pop(ctx),
+  //                   ),
+  //                 ],
+  //               ),
+  //               ListTile(
+  //                 leading: const Icon(
+  //                   Icons.photo_library,
+  //                   color: Color(0xff315DEA),
+  //                 ),
+  //                 title: const Text(
+  //                   'Choose from Gallery',
+  //                   style: TextStyle(fontSize: 16, color: Colors.black87),
+  //                 ),
+  //                 onTap: () {
+  //                   Navigator.pop(ctx);
+  //                   _pickImageFromGallery();
+  //                 },
+  //               ),
+  //               ListTile(
+  //                 leading: const Icon(
+  //                   Icons.camera_alt,
+  //                   color: Color(0xff315DEA),
+  //                 ),
+  //                 title: const Text(
+  //                   'Take a Photo',
+  //                   style: TextStyle(fontSize: 16, color: Colors.black87),
+  //                 ),
+  //                 onTap: () {
+  //                   Navigator.pop(ctx);
+  //                   _pickImageFromCamera();
+  //                 },
+  //               ),
+  //               const SizedBox(height: 8),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildTab(String title, String index) {
     return ValueListenableBuilder<String>(
