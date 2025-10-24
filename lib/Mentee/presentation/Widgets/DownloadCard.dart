@@ -56,25 +56,45 @@ class DownloadCard extends StatelessWidget {
                   Text(
                     downloads.description ?? "",
                     style: TextStyle(fontSize: 14, color: Color(0xff666666)),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 10),
-                  Wrap(
-                    spacing: 6.0, // space between tags
-                    children:
-                        downloads.tag?.map((tag) {
-                          return Text(
-                            tag,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                  if ((downloads.tag?.isNotEmpty ?? false))
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics:
+                          const BouncingScrollPhysics(), // 👈 gives you the smooth bounce
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: downloads.tag!.map((tag) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFFF7F8FC), Color(0xFFEFF4FF)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              tag,
+                              style: const TextStyle(
+                                fontFamily: 'segeo',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           );
-                        }).toList() ??
-                        [],
-                  ),
+                        }).toList(),
+                      ),
+                    ),
                   SizedBox(height: 15),
                   CustomOutlinedButton(
                     text: "View",

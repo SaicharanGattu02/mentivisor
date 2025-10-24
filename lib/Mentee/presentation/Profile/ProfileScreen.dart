@@ -107,9 +107,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                               ),
                             ),
                           ),
-
-                          if (menteeProfile?.user?.mentorStatus ==
-                              "approval") ...[
+                          if (menteeProfile?.user?.mentorStatus == "approval") ...[
                             Positioned(
                               right: 0,
                               bottom: 0,

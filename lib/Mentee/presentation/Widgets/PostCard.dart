@@ -516,9 +516,10 @@ class _PostCardState extends State<PostCard>
 void _showReportSheet(BuildContext context, communityPosts) {
   String _selected = 'False Information';
   final TextEditingController _otherController = TextEditingController();
+
   final List<String> _reportReasons = [
     'Copied',
-    'Scam or Fraud ',
+    'Scam or Fraud',
     'Abusing Post',
     'Other',
   ];
@@ -663,19 +664,14 @@ class CommunityPostShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: SizeConfig.screenWidth < 600 ? 12 : 16,
-          ),
-          sliver: SliverMasonryGrid.count(
-            crossAxisCount: _getCrossAxisCount(context),
-            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-            childCount: itemCount,
-            itemBuilder: (context, index) {
-              return _buildShimmerCard(context);
-            },
-          ),
+        SliverMasonryGrid.count(
+          crossAxisCount: _getCrossAxisCount(context),
+          mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+          crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+          childCount: itemCount,
+          itemBuilder: (context, index) {
+            return _buildShimmerCard(context);
+          },
         ),
       ],
     );
