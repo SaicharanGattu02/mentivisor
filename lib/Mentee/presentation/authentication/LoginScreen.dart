@@ -61,20 +61,20 @@ class _LoginScreenState extends State<LoginScreen> {
       showPasswordError = true;
       isValid = false;
     }
-    //
-    // String? fcmToken = await FirebaseMessaging.instance.getToken();
-    // AppLogger.log("FCM Token: $fcmToken");
-    //
-    // if (fcmToken != null) {
-    //   await SecureStorageService.instance.setString("fb_token", fcmToken);
-    // }
+
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    AppLogger.log("FCM Token: $fcmToken");
+
+    if (fcmToken != null) {
+      await SecureStorageService.instance.setString("fb_token", fcmToken);
+    }
 
     if (isValid) {
       final Map<String, dynamic> data = {
         "username": emailController.text,
         "password": passwordController.text,
-        // "fcm_token": fcmToken ?? "",
-        "fcm_token": "hherhejtjtj",
+        "fcm_token": fcmToken ?? "",
+        // "fcm_token": "hherhejtjtj",
       };
       context.read<LoginCubit>().logInApi(data);
     }

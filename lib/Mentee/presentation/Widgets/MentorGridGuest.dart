@@ -35,7 +35,7 @@ class MentorGridGuest extends StatelessWidget {
       crossAxisCount: crossAxisCount,
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: mentors?.length ?? 0,
       itemBuilder: (ctx, i) {
@@ -86,7 +86,7 @@ class MentorGridCampus extends StatelessWidget {
       crossAxisCount: crossAxisCount,
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: mentors_list?.length ?? 0,
       itemBuilder: (ctx, i) {
@@ -189,7 +189,7 @@ class _MentorCard extends StatelessWidget {
           Text(
             "$collegeName",
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12,

@@ -1099,7 +1099,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   ],
                                 ],
                               ),
-
                               SizedBox(height: 10),
                               if (isGuest) ...[
                                 BlocBuilder<
@@ -1259,12 +1258,15 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                               : 0.85); // desktop
 
                                       return MasonryGridView.count(
-                                        crossAxisCount: _getCrossAxisCount(context),
+                                        crossAxisCount: _getCrossAxisCount(
+                                          context,
+                                        ),
                                         mainAxisSpacing: 16,
                                         crossAxisSpacing: 16,
-                                        physics: const AlwaysScrollableScrollPhysics(),
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
                                         shrinkWrap: true,
-                                        itemCount:10,
+                                        itemCount: 10,
                                         itemBuilder: (ctx, i) {
                                           return Container(
                                             padding: const EdgeInsets.all(8),
@@ -1372,6 +1374,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       },
     );
   }
+
   int _getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
@@ -1383,6 +1386,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       return 4;
     }
   }
+
   void showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,

@@ -144,14 +144,17 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text(
-                      '${menteeProfile.data?.user?.yearName ?? ""} year student in ${menteeProfile.data?.user?.stream ?? ""} from ${menteeProfile.data?.user?.collegeName ?? ""}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xff666666),
-                        fontSize: 14,
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w600,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Text(maxLines: 2,
+                        '${menteeProfile.data?.user?.yearName ?? ""} year student in ${menteeProfile.data?.user?.stream ?? ""} from ${menteeProfile.data?.user?.collegeName ?? ""}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(overflow: TextOverflow.ellipsis,
+                          color: Color(0xff666666),
+                          fontSize: 14,
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     SizedBox(height: 12),
@@ -869,46 +872,55 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                               ),
                                                         ),
                                                         SizedBox(height: 12),
-                                                        if (campusList
-                                                                ?.tags
-                                                                ?.isNotEmpty ??
-                                                            false)
-                                                          Wrap(
-                                                            spacing: 8,
-                                                            runSpacing: 8,
-                                                            children: campusList!.tags!.map((
-                                                              tag,
-                                                            ) {
-                                                              return Container(
-                                                                padding:
-                                                                    EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          12,
-                                                                      vertical:
-                                                                          6,
-                                                                    ),
-                                                                decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        20,
-                                                                      ),
-                                                                ),
-                                                                child: Text(
+                                                        if ((campusList
+                                                            ?.tags
+                                                            ?.isNotEmpty ??
+                                                            false))
+                                                          SingleChildScrollView(
+                                                            scrollDirection:
+                                                            Axis.horizontal,
+                                                            physics:
+                                                            const BouncingScrollPhysics(), // 👈 gives you the smooth bounce
+                                                            child: Wrap(
+                                                              direction: Axis
+                                                                  .horizontal,
+                                                              spacing: 8,
+                                                              runSpacing: 8,
+                                                              children: campusList!.tags!.map((
                                                                   tag,
-                                                                  style: const TextStyle(
-                                                                    fontFamily:
-                                                                        'segeo',
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
+                                                                  ) {
+                                                                return Container(
+                                                                  padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                    12,
+                                                                    vertical:
+                                                                    6,
                                                                   ),
-                                                                ),
-                                                              );
-                                                            }).toList(),
+                                                                  decoration: BoxDecoration(
+                                                                    color: Color(
+                                                                      0xffFFF2F4FD,
+                                                                    ),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      20,
+                                                                    ),
+                                                                  ),
+                                                                  child: Text(
+                                                                    tag,
+                                                                    style: const TextStyle(
+                                                                      fontFamily:
+                                                                      'segeo',
+                                                                      fontSize:
+                                                                      12,
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }).toList(),
+                                                            ),
                                                           ),
                                                         SizedBox(height: 16),
                                                         Row(

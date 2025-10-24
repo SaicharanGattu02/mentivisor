@@ -214,7 +214,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                                   const SizedBox(height: 4),
                                   Text(
                                     m.user?.college?.name ?? '',
-                                    maxLines: 2,
+                                    maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
