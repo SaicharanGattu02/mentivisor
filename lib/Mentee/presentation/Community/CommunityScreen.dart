@@ -273,23 +273,18 @@ class _CommunityScreenState extends State<Communityscreen> {
                     return Expanded(
                       child: CustomScrollView(
                         slivers: [
-                          SliverGrid(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: _getCrossAxisCount(
-                                    context,
-                                  ), // 👈 Responsive count
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
-                                  childAspectRatio: _getChildAspectRatio(
-                                    context,
-                                  ), // 👈 Responsive ratio
-                                ),
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            sliver: SliverMasonryGrid.count(
+                              crossAxisCount: _getCrossAxisCount(
+                                context,
+                              ), // 👈 Responsive columns
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childCount: 5, // same as before
+                              itemBuilder: (context, index) {
                                 return const CommunityPostShimmer();
                               },
-                              childCount: 5, // same as before
                             ),
                           ),
                         ],

@@ -643,8 +643,10 @@ final GoRouter appRouter = GoRouter(
         final selectedIndex = int.tryParse(
           state.uri.queryParameters['selectedIndex'] ?? '0',
         );
+        final selectedFilter = state.uri.queryParameters['filter'];
         return buildSlideTransitionPage(
-          MentorDashboard(selectedIndex: selectedIndex),
+          MentorDashboard(selectedIndex: selectedIndex,selectedFilter: selectedFilter, // ✅ Pass it down
+          ),
           state,
         );
       },

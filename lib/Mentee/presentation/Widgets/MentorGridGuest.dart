@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 
 import '../../../Components/Shimmers.dart';
@@ -30,31 +31,13 @@ class MentorGridGuest extends StatelessWidget {
       crossAxisCount = 4;
     }
 
-    return GridView.builder(
+    return MasonryGridView.count(
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      physics: const AlwaysScrollableScrollPhysics(),
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       itemCount: mentors?.length ?? 0,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: () {
-          final screenHeight = MediaQuery.of(context).size.height;
-          final size = MediaQuery.of(context).size;
-          final screenWidth = size.width;
-          double aspectRatio = screenWidth / (screenHeight * 0.5);
-          if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.54);
-          } else if (screenWidth < 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.5);
-          } else if (screenWidth > 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.6);
-          } else {
-            aspectRatio = screenWidth / (screenHeight * 0.35);
-          }
-          return aspectRatio;
-        }(),
-      ),
       itemBuilder: (ctx, i) {
         final m = mentors?[i];
         if (m == null) return const SizedBox();
@@ -99,31 +82,13 @@ class MentorGridCampus extends StatelessWidget {
       crossAxisCount = 4;
     }
 
-    return GridView.builder(
+    return MasonryGridView.count(
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      physics: const AlwaysScrollableScrollPhysics(),
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
       itemCount: mentors_list?.length ?? 0,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: () {
-          final screenHeight = MediaQuery.of(context).size.height;
-          final size = MediaQuery.of(context).size;
-          final screenWidth = size.width;
-          double aspectRatio = screenWidth / (screenHeight * 0.45);
-          if (screenWidth < 400) {
-            aspectRatio = screenWidth / (screenHeight * 0.54);
-          } else if (screenWidth < 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.5);
-          } else if (screenWidth > 600) {
-            aspectRatio = screenWidth / (screenHeight * 0.6);
-          } else {
-            aspectRatio = screenWidth / (screenHeight * 0.35);
-          }
-          return aspectRatio;
-        }(),
-      ),
       itemBuilder: (ctx, i) {
         final m = mentors_list?[i];
         final url = m?.user?.profilePicUrl?.trim();

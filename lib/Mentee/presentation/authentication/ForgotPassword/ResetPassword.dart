@@ -186,7 +186,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             listener: (context, state) {
               if (state is ForgotPasswordSuccess) {
                 context.pushReplacement(
-                  '/payment_success?title=${Uri.encodeComponent("Password updated successfully")}&next=/login',
+                  '/payment_success?title=${Uri.encodeComponent("Password updated successfully")}&nextRoute=/login',
                 );
               } else if (state is ForgotPasswordFailure) {
                 CustomSnackBar1.show(context, state.error);

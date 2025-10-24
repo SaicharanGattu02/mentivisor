@@ -88,37 +88,42 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                     final data = state is TaskByStatusLoaded
                         ? state.taskStatesModel
                         : null;
-                    return Row(
+                    return Row(spacing: 10,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          width: 100,
-                          height: 110,
-                          child: _buildStatCard(
-                            'Current Streak',
-                            data?.currentStreak?.toString() ?? "0",
-                            Colors.orange[100]!,
-                            "assets/images/Vector1.png",
+                        Expanded(
+                          child: SizedBox(
+                            height: 110,
+                            child: _buildStatCard(
+                              'Current Streak',
+                              data?.currentStreak?.toString() ?? "0",
+                              Colors.orange[100]!,
+                              "assets/images/Vector1.png",
+                            ),
                           ),
                         ),
-                        SizedBox(
-                          width: 100,
-                          height: 110,
-                          child: _buildStatCard(
-                            'Completed Task',
-                            data?.completedTask?.toString() ?? "0",
-                            Colors.green[100]!,
-                            "assets/images/vector2.png", // your image 2
+                        Expanded(
+                          child: SizedBox(
+
+                            height: 110,
+                            child: _buildStatCard(
+                              'Completed Task',
+                              data?.completedTask?.toString() ?? "0",
+                              Colors.green[100]!,
+                              "assets/images/vector2.png", // your image 2
+                            ),
                           ),
                         ),
-                        SizedBox(
-                          width: 100,
-                          height: 110,
-                          child: _buildStatCard(
-                            'Today  \n Task',
-                            data?.todayTask?.toString() ?? "0",
-                            Colors.blue[100]!,
-                            "assets/images/vector3.png",
+                        Expanded(
+                          child: SizedBox(
+
+                            height: 110,
+                            child: _buildStatCard(
+                              'Today  \n Task',
+                              data?.todayTask?.toString() ?? "0",
+                              Colors.blue[100]!,
+                              "assets/images/vector3.png",
+                            ),
                           ),
                         ),
                       ],

@@ -1,3 +1,5 @@
+import 'CommunityPostsModel.dart';
+
 class CommonProfileModel {
   bool? status;
   String? message;
@@ -64,7 +66,7 @@ class User {
   String? mentorStatus;
   int? availabilityCoins;
   List<StudyZoneBook>? studyZoneBooks;
-  List<CommunityPost>? communityPost;
+  List<CommunityPosts>? communityPost;
 
   User({
     this.id,
@@ -127,9 +129,9 @@ class User {
 
     // community_post
     if (json['community_post'] != null) {
-      communityPost = <CommunityPost>[];
+      communityPost = <CommunityPosts>[];
       json['community_post'].forEach((v) {
-        communityPost!.add(CommunityPost.fromJson(v));
+        communityPost!.add(CommunityPosts.fromJson(v));
       });
     }
   }
@@ -228,48 +230,48 @@ class StudyZoneBook {
   }
 }
 
-class CommunityPost {
-  int? id;
-  String? title;
-  String? content;
-  String? image;
-  int? likesCount;
-  int? commentsCount;
-  String? createdAt;
-  bool? isLike;
-
-  CommunityPost({
-    this.id,
-    this.title,
-    this.content,
-    this.image,
-    this.likesCount,
-    this.commentsCount,
-    this.createdAt,
-    this.isLike,
-  });
-
-  CommunityPost.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    title = json['title'];
-    content = json['content'];
-    image = json['image'];
-    likesCount = json['likes_count'];
-    commentsCount = json['comments_count'];
-    createdAt = json['created_at'];
-    isLike = json['is_like'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['title'] = title;
-    data['content'] = content;
-    data['image'] = image;
-    data['likes_count'] = likesCount;
-    data['comments_count'] = commentsCount;
-    data['created_at'] = createdAt;
-    data['is_like'] = isLike;
-    return data;
-  }
-}
+// class CommunityPost {
+//   int? id;
+//   String? title;
+//   String? content;
+//   String? image;
+//   int? likesCount;
+//   int? commentsCount;
+//   String? createdAt;
+//   bool? isLike;
+//
+//   CommunityPost({
+//     this.id,
+//     this.title,
+//     this.content,
+//     this.image,
+//     this.likesCount,
+//     this.commentsCount,
+//     this.createdAt,
+//     this.isLike,
+//   });
+//
+//   CommunityPost.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     title = json['title'];
+//     content = json['content'];
+//     image = json['image'];
+//     likesCount = json['likes_count'];
+//     commentsCount = json['comments_count'];
+//     createdAt = json['created_at'];
+//     isLike = json['is_like'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = {};
+//     data['id'] = id;
+//     data['title'] = title;
+//     data['content'] = content;
+//     data['image'] = image;
+//     data['likes_count'] = likesCount;
+//     data['comments_count'] = commentsCount;
+//     data['created_at'] = createdAt;
+//     data['is_like'] = isLike;
+//     return data;
+//   }
+// }

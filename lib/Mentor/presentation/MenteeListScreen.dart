@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/MenteeCard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/MenteeShimmerLoader.dart';
@@ -63,29 +64,60 @@ class _MenteeListScreenState extends State<MenteeListScreen> {
                   } else if (state is MyMenteeLoaded) {
                     return CustomScrollView(
                       slivers: [
-                        SliverGrid(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(context),
-                                crossAxisSpacing: SizeConfig.screenWidth < 600
-                                    ? 12
-                                    : 16,
-                                mainAxisSpacing: SizeConfig.screenWidth < 600
-                                    ? 0
-                                    : 16,
-                                childAspectRatio: _getChildAspectRatio(context),
+                        SliverMasonryGrid.count(
+                          crossAxisCount: _getCrossAxisCount(context), // 👈 1 mobile, 2 tab
+                          mainAxisSpacing: SizeConfig.screenWidth < 600 ? 0 : 16,
+                          crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
+                          childCount: state.myMenteesModel.data?.menteeData?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final menteeList = state.myMenteesModel.data?.menteeData?[index];
+                            if (menteeList == null)  return Center(
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    "assets/nodata/no_data.png",
+                                    width: 200,
+                                    height: 200,
+                                  ),
+                                  Text(
+                                     "No Mentee Found",
+                                    style: TextStyle(
+                                      color: Color(0xff333333),
+                                      fontFamily: 'segeo',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
                               ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final menteeList =
-                                  state.myMenteesModel.data?.menteeData?[index];
-                              return MenteeCard(mentee: menteeList!);
-                            },
-                            childCount:
-                                state.myMenteesModel.data?.menteeData?.length ??
-                                0,
-                          ),
+                            );
+
+                            return MenteeCard(mentee: menteeList);
+                          },
                         ),
+                        // SliverGrid(
+                        //   gridDelegate:
+                        //       SliverGridDelegateWithFixedCrossAxisCount(
+                        //         crossAxisCount: _getCrossAxisCount(context),
+                        //         crossAxisSpacing: SizeConfig.screenWidth < 600
+                        //             ? 12
+                        //             : 16,
+                        //         mainAxisSpacing: SizeConfig.screenWidth < 600
+                        //             ? 0
+                        //             : 16,
+                        //         childAspectRatio: _getChildAspectRatio(context),
+                        //       ),
+                        //   delegate: SliverChildBuilderDelegate(
+                        //     (context, index) {
+                        //       final menteeList =
+                        //           state.myMenteesModel.data?.menteeData?[index];
+                        //       return MenteeCard(mentee: menteeList!);
+                        //     },
+                        //     childCount:
+                        //         state.myMenteesModel.data?.menteeData?.length ??
+                        //         0,
+                        //   ),
+                        // ),
                         if (state is MyMenteeLoadingMore)
                           SliverToBoxAdapter(
                             child: Padding(

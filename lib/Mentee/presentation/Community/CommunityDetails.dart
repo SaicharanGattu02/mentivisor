@@ -678,19 +678,68 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      width: SizeConfig.screenWidth,
-                      imageUrl: communityDetails?.imgUrl ?? "",
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Center(child: spinkits.getSpinningLinespinkit()),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey.shade100,
-                        child: const Icon(Icons.broken_image, size: 40),
+                    borderRadius: BorderRadius.circular(12),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9, // ✅ consistent image shape
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            communityDetails?.imgUrl?.trim().isNotEmpty == true
+                            ? communityDetails!.imgUrl!
+                            : '', // handle null/empty URL safely
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey.shade100,
+                          child: Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: spinkits.getSpinningLinespinkit(),
+                            ),
+                          ),
+                        ),
+
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey.shade200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.broken_image,
+                                size: 42,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Image not available",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                  fontFamily: 'segeo',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
+
+                  // ClipRRect(
+                  //   borderRadius: BorderRadius.circular(8),
+                  //   child: CachedNetworkImage(
+                  //     width: SizeConfig.screenWidth,
+                  //     imageUrl: communityDetails?.imgUrl ?? "",
+                  //     fit: BoxFit.cover,
+                  //     placeholder: (context, url) =>
+                  //         Center(child: spinkits.getSpinningLinespinkit()),
+                  //     errorWidget: (context, url, error) => Container(height: 180,
+                  //       color: Colors.grey.shade100,
+                  //       child: const Icon(Icons.broken_image, size: 40),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(height: 12),
                   if (communityDetails?.anonymous == 0)
                     Row(
@@ -965,9 +1014,10 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                     orElse: () => Replies(),
                                   );
                                   if (reply != null) {
-                                    context
-                                        .read<PostCommentCubit>()
-                                        .likeReply(parent: c, reply: reply);
+                                    context.read<PostCommentCubit>().likeReply(
+                                      parent: c,
+                                      reply: reply,
+                                    );
                                   }
                                 },
                                 onReplyReply:

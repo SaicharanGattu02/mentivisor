@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -41,8 +43,8 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   String _weekFilter = 'This Week';
   ValueNotifier<bool> enoughBalance = ValueNotifier<bool>(false);
   TextEditingController sessionController = TextEditingController();
-  String? selectedFileName;
-  String? selectedFilePath;
+  // String? selectedFileName;
+  // String? selectedFilePath;
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
   final ValueNotifier<File?> _pickedFile = ValueNotifier(null);
   @override
@@ -58,25 +60,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
     });
   }
 
-  // Future<void> pickFile() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['pdf'],
-  //   );
-  //
-  //   if (result != null && result.files.single.path != null) {
-  //     final file = result.files.single;
-  //
-  //     if (file.extension?.toLowerCase() == "pdf") {
-  //       setState(() {
-  //         selectedFilePath = file.path;
-  //         selectedFileName = file.name;
-  //       });
-  //     } else {
-  //       CustomSnackBar1.show(context, "Only PDF files are allowed.");
-  //     }
-  //   }
-  // }
   Future<void> pickFile() async {
     _isLoading.value = true;
 
@@ -93,6 +76,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       _isLoading.value = false;
     }
   }
+
   void removeFile() {
     _pickedFile.value = null;
   }
@@ -505,16 +489,31 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ValueListenableBuilder<bool>(
-                                      valueListenable: _isLoading, // from your existing controller
+                                      valueListenable:
+                                          _isLoading, // from your existing controller
                                       builder: (context, isLoading, _) {
                                         if (isLoading) {
-                                          return  Row(spacing: 10,
+                                          return Row(
+                                            spacing: 10,
                                             children: [
                                               SizedBox(
                                                 height: 18,
                                                 width: 18,
-                                                child: CircularProgressIndicator(strokeWidth: 1,color: primarycolor,),
-                                              ),Text("compressing and uploading file.....",style: TextStyle(color: Color(0xff555555),fontFamily: "segeo",fontWeight: FontWeight.w400,fontSize: 12),)
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 1,
+                                                      color: primarycolor,
+                                                    ),
+                                              ),
+                                              Text(
+                                                "compressing and uploading file.....",
+                                                style: TextStyle(
+                                                  color: Color(0xff555555),
+                                                  fontFamily: "segeo",
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
                                             ],
                                           );
                                         }
@@ -525,21 +524,28 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                             builder: (context, pickedFile, __) {
                                               return Row(
                                                 mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   if (pickedFile == null) ...[
                                                     GestureDetector(
                                                       onTap: pickFile,
                                                       child: Row(
-                                                        mainAxisSize: MainAxisSize.min,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
                                                         children: const [
                                                           Text(
                                                             'Add Attachment',
                                                             style: TextStyle(
-                                                              color: Color(0xff555555),
-                                                              fontFamily: 'segeo',
+                                                              color: Color(
+                                                                0xff555555,
+                                                              ),
+                                                              fontFamily:
+                                                                  'segeo',
                                                               fontSize: 14,
-                                                              fontWeight: FontWeight.w400,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                             ),
                                                           ),
                                                           SizedBox(width: 6),
@@ -554,14 +560,20 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                                   ] else ...[
                                                     Flexible(
                                                       child: Text(
-                                                        path.basename(pickedFile.path),
+                                                        path.basename(
+                                                          pickedFile.path,
+                                                        ),
                                                         maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style: const TextStyle(
-                                                          color: Color(0xff333333),
+                                                          color: Color(
+                                                            0xff333333,
+                                                          ),
                                                           fontFamily: 'segeo',
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                         ),
                                                       ),
                                                     ),
@@ -708,10 +720,14 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             final sessionCoins = wallet?.sessionCoins ?? 0;
                             final availableCoins = wallet?.availableCoins ?? 0;
                             final balanceCoins = wallet?.balanceCoins ?? 0;
-                            enoughBalance.value = balanceCoins > 0;
-                            AppLogger.info(
-                              "EnoughBalance Updated After Frame :: ${enoughBalance.value}.",
-                            );
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (enoughBalance.value != (balanceCoins > 0)) {
+                                enoughBalance.value = balanceCoins > 0;
+                                AppLogger.info(
+                                  "✅ EnoughBalance Updated After Frame :: ${enoughBalance.value}",
+                                );
+                              }
+                            });
                             Row _row(String label, int coins) => Row(
                               children: [
                                 Text(label),
@@ -796,7 +812,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                               .read<MenteeProfileCubit>()
                               .fetchMenteeProfile();
                           context.pushReplacement(
-                            '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&next=/upcoming_session',
+                            '/payment_success?title=${Uri.encodeComponent("Your slot was booked successfully!")}&nextRoute=/upcoming_session',
                           );
                         } else if (state is SessionBookingFailure) {
                           CustomSnackBar1.show(context, state.error ?? "");
@@ -808,16 +824,22 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                           text: 'Book Session',
                           isLoading: isLoading,
                           onPlusTap: enough_coins
-                              ? () {
+                              ? () async {
                                   if (selectedSlotId != null) {
                                     final Map<String, dynamic> data = {
                                       "mentor_id": widget.data.userId ?? 0,
                                       "slot_id": selectedSlotId,
                                       "topic": sessionController.text.trim(),
                                     };
-                                    if (selectedFilePath != null &&
-                                        selectedFilePath!.isNotEmpty) {
-                                      data["attachment"] = selectedFilePath;
+                                    if (_pickedFile.value != null) {
+                                      final file = _pickedFile.value!;
+                                      final length = await file.length();
+                                      if (length > 0) {
+                                        data["attachment"] = await MultipartFile.fromFile(
+                                          file.path,
+                                          filename: path.basename(file.path),
+                                        );
+                                      }
                                     }
 
                                     context

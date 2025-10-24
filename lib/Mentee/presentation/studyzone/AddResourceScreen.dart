@@ -342,7 +342,12 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               BlocBuilder<TagsCubit, TagsState>(
                 builder: (context, state) {
                   if (state is TagsLoading) {
-                    return const Center(child: DottedProgressWithLogo());
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: primarycolor,
+                        strokeWidth: 1.5,
+                      ),
+                    );
                   } else if (state is TagsLoaded) {
                     final allTags = [...state.tagsModel.data!, ..._customTags];
                     if (allTags.isEmpty) {

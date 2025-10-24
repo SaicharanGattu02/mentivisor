@@ -710,7 +710,9 @@ class SessionCard extends StatelessWidget {
                                   status != 'cancelled' &&
                                   status != 'completed') ...[
                                 SizedBox(
-                                  width: SizeConfig.screenWidth>600?SizeConfig.screenWidth * 0.3:SizeConfig.screenWidth * 0.35,
+                                  width: SizeConfig.screenWidth > 600
+                                      ? SizeConfig.screenWidth * 0.3
+                                      : SizeConfig.screenWidth * 0.35,
                                   child: CustomAppButton1(
                                     height: 31,
                                     text: "Join Session",
@@ -815,8 +817,8 @@ class SessionCard extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 8),
                   if (sessionTopics.trim().isNotEmpty) ...[
+                    const SizedBox(height: 8),
                     const Text(
                       'Session Topics',
                       style: TextStyle(
@@ -861,8 +863,9 @@ class SessionCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 16),
+
                   if (status == "completed") ...[
+                    const SizedBox(height: 16),
                     InkWell(
                       onTap: () {
                         _showReportSheet(
@@ -926,82 +929,194 @@ class SessionCard extends StatelessWidget {
                   ],
                 ],
               ),
-              SizedBox(height: 12),
-              if (status == 'upcoming') ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFFF4E9FF),
-                              Color(0xFFE1E4FF),
-                              Color(0xFFE2EEFF),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            AppLogger.info("menteeId::${menteeId}");
-                            context.push(
-                              '/chat?receiverId=${menteeId}&sessionId=${sessionId}',
-                            );
-                          },
-                          icon: Image.asset(buttonIcon, width: 18, height: 18),
-                          label: Text(
-                            buttonText,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'segeo',
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  /// 🔹 Chat button (only visible during session time)
+                  if (status == 'upcoming') ...[
+                    Builder(
+                      builder: (context) {
+                        bool showChatButton = false;
+
+                        try {
+                          final now = DateTime.now();
+
+                          final sessionDateTimeStart = DateFormat(
+                            "dd MMM yyyy h:mm a",
+                          ).parse("$sessionDate ${sessionStartTime}");
+                          final sessionDateTimeEnd = DateFormat(
+                            "dd MMM yyyy h:mm a",
+                          ).parse("$sessionDate ${sessionEndTime}");
+
+                          if (now.isAfter(sessionDateTimeStart) &&
+                              now.isBefore(sessionDateTimeEnd)) {
+                            showChatButton = true;
+                          }
+                        } catch (e) {
+                          print("DateTime parse error in SessionCard: $e");
+                        }
+
+                        if (!showChatButton) return const SizedBox.shrink();
+
+                        return Expanded(
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFF4E9FF),
+                                  Color(0xFFE1E4FF),
+                                  Color(0xFFE2EEFF),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                AppLogger.info("menteeId::${menteeId}");
+                                context.push(
+                                  '/chat?receiverId=${menteeId}&sessionId=${sessionId}',
+                                );
+                              },
+                              icon: Image.asset(
+                                buttonIcon,
+                                width: 18,
+                                height: 18,
+                              ),
+                              label: Text(
+                                buttonText,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'segeo',
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                              ),
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+
+                  /// 🔹 Cancel button (always visible for upcoming)
+                  if (status == 'upcoming') ...[
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            context.push(
+                              "/cancel_session?sessionId=${sessionId}",
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Colors.grey.shade400),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24),
                             ),
+                            backgroundColor: const Color(0xFFF5F5F5),
                           ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    SizedBox(
-                      height: 48,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          context.push(
-                            "/cancel_session?sessionId=${sessionId}",
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.shade400),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          backgroundColor: Color(0xFFF5F5F5),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(
-                            fontSize: SizeConfig.screenWidth < 600
-                                ? 12
-                                : 14, // Responsive font
-                            color: Color(0xFF333333),
-                            fontFamily: 'segeo',
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: SizeConfig.screenWidth < 600 ? 12 : 14,
+                              color: const Color(0xFF333333),
+                              fontFamily: 'segeo',
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ],
-                ),
-              ],
+                ],
+              ),
+
+              // if (status == 'upcoming') ...[
+              //
+              //   Row(
+              //     children: [
+              //       Expanded(
+              //         child: Container(
+              //           height: 48,
+              //           decoration: BoxDecoration(
+              //             gradient: LinearGradient(
+              //               colors: [
+              //                 Color(0xFFF4E9FF),
+              //                 Color(0xFFE1E4FF),
+              //                 Color(0xFFE2EEFF),
+              //               ],
+              //             ),
+              //             borderRadius: BorderRadius.circular(24),
+              //           ),
+              //           child: ElevatedButton.icon(
+              //             onPressed: () {
+              //               AppLogger.info("menteeId::${menteeId}");
+              //               context.push(
+              //                 '/chat?receiverId=${menteeId}&sessionId=${sessionId}',
+              //               );
+              //             },
+              //             icon: Image.asset(buttonIcon, width: 18, height: 18),
+              //             label: Text(
+              //               buttonText,
+              //               style: TextStyle(
+              //                 fontSize: 12,
+              //                 color: Colors.black,
+              //                 fontWeight: FontWeight.w600,
+              //                 fontFamily: 'segeo',
+              //               ),
+              //             ),
+              //             style: ElevatedButton.styleFrom(
+              //               backgroundColor: Colors.transparent,
+              //               shadowColor: Colors.transparent,
+              //               elevation: 0,
+              //               shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(24),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       SizedBox(width: 12),
+              //       SizedBox(
+              //         height: 48,
+              //         child: OutlinedButton(
+              //           onPressed: () {
+              //             context.push(
+              //               "/cancel_session?sessionId=${sessionId}",
+              //             );
+              //           },
+              //           style: OutlinedButton.styleFrom(
+              //             side: BorderSide(color: Colors.grey.shade400),
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(24),
+              //             ),
+              //             backgroundColor: Color(0xFFF5F5F5),
+              //           ),
+              //           child: Text(
+              //             'Cancel',
+              //             style: TextStyle(
+              //               fontSize: SizeConfig.screenWidth < 600
+              //                   ? 12
+              //                   : 14, // Responsive font
+              //               color: Color(0xFF333333),
+              //               fontFamily: 'segeo',
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ],
             ],
           ),
         ),

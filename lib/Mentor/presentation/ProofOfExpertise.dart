@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:path/path.dart' as path;
+import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -74,24 +75,22 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
       }
     }
 
-    // Build only the provided proof fields
-    final proof = <String, dynamic>{
-      if (link.isNotEmpty) 'proof_link': link,
-      // Pass the File/Path – your repo can convert it to multipart if needed
-      if (selectedResumeFile != null) 'proof_file': selectedResumeFile, // File
-      if (selectedResumeFile != null)
-        'proof_file_path': selectedResumeFile.value, // optional
-    };
+    final proof = <String, dynamic>{};
+    if (link.isNotEmpty) {
+      proof['proof_link'] = link;
+    }
 
-    // Merge with the map you’re already receiving on this screen
+    if (selectedResumeFile.value != null) {
+      final file = selectedResumeFile.value!;
+      proof["proof_doc"] = await MultipartFile.fromFile(
+        file.path,
+        filename: path.basename(file.path),
+      );
+    }
     final request = <String, dynamic>{...widget.data, ...proof};
-
-    // Remove empty/nulls so backend doesn’t get junk
     request.removeWhere(
       (k, v) => v == null || (v is String && v.trim().isEmpty),
     );
-
-    // Fire the cubit
     await context.read<NewExpertiseRequestCubit>().newExpertiseRequest(request);
   }
 
@@ -206,44 +205,111 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
                 ),
                 const SizedBox(height: 8),
 
-                // Link field
-                GestureDetector(
-                  onTap: _pickResumeFile,
-                  child: DottedBorder(
-                    color: Colors.grey,
-                    strokeWidth: 1.2,
-                    dashPattern: const [6, 4],
-                    borderType: BorderType.RRect,
-                    radius: const Radius.circular(8),
-                    padding: const EdgeInsets.all(12),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.upload_file, color: Colors.grey),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              selectedResumeFile.value?.path.split('/').last ??
-                                  "Tap to select your resume (PDF)",
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isLoading,
+                  builder: (context, isLoading, _) {
+                    return GestureDetector(
+                      onTap: isLoading
+                          ? null
+                          : _pickResumeFile, // Disable tap while loading
+                      child: DottedBorder(
+                        color: Colors.grey,
+                        strokeWidth: 1.2,
+                        dashPattern: const [6, 4],
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(8),
+                        padding: const EdgeInsets.all(12),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.upload_file, color: Colors.grey),
+                              const SizedBox(width: 10),
 
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: selectedResumeFile != null
-                                    ? Colors.black87
-                                    : Colors.grey[600],
-                                fontFamily: 'segeo',
+                              // 🔹 Inner listener to react to selected file
+                              Expanded(
+                                child: ValueListenableBuilder<File?>(
+                                  valueListenable: selectedResumeFile,
+                                  builder: (context, file, _) {
+                                    // 🌀 CASE 1: Loading state
+                                    if (isLoading) {
+                                      return Row(
+                                        children: [
+                                          const SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Expanded(
+                                            child: Text(
+                                              "Compressing and uploading file...",
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Color(0xff555555),
+                                                fontFamily: 'segeo',
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+
+                                    // 📄 CASE 2: File selected
+                                    if (file != null) {
+                                      return Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              file.path.split('/').last,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black87,
+                                                fontFamily: 'segeo',
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () =>
+                                                selectedResumeFile.value = null,
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.red,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+
+                                    return const Text(
+                                      "Tap to select your resume (PDF)",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xff777777),
+                                        fontFamily: 'segeo',
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  },
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 8),
 
                 const SizedBox(height: 100), // space for the sticky button
               ],

@@ -72,241 +72,249 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await context.read<MentorDashboardCubit>().fetchDashboard();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xFFEFF6FF)],
+            ),
           ),
-        ),
-        child: BlocBuilder<MentorDashboardCubit, MentorDashBoardState>(
-          builder: (context, state) {
-            if (state is MentorDashBoardLoading) {
-              return const MentorDashboardShimmer();
-            } else if (state is MentorDashBoardLoaded) {
-              final banners_data = state.getBannersRespModel;
-              final session_data = state.sessionsModel;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Column(
-                    children: [
-                      CarouselSlider.builder(
-                        itemCount: banners_data?.data?.length ?? 0,
-                        itemBuilder: (ctx, i, _) {
-                          final b = banners_data?.data?[i];
-                          return GestureDetector(
-                            onTap: () {
-                              if (b?.link != null) _launchUrl(b?.link ?? "");
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 2.5,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  b?.imgUrl ?? '',
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  errorBuilder: (_, __, ___) => Container(
-                                    color: Colors.grey[200],
-                                    alignment: Alignment.center,
-                                    child: const Icon(
-                                      Icons.broken_image,
-                                      color: Colors.grey,
+          child: BlocBuilder<MentorDashboardCubit, MentorDashBoardState>(
+            builder: (context, state) {
+              if (state is MentorDashBoardLoading) {
+                return const MentorDashboardShimmer();
+              } else if (state is MentorDashBoardLoaded) {
+                final banners_data = state.getBannersRespModel;
+                final session_data = state.sessionsModel;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Column(
+                      children: [
+                        CarouselSlider.builder(
+                          itemCount: banners_data?.data?.length ?? 0,
+                          itemBuilder: (ctx, i, _) {
+                            final b = banners_data?.data?[i];
+                            return GestureDetector(
+                              onTap: () {
+                                if (b?.link != null) _launchUrl(b?.link ?? "");
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2.5,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.network(
+                                    b?.imgUrl ?? '',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder: (_, __, ___) => Container(
+                                      color: Colors.grey[200],
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                        options: CarouselOptions(
-                          height: 180,
-                          autoPlay: true,
-                          autoPlayInterval: const Duration(seconds: 4),
-                          viewportFraction: 1.0,
-                          onPageChanged: (index, reason) {
-                            _currentIndex.value = index;
+                            );
+                          },
+                          options: CarouselOptions(
+                            height: 180,
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 4),
+                            viewportFraction: 1.0,
+                            onPageChanged: (index, reason) {
+                              _currentIndex.value = index;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ValueListenableBuilder<int>(
+                          valueListenable: _currentIndex,
+                          builder: (context, currentIndex, _) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                banners_data?.data?.length ?? 0,
+                                (index) {
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 3,
+                                    ),
+                                    height: SizeConfig.screenHeight * 0.008,
+                                    width: currentIndex == index
+                                        ? SizeConfig.screenWidth * 0.05
+                                        : SizeConfig.screenWidth * 0.014,
+                                    decoration: BoxDecoration(
+                                      color: currentIndex == index
+                                          ? primarycolor
+                                          : Colors.grey.shade400,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
                           },
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      ValueListenableBuilder<int>(
-                        valueListenable: _currentIndex,
-                        builder: (context, currentIndex, _) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              banners_data?.data?.length ?? 0,
-                              (index) {
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 3,
-                                  ),
-                                  height: SizeConfig.screenHeight * 0.008,
-                                  width: currentIndex == index
-                                      ? SizeConfig.screenWidth * 0.05
-                                      : SizeConfig.screenWidth * 0.014,
-                                  decoration: BoxDecoration(
-                                    color: currentIndex == index
-                                        ? primarycolor
-                                        : Colors.grey.shade400,
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-                  Text(
-                    'Upcoming Session',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'segeo',
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: session_data?.data?.length == 0
-                        ? Center(
-                            child: Column(
-                              spacing: 6,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/images/nodata.png"),
-                                Text(
-                                  "No mentees in sight!",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff666666),
+
+                    const SizedBox(height: 24),
+                    Text(
+                      'Upcoming Session',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'segeo',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: session_data?.data?.length == 0
+                          ? Center(
+                              child: Column(
+                                spacing: 6,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/images/nodata.png"),
+                                  Text(
+                                    "No mentees in sight!",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff666666),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Share your profile for good reach",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff444444),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : CustomScrollView(
+                              slivers: [
+                                SliverPadding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 0,
+                                  ),
+                                  sliver: SliverMasonryGrid.count(
+                                    crossAxisCount: _getCrossAxisCount(context),
+                                    mainAxisSpacing: 16,
+                                    crossAxisSpacing: 16,
+                                    childCount: session_data?.data?.length ?? 0,
+                                    itemBuilder: (context, index) {
+                                      final session =
+                                          session_data?.data?[index];
+                                      final duration = calculateDuration(
+                                        session?.startTime ?? "",
+                                        session?.endTime ?? "",
+                                      );
+                                      return SessionCard(
+                                        menteeId: session?.mentee?.id,
+                                        attachment: session?.attachment ?? "",
+                                        sessionLink: session?.zoomLink ?? "",
+                                        sessionId: session?.id ?? 0,
+                                        status: 'upcoming',
+                                        sessionDate: formatDate(
+                                          session?.date ?? "",
+                                        ),
+                                        sessionStartTime:
+                                            '${session?.startTime ?? ""}',
+                                        sessionEndTime:
+                                            '${session?.endTime ?? ""}',
+                                        sessionTime: '$duration to go',
+                                        sessionName:
+                                            'Zoom Meet with ${session?.mentee?.name}',
+                                        sessionImage:
+                                            session?.mentee?.menteeProfile ??
+                                            "",
+                                        sessionTopics: session?.topics ?? "",
+                                        reason: '',
+                                        buttonText:
+                                            'Message from ${session?.mentee?.name ?? ""}',
+                                        buttonIcon:
+                                            "assets/icons/ChatCircle.png",
+                                        remainingTime:
+                                            '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
+                                      );
+                                    },
                                   ),
                                 ),
-                                Text(
-                                  "Share your profile for good reach",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff444444),
-                                  ),
-                                ),
+                                // SliverGrid(
+                                //   gridDelegate:
+                                //       SliverGridDelegateWithFixedCrossAxisCount(
+                                //         crossAxisCount: _getCrossAxisCount(
+                                //           context,
+                                //         ),
+                                //         crossAxisSpacing: 16,
+                                //         mainAxisSpacing: 16,
+                                //         childAspectRatio: _getChildAspectRatio(
+                                //           context,
+                                //         ),
+                                //       ),
+                                //   delegate: SliverChildBuilderDelegate((
+                                //     context,
+                                //     index,
+                                //   ) {
+                                //     final session = session_data?.data?[index];
+                                //     final duration = calculateDuration(
+                                //       session?.startTime ?? "",
+                                //       session?.endTime ?? "",
+                                //     );
+                                //     return SessionCard(
+                                //       menteeId: session?.mentee?.id,
+                                //       attachment: session?.attachment ?? "",
+                                //       sessionLink: session?.zoomLink ?? "",
+                                //       sessionId: session?.id ?? 0,
+                                //       status: 'upcoming',
+                                //       sessionDate: formatDate(
+                                //         session?.date ?? "",
+                                //       ),
+                                //       sessionStartTime:
+                                //           '${session?.startTime ?? ""}',
+                                //       sessionEndTime: '${session?.endTime ?? ""}',
+                                //       sessionTime: '${duration}  to go',
+                                //       sessionName:
+                                //           'Zoom Meet with ${session?.mentee?.name}',
+                                //       sessionImage:
+                                //           session?.mentee?.menteeProfile ?? "",
+                                //       sessionTopics: session?.topics ?? "",
+                                //       reason: '',
+                                //       buttonText:
+                                //           'Message from ${session?.mentee?.name ?? ""}',
+                                //       buttonIcon: "assets/icons/ChatCircle.png",
+                                //       remainingTime:
+                                //           '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
+                                //     );
+                                //   }, childCount: session_data?.data?.length),
+                                // ),
                               ],
                             ),
-                          )
-                        : CustomScrollView(
-                            slivers: [
-                              SliverPadding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                ),
-                                sliver: SliverMasonryGrid.count(
-                                  crossAxisCount: _getCrossAxisCount(context),
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
-                                  childCount: session_data?.data?.length ?? 0,
-                                  itemBuilder: (context, index) {
-                                    final session = session_data?.data?[index];
-                                    final duration = calculateDuration(
-                                      session?.startTime ?? "",
-                                      session?.endTime ?? "",
-                                    );
-                                    return SessionCard(
-                                      menteeId: session?.mentee?.id,
-                                      attachment: session?.attachment ?? "",
-                                      sessionLink: session?.zoomLink ?? "",
-                                      sessionId: session?.id ?? 0,
-                                      status: 'upcoming',
-                                      sessionDate: formatDate(
-                                        session?.date ?? "",
-                                      ),
-                                      sessionStartTime:
-                                          '${session?.startTime ?? ""}',
-                                      sessionEndTime:
-                                          '${session?.endTime ?? ""}',
-                                      sessionTime: '$duration to go',
-                                      sessionName:
-                                          'Zoom Meet with ${session?.mentee?.name}',
-                                      sessionImage:
-                                          session?.mentee?.menteeProfile ?? "",
-                                      sessionTopics: session?.topics ?? "",
-                                      reason: '',
-                                      buttonText:
-                                          'Message from ${session?.mentee?.name ?? ""}',
-                                      buttonIcon: "assets/icons/ChatCircle.png",
-                                      remainingTime:
-                                          '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
-                                    );
-                                  },
-                                ),
-                              ),
-                              // SliverGrid(
-                              //   gridDelegate:
-                              //       SliverGridDelegateWithFixedCrossAxisCount(
-                              //         crossAxisCount: _getCrossAxisCount(
-                              //           context,
-                              //         ),
-                              //         crossAxisSpacing: 16,
-                              //         mainAxisSpacing: 16,
-                              //         childAspectRatio: _getChildAspectRatio(
-                              //           context,
-                              //         ),
-                              //       ),
-                              //   delegate: SliverChildBuilderDelegate((
-                              //     context,
-                              //     index,
-                              //   ) {
-                              //     final session = session_data?.data?[index];
-                              //     final duration = calculateDuration(
-                              //       session?.startTime ?? "",
-                              //       session?.endTime ?? "",
-                              //     );
-                              //     return SessionCard(
-                              //       menteeId: session?.mentee?.id,
-                              //       attachment: session?.attachment ?? "",
-                              //       sessionLink: session?.zoomLink ?? "",
-                              //       sessionId: session?.id ?? 0,
-                              //       status: 'upcoming',
-                              //       sessionDate: formatDate(
-                              //         session?.date ?? "",
-                              //       ),
-                              //       sessionStartTime:
-                              //           '${session?.startTime ?? ""}',
-                              //       sessionEndTime: '${session?.endTime ?? ""}',
-                              //       sessionTime: '${duration}  to go',
-                              //       sessionName:
-                              //           'Zoom Meet with ${session?.mentee?.name}',
-                              //       sessionImage:
-                              //           session?.mentee?.menteeProfile ?? "",
-                              //       sessionTopics: session?.topics ?? "",
-                              //       reason: '',
-                              //       buttonText:
-                              //           'Message from ${session?.mentee?.name ?? ""}',
-                              //       buttonIcon: "assets/icons/ChatCircle.png",
-                              //       remainingTime:
-                              //           '${session?.startTime ?? ""}-${session?.endTime ?? ""}',
-                              //     );
-                              //   }, childCount: session_data?.data?.length),
-                              // ),
-                            ],
-                          ),
-                  ),
-                ],
-              );
-            } else {
-              return Center(child: Text("No Data"));
-            }
-          },
+                    ),
+                  ],
+                );
+              } else {
+                return Center(child: Text("No Data"));
+              }
+            },
+          ),
         ),
       ),
     );

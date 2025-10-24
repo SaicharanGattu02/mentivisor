@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../Components/Shimmers.dart';
 import '../../../utils/media_query_helper.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 class MenteeShimmerLoader extends StatelessWidget {
   final int itemCount;
   const MenteeShimmerLoader({super.key, this.itemCount = 6});
@@ -10,20 +13,40 @@ class MenteeShimmerLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      physics: const NeverScrollableScrollPhysics(),
       slivers: [
-        SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _getCrossAxisCount(context),
-            crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-            mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-            childAspectRatio: _getChildAspectRatio(context),
-          ),
-          delegate: SliverChildBuilderDelegate((context, index) {
+        SliverMasonryGrid.count(
+          crossAxisCount: _getCrossAxisCount(context), // ✅ Responsive count
+          mainAxisSpacing: _getMainAxisSpacing(context),
+          crossAxisSpacing: _getCrossAxisSpacing(context),
+          childCount: itemCount,
+          itemBuilder: (context, index) {
+            // Keep your shimmer card intact
             return shimmerMenteeCard(context);
-          }, childCount: itemCount),
+          },
         ),
       ],
     );
+  }
+
+  /// 📱💻 Responsive CrossAxisCount
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width < 600) return 1; // Mobile
+    if (width < 900) return 2; // Tablet
+    return 3; // Desktop
+  }
+
+  /// ✨ Responsive Main Axis Spacing
+  double _getMainAxisSpacing(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return width < 600 ? 12 : 16;
+  }
+
+  /// ✨ Responsive Cross Axis Spacing
+  double _getCrossAxisSpacing(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return width < 600 ? 12 : 16;
   }
 
   /// 🟣 Builds a single shimmer card replicating [MenteeCard]
@@ -91,25 +114,5 @@ class MenteeShimmerLoader extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  int _getCrossAxisCount(BuildContext context) {
-    final width = SizeConfig.screenWidth;
-    if (width < 600) {
-      return 1; // 1 column for mobile
-    } else if (width > 600) {
-      return 2; // 2 columns for tablets and larger
-    } else {
-      return 2; // For exactly 600px (edge case), treat as tablet layout
-    }
-  }
-
-  double _getChildAspectRatio(BuildContext context) {
-    final screenWidth = SizeConfig.screenWidth;
-    if (screenWidth < 600) {
-      return 2; // Taller cards on mobile for better readability
-    } else {
-      return 2.2; // Slightly wider aspect on tablet/desktop for balanced layout
-    }
   }
 }

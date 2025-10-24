@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentor/data/Cubits/SessionDetails/SessionsDetailsCubi
 import 'package:mentivisor/Mentor/data/Cubits/SessionDetails/SessionsDetailsStates.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Components/CustomAppButton.dart';
 import '../../Components/CustomSnackBar.dart';
@@ -42,98 +43,108 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
     return Scaffold(
       appBar: CustomAppBar1(title: "Session Details", actions: []),
       body: SafeArea(
-        child: Container(
+        child: Container(height: SizeConfig.screenHeight,
           padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xffFAF5FF), Color(0xffF5F6FF), Color(0xffEFF6FF)],
+              colors: [
+                Color(0xffFAF5FF),
+                Color(0xffF5F6FF),
+                Color(0xffEFF6FF),
+              ],
             ),
           ),
           child: BlocConsumer<SessionDetailsCubit, SessionDetailsStates>(
             listener: (context, state) {
               if (state is SessionDetailsLoaded) {
                 setState(() {
-                  status.value =
-                      state.sessionDetailsModel.session?.status ?? "";
+                  status.value = state.sessionDetailsModel.session?.status ?? "";
                 });
               }
             },
             builder: (context, state) {
               if (state is SessionDetailsLoading) {
-                return Scaffold(body: Center(child: DottedProgressWithLogo()));
+                return const Center(child: DottedProgressWithLogo());
               } else if (state is SessionDetailsLoaded) {
-                final sessionDetails = state.sessionDetailsModel.session;
-                AppLogger.info("session Status:${status.value}");
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: SizeConfig.screenWidth * 0.575,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  sessionDetails?.date ?? "",
-                                  style: TextStyle(
-                                    fontFamily: 'Segeo',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Color(0xff333333),
+                final session = state.sessionDetailsModel.session;
+                if (session == null) return const Center(child: Text("No session found"));
+
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 🧑‍🎓 Session Info Card
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              blurRadius: 6,
+                              spreadRadius: 2,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Left Section — Session info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    session.date ?? "",
+                                    style: const TextStyle(
+                                      fontFamily: 'Segeo',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Color(0xff333333),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'with ${sessionDetails?.mentee?.name ?? ""} from ${sessionDetails?.mentee?.collegeName} collage',
-                                  style: TextStyle(
-                                    fontFamily: 'Segeo',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 14,
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'with ${session.mentee?.name ?? ""} from ${session.mentee?.collegeName ?? ""}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Segeo',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14,
+                                      color: Color(0xff555555),
+                                    ),
                                   ),
-                                ),
-                                // SizedBox(height: 8),
-                                // Container(
-                                //   padding: EdgeInsets.symmetric(
-                                //     horizontal: 8,
-                                //     vertical: 4,
-                                //   ),
-                                //   decoration: BoxDecoration(
-                                //     color: Color(0xff4076ED).withOpacity(0.1),
-                                //     borderRadius: BorderRadius.circular(12),
-                                //   ),
-                                //   child: Text(
-                                //     sessionDetails?.minutesLeft ?? "",
-                                //     style: TextStyle(
-                                //       color: Color(0xff4076ED),
-                                //       fontSize: 12,
-                                //       fontFamily: 'segeo',
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
+                                  if( session.minutesLeft!=null)...[
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xff4076ED).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        session.minutesLeft ?? "",
+                                        style: const TextStyle(
+                                          color: Color(0xff4076ED),
+                                          fontSize: 12,
+                                          fontFamily: 'Segeo',
+                                        ),
+                                      ),
+                                    ),
+                                  ]
+
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Colors.brown.withOpacity(0.5),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
+
+                            const SizedBox(width: 12),
+
+                            // Right Section — Mentee image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
                               child: CachedNetworkImage(
-                                imageUrl: sessionDetails?.mentee?.profile ?? "",
+                                imageUrl: session.mentee?.profile ?? "",
                                 width: 70,
                                 height: 70,
                                 fit: BoxFit.cover,
@@ -144,86 +155,125 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                                     child: spinkits.getSpinningLinespinkit(),
                                   ),
                                 ),
-                                errorWidget: (context, url, error) => Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/images/profile.png",
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                errorWidget: (context, url, error) => const CircleAvatar(
+                                  radius: 35,
+                                  backgroundImage: AssetImage("assets/images/profile.png"),
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // 🧾 Session Topics
+                      if ((session.topics ?? "").isNotEmpty) ...[
+                        const Text(
+                          'Session Topics',
+                          style: TextStyle(
+                            fontFamily: 'Segeo',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Color(0xff444444),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            session.topics ?? "",
+                            style: const TextStyle(
+                              fontFamily: 'Segeo',
+                              fontSize: 14,
+                              color: Color(0xff555555),
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // 💰 Session Cost
+                      Row(
+                        children: [
+                          const Text(
+                            "Session Cost: ",
+                            style: TextStyle(
+                              fontFamily: 'Segeo',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: Color(0xff333333),
+                            ),
+                          ),
+                          Image.asset('assets/images/GoldCoins.png', height: 18, width: 18),
+                          const SizedBox(width: 6),
+                          Text(
+                            "${session.sessionCost ?? 0}",
+                            style: const TextStyle(
+                              fontFamily: 'Segeo',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              color: Color(0xff555555),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    SizedBox(height: 24),
-                    if ((sessionDetails?.topics ?? "").isNotEmpty) ...[
-                      const Text(
-                        'Session Topics',
-                        style: TextStyle(
-                          fontFamily: 'Segeo',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Color(0xff444444),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        sessionDetails?.topics ?? "",
-                        style: TextStyle(
-                          fontFamily: 'Segeo',
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                        ),
-                      ),
                       const SizedBox(height: 24),
-                    ],
-                    if ((sessionDetails?.attachment ?? "").isNotEmpty) ...[
-                      const Text(
-                        'Attachment',
-                        style: TextStyle(
-                          fontFamily: 'Segeo',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Color(0xff444444),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () {
-                          context.push(
-                            "/pdf_viewer?file_url=${sessionDetails?.attachment ?? ""}",
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(22),
-                          width: 125,
-                          height: 125,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Center(
-                            child: Image.asset('assets/images/file.png'),
+
+                      // 📎 Attachment
+                      if ((session.attachment ?? "").isNotEmpty) ...[
+                        const Text(
+                          'Attachment',
+                          style: TextStyle(
+                            fontFamily: 'Segeo',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Color(0xff444444),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () {
+                            context.push("/pdf_viewer?file_url=${session.attachment}");
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(22),
+                            width: 125,
+                            height: 125,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Image.asset('assets/images/file.png'),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
                     ],
-                  ],
+                  ),
                 );
               } else if (state is SessionDetailsFailure) {
-                return Text(state.error);
+                return Center(
+                  child: Text(
+                    state.error,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
               }
-              return Text("No Data");
+              return const Center(child: Text("No Data"));
             },
           ),
         ),
       ),
+
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),

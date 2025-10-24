@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -108,17 +109,19 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                   return Expanded(
                     child: CustomScrollView(
                       slivers: [
-                        SliverGrid(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(context),
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 0,
-                                childAspectRatio: _getChildAspectRatio(context),
-                              ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) => const ServiceCardShimmer(),
-                            childCount: 5, // shimmer count
+                        SliverPadding(
+                          padding: EdgeInsets.zero,
+                          sliver: SliverMasonryGrid.count(
+                            crossAxisCount: _getCrossAxisCount(
+                              context,
+                            ), // 👈 1 on mobile, 2 on tab
+                            mainAxisSpacing:
+                                0, // keep your original mainAxisSpacing
+                            crossAxisSpacing: 16,
+                            childCount: 10,
+                            itemBuilder: (context, index) {
+                              return ServiceCardShimmer();
+                            },
                           ),
                         ),
                       ],
@@ -164,36 +167,29 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                             ),
                           )
                         else
-                          SliverGrid(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: _getCrossAxisCount(
-                                    context,
-                                  ), // 👈 1 on mobile, 2 on tab
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 0,
-                                  childAspectRatio: _getChildAspectRatio(
-                                    context,
-                                  ), // 👈 dynamic ratio
-                                ),
-                            delegate: SliverChildBuilderDelegate((
-                              context,
-                              index,
-                            ) {
-                              final serviceList = list[index];
-                              return _ServiceCard(
-                                exclusiveServiceImageUrl:
-                                    serviceList.exclusiveService ?? '',
-                                imageUrl: serviceList.imageUrl ?? '',
-                                title: serviceList.name ?? '',
-                                description: serviceList.description ?? '',
-                                onTap: () {
-                                  context.push(
-                                    '/service_details?id=${serviceList.id}&title=${serviceList.name ?? ''}',
-                                  );
-                                },
-                              );
-                            }, childCount: list.length),
+                          SliverPadding(
+                            padding: EdgeInsets.zero,
+                            sliver: SliverMasonryGrid.count(
+                              crossAxisCount: _getCrossAxisCount(context),
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 16,
+                              childCount: list.length,
+                              itemBuilder: (context, index) {
+                                final serviceList = list[index];
+                                return _ServiceCard(
+                                  exclusiveServiceImageUrl:
+                                      serviceList.exclusiveService ?? '',
+                                  imageUrl: serviceList.imageUrl ?? '',
+                                  title: serviceList.name ?? '',
+                                  description: serviceList.description ?? '',
+                                  onTap: () {
+                                    context.push(
+                                      '/service_details?id=${serviceList.id}&title=${serviceList.name ?? ''}',
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         if (state is ExclusiveserviceStateLoadingMore)
                           const SliverToBoxAdapter(

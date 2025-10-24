@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -46,24 +47,6 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
       return 3; // 💻 Tablet/Desktop: 3 columns
     } else {
       return 4;
-    }
-  }
-
-  double _getChildAspectRatio(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-    final baseRatio = width / height;
-
-    if (width < 600) {
-      // Mobile – slightly taller
-      return baseRatio * 1.65;
-    } else if (width > 600) {
-      // Tablet – balanced
-      return baseRatio * 1.55;
-    } else {
-      // Desktop – wider
-      return baseRatio * 2.1;
     }
   }
 
@@ -155,26 +138,16 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                       );
                     }
                     return Expanded(
-                      child: GridView.builder(
-                        shrinkWrap: true,
+                      child: MasonryGridView.count(
+                        crossAxisCount: _getCrossAxisCount(context),
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
                         physics: const AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
                         itemCount: list.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: _getCrossAxisCount(
-                            context,
-                          ), // 👈 2 on mobile, 3 on tab
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: _getChildAspectRatio(
-                            context,
-                          ), // 👈 dynamic ratio
-                        ),
                         itemBuilder: (ctx, i) {
                           final m = list[i];
-                          // final url = m.user?.profilePicUrl?.trim();
-                          // final hasPic = url != null && url.isNotEmpty;
                           final name = m.user?.name ?? "";
-
                           return GestureDetector(
                             onTap: () {
                               if (isGuest) {
@@ -331,40 +304,16 @@ class MentorGridShimmer extends StatelessWidget {
     }
   }
 
-  double _getChildAspectRatio(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-
-    final baseRatio = width / height;
-
-    if (width < 600) {
-      // Mobile – slightly taller
-      return baseRatio * 1.75;
-    } else if (width > 600) {
-      // Tablet – balanced
-      return baseRatio * 1.55;
-    } else {
-      // Desktop – wider
-      return baseRatio * 2.1;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GridView.builder(
+      child: MasonryGridView.count(
+        crossAxisCount: _getCrossAxisCount(context),
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        physics: const AlwaysScrollableScrollPhysics(),
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 6, // number of shimmer placeholders
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: _getCrossAxisCount(
-            context,
-          ), // 👈 responsive (2 mobile, 3 tab)
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: _getChildAspectRatio(context), // 👈 adaptive ratio
-        ),
+        itemCount: 10,
         itemBuilder: (ctx, i) {
           return Container(
             padding: const EdgeInsets.all(15),

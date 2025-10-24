@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Mentee/data/cubits/CampusMentorList/campus_mentor_list_state.dart';
@@ -66,7 +67,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         context.read<Getbannerscubit>().getbanners(),
         context.read<MenteeProfileCubit>().fetchMenteeProfile(),
         context.read<DailyCheckInsCubit>().getDailyCheckIns(),
-         context.read<HomeDialogCubit>().getHomeDialog(),
+        context.read<HomeDialogCubit>().getHomeDialog(),
 
         if (!guest)
           context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
@@ -575,7 +576,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                               ) => CircleAvatar(
                                                                 radius: 20,
                                                                 backgroundImage:
-                                                                    AssetImage(
+                                                                    const AssetImage(
                                                                       "assets/images/profile.png",
                                                                     ),
                                                               ),
@@ -588,46 +589,51 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                                   .shade300,
                                                           child: Text(
                                                             initials,
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
                                                           ),
                                                         );
                                                 },
                                               );
                                             },
                                           ),
+
                                           const SizedBox(width: 12),
-                                          ValueListenableBuilder<String?>(
-                                            valueListenable: _mentorProfileName,
-                                            builder: (context, name, _) {
-                                              return SizedBox(
-                                                width:
-                                                    SizeConfig.screenWidth *
-                                                    0.5,
-                                                child: Text(
-                                                  capitalize(name ?? "User"),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
+
+                                          Expanded(
+                                            child:
+                                                ValueListenableBuilder<String?>(
+                                                  valueListenable:
+                                                      _mentorProfileName,
+                                                  builder: (context, name, _) {
+                                                    return Text(
+                                                      capitalize(
+                                                        name ?? "User",
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
-                                              );
-                                            },
                                           ),
                                         ],
                                       ),
                                     ),
                                     SizedBox(width: 16),
-
                                     _buildDrawerItem(
                                       assetpath: "assets/icons/Wallet.png",
                                       label: 'Wallet',
@@ -1251,21 +1257,15 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                               : SizeConfig.screenWidth < 1024
                                               ? 0.95 // tablet
                                               : 0.85); // desktop
-                                      final aspectRatio =
-                                          itemWidth / itemHeight;
-                                      return GridView.builder(
+
+                                      return MasonryGridView.count(
+                                        crossAxisCount: _getCrossAxisCount(context),
+                                        mainAxisSpacing: 16,
+                                        crossAxisSpacing: 16,
+                                        physics: const AlwaysScrollableScrollPhysics(),
                                         shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: 6,
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: crossAxisCount,
-                                              crossAxisSpacing: spacing,
-                                              mainAxisSpacing: spacing,
-                                              childAspectRatio: aspectRatio,
-                                            ),
-                                        itemBuilder: (context, index) {
+                                        itemCount:10,
+                                        itemBuilder: (ctx, i) {
                                           return Container(
                                             padding: const EdgeInsets.all(8),
                                             decoration: BoxDecoration(
@@ -1372,7 +1372,17 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       },
     );
   }
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
 
+    if (width < 600) {
+      return 2; // 📱 Mobile: 2 columns
+    } else if (width > 600) {
+      return 3; // 💻 Tablet/Desktop: 3 columns
+    } else {
+      return 4;
+    }
+  }
   void showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,

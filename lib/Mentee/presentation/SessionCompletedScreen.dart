@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
@@ -15,7 +16,7 @@ import '../data/cubits/SessionCompleted/session_completed_cubit.dart';
 import '../data/cubits/SessionCompleted/session_completed_states.dart';
 
 class SessionCompletedScreen extends StatefulWidget {
-  const SessionCompletedScreen({Key? key}) : super(key: key);
+  SessionCompletedScreen({Key? key}) : super(key: key);
 
   @override
   State<SessionCompletedScreen> createState() => _SessionCompletedScreenState();
@@ -31,7 +32,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF5F6FF),
+      backgroundColor: Color(0xffF5F6FF),
       appBar: CustomAppBar1(
         title: 'Session Completed',
         actions: const [],
@@ -78,18 +79,14 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                 slivers: [
                   SliverPadding(
                     padding: const EdgeInsets.all(16.0),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: _getCrossAxisCount(
-                          context,
-                        ), // 👈 2 on mobile, 3 on tab
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: _getChildAspectRatio(
-                          context,
-                        ), // 👈 responsive ratio
-                      ),
-                      delegate: SliverChildBuilderDelegate((context, index) {
+                    sliver: SliverMasonryGrid.count(
+                      crossAxisCount: _getCrossAxisCount(
+                        context,
+                      ), // 👈 Responsive count
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childCount: sessions.length,
+                      itemBuilder: (context, index) {
                         final completeSessions = sessions[index];
                         if (completeSessions == null) {
                           return const SizedBox.shrink();
@@ -264,7 +261,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                             ],
                           ),
                         );
-                      }, childCount: sessions.length),
+                      },
                     ),
                   ),
                 ],
@@ -283,27 +280,11 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
     final width = MediaQuery.of(context).size.width;
 
     if (width < 600) {
-      return 1; // 📱 Mobile: 2 columns
+      return 1; // 📱 Mobile: single column
+    } else if (width < 900) {
+      return 2;
     } else {
-      return 2; // 💻 Tablet/Desktop: 3 columns
-    }
-  }
-
-  double _getChildAspectRatio(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-    final baseRatio = width / height;
-
-    if (width < 600) {
-      // Mobile – taller layout
-      return baseRatio * 5;
-    } else if (width > 600) {
-      // Tablet – more balanced
-      return baseRatio * 2.85;
-    } else {
-      // Desktop – wider
-      return baseRatio * 1.8;
+      return 3; // 🖥️ Desktop / large screen: three columns
     }
   }
 
@@ -605,27 +586,10 @@ class CompletedSessionsShimmer extends StatelessWidget {
 
     if (width < 600) {
       return 1; // 📱 Mobile
+    } else if (width < 900) {
+      return 2; // 💻 Tablet
     } else {
-      return 2; // 💻 Tablet/Desktop
-    }
-  }
-
-  double _getChildAspectRatio(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-
-    final baseRatio = width / height;
-
-    if (width < 600) {
-      // Mobile – taller layout
-      return baseRatio * 5;
-    } else if (width > 600) {
-      // Tablet – more balanced
-      return baseRatio * 2.85;
-    } else {
-      // Desktop – wider
-      return baseRatio * 1.8;
+      return 3; // 🖥 Desktop
     }
   }
 
@@ -636,82 +600,75 @@ class CompletedSessionsShimmer extends StatelessWidget {
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.all(16.0),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _getCrossAxisCount(
-                context,
-              ), // 👈 2 mobile, 3 tablet
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: _getChildAspectRatio(
-                context,
-              ), // 👈 responsive ratio
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// 🔹 Header Row (Left: session info | Right: completed badge)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Left Column
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              shimmerText(180, 18, context), // topic title
-                              const SizedBox(height: 6),
-                              shimmerText(150, 14, context), // mentor name
-                              const SizedBox(height: 8),
-                              shimmerText(130, 12, context), // date/time
-                            ],
-                          ),
+          sliver: SliverMasonryGrid.count(
+            crossAxisCount: _getCrossAxisCount(
+              context,
+            ), // 👈 Responsive count (1 mobile, 2 tablet, 3 desktop)
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childCount: 5, // shimmer placeholders
+            itemBuilder: (context, index) {
+              return Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// 🔹 Header Row (Left: session info | Right: completed badge)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left Column
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            shimmerText(180, 18, context), // topic title
+                            const SizedBox(height: 6),
+                            shimmerText(150, 14, context), // mentor name
+                            const SizedBox(height: 8),
+                            shimmerText(130, 12, context), // date/time
+                          ],
+                        ),
 
-                          // Right Column
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(height: 20),
-                              shimmerCircle(24, context), // check icon
-                              const SizedBox(height: 6),
-                              shimmerText(
-                                100,
-                                12,
-                                context,
-                              ), // "Session completed"
-                            ],
-                          ),
-                        ],
-                      ),
+                        // Right Column
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+                            shimmerCircle(24, context), // check icon shimmer
+                            const SizedBox(height: 6),
+                            shimmerText(
+                              100,
+                              12,
+                              context,
+                            ), // "Session completed"
+                          ],
+                        ),
+                      ],
+                    ),
 
-                      const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                      /// 🔹 Action Button Placeholder
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        child: shimmerRectangle(40, context),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              childCount: 5, // shimmer placeholders
-            ),
+                    /// 🔹 Action Button Placeholder
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: shimmerRectangle(40, context), // button shimmer
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ],

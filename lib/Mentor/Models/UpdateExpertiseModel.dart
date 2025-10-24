@@ -30,7 +30,7 @@ class Data {
   List<String>? expertiseId;
   List<String>? subExpertiseIds;
   String? proofLink;
-  Null? proofDoc;
+  String? proofDoc;
   String? status;
   String? updatedAt;
   String? createdAt;

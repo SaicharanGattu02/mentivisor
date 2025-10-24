@@ -15,6 +15,7 @@ import '../data/Cubits/MentorSessionCancel/mentor_session_cancel_cubit.dart';
 import '../data/Cubits/MentorSessionCancel/mentor_session_cancel_states.dart';
 import '../data/Cubits/SessionDetails/SessionsDetailsCubit.dart';
 import '../data/Cubits/SessionDetails/SessionsDetailsStates.dart';
+import '../data/Cubits/Sessions/SessionsCubit.dart';
 
 class CancelSessionScreen extends StatefulWidget {
   final int sessionId;
@@ -223,8 +224,7 @@ class _CancelSessionScreenState extends State<CancelSessionScreen> {
               BlocConsumer<MentorSessionCancelCubit, MentorSessionCancleStates>(
                 listener: (context, state) {
                   if (state is MentorsessionCancelSuccess) {
-                    context.read<MentorDashboardCubit>().fetchDashboard();
-                    context.pop();
+                    context.push('/mentor_dashboard?selectedIndex=1&filter=cancelled');
                   } else if (state is MentorsessioncancleFailure) {
                     CustomSnackBar1.show(context, state.error);
                   }

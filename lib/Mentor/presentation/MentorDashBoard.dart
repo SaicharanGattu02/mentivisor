@@ -19,7 +19,9 @@ import 'SlotsBookingScreen.dart';
 
 class MentorDashboard extends StatefulWidget {
   final int? selectedIndex;
-  const MentorDashboard({Key? key, this.selectedIndex}) : super(key: key);
+  final String? selectedFilter;
+  const MentorDashboard({Key? key, this.selectedIndex, this.selectedFilter})
+    : super(key: key);
 
   @override
   State<MentorDashboard> createState() => _MentorDashboardState();
@@ -154,10 +156,10 @@ class _MentorDashboardState extends State<MentorDashboard> {
             setState(() => _selectedIndex = i);
           },
           children: [
-            const MentorHomeScreen(),
-            const MySessionsScreen(),
-            const Slotsbookingscreen(),
-            const CouponsHomeScreen(),
+            MentorHomeScreen(),
+            MySessionsScreen(selectedFilter: widget.selectedFilter),
+            Slotsbookingscreen(),
+            CouponsHomeScreen(),
           ],
         ),
         bottomNavigationBar: _buildBottomNav(),

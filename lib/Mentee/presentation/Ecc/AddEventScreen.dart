@@ -254,7 +254,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
               BlocBuilder<EccTagsCubit, EccTagsState>(
                 builder: (context, state) {
                   if (state is EccTagsLoading) {
-                    return const Center(child: DottedProgressWithLogo());
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: primarycolor,
+                        strokeWidth: 1.5,
+                      ),
+                    );
                   } else if (state is EccTagsLoaded) {
                     final allTags = [...state.tagsModel.data!, ..._customTags];
                     if (allTags.isEmpty) {

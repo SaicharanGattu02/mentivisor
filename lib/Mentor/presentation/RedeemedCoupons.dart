@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -82,101 +83,335 @@ class _RedeemedCouponsScreenState extends State<RedeemedCouponsScreen> {
               ],
             ),
             SizedBox(height: 12),
-            Expanded(
-              child: BlocBuilder<RedeemedCouponCubit, RedeemedCouponStates>(
-                builder: (context, state) {
-                  if (state is RedeemedCouponLoading) {
-                    return CouponShimmer();
-                  } else if (state is RedeemedCouponFailure) {
-                    return Center(child: Text(state.error));
-                  } else if (state is RedeemedCouponLoaded ||
-                      state is RedeemedCouponLoadingMore) {
-                    final redeemedModel = (state is RedeemedCouponLoaded)
-                        ? state.redeemedCouponsModel
-                        : (state as RedeemedCouponLoadingMore)
-                              .redeemedCouponsModel;
+            // Expanded(
+            //   child: BlocBuilder<RedeemedCouponCubit, RedeemedCouponStates>(
+            //     builder: (context, state) {
+            //       if (state is RedeemedCouponLoading) {
+            //         return CouponShimmer();
+            //       } else if (state is RedeemedCouponFailure) {
+            //         return Center(child: Text(state.error));
+            //       } else if (state is RedeemedCouponLoaded ||
+            //           state is RedeemedCouponLoadingMore) {
+            //         final redeemedModel = (state is RedeemedCouponLoaded)
+            //             ? state.redeemedCouponsModel
+            //             : (state as RedeemedCouponLoadingMore)
+            //                   .redeemedCouponsModel;
+            //
+            //         final couponData = redeemedModel.data;
+            //         final couponsList = couponData?.data ?? [];
+            //
+            //         if (couponsList.isEmpty) {
+            //           return Center(
+            //             child: SingleChildScrollView(
+            //               physics: const AlwaysScrollableScrollPhysics(),
+            //               child: Column(
+            //                 mainAxisSize: MainAxisSize.min,
+            //                 children: [
+            //                   SizedBox(
+            //                     height: 200,
+            //                     width: 200,
+            //                     child: Image.asset("assets/nodata/no_data.png"),
+            //                   ),
+            //                   const SizedBox(height: 10),
+            //                   const Text(
+            //                     'No Coupons Found!',
+            //                     textAlign: TextAlign.center,
+            //                     style: TextStyle(
+            //                       color: Color(0xff333333),
+            //                       fontSize: 18,
+            //                       fontWeight: FontWeight.w500,
+            //                       fontFamily: 'Poppins',
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           );
+            //         }
+            //
+            //         return NotificationListener<ScrollNotification>(
+            //           onNotification: (scrollInfo) {
+            //             if (scrollInfo.metrics.pixels >=
+            //                 scrollInfo.metrics.maxScrollExtent * 0.9) {
+            //               if (state is RedeemedCouponLoaded &&
+            //                   state.hasNextPage) {
+            //                 context
+            //                     .read<RedeemedCouponCubit>()
+            //                     .fetchMoreRedeemedCoupons("");
+            //               }
+            //             }
+            //             return false;
+            //           },
+            //           child:
+            //               ListView.separated(
+            //                 separatorBuilder: (context, index) {
+            //                   return Padding(
+            //                     padding: EdgeInsets.symmetric(vertical: 8),
+            //                   );
+            //                 },
+            //                 itemCount:
+            //                     couponsList.length +
+            //                     (state is RedeemedCouponLoadingMore ? 1 : 0),
+            //                 itemBuilder: (context, index) {
+            //                   if (index == couponsList.length &&
+            //                       state is RedeemedCouponLoadingMore) {
+            //                     return const Padding(
+            //                       padding: EdgeInsets.all(25.0),
+            //                       child: Center(
+            //                         child: CircularProgressIndicator(
+            //                           strokeWidth: 1.2,
+            //                         ),
+            //                       ),
+            //                     );
+            //                   }
+            //
+            //                   final coupon = couponsList[index];
+            //
+            //                   return Container(
+            //                     width: SizeConfig.screenWidth,
+            //                     padding: const EdgeInsets.all(12.0),
+            //                     decoration: BoxDecoration(
+            //                       color: Color(0xffFFFFFF),
+            //                       borderRadius: BorderRadius.circular(12),
+            //                     ),
+            //
+            //                     child: Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Column(
+            //                           crossAxisAlignment: CrossAxisAlignment.start,
+            //                           children: [
+            //                             Row(
+            //                               children: [
+            //                                 Text(
+            //                                   coupon.coins ?? "0",
+            //                                   style: const TextStyle(
+            //                                     fontSize: 20,
+            //                                     fontWeight: FontWeight.bold,
+            //                                   ),
+            //                                 ),
+            //                                 const SizedBox(width: 6),
+            //                                 Image.asset(
+            //                                   "assets/images/GoldCoins.png",
+            //                                   height: 24,
+            //                                   width: 24,
+            //                                 ),
+            //                               ],
+            //                             ),
+            //                             const SizedBox(height: 6),
+            //                             Container(
+            //                               padding: const EdgeInsets.symmetric(
+            //                                 horizontal: 8,
+            //                                 vertical: 4,
+            //                               ),
+            //                               decoration: BoxDecoration(
+            //                                 color: const Color(0xff6595FF),
+            //                                 borderRadius: BorderRadius.circular(12),
+            //                               ),
+            //                               child: const Text(
+            //                                 "New",
+            //                                 style: TextStyle(
+            //                                   color: Colors.white,
+            //                                   fontWeight: FontWeight.w600,
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                             const SizedBox(height: 12),
+            //                             Row(
+            //                               children: [
+            //                                 Icon(
+            //                                   Icons.calendar_month,
+            //                                   size: 16,
+            //                                   color: Color(0xff999999),
+            //                                 ),
+            //                                 SizedBox(width: 5),
+            //                                 Text(
+            //                                   formatDate(coupon.createdAt ?? ""),
+            //                                   style: TextStyle(
+            //                                     fontWeight: FontWeight.w600,
+            //                                     color: Color(0xff575757),
+            //                                     fontFamily: "segeo",
+            //                                     fontSize: 12,
+            //                                   ),
+            //                                 ),
+            //                               ],
+            //                             ),
+            //                           ],
+            //                         ),
+            //
+            //                         // Right Section - Coupon details
+            //                         Column(
+            //                           crossAxisAlignment: CrossAxisAlignment.end,
+            //                           children: [
+            //                             Text(
+            //                               coupon.title ?? "",
+            //                               style: const TextStyle(
+            //                                 fontWeight: FontWeight.w600,
+            //                                 color: Color(0xff333333),
+            //                                 fontFamily: "segeo",
+            //                                 fontSize: 12,
+            //                               ),
+            //                             ),
+            //                             const SizedBox(height: 6),
+            //                             GestureDetector(
+            //                               onTap: () {
+            //                                 _copy(context, coupon.code ?? "");
+            //                               },
+            //                               child: Container(
+            //                                 padding: const EdgeInsets.symmetric(
+            //                                   horizontal: 8,
+            //                                   vertical: 12,
+            //                                 ),
+            //                                 decoration: BoxDecoration(
+            //                                   color: const Color(0xffF5F5F5),
+            //                                   borderRadius: BorderRadius.circular(
+            //                                     4,
+            //                                   ),
+            //                                 ),
+            //                                 child: Row(
+            //                                   children: [
+            //                                     Text(
+            //                                       coupon.code ?? "",
+            //                                       style: const TextStyle(
+            //                                         fontWeight: FontWeight.w600,
+            //                                         color: Color(0xff121212),
+            //                                         fontFamily: "segeo",
+            //                                         fontSize: 12,
+            //                                       ),
+            //                                     ),
+            //                                     const SizedBox(width: 10),
+            //                                     Image.asset(
+            //                                       "assets/images/Copyimg.png",
+            //                                       height: 16,
+            //                                       width: 16,
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                             const SizedBox(height: 6),
+            //                             Text(
+            //                               "Worth of ₹ ${coupon.coupon?.actualValue ?? "0"}",
+            //                               style: const TextStyle(
+            //                                 color: Color(0xff575757),
+            //                                 fontFamily: "segeo",
+            //                                 fontWeight: FontWeight.w600,
+            //                                 fontSize: 12,
+            //                               ),
+            //                             ),
+            //                           ],
+            //                         ),
+            //                       ],
+            //                     ),
+            //                   );
+            //                 },
+            //               ),
+            //         );
+            //       } else {
+            //         return Text("No Data");
+            //       }
+            //     },
+            //   ),
+            // ),
+      Expanded(
+        child: BlocBuilder<RedeemedCouponCubit, RedeemedCouponStates>(
+          builder: (context, state) {
+            if (state is RedeemedCouponLoading) {
+              return const CouponShimmer();
+            } else if (state is RedeemedCouponFailure) {
+              return Center(child: Text(state.error));
+            } else if (state is RedeemedCouponLoaded ||
+                state is RedeemedCouponLoadingMore) {
+              final redeemedModel = (state is RedeemedCouponLoaded)
+                  ? state.redeemedCouponsModel
+                  : (state as RedeemedCouponLoadingMore).redeemedCouponsModel;
 
-                    final couponData = redeemedModel.data;
-                    final couponsList = couponData?.data ?? [];
+              final couponData = redeemedModel.data;
+              final couponsList = couponData?.data ?? [];
 
-                    if (couponsList.isEmpty) {
-                      return Center(
-                        child: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                height: 200,
-                                width: 200,
-                                child: Image.asset("assets/nodata/no_data.png"),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                'No Coupons Found!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xff333333),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Poppins',
-                                ),
+              if (couponsList.isEmpty) {
+                return Center(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 200,
+                          width: 200,
+                          child: Image.asset("assets/nodata/no_data.png"),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'No Coupons Found!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xff333333),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  if (scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent * 0.9) {
+                    if (state is RedeemedCouponLoaded && state.hasNextPage) {
+                      context.read<RedeemedCouponCubit>().fetchMoreRedeemedCoupons("");
+                    }
+                  }
+                  return false;
+                },
+                child: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverMasonryGrid.count(
+                      crossAxisCount: _getCrossAxisCount(context),
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childCount: couponsList.length +
+                          (state is RedeemedCouponLoadingMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == couponsList.length &&
+                            state is RedeemedCouponLoadingMore) {
+                          return const Padding(
+                            padding: EdgeInsets.all(25.0),
+                            child: Center(
+                              child: CircularProgressIndicator(strokeWidth: 1.2),
+                            ),
+                          );
+                        }
+
+                        final coupon = couponsList[index];
+
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffFFFFFF),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    }
-
-                    return NotificationListener<ScrollNotification>(
-                      onNotification: (scrollInfo) {
-                        if (scrollInfo.metrics.pixels >=
-                            scrollInfo.metrics.maxScrollExtent * 0.9) {
-                          if (state is RedeemedCouponLoaded &&
-                              state.hasNextPage) {
-                            context
-                                .read<RedeemedCouponCubit>()
-                                .fetchMoreRedeemedCoupons("");
-                          }
-                        }
-                        return false;
-                      },
-                      child: ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                          );
-                        },
-                        itemCount:
-                            couponsList.length +
-                            (state is RedeemedCouponLoadingMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == couponsList.length &&
-                              state is RedeemedCouponLoadingMore) {
-                            return const Padding(
-                              padding: EdgeInsets.all(25.0),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1.2,
-                                ),
-                              ),
-                            );
-                          }
-
-                          final coupon = couponsList[index];
-
-                          return Container(
-                            width: SizeConfig.screenWidth,
-                            padding: const EdgeInsets.all(12.0),
-                            decoration: BoxDecoration(
-                              color: Color(0xffFFFFFF),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              /// 🔹 Left Section
+                              Expanded(
+                                flex: 3,
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
@@ -217,15 +452,15 @@ class _RedeemedCouponsScreenState extends State<RedeemedCouponsScreen> {
                                     const SizedBox(height: 12),
                                     Row(
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.calendar_month,
                                           size: 16,
                                           color: Color(0xff999999),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           formatDate(coupon.createdAt ?? ""),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xff575757),
                                             fontFamily: "segeo",
@@ -236,13 +471,21 @@ class _RedeemedCouponsScreenState extends State<RedeemedCouponsScreen> {
                                     ),
                                   ],
                                 ),
+                              ),
 
-                                // Right Section - Coupon details
-                                Column(
+                              const SizedBox(width: 8),
+
+                              /// 🔹 Right Section
+                              Flexible(
+                                flex: 3,
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
                                       coupon.title ?? "",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.right,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff333333),
@@ -262,19 +505,21 @@ class _RedeemedCouponsScreenState extends State<RedeemedCouponsScreen> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: const Color(0xffF5F5F5),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
+                                          borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Row(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                              coupon.code ?? "",
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xff121212),
-                                                fontFamily: "segeo",
-                                                fontSize: 12,
+                                            Flexible(
+                                              child: Text(
+                                                coupon.code ?? "",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xff121212),
+                                                  fontFamily: "segeo",
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             ),
                                             const SizedBox(width: 10),
@@ -299,23 +544,39 @@ class _RedeemedCouponsScreenState extends State<RedeemedCouponsScreen> {
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  } else {
-                    return Text("No Data");
-                  }
-                },
-              ),
-            ),
-          ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return const Center(child: Text("No Data"));
+            }
+          },
+        ),
+      )
+
+      ],
         ),
       ),
     );
   }
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width < 600) {
+      return 1; // 📱 Mobile
+    } else if (width <900) {
+      return 2; // 💻 Tablet
+    } else {
+      return 3; // 🖥 Desktop
+    }
+  }
+
+
 }
 
 class _FilterSheet extends StatefulWidget {
@@ -469,70 +730,98 @@ class CouponShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      itemCount: 6,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        return Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+    return CustomScrollView(
+      slivers: [
+        SliverMasonryGrid.count(
+          crossAxisCount: _getCrossAxisCount(context),
+          mainAxisSpacing: 12, // same as separator height
+          crossAxisSpacing: 12,
+          childCount: 6,
+          itemBuilder: (context, index) {
+            return Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Coin Value + Icon
-                  Row(
-                    children: [
-                      shimmerText(50, 20, context),
-                      const SizedBox(width: 6),
-                      shimmerCircle(24, context),
-                    ],
+                  /// 🔹 LEFT SECTION
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Coin Value + Icon
+                        Row(
+                          children: [
+                            shimmerText(50, 20, context),
+                            const SizedBox(width: 6),
+                            shimmerCircle(24, context),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // "New" Badge shimmer
+                        shimmerContainer(50, 24, context),
+
+                        const SizedBox(height: 12),
+
+                        // Date shimmer
+                        Row(
+                          children: [
+                            shimmerCircle(16, context),
+                            const SizedBox(width: 6),
+                            shimmerText(80, 14, context),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8),
 
-                  // "New" Badge shimmer
-                  shimmerContainer(50, 24, context),
+                  const SizedBox(width: 10),
 
-                  const SizedBox(height: 12),
+                  /// 🔹 RIGHT SECTION
+                  Flexible(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Coupon title
+                        shimmerText(120, 14, context),
+                        const SizedBox(height: 8),
 
-                  // Date shimmer
-                  Row(
-                    children: [
-                      shimmerCircle(16, context),
-                      const SizedBox(width: 6),
-                      shimmerText(80, 14, context),
-                    ],
+                        // Coupon code box shimmer
+                        shimmerContainer(120, 36, context),
+
+                        const SizedBox(height: 8),
+
+                        // Worth text shimmer
+                        shimmerText(100, 14, context),
+                      ],
+                    ),
                   ),
                 ],
               ),
-
-              /// RIGHT SECTION
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Coupon title
-                  shimmerText(120, 14, context),
-                  const SizedBox(height: 8),
-
-                  // Coupon code box shimmer
-                  shimmerContainer(120, 36, context),
-
-                  const SizedBox(height: 8),
-
-                  // Worth text shimmer
-                  shimmerText(100, 14, context),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ],
     );
+  }
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width < 600) return 1; // Mobile
+    if (width < 900) return 2; // Tablet
+    return 3; // Desktop
   }
 }

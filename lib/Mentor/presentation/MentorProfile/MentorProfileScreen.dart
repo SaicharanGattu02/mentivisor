@@ -231,7 +231,6 @@ class _ProfileBody extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // Expertise (extra section if needed)
           // if ((data.expertise ?? []).isNotEmpty) ...[
           //   Align(
           //     alignment: Alignment.centerLeft,

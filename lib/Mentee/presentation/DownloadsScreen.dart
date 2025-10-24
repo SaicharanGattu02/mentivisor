@@ -133,31 +133,30 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                             //         downloads.length + (loadingMore ? 1 : 0),
                             //   ),
                             // ),
+                            SliverMasonryGrid.count(
+                              crossAxisCount: _getCrossAxisCount(context),
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childCount:
+                                  downloads.length + (loadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (loadingMore && index == downloads.length) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(25.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 0.8,
+                                      ),
+                                    ),
+                                  );
+                                }
 
-                        SliverMasonryGrid.count(
-                          crossAxisCount: _getCrossAxisCount(context),
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childCount: downloads.length + (loadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (loadingMore && index == downloads.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(25.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.8,
-                                  ),
-                                ),
-                              );
-                            }
-
-                            return DownloadCard(
-                              downloads: downloads[index],
-                            );
-                          },
-                        ),
-
-                    ],
+                                return DownloadCard(
+                                  downloads: downloads[index],
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       );
                     } else {
@@ -178,13 +177,12 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
     if (width < 600) {
       return 1; // 📱 Mobile
-    } else if (width < 900) {
+    } else if (width > 600) {
       return 2; // 💻 Tablet
     } else {
       return 3; // 🖥️ Desktop
     }
   }
-
 }
 
 class DownloadListShimmer extends StatelessWidget {

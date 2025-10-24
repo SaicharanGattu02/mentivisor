@@ -121,8 +121,13 @@ class _PostCardState extends State<PostCard>
                           imageUrl: widget.communityPosts.imgUrl ?? "",
                           fit: BoxFit.cover,
                           width: SizeConfig.screenWidth,
-                          placeholder: (context, url) =>
-                              Center(child: spinkits.getSpinningLinespinkit()),
+                          placeholder: (context, url) => Container(
+                            height: 160,
+                            color: Colors.grey.shade100,
+                            child: Center(
+                              child: spinkits.getSpinningLinespinkit(),
+                            ),
+                          ),
                           errorWidget: (context, url, error) => Container(
                             height: 160,
                             color: Colors.grey.shade100,
@@ -516,10 +521,9 @@ class _PostCardState extends State<PostCard>
 void _showReportSheet(BuildContext context, communityPosts) {
   String _selected = 'False Information';
   final TextEditingController _otherController = TextEditingController();
-
   final List<String> _reportReasons = [
     'Copied',
-    'Scam or Fraud',
+    'Scam or Fraud ',
     'Abusing Post',
     'Other',
   ];
@@ -662,22 +666,6 @@ class CommunityPostShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverMasonryGrid.count(
-          crossAxisCount: _getCrossAxisCount(context),
-          mainAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-          crossAxisSpacing: SizeConfig.screenWidth < 600 ? 12 : 16,
-          childCount: itemCount,
-          itemBuilder: (context, index) {
-            return _buildShimmerCard(context);
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildShimmerCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -693,7 +681,6 @@ class CommunityPostShimmer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// 🖼 Image placeholder
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
             child: ClipRRect(
@@ -767,17 +754,5 @@ class CommunityPostShimmer extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  /// 🧩 Responsive Column Count
-  int _getCrossAxisCount(BuildContext context) {
-    final width = SizeConfig.screenWidth;
-    if (width < 600) {
-      return 1; // Mobile
-    } else if (width < 900) {
-      return 2; // Tablet
-    } else {
-      return 3; // Desktop
-    }
   }
 }

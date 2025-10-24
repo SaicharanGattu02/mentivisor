@@ -58,56 +58,52 @@ class _InfoScreenState extends State<InfoScreen> {
               }
 
               if (state is MentorinfoLoaded) {
-                final mentorData = state.mentorinfoResponseModel.data;
+                final mentorData = state.mentorinfoResponseModel.info;
 
-                return ListView(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  children: [
-                    ...mentorData?.map((item) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 6,
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Heading for each info card
-                                  Text(
-                                    item.heading ?? 'No Heading',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'segeo',
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(height: 6),
-                                  // Description for each info card
-                                  Text(
-                                    item.description ??
-                                        'No description available',
-                                    style: TextStyle(
-                                      color: Color(0xff666666),
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
-                                      fontFamily: 'segeo',
-                                      height: 1.3,
-                                    ),
-                                  ),
-                                ],
+
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  itemCount: mentorData?.data?.length,
+                  itemBuilder: (context, index) {
+                    final item = mentorData?.data?[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item?.heading ?? 'No Heading',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'segeo',
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          );
-                        }).toList() ??
-                        [], // Iterate through the mentor data and create cards
-                  ],
+                            const SizedBox(height: 6),
+                            Text(
+                              item?.description ?? 'No description available',
+                              style: const TextStyle(
+                                color: Color(0xff666666),
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                fontFamily: 'segeo',
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 );
+
               }
 
               return Center(child: Text('Unexpected state'));
