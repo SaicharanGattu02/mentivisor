@@ -1,5 +1,7 @@
+import 'dart:io';
+import 'package:mentivisor/utils/color_constants.dart';
+import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -20,6 +22,7 @@ import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import '../data/cubits/SelectSlot/select_slot_cubit.dart';
 import '../data/cubits/SelectSlot/select_slot_states.dart';
 import '../data/cubits/WeeklySlots/weekly_slots_states.dart';
+import 'Widgets/CommonImgeWidget.dart';
 import 'Widgets/DailySlotsSheet.dart';
 import 'Widgets/DayCell.dart';
 
@@ -40,7 +43,8 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   TextEditingController sessionController = TextEditingController();
   String? selectedFileName;
   String? selectedFilePath;
-
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
+  final ValueNotifier<File?> _pickedFile = ValueNotifier(null);
   @override
   void initState() {
     super.initState();
@@ -54,31 +58,43 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
     });
   }
 
+  // Future<void> pickFile() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['pdf'],
+  //   );
+  //
+  //   if (result != null && result.files.single.path != null) {
+  //     final file = result.files.single;
+  //
+  //     if (file.extension?.toLowerCase() == "pdf") {
+  //       setState(() {
+  //         selectedFilePath = file.path;
+  //         selectedFileName = file.name;
+  //       });
+  //     } else {
+  //       CustomSnackBar1.show(context, "Only PDF files are allowed.");
+  //     }
+  //   }
+  // }
   Future<void> pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
+    _isLoading.value = true;
 
-    if (result != null && result.files.single.path != null) {
-      final file = result.files.single;
-
-      if (file.extension?.toLowerCase() == "pdf") {
-        setState(() {
-          selectedFilePath = file.path;
-          selectedFileName = file.name;
-        });
-      } else {
-        CustomSnackBar1.show(context, "Only PDF files are allowed.");
+    try {
+      final file = await FileImagePicker.pickPdfFile();
+      if (file != null) {
+        _pickedFile.value = file;
+        AppLogger.info("Picked & compressed file: ${file.path}");
       }
+    } catch (e) {
+      debugPrint('File selection error: $e');
+      CustomSnackBar1.show(context, "Failed to pick file");
+    } finally {
+      _isLoading.value = false;
     }
   }
-
   void removeFile() {
-    setState(() {
-      selectedFileName = null; // clear UI name
-      selectedFilePath = null; // clear actual file path
-    });
+    _pickedFile.value = null;
   }
 
   @override
@@ -488,54 +504,84 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    if (selectedFileName == null) ...[
-                                      GestureDetector(
-                                        onTap: pickFile,
-                                        child: Row(
-                                          children: const [
-                                            Text(
-                                              'Add Attachment',
-                                              style: TextStyle(
-                                                color: Color(0xff555555),
-                                                fontFamily: 'segeo',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            SizedBox(width: 6),
-                                            Icon(
-                                              Icons.attach_file,
-                                              color: Colors.grey,
-                                              size: 18,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      // ✅ Show selected file with remove button
-                                      Expanded(
-                                        child: Text(
-                                          selectedFileName!,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Color(0xff333333),
-                                            fontFamily: 'segeo',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
+                                    ValueListenableBuilder<bool>(
+                                      valueListenable: _isLoading, // from your existing controller
+                                      builder: (context, isLoading, _) {
+                                        if (isLoading) {
+                                          return  Row(spacing: 10,
+                                            children: [
+                                              SizedBox(
+                                                height: 18,
+                                                width: 18,
+                                                child: CircularProgressIndicator(strokeWidth: 1,color: primarycolor,),
+                                              ),Text("compressing and uploading file.....",style: TextStyle(color: Color(0xff555555),fontFamily: "segeo",fontWeight: FontWeight.w400,fontSize: 12),)
+                                            ],
+                                          );
+                                        }
+
+                                        return Flexible(
+                                          child: ValueListenableBuilder<File?>(
+                                            valueListenable: _pickedFile,
+                                            builder: (context, pickedFile, __) {
+                                              return Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  if (pickedFile == null) ...[
+                                                    GestureDetector(
+                                                      onTap: pickFile,
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: const [
+                                                          Text(
+                                                            'Add Attachment',
+                                                            style: TextStyle(
+                                                              color: Color(0xff555555),
+                                                              fontFamily: 'segeo',
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w400,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 6),
+                                                          Icon(
+                                                            Icons.attach_file,
+                                                            color: Colors.grey,
+                                                            size: 18,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ] else ...[
+                                                    Flexible(
+                                                      child: Text(
+                                                        path.basename(pickedFile.path),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: const TextStyle(
+                                                          color: Color(0xff333333),
+                                                          fontFamily: 'segeo',
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    GestureDetector(
+                                                      onTap: removeFile,
+                                                      child: const Icon(
+                                                        Icons.close,
+                                                        color: Colors.red,
+                                                        size: 18,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ],
+                                              );
+                                            },
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      GestureDetector(
-                                        onTap: removeFile,
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: Colors.red,
-                                          size: 18,
-                                        ),
-                                      ),
-                                    ],
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),

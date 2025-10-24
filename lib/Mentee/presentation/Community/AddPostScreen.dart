@@ -547,7 +547,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                           : "0";
                                       highlitedCoinValue.value = coins ?? "";
                                       return Text(
-                                        'Make your post Highlight with $coins coins for 1 day',
+                                        'Make your post Highlight with $coins coins ',
                                         style: TextStyle(
                                           fontFamily: 'segeo',
                                           fontWeight: FontWeight.w400,

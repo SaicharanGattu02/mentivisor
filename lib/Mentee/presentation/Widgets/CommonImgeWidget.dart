@@ -164,9 +164,9 @@ class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
 
   static Future<File?> pickImageBottomSheet(
-      BuildContext context, {
-        int maxDimension = 1080, // optional resize limit for large images
-      }) async {
+    BuildContext context, {
+    int maxDimension = 1080, // optional resize limit for large images
+  }) async {
     return await showModalBottomSheet<File?>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -196,7 +196,10 @@ class ImagePickerHelper {
 
                 // 📂 Choose from Gallery
                 ListTile(
-                  leading: const Icon(Icons.photo_library, color: Color(0xff315DEA)),
+                  leading: const Icon(
+                    Icons.photo_library,
+                    color: Color(0xff315DEA),
+                  ),
                   title: const Text(
                     'Choose from Gallery',
                     style: TextStyle(fontSize: 16, color: Colors.black87),
@@ -212,7 +215,10 @@ class ImagePickerHelper {
 
                 // 📷 Take a Photo
                 ListTile(
-                  leading: const Icon(Icons.camera_alt, color: Color(0xff315DEA)),
+                  leading: const Icon(
+                    Icons.camera_alt,
+                    color: Color(0xff315DEA),
+                  ),
                   title: const Text(
                     'Take a Photo',
                     style: TextStyle(fontSize: 16, color: Colors.black87),
@@ -235,9 +241,9 @@ class ImagePickerHelper {
 
   /// 🖼 Pick + (optionally) resize image for optimization
   static Future<File?> _pickAndResize(
-      ImageSource source, {
-        int maxDimension = 1080,
-      }) async {
+    ImageSource source, {
+    int maxDimension = 1080,
+  }) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: source);
       if (pickedFile == null) return null;
@@ -252,9 +258,9 @@ class ImagePickerHelper {
 
   /// 🧩 Resize large images proportionally — but keep full height (no crop)
   static Future<File?> _resizeIfTooLarge(
-      File file, {
-        int maxDimension = 1080,
-      }) async {
+    File file, {
+    int maxDimension = 1080,
+  }) async {
     try {
       final bytes = await file.readAsBytes();
       final img.Image? image = img.decodeImage(bytes);
@@ -290,4 +296,3 @@ class ImagePickerHelper {
     }
   }
 }
-

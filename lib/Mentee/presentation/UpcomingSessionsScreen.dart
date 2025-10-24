@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
@@ -23,9 +26,18 @@ class UpcomingSessionsScreen extends StatefulWidget {
 }
 
 class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
+  final ValueNotifier<Map<int, bool>> chatVisibilityNotifier = ValueNotifier(
+    {},
+  );
+
   @override
   void initState() {
     super.initState();
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      // Trigger recomputation for all items (or just refresh logic)
+      final updatedMap = {...chatVisibilityNotifier.value};
+      chatVisibilityNotifier.value = updatedMap;
+    });
     context.read<UpComingSessionCubit>().upComingSessions();
   }
 
@@ -71,6 +83,57 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                         if (upComingSessions == null) {
                           return const SizedBox.shrink();
                         }
+                        final now = DateTime.now();
+                        final sessionDateStr = upComingSessions.date ?? "";
+                        final startTimeStr = upComingSessions.startTime ?? "";
+                        final endTimeStr = upComingSessions.endTime ?? "";
+
+                        bool showChatButton = false;
+
+                        try {
+                          final sessionDate = DateFormat(
+                            "yyyy-MM-dd",
+                          ).parse(sessionDateStr);
+                          final startTime = DateFormat(
+                            "h:mm a",
+                          ).parse(startTimeStr);
+                          final endTime = DateFormat(
+                            "h:mm a",
+                          ).parse(endTimeStr);
+
+                          final sessionStart = DateTime(
+                            sessionDate.year,
+                            sessionDate.month,
+                            sessionDate.day,
+                            startTime.hour,
+                            startTime.minute,
+                          );
+
+                          final sessionEnd = DateTime(
+                            sessionDate.year,
+                            sessionDate.month,
+                            sessionDate.day,
+                            endTime.hour,
+                            endTime.minute,
+                          );
+
+                          if (now.isAfter(sessionStart) &&
+                              now.isBefore(sessionEnd)) {
+                            showChatButton = true;
+                          }
+                        } catch (e) {
+                          print("DateTime parse error: $e");
+                        }
+
+                        if (chatVisibilityNotifier.value[upComingSessions.id] !=
+                            showChatButton) {
+                          final updatedMap = Map<int, bool>.from(
+                            chatVisibilityNotifier.value,
+                          );
+                          updatedMap[upComingSessions.id ?? 0] = showChatButton;
+                          chatVisibilityNotifier.value = updatedMap;
+                        }
+
                         return Container(
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
@@ -146,45 +209,98 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                    OutlinedButton.icon(
-                                      onPressed: () {
-                                        context.push(
-                                          '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
+                                    // if()...[OutlinedButton.icon(
+                                    //   onPressed: () {
+                                    //     context.push(
+                                    //       '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
+                                    //     );
+                                    //   },
+                                    //   icon: Image.asset(
+                                    //     "assets/icons/ChatCircle.png",
+                                    //     width: 20,
+                                    //     height: 20,
+                                    //   ),
+                                    //   label: SizedBox(
+                                    //     width: SizeConfig.screenWidth * 0.28,
+                                    //     child: Text(
+                                    //       "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                                    //       overflow: TextOverflow.ellipsis,
+                                    //       style: const TextStyle(
+                                    //         fontSize: 14,
+                                    //         fontWeight: FontWeight.w600,
+                                    //         fontFamily: "segeo",
+                                    //         color: Color(0xff666666),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    //   style: OutlinedButton.styleFrom(
+                                    //     side: BorderSide(
+                                    //       color: Color(0xffCCCCCC),
+                                    //       width: 1,
+                                    //     ),
+                                    //     shape: RoundedRectangleBorder(
+                                    //       borderRadius: BorderRadius.circular(
+                                    //         8,
+                                    //       ),
+                                    //     ),
+                                    //     padding: EdgeInsets.symmetric(
+                                    //       vertical: 8,
+                                    //       horizontal: 12,
+                                    //     ),
+                                    //   ),
+                                    // )]
+                                    ValueListenableBuilder<Map<int, bool>>(
+                                      valueListenable: chatVisibilityNotifier,
+                                      builder: (context, visibilityMap, _) {
+                                        final showChat =
+                                            visibilityMap[upComingSessions
+                                                .id] ??
+                                            false;
+
+                                        if (!showChat)
+                                          return const SizedBox.shrink();
+
+                                        return OutlinedButton.icon(
+                                          onPressed: () {
+                                            context.push(
+                                              '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
+                                            );
+                                          },
+                                          icon: Image.asset(
+                                            "assets/icons/ChatCircle.png",
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          label: SizedBox(
+                                            width:
+                                                SizeConfig.screenWidth * 0.28,
+                                            child: Text(
+                                              "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "segeo",
+                                                color: Color(0xff666666),
+                                              ),
+                                            ),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                              color: Color(0xffCCCCCC),
+                                              width: 1,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 8,
+                                              horizontal: 12,
+                                            ),
+                                          ),
                                         );
                                       },
-                                      icon: Image.asset(
-                                        "assets/icons/ChatCircle.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      label: SizedBox(
-                                        width: SizeConfig.screenWidth * 0.28,
-                                        child: Text(
-                                          "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: "segeo",
-                                            color: Color(0xff666666),
-                                          ),
-                                        ),
-                                      ),
-                                      style: OutlinedButton.styleFrom(
-                                        side: BorderSide(
-                                          color: Color(0xffCCCCCC),
-                                          width: 1,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 8,
-                                          horizontal: 12,
-                                        ),
-                                      ),
                                     ),
                                   ],
                                 ),
@@ -229,23 +345,37 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       ),
                                     ),
                                     const SizedBox(height: 12),
-                                    CustomAppButton1(
-                                      height: 45,
-                                      width: SizeConfig.screenWidth * 0.33,
-                                      text: "Join Session",
-                                      onPlusTap: () async {
-                                        final url = upComingSessions.zoomLink;
-                                        if (url != null &&
-                                            await canLaunchUrl(
-                                              Uri.parse(url),
-                                            )) {
-                                          await launchUrl(Uri.parse(url));
-                                        } else {
-                                          CustomSnackBar1.show(
-                                            context,
-                                            "Unable to open Zoom link",
-                                          );
-                                        }
+                                    ValueListenableBuilder<Map<int, bool>>(
+                                      valueListenable: chatVisibilityNotifier,
+                                      builder: (context, visibilityMap, _) {
+                                        final showJoin =
+                                            visibilityMap[upComingSessions.id ??
+                                                0] ??
+                                            false;
+
+                                        if (!showJoin)
+                                          return const SizedBox.shrink();
+
+                                        return CustomAppButton1(
+                                          height: 45,
+                                          width: SizeConfig.screenWidth * 0.33,
+                                          text: "Join Session",
+                                          onPlusTap: () async {
+                                            final url =
+                                                upComingSessions.zoomLink;
+                                            if (url != null &&
+                                                await canLaunchUrl(
+                                                  Uri.parse(url),
+                                                )) {
+                                              await launchUrl(Uri.parse(url));
+                                            } else {
+                                              CustomSnackBar1.show(
+                                                context,
+                                                "Unable to open Zoom link",
+                                              );
+                                            }
+                                          },
+                                        );
                                       },
                                     ),
                                   ],
