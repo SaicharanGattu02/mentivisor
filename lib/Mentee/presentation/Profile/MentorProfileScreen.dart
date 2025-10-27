@@ -6,6 +6,7 @@ import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CommonBackground.dart';
+import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
@@ -26,10 +27,17 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   bool hasTodaySlots = false;
   bool hasTomorrowSlots = false;
   bool hasRemainingSlots = false;
+  String? user_id;
+  int? profile_id;
   @override
   void initState() {
     super.initState();
     context.read<MentorProfileCubit>().fetchMentorProfile(widget.id);
+    getUserID();
+  }
+
+  Future<void> getUserID() async {
+    user_id = await AuthService.getUSerId();
   }
 
   @override
@@ -51,6 +59,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                   hasTodaySlots = t1;
                   hasTomorrowSlots = t2;
                   hasRemainingSlots = t3;
+                  profile_id = state.mentorProfileModel.data?.userId ?? 0;
                 });
               }
             }
@@ -87,26 +96,29 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             child: CachedNetworkImage(
                               imageUrl: mentorData?.user?.profilePicUrl ?? "",
                               fadeInDuration: const Duration(milliseconds: 200),
-                              fadeOutDuration: const Duration(milliseconds: 100),
-                              imageBuilder: (context, imageProvider) => Container(
+                              fadeOutDuration: const Duration(
+                                milliseconds: 100,
+                              ),
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                              placeholder: (context, url) => Container(
                                 width: double.infinity,
                                 height: double.infinity,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              placeholder: (context, url) => Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                decoration:  BoxDecoration(
-                                  shape: BoxShape.circle,
                                   color: Color(0xFFE0E0E0),
                                 ),
-                                child:  Center(
+                                child: Center(
                                   child: SizedBox(
                                     width: 28,
                                     height: 28,
@@ -142,8 +154,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                           ),
                         ),
 
-
-                    SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Container(
                           padding: EdgeInsets.all(16),
                           margin: EdgeInsets.only(bottom: 16),
@@ -347,33 +358,35 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       ),
       bottomNavigationBar:
           (hasTodaySlots || hasTomorrowSlots || hasRemainingSlots)
-          ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
-                  builder: (context, state) {
-                    final mentorData = (state is MentorProfileLoaded)
-                        ? state.mentorProfileModel.data
-                        : null;
-                    return SizedBox(
-                      width: double.infinity,
-                      child: CustomAppButton1(
-                        text: 'Book Session',
-                        onPlusTap: mentorData == null
-                            ? null // disable until loaded
-                            : () {
-                                context.push(
-                                  '/book_sessions_screen',
-                                  extra:
-                                      mentorData, // << pass the exact object you have
-                                );
-                              },
+          ? int.parse(user_id ?? "") == profile_id
+                ? SizedBox.shrink()
+                : SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                      child: BlocBuilder<MentorProfileCubit, MentorProfileState>(
+                        builder: (context, state) {
+                          final mentorData = (state is MentorProfileLoaded)
+                              ? state.mentorProfileModel.data
+                              : null;
+                          return SizedBox(
+                            width: double.infinity,
+                            child: CustomAppButton1(
+                              text: 'Book Session',
+                              onPlusTap: mentorData == null
+                                  ? null // disable until loaded
+                                  : () {
+                                      context.push(
+                                        '/book_sessions_screen',
+                                        extra:
+                                            mentorData, // << pass the exact object you have
+                                      );
+                                    },
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-            )
+                    ),
+                  )
           : SizedBox.shrink(),
     );
   }
@@ -470,10 +483,10 @@ class MentorProfileShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(child: shimmerCircle(120, context)),
-               SizedBox(height: 16),
+              SizedBox(height: 16),
 
               Container(
-                padding:  EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,

@@ -146,10 +146,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     SizedBox(height: 4),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(maxLines: 2,
+                      child: Text(
+                        maxLines: 2,
                         '${menteeProfile.data?.user?.yearName ?? ""} year student in ${menteeProfile.data?.user?.stream ?? ""} from ${menteeProfile.data?.user?.collegeName ?? ""}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
                           color: Color(0xff666666),
                           fontSize: 14,
                           fontFamily: 'segeo',
@@ -448,8 +450,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                   children: [
                                                     SizedBox(height: 4),
                                                     Text(
-                                                      menteePosts?.heading ??
-                                                          "",
+                                                      menteePosts?.heading ?? "",
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -619,7 +620,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                             >(
                                                               builder: (context, state) {
                                                                 return Text(
-                                                                  menteePosts?.commentsCount
+                                                                  menteePosts
+                                                                          ?.commentsCount
                                                                           .toString() ??
                                                                       "0",
                                                                   style: TextStyle(
@@ -763,7 +765,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                             ),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(24),
+                                                  BorderRadius.circular(8),
                                               color: Colors.white,
                                             ),
 
@@ -841,14 +843,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                         Text(
                                                           campusList?.title ??
                                                               "",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
                                                           style: TextStyle(
                                                             fontFamily: 'segeo',
-                                                            fontWeight:
-                                                                FontWeight.w700,
+                                                            fontWeight: FontWeight.w700,
                                                             fontSize: 12,
-                                                            height: 1,
                                                             letterSpacing: 0.5,
                                                           ),
                                                         ),
@@ -859,63 +859,59 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                           campusList
                                                                   ?.description ??
                                                               "",
-                                                          maxLines: 3,
+                                                          maxLines: 2,
                                                           style:
                                                               const TextStyle(
-                                                                fontFamily:
-                                                                    'segeo',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                                fontFamily: 'segeo',
+                                                                fontWeight: FontWeight.w400,
                                                                 fontSize: 11,
-                                                                height: 1,
                                                               ),
                                                         ),
                                                         SizedBox(height: 12),
                                                         if ((campusList
-                                                            ?.tags
-                                                            ?.isNotEmpty ??
+                                                                ?.tags
+                                                                ?.isNotEmpty ??
                                                             false))
                                                           SingleChildScrollView(
                                                             scrollDirection:
-                                                            Axis.horizontal,
+                                                                Axis.horizontal,
                                                             physics:
-                                                            const BouncingScrollPhysics(), // 👈 gives you the smooth bounce
+                                                                const BouncingScrollPhysics(), // 👈 gives you the smooth bounce
                                                             child: Wrap(
                                                               direction: Axis
                                                                   .horizontal,
                                                               spacing: 8,
                                                               runSpacing: 8,
                                                               children: campusList!.tags!.map((
-                                                                  tag,
-                                                                  ) {
+                                                                tag,
+                                                              ) {
                                                                 return Container(
                                                                   padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                    12,
-                                                                    vertical:
-                                                                    6,
-                                                                  ),
+                                                                      const EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            12,
+                                                                        vertical:
+                                                                            6,
+                                                                      ),
                                                                   decoration: BoxDecoration(
                                                                     color: Color(
                                                                       0xffFFF2F4FD,
                                                                     ),
                                                                     borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      20,
-                                                                    ),
+                                                                        BorderRadius.circular(
+                                                                          20,
+                                                                        ),
                                                                   ),
                                                                   child: Text(
                                                                     tag,
                                                                     style: const TextStyle(
                                                                       fontFamily:
-                                                                      'segeo',
+                                                                          'segeo',
                                                                       fontSize:
-                                                                      12,
+                                                                          12,
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
+                                                                          FontWeight
+                                                                              .w600,
                                                                     ),
                                                                   ),
                                                                 );

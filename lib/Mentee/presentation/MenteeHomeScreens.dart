@@ -39,9 +39,9 @@ class MenteeHomeScreen extends StatefulWidget {
 
 class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
+  ValueNotifier<String> _role = ValueNotifier<String>("");
   ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
   ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
-  String? role;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final ValueNotifier<bool> _isLoadingNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _onCampusNotifier = ValueNotifier<bool>(true);
@@ -54,7 +54,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   void initState() {
     super.initState();
     _loadAll();
-    getData();
   }
 
   Future<void> _loadAll() async {
@@ -68,7 +67,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         context.read<MenteeProfileCubit>().fetchMenteeProfile(),
         context.read<DailyCheckInsCubit>().getDailyCheckIns(),
         context.read<HomeDialogCubit>().getHomeDialog(),
-
         if (!guest)
           context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
         if (guest) context.read<GuestMentorsCubit>().fetchGuestMentorList(),
@@ -121,10 +119,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   //   }
   // }
 
-  Future<void> getData() async {
-    role = await AuthService.getRole();
-  }
-
   void _navigateToScreen(String name) {
     switch (name) {
       case 'Wallet':
@@ -141,6 +135,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         break;
       case 'Upcoming Sessions':
         context.push("/upcoming_session");
+        break;
+      case 'Milestones':
+        context.push("/milestones");
         break;
       case 'Customer Services':
         context.push('/customersscreen');
@@ -377,10 +374,28 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   onPressed: () =>
                                       _scaffoldKey.currentState?.openDrawer(),
                                 ),
-                                BlocBuilder<
+                                BlocConsumer<
                                   MenteeProfileCubit,
                                   MenteeProfileState
                                 >(
+                                  listener: (context, menteeProfilestate) {
+                                    // if (menteeProfilestate
+                                    //     is MenteeProfileLoaded) {
+                                    //   AppLogger.info(
+                                    //     "_role.value:${_role.value}",
+                                    //   );
+                                    //   final menteeProfile = menteeProfilestate
+                                    //       .menteeProfileModel
+                                    //       .data;
+                                    //   setState(() {
+                                    //     _role.value =
+                                    //         menteeProfile?.user?.role ?? "";
+                                    //   });
+                                    //   AppLogger.info(
+                                    //     "_role.value:${_role.value}",
+                                    //   );
+                                    // }
+                                  },
                                   builder: (context, menteeProfilestate) {
                                     if (menteeProfilestate
                                         is MenteeProfileLoaded) {
@@ -393,6 +408,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       _mentorProfileUrl.value =
                                           menteeProfile?.user?.profilePicUrl ??
                                           "";
+                                      _role.value =
+                                          menteeProfile?.user?.role ?? "";
+                                      AppLogger.info(
+                                        "_role.value:${_role.value}",
+                                      );
                                       _mentorProfileName.value =
                                           menteeProfile?.user?.name ?? "";
                                       final coins =
@@ -726,6 +746,15 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         _navigateToScreen('Upcoming Sessions');
                                       },
                                     ),
+                                    _buildDrawerItem(
+                                      assetpath:
+                                          "assets/icons/milestone.png",
+                                      label: 'Milestones',
+                                      onTap: () {
+                                        context.pop();
+                                        _navigateToScreen('Milestones');
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
@@ -792,34 +821,44 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   return const SizedBox.shrink();
                                 },
                               ),
-                              if (role == "Both") ...[
-                                Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  padding: EdgeInsets.symmetric(
-                                    // vertical: 12,
-                                    horizontal: 14,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xffFFF7CE),
-                                  ),
-                                  child: _DrawerItem(
-                                    icon: Image.asset(
-                                      "assets/icons/ArrowCircleleft.png",
-                                      fit: BoxFit.cover,
-                                      width: SizeConfig.screenWidth * 0.082,
-                                      height: SizeConfig.screenHeight * 0.065,
-                                    ),
-                                    title: 'Switch to Mentor',
-                                    onTap: () {
-                                      context.pop();
-                                      context.pushReplacement(
-                                        '/mentor_dashboard',
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-
+                              ValueListenableBuilder(
+                                valueListenable: _role,
+                                builder: (context, value, child) {
+                                  return value == "Both"
+                                      ? Container(
+                                          margin: EdgeInsets.symmetric(
+                                            vertical: 10,
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                            // vertical: 12,
+                                            horizontal: 14,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffFFF7CE),
+                                          ),
+                                          child: _DrawerItem(
+                                            icon: Image.asset(
+                                              "assets/icons/ArrowCircleleft.png",
+                                              fit: BoxFit.cover,
+                                              width:
+                                                  SizeConfig.screenWidth *
+                                                  0.082,
+                                              height:
+                                                  SizeConfig.screenHeight *
+                                                  0.065,
+                                            ),
+                                            title: 'Switch to Mentor',
+                                            onTap: () {
+                                              context.pop();
+                                              context.pushReplacement(
+                                                '/mentor_dashboard',
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : SizedBox.shrink();
+                                },
+                              ),
                               SizedBox(height: 20),
                               Container(
                                 padding: const EdgeInsets.symmetric(

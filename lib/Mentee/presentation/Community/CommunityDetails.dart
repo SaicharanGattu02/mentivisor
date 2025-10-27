@@ -679,48 +679,44 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: AspectRatio(
-                      aspectRatio: 16 / 9, // ✅ consistent image shape
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            communityDetails?.imgUrl?.trim().isNotEmpty == true
-                            ? communityDetails!.imgUrl!
-                            : '', // handle null/empty URL safely
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey.shade100,
-                          child: Center(
-                            child: SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: spinkits.getSpinningLinespinkit(),
-                            ),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          communityDetails?.imgUrl?.trim().isNotEmpty == true
+                          ? communityDetails!.imgUrl!
+                          : '', // handle null/empty URL safely
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey.shade100,
+                        child: Center(
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: spinkits.getSpinningLinespinkit(),
                           ),
                         ),
+                      ),
 
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey.shade200,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.broken_image,
-                                size: 42,
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey.shade200,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.broken_image,
+                              size: 42,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Image not available",
+                              style: TextStyle(
                                 color: Colors.grey,
+                                fontSize: 12,
+                                fontFamily: 'segeo',
                               ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Image not available",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                  fontFamily: 'segeo',
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -741,7 +737,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                   //   ),
                   // ),
                   const SizedBox(height: 12),
-                  if (communityDetails?.anonymous == 0)
+                  if (communityDetails?.anonymous == 0) ...[
                     Row(
                       children: [
                         CircleAvatar(
@@ -773,8 +769,28 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                         ),
                       ],
                     ),
-
-                  const SizedBox(height: 8),
+                  ] else ...[
+                    Text(
+                      "Anonymous Post",
+                      style: const TextStyle(
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                        color: Color(0xFF222222),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  Text(
+                    "Posted At ${formatSmartDateTime(communityDetails?.createdAt ?? "")}",
+                    style: const TextStyle(
+                      fontFamily: 'segeo',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: Color(0xFF222222),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
                   Text(
                     communityDetails?.heading ?? "",
                     style: const TextStyle(
@@ -784,7 +800,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                       color: Color(0xFF222222),
                     ),
                   ),
-
                   const SizedBox(height: 6),
                   Text(
                     communityDetails?.description ?? "",

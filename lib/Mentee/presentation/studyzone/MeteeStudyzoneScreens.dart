@@ -707,7 +707,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                         ?.name ??
                                                                     "",
                                                               ),
-
+                                                              maxLines: 1,
                                                               style: const TextStyle(
                                                                 fontFamily:
                                                                     'segeo',
@@ -715,19 +715,16 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                     FontWeight
                                                                         .w700,
                                                                 fontSize: 12,
-                                                                height: 1,
                                                                 letterSpacing:
                                                                     0.5,
                                                               ),
                                                             ),
-                                                            const SizedBox(
-                                                              height: 8,
-                                                            ),
+                                                            SizedBox(height: 4),
                                                             Text(
                                                               campusList
                                                                       ?.description ??
                                                                   "",
-                                                              maxLines: 3,
+                                                              maxLines: 2,
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
@@ -738,12 +735,9 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                                     FontWeight
                                                                         .w400,
                                                                 fontSize: 11,
-                                                                height: 1,
                                                               ),
                                                             ),
-                                                            const SizedBox(
-                                                              height: 12,
-                                                            ),
+                                                            SizedBox(height: 4),
                                                             if ((campusList
                                                                     ?.tag
                                                                     ?.isNotEmpty ??
@@ -793,7 +787,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                                               ),
 
                                                             const SizedBox(
-                                                              height: 16,
+                                                              height: 10,
                                                             ),
                                                             Row(
                                                               spacing: 4,
@@ -1052,74 +1046,74 @@ class StudyZoneShimmer extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-      Expanded(
-        child: MasonryGridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: crossAxisCount, // 👈 same logic: 1 mobile, 2 tablet
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 12,
-        itemCount: itemCount,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// 📸 Image shimmer
-                shimmerRectangle(100, context),
-                const SizedBox(width: 10),
+            Expanded(
+              child: MasonryGridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount:
+                    crossAxisCount, // 👈 same logic: 1 mobile, 2 tablet
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 12,
+                itemCount: itemCount,
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// 📸 Image shimmer
+                        shimmerRectangle(100, context),
+                        const SizedBox(width: 10),
 
-                /// 📄 Text content shimmer
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      shimmerText(100, 12, context),
-                      const SizedBox(height: 8),
-                      shimmerText(140, 10, context),
-                      const SizedBox(height: 8),
-                      shimmerText(120, 10, context),
-                      const SizedBox(height: 10),
+                        /// 📄 Text content shimmer
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              shimmerText(100, 12, context),
+                              const SizedBox(height: 8),
+                              shimmerText(140, 10, context),
+                              const SizedBox(height: 8),
+                              shimmerText(120, 10, context),
+                              const SizedBox(height: 10),
 
-                      /// 🔘 Buttons shimmer row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: shimmerContainer(
-                              double.infinity,
-                              32,
-                              context,
-                              isButton: true,
-                            ),
+                              /// 🔘 Buttons shimmer row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: shimmerContainer(
+                                      double.infinity,
+                                      32,
+                                      context,
+                                      isButton: true,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: shimmerContainer(
+                                      double.infinity,
+                                      32,
+                                      context,
+                                      isButton: true,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: shimmerContainer(
-                              double.infinity,
-                              32,
-                              context,
-                              isButton: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          );
-        },
-      ),
-    )
-
-    ],
+          ],
         ),
       ),
     );

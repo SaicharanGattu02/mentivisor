@@ -9,7 +9,9 @@ import 'package:mentivisor/Mentee/presentation/Community/CommunityDetails.dart';
 import 'package:mentivisor/GroupChatScreen.dart';
 import 'package:mentivisor/Mentee/data/cubits/Chat/GroupRoomCubit.dart';
 import 'package:mentivisor/Mentee/presentation/DownloadsScreen.dart';
+import 'package:mentivisor/Mentee/presentation/LeaderboardScreen.dart';
 import 'package:mentivisor/Mentee/presentation/MenteeHomeScreens.dart';
+import 'package:mentivisor/Mentee/presentation/MilestonesScreen.dart';
 import 'package:mentivisor/Mentee/presentation/PdfViewerPage.dart';
 import 'package:mentivisor/Mentee/presentation/Widgets/CustomerServiceScreen.dart';
 import 'package:mentivisor/Mentee/presentation/authentication/AuthLandingScreen.dart';
@@ -645,7 +647,9 @@ final GoRouter appRouter = GoRouter(
         );
         final selectedFilter = state.uri.queryParameters['filter'];
         return buildSlideTransitionPage(
-          MentorDashboard(selectedIndex: selectedIndex,selectedFilter: selectedFilter, // ✅ Pass it down
+          MentorDashboard(
+            selectedIndex: selectedIndex,
+            selectedFilter: selectedFilter, // ✅ Pass it down
           ),
           state,
         );
@@ -819,6 +823,20 @@ final GoRouter appRouter = GoRouter(
           PdfViewerPage(file_url: file_url),
           state,
         );
+      },
+    ),
+
+    GoRoute(
+      path: '/milestones',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(MilestonesScreen(), state);
+      },
+    ),
+
+    GoRoute(
+      path: '/leaderboard',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(LeaderboardScreen(), state);
       },
     ),
   ],

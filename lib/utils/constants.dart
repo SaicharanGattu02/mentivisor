@@ -224,4 +224,48 @@ String _parseAndFormatTime(String raw) {
   } catch (_) {
     return raw; // fallback to raw string
   }
+
+}
+
+String formatSmartDateTime(String isoString) {
+  if (isoString.isEmpty) return "";
+
+  DateTime dateTime = DateTime.parse(isoString).toLocal();
+  DateTime now = DateTime.now();
+  Duration diff = now.difference(dateTime);
+
+  // 🕒 Case 1: Less than a minute
+  if (diff.inSeconds < 60) {
+    return "Just now";
+  }
+
+  // 🕒 Case 2: Less than an hour
+  if (diff.inMinutes < 60) {
+    return "${diff.inMinutes} minute${diff.inMinutes == 1 ? '' : 's'} ago";
+  }
+
+  // 🕒 Case 3: Less than a day (same day)
+  if (diff.inHours < 24 && dateTime.day == now.day) {
+    return "Today, ${DateFormat('h:mm a').format(dateTime)}";
+  }
+
+  // 🕒 Case 4: Yesterday
+  if (diff.inHours < 48 && dateTime.day == now.subtract(Duration(days: 1)).day) {
+    return "Yesterday, ${DateFormat('h:mm a').format(dateTime)}";
+  }
+
+  // 🕒 Case 5: Older dates → show “10th Oct 2025, 5:19 PM”
+  String day = DateFormat('d').format(dateTime);
+  String suffix;
+  if (day.endsWith('1') && day != '11') {
+    suffix = 'st';
+  } else if (day.endsWith('2') && day != '12') {
+    suffix = 'nd';
+  } else if (day.endsWith('3') && day != '13') {
+    suffix = 'rd';
+  } else {
+    suffix = 'th';
+  }
+
+  return DateFormat("d'$suffix' MMM yyyy, h:mm a").format(dateTime);
 }

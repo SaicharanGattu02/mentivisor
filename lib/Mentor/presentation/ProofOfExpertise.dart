@@ -25,6 +25,7 @@ class ProofOfExpertise extends StatefulWidget {
 class _ProofOfExpertiseState extends State<ProofOfExpertise> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _linkController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
   final ValueNotifier<File?> selectedResumeFile = ValueNotifier<File?>(null);
 
@@ -52,6 +53,7 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
 
   Future<void> _submit() async {
     final link = _linkController.text.trim();
+    final description = _descriptionController.text.trim();
 
     if (link.isEmpty && selectedResumeFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,6 +80,10 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
     final proof = <String, dynamic>{};
     if (link.isNotEmpty) {
       proof['proof_link'] = link;
+    }
+
+    if (description.isNotEmpty) {
+      proof['description'] = description;
     }
 
     if (selectedResumeFile.value != null) {
@@ -124,8 +130,6 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                const SizedBox(height: 16),
-
                 // Headline + subtext
                 const Text(
                   'Please provide the proof for your skills',
@@ -169,7 +173,6 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
                   ],
                 ),
                 const SizedBox(height: 8),
-
                 TextFormField(
                   controller: _linkController,
                   keyboardType: TextInputType.url,
@@ -178,6 +181,30 @@ class _ProofOfExpertiseState extends State<ProofOfExpertise> {
                   decoration: InputDecoration(
                     hint: Text(
                       "https://",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Description',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "segeo",
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF374151).withOpacity(0.9),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                TextFormField(
+                  controller: _descriptionController,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  maxLines: 4,
+                  cursorColor: const Color(0xFF121212),
+                  decoration: InputDecoration(
+                    hint: Text(
+                      "Enter Description",
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),

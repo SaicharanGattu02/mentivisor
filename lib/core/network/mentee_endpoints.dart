@@ -92,4 +92,6 @@ class APIEndpointUrls {
   static const String get_messages = "${userUrl}get-messages";
   static const String get_group_messages = "${userUrl}get-group-messages";
   static const String upload_file = "${apiUrl}upload-file";
+  static const String leader_board = "${userUrl}leader-board";
+  static const String mile_stone = "${userUrl}mile-stone";
 }

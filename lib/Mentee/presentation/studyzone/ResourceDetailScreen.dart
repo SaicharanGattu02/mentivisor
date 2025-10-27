@@ -13,6 +13,7 @@ import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../Components/Shimmers.dart';
+import '../../../services/AuthService.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../data/cubits/AddResource/add_resource_cubit.dart';
@@ -221,10 +222,21 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                                         ),
                                       )
                                     : GestureDetector(
-                                        onTap: () {
-                                          context.push(
-                                            "/common_profile/${resourceData?.uploader?.id}",
-                                          );
+                                        onTap: () async {
+                                          final userIdStr =
+                                              await AuthService.getUSerId(); // String? like "107"
+                                          final userId = int.tryParse(
+                                            userIdStr ?? '',
+                                          ); // Parse to int, default 0 if null/invalid
+                                          final uploaderId =
+                                              resourceData?.uploader?.id;
+                                          if (userId == uploaderId) {
+                                            context.push("/profile");
+                                          } else {
+                                            context.push(
+                                              "/common_profile/${resourceData?.uploader?.id}",
+                                            );
+                                          }
                                         },
                                         child: CircleAvatar(
                                           radius:

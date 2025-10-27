@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/Shimmers.dart';
 import 'package:mentivisor/Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
@@ -73,6 +74,8 @@ class _PostCardState extends State<PostCard>
       context.read<PostCommentCubit>().postLike(data, post);
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -161,17 +164,17 @@ class _PostCardState extends State<PostCard>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding:   EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.communityPosts.anonymous == 0)
+                    if (widget.communityPosts.anonymous == 0)...[
                       Row(
                         children: [
                           GestureDetector(
                             onTap: () async {
                               final userIdStr =
-                                  await AuthService.getUSerId(); // String? like "107"
+                              await AuthService.getUSerId(); // String? like "107"
                               final userId = int.tryParse(
                                 userIdStr ?? '',
                               ); // Parse to int, default 0 if null/invalid
@@ -197,61 +200,59 @@ class _PostCardState extends State<PostCard>
                             },
                             child: widget.communityPosts.imgUrl?.isEmpty == true
                                 ? CircleAvatar(
-                                    radius: 16,
-                                    backgroundColor: Colors.grey.shade400,
-                                    child: Text(
-                                      widget.communityPosts.uploader?.name![0]
-                                              .toUpperCase() ??
-                                          "",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
+                              radius: 16,
+                              backgroundColor: Colors.grey.shade400,
+                              child: Text(
+                                widget.communityPosts.uploader?.name![0]
+                                    .toUpperCase() ??
+                                    "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
                                 : CachedNetworkImage(
-                                    imageUrl:
-                                        widget.communityPosts.anonymous == 1
-                                        ? "assets/images/profile.png"
-                                        : widget
-                                                  .communityPosts
-                                                  .uploader
-                                                  ?.profilePicUrl ??
-                                              "",
-                                    imageBuilder: (context, imageProvider) =>
-                                        CircleAvatar(
-                                          radius: 16,
-                                          backgroundImage: imageProvider,
-                                        ),
-                                    placeholder: (context, url) => CircleAvatar(
-                                      radius: 16,
-                                      backgroundColor: Colors.grey,
-                                      child: SizedBox(
-                                        width: 14,
-                                        height: 14,
-                                        child: Center(
-                                          child: spinkits
-                                              .getSpinningLinespinkit(),
-                                        ),
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const CircleAvatar(
-                                          radius: 16,
-                                          backgroundImage: AssetImage(
-                                            "assets/images/profile.png",
-                                          ),
-                                        ),
+                              imageUrl:
+                              widget.communityPosts.anonymous == 1
+                                  ? "assets/images/profile.png"
+                                  : widget
+                                  .communityPosts
+                                  .uploader
+                                  ?.profilePicUrl ??
+                                  "",
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: imageProvider,
                                   ),
+                              placeholder: (context, url) => CircleAvatar(
+                                radius: 16,
+                                backgroundColor: Colors.grey,
+                                child: SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: Center(
+                                    child: spinkits
+                                        .getSpinningLinespinkit(),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                              const CircleAvatar(
+                                radius: 16,
+                                backgroundImage: AssetImage(
+                                  "assets/images/profile.png",
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            widget.communityPosts.anonymous == 1
-                                ? "Anonymous"
-                                : capitalize(
-                                    widget.communityPosts.uploader?.name ?? "",
-                                  ),
+                            capitalize(
+                              widget.communityPosts.uploader?.name ?? "",
+                            ),
                             style: const TextStyle(
                               fontFamily: 'segeo',
                               fontWeight: FontWeight.w400,
@@ -261,8 +262,27 @@ class _PostCardState extends State<PostCard>
                           ),
                         ],
                       ),
-
+                    ]else...[
+                      Text(
+                        "Anonymous Post",
+                        style: const TextStyle(
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: Color(0xFF222222),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 4),
+                    Text(
+                      "Posted At ${formatSmartDateTime(widget.communityPosts.createdAt??"")}",
+                      style: const TextStyle(
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Color(0xFF222222),
+                      ),
+                    ),
                     Text(
                       widget.communityPosts.heading ?? "",
                       style: const TextStyle(
@@ -272,7 +292,6 @@ class _PostCardState extends State<PostCard>
                         color: Color(0xFF222222),
                       ),
                     ),
-
                     const SizedBox(height: 4),
                     Text(
                       widget.communityPosts.description ?? "",

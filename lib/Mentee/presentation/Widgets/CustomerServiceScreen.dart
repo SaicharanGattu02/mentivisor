@@ -13,7 +13,7 @@ class CustomerServiceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<MenteeCustomersupportCubit>().exclusiveServiceDetails(
+    context.read<MenteeCustomersupportCubit>().CustomersupportDetails(
       1,
     ); // Example ID
 

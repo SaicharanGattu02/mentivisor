@@ -8,6 +8,7 @@ import 'package:mentivisor/Mentee/Models/ExclusiveservicedetailsModel.dart';
 import 'package:mentivisor/Mentee/Models/GetBannersRespModel.dart';
 import 'package:mentivisor/Mentee/Models/LoginResponseModel.dart';
 import 'package:mentivisor/Mentee/Models/MenteeCustmor_supportModel.dart';
+import 'package:mentivisor/Mentee/Models/MilestonesModel.dart';
 import 'package:mentivisor/Mentee/Models/WalletModel.dart';
 import 'package:mentivisor/Mentee/Models/YearsModel.dart';
 import 'package:mentivisor/core/network/api_config.dart';
@@ -31,6 +32,7 @@ import '../Models/GetHomeDilogModel.dart';
 import '../Models/GroupChatMessagesModel.dart';
 import '../Models/GuestMentorsModel.dart';
 import '../Models/HighlatedCoinsModel.dart';
+import '../Models/LeaderBoardModel.dart';
 import '../Models/MenteeProfileModel.dart';
 import '../Models/NotificationModel.dart';
 import '../Models/ProductToolTaskByDateModel.dart';
@@ -159,6 +161,8 @@ abstract class RemoteDataSource {
   Future<CoinsAchievementModel?> getcoinsAchievements(int page);
   Future<checkInModel?> dailyCheckins();
   Future<GetHomeDilogModel?> homeDiolog();
+  Future<LeaderBoardModel?> getLeaderBoard();
+  Future<MilestonesModel?> getMilestones();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -198,6 +202,30 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<MilestonesModel?> getMilestones() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.mile_stone}");
+      AppLogger.log('getMilestones: ${res.data}');
+      return MilestonesModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getMilestones:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<LeaderBoardModel?> getLeaderBoard() async {
+    try {
+      Response res = await ApiClient.get("${APIEndpointUrls.leader_board}");
+      AppLogger.log('getLeaderBoard: ${res.data}');
+      return LeaderBoardModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getLeaderBoard:${e}');
+      return null;
+    }
   }
 
   @override

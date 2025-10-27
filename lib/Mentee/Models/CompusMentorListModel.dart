@@ -34,20 +34,21 @@ class Data {
   int? to;
   int? total;
 
-  Data(
-      {this.currentPage,
-        this.mentors_list,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  Data({
+    this.currentPage,
+    this.mentors_list,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
@@ -114,35 +115,36 @@ class MentorsList {
   String? deletedAt;
   int? activeStatus;
   String? resumeUrl;
-  List<Null>? todaySlots;
-  List<Null>? tomorrowSlots;
+  List<Slot>? todaySlots;
+  List<Slot>? tomorrowSlots;
+  List<Expertise>? expertises;
   dynamic averageRating;
   dynamic totalReviews;
   User? user;
-  List<Null>? expertises;
 
-  MentorsList(
-      {this.id,
-        this.userId,
-        this.reasonForBecomeMentor,
-        this.achivements,
-        this.portfolio,
-        this.linkedIn,
-        this.gitHub,
-        this.resume,
-        this.langages,
-        this.coinsPerMinute,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus,
-        this.resumeUrl,
-        this.todaySlots,
-        this.tomorrowSlots,
-        this.averageRating,
-        this.totalReviews,
-        this.user,
-        this.expertises});
+  MentorsList({
+    this.id,
+    this.userId,
+    this.reasonForBecomeMentor,
+    this.achivements,
+    this.portfolio,
+    this.linkedIn,
+    this.gitHub,
+    this.resume,
+    this.langages,
+    this.coinsPerMinute,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+    this.resumeUrl,
+    this.todaySlots,
+    this.tomorrowSlots,
+    this.averageRating,
+    this.totalReviews,
+    this.user,
+    this.expertises,
+  });
 
   MentorsList.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -153,7 +155,6 @@ class MentorsList {
     linkedIn = json['linked_in'];
     gitHub = json['git_hub'];
     resume = json['resume'];
-    langages = json['langages'].cast<String>();
     coinsPerMinute = json['coins_per_minute'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
@@ -163,6 +164,32 @@ class MentorsList {
     averageRating = json['average_rating'];
     totalReviews = json['total_reviews'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    if (json['today_slots'] != null) {
+      todaySlots = <Slot>[];
+      json['today_slots'].forEach((v) {
+        todaySlots!.add(Slot.fromJson(v));
+      });
+    }
+
+    if (json['tomorrow_slots'] != null) {
+      tomorrowSlots = <Slot>[];
+      json['tomorrow_slots'].forEach((v) {
+        tomorrowSlots!.add(Slot.fromJson(v));
+      });
+    }
+
+    if (json['expertises'] != null) {
+      expertises = <Expertise>[];
+      json['expertises'].forEach((v) {
+        expertises!.add(Expertise.fromJson(v));
+      });
+    }
+    if (json['langages'] != null && json['langages'] is List) {
+      langages = List<String>.from(json['langages']);
+    } else {
+      langages = [];
+    }
+
   }
 
   Map<String, dynamic> toJson() {
@@ -187,9 +214,71 @@ class MentorsList {
     if (this.user != null) {
       data['user'] = this.user!.toJson();
     }
+    if (this.todaySlots != null) {
+      data['today_slots'] = this.todaySlots!.map((v) => v.toJson()).toList();
+    }
+    if (this.tomorrowSlots != null) {
+      data['tomorrow_slots'] = this.tomorrowSlots!.map((v) => v.toJson()).toList();
+    }
+    if (this.expertises != null) {
+      data['expertises'] = this.expertises!.map((v) => v.toJson()).toList();
+    }
+
     return data;
   }
 }
+
+class Slot {
+  int? id;
+  String? date;
+  String? status;
+  String? startTime;
+  String? endTime;
+
+  Slot({this.id, this.date, this.status, this.startTime, this.endTime});
+
+  Slot.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    date = json['date'];
+    status = json['status'];
+    startTime = json['start_time'];
+    endTime = json['end_time'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = this.id;
+    data['date'] = this.date;
+    data['status'] = this.status;
+    data['start_time'] = this.startTime;
+    data['end_time'] = this.endTime;
+    return data;
+  }
+}
+
+
+class Expertise {
+  int? id;
+  String? name;
+  int? baseValue;
+
+  Expertise({this.id, this.name, this.baseValue});
+
+  Expertise.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    baseValue = json['base_value'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['base_value'] = this.baseValue;
+    return data;
+  }
+}
+
 
 class User {
   int? id;
@@ -224,41 +313,43 @@ class User {
   String? mentorStatus;
   String? profilePicUrl;
   College? college;
+  int? topMentorRank;
 
-  User(
-      {this.id,
-        this.name,
-        this.email,
-        this.contact,
-        this.emailVerifiedAt,
-        this.refreshToken,
-        this.webFcmToken,
-        this.deviceFcmToken,
-        this.role,
-        this.designation,
-        this.exp,
-        this.bio,
-        this.collegeId,
-        this.year,
-        this.stream,
-        this.gender,
-        this.status,
-        this.profilePic,
-        this.state,
-        this.city,
-        this.country,
-        this.saasId,
-        this.emailOtp,
-        this.expiredTime,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus,
-        this.lastLoginAt,
-        this.mentorStatus,
-        this.profilePicUrl,
-        this.college
-      });
+  User({
+    this.id,
+    this.name,
+    this.email,
+    this.contact,
+    this.emailVerifiedAt,
+    this.refreshToken,
+    this.webFcmToken,
+    this.deviceFcmToken,
+    this.role,
+    this.designation,
+    this.exp,
+    this.bio,
+    this.collegeId,
+    this.year,
+    this.stream,
+    this.gender,
+    this.status,
+    this.profilePic,
+    this.state,
+    this.city,
+    this.country,
+    this.saasId,
+    this.emailOtp,
+    this.expiredTime,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+    this.lastLoginAt,
+    this.mentorStatus,
+    this.profilePicUrl,
+    this.college,
+    this.topMentorRank,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -292,9 +383,10 @@ class User {
     lastLoginAt = json['last_login_at'];
     mentorStatus = json['mentor_status'];
     profilePicUrl = json['profile_pic_url'];
-    college =
-    json['college'] != null ? new College.fromJson(json['college']) : null;
-
+    topMentorRank = json['top_mentor_rank'];
+    college = json['college'] != null
+        ? new College.fromJson(json['college'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -330,6 +422,7 @@ class User {
     data['last_login_at'] = this.lastLoginAt;
     data['mentor_status'] = this.mentorStatus;
     data['profile_pic_url'] = this.profilePicUrl;
+    data['top_mentor_rank'] = this.topMentorRank;
     if (this.college != null) {
       data['college'] = this.college!.toJson();
     }
@@ -346,20 +439,21 @@ class College {
   String? pincode;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  String? deletedAt;
   int? activeStatus;
 
-  College(
-      {this.id,
-        this.name,
-        this.state,
-        this.city,
-        this.dist,
-        this.pincode,
-        this.createdAt,
-        this.updatedAt,
-        this.deletedAt,
-        this.activeStatus});
+  College({
+    this.id,
+    this.name,
+    this.state,
+    this.city,
+    this.dist,
+    this.pincode,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.activeStatus,
+  });
 
   College.fromJson(Map<String, dynamic> json) {
     id = json['id'];

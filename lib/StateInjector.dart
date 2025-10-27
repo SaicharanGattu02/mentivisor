@@ -33,8 +33,12 @@ import 'package:mentivisor/Mentee/data/cubits/GuestMentors/guest_mentors_reposit
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/HighlightedCoins/highlighted_coins_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/HomeDialog/home_dialog_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/LeaderBoard/leaderboard_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/LeaderBoard/leaderboard_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Milestones/milestones_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Milestones/milestones_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/Payment/payment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
@@ -352,6 +356,17 @@ class StateInjector {
           DailyCheckInsImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
 
+    RepositoryProvider<MilestonesRepo>(
+      create: (context) => MilestonesRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+    RepositoryProvider<LeaderBoardRepo>(
+      create: (context) => LeaderBoardRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
+
     ///Mentor Repositories
     RepositoryProvider<SessionSRepo>(
       create: (context) => SessionSRepoImpl(
@@ -651,6 +666,14 @@ class StateInjector {
     BlocProvider<CommonProfileCubit>(
       create: (context) =>
           CommonProfileCubit(context.read<CommonProfileRepository>()),
+    ),
+
+    BlocProvider<MilestonesCubit>(
+      create: (context) => MilestonesCubit(context.read<MilestonesRepo>()),
+    ),
+
+    BlocProvider<LeaderboardCubit>(
+      create: (context) => LeaderboardCubit(context.read<LeaderBoardRepo>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

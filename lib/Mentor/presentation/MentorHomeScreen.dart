@@ -96,46 +96,61 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                     const SizedBox(height: 20),
                     Column(
                       children: [
-                        CarouselSlider.builder(
-                          itemCount: banners_data?.data?.length ?? 0,
-                          itemBuilder: (ctx, i, _) {
-                            final b = banners_data?.data?[i];
-                            return GestureDetector(
-                              onTap: () {
-                                if (b?.link != null) _launchUrl(b?.link ?? "");
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 2.5,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Image.network(
-                                    b?.imgUrl ?? '',
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    errorBuilder: (_, __, ___) => Container(
-                                      color: Colors.grey[200],
-                                      alignment: Alignment.center,
-                                      child: const Icon(
-                                        Icons.broken_image,
-                                        color: Colors.grey,
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final size = MediaQuery.of(context).size;
+                            final aspectRatio = size.width / size.height;
+
+                            // ✅ Simple tablet detection (you can tweak this logic as needed)
+                            final isTablet = size.shortestSide >= 600;
+
+                            final carouselHeight = isTablet
+                                ? size.height * 0.3
+                                : size.height * 0.25;
+                            return CarouselSlider.builder(
+                              itemCount: banners_data?.data?.length ?? 0,
+                              itemBuilder: (ctx, i, _) {
+                                final b = banners_data?.data?[i];
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (b?.link != null)
+                                      _launchUrl(b?.link ?? "");
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.5,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Image.network(
+                                        b?.imgUrl ?? '',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        errorBuilder: (_, __, ___) => Container(
+                                          color: Colors.grey[200],
+                                          alignment: Alignment.center,
+                                          child: const Icon(
+                                            Icons.broken_image,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                );
+                              },
+                              options: CarouselOptions(
+                                height:
+                                    carouselHeight, // 👈 height based on device type
+                                autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 4),
+                                viewportFraction: 1.0,
+                                onPageChanged: (index, reason) {
+                                  _currentIndex.value = index;
+                                },
                               ),
                             );
                           },
-                          options: CarouselOptions(
-                            height: 180,
-                            autoPlay: true,
-                            autoPlayInterval: const Duration(seconds: 4),
-                            viewportFraction: 1.0,
-                            onPageChanged: (index, reason) {
-                              _currentIndex.value = index;
-                            },
-                          ),
                         ),
                         const SizedBox(height: 8),
                         ValueListenableBuilder<int>(
