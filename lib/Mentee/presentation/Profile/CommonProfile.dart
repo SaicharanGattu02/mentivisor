@@ -448,7 +448,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    SizedBox(height: 4),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      "Posted At ${formatSmartDateTime( menteePosts?.createdAt??"")}",
+                                                      style: const TextStyle(
+                                                        fontFamily: 'segeo',
+                                                        fontWeight: FontWeight.w500,
+                                                        fontSize: 12,
+                                                        color: Color(0xFF222222),
+                                                      ),
+                                                    ),
                                                     Text(
                                                       menteePosts?.heading ?? "",
                                                       maxLines: 2,

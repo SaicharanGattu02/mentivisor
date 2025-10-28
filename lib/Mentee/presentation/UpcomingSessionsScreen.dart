@@ -35,7 +35,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic( Duration(minutes: 1), (timer) {
+    Timer.periodic(Duration(minutes: 1), (timer) {
       final updatedMap = {...chatVisibilityNotifier.value};
       chatVisibilityNotifier.value = updatedMap;
     });
@@ -233,12 +233,12 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       ValueListenableBuilder<Map<int, bool>>(
                                         valueListenable: chatVisibilityNotifier,
                                         builder: (context, visibilityMap, _) {
-                                          final showChat =
-                                              visibilityMap[upComingSessions
-                                                  .id] ??
-                                              false;
-                                          if (!showChat)
-                                            return const SizedBox.shrink();
+                                          // final showChat =
+                                          //     visibilityMap[upComingSessions
+                                          //         .id] ??
+                                          //     false;
+                                          // if (!showChat)
+                                          //   return const SizedBox.shrink();
 
                                           return OutlinedButton.icon(
                                             onPressed: () {
@@ -293,12 +293,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       CachedNetworkImage(
-                                        imageUrl:
-                                            upComingSessions
-                                                .mentor
-                                                ?.mentorProfile ??
-                                            "",
-
+                                        imageUrl: upComingSessions.mentor?.mentorProfile ?? "",
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 CircleAvatar(

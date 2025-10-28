@@ -472,6 +472,16 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                 children: [
                                                   SizedBox(height: 4),
                                                   Text(
+                                                    "Posted At ${formatSmartDateTime(menteePosts?.createdAt ?? "")}",
+                                                    style: const TextStyle(
+                                                      fontFamily: 'segeo',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 12,
+                                                      color: Color(0xFF222222),
+                                                    ),
+                                                  ),
+                                                  Text(
                                                     menteePosts?.heading ?? "",
                                                     maxLines: 2,
                                                     overflow:
@@ -834,7 +844,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           height: 8,
                                                         ),
                                                         Text(
-                                                          campusList?.description ?? "",
+                                                          campusList
+                                                                  ?.description ??
+                                                              "",
                                                           maxLines: 2,
                                                           style:
                                                               const TextStyle(

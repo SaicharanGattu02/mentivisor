@@ -117,8 +117,10 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
         final sameSender = (m.senderId ?? 0) == (server.senderId ?? -1);
         final sameType = (m.type ?? '') == (server.type ?? '');
         final sameMsg = (m.message ?? '') == (server.message ?? '');
+        final sameSenderName = (m.sender?.name ?? '') == (server.sender?.name ?? '');
+        final sameSenderImage = (m.sender?.profilePicUrl ?? '') == (server.sender?.profilePicUrl ?? '');
         final sameUrl = (m.url ?? '') == (server.url ?? '');
-        if (!(sameSender && sameType && sameMsg && sameUrl)) return false;
+        if (!(sameSender && sameType && sameMsg && sameUrl && sameSenderImage && sameSenderName)) return false;
 
         final mTs = DateTime.tryParse(m.createdAt ?? '') ?? DateTime.now();
         return (mTs.difference(serverTs).abs() <= const Duration(seconds: 5));

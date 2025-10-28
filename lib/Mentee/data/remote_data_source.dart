@@ -280,17 +280,27 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     String scope,
   ) async {
     try {
-      // Build base URL
+      // Base URL
       String url = "${APIEndpointUrls.get_group_messages}";
 
-      // Append scope only if it's not empty
+      // Build query parameters dynamically
+      List<String> queryParams = [];
+
       if (scope.isNotEmpty) {
-        url += "?scope=$scope";
+        queryParams.add("scope=$scope");
+      }
+
+      // Always add page parameter
+      queryParams.add("page=$page");
+
+      // Append query params to URL
+      if (queryParams.isNotEmpty) {
+        url += "?${queryParams.join("&")}";
       }
 
       AppLogger.log('getGroupChatMessages → Request URL: $url');
 
-      // Make the GET request
+      // Make GET request
       Response res = await ApiClient.get(url);
 
       AppLogger.log('getGroupChatMessages → Response: ${res.data}');
@@ -309,7 +319,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   ) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.get_messages}/$user_id?session_id=${sessionId}",
+        "${APIEndpointUrls.get_messages}/$user_id?session_id=${sessionId}&page=${page}",
       );
       AppLogger.log('getChatMessages: ${res.data}');
       return ChatMessagesModel.fromJson(res.data);

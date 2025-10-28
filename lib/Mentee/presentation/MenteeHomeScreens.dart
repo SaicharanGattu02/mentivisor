@@ -747,8 +747,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       },
                                     ),
                                     _buildDrawerItem(
-                                      assetpath:
-                                          "assets/icons/milestone.png",
+                                      assetpath: "assets/icons/milestone.png",
                                       label: 'Milestones',
                                       onTap: () {
                                         context.pop();

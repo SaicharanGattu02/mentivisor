@@ -84,8 +84,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   Color get _card => Colors.white;
   Color get _text => const Color(0xFF1F2328);
   Color get _muted => const Color(0xFF6B7280);
-  Color get _me => const Color(0xFFDDEBFF);
-  Color get _other => const Color(0xFFF1F5F9);
+  Color get _me => Colors.white;
+  Color get _other => const Color(0xFFDEEBFF);
   Color get _accent => const Color(0xFF2563EB);
 
   @override
@@ -143,7 +143,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       if (nearTop && !_isLoadingMore && _hasMore) {
         setState(() => _isLoadingMore = true);
         if (widget.campus_type == "On Campus Chat") {
-          context.read<GroupChatMessagesCubit>().loadMore("scope");
+          context.read<GroupChatMessagesCubit>().loadMore("same");
         } else {
           context.read<GroupChatMessagesCubit>().loadMore("");
         }
@@ -264,8 +264,13 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         ],
         iconTheme: IconThemeData(color: _text),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFAF5FF), Color(0xFFF5F6FF), Color(0xffEFF6FF)],
+          ),
+        ),
         child: Column(
           children: [
             Expanded(
@@ -301,7 +306,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         histState.chat.message?.groupMessages ?? const [],
                       );
                     }
-
                     return BlocBuilder<GroupRoomCubit, GroupRoomState>(
                       builder: (context, liveState) {
                         final all = <GroupMessages>[];
@@ -346,7 +350,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                         vertical: 10,
                                       ),
                                       child: Center(
-                                        child: CircularProgressIndicator(),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 1,
+                                        ),
                                       ),
                                     );
                                   }
@@ -409,14 +415,36 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     );
   }
 
-  Widget _bubble(GroupMessages m, bool isMe) {
-    final bg = isMe ? _me : _other;
+  // ---------------------------------------------------------------------
+  // 1. Helper – a tiny avatar widget (reuse it everywhere)
+  // ---------------------------------------------------------------------
+  Widget _avatar(String? url, {double size = 28}) {
+    return CircleAvatar(
+      radius: size / 2,
+      backgroundColor: const Color(0xFFE5E7EB),
+      backgroundImage: url != null && url.isNotEmpty ? NetworkImage(url) : null,
+      child: url == null || url.isEmpty
+          ? const Icon(Icons.person, size: 16, color: Colors.grey)
+          : null,
+    );
+  }
 
+  // ---------------------------------------------------------------------
+  // 2. Updated _bubble – matches the uploaded design 100%
+  // ---------------------------------------------------------------------
+  Widget _bubble(GroupMessages m, bool isMe) {
+    final bg = isMe ? _me : _other; // your existing colour vars
+    final textColor = _text; // your existing text colour
+    final muted = _muted; // timestamp / name colour
+
+    // -----------------------------------------------------------------
+    // Content (text / image / file) – unchanged logic, just wrapped
+    // -----------------------------------------------------------------
     Widget content;
     if (m.isText) {
       content = Text(
         m.message ?? '',
-        style: TextStyle(color: _text, fontSize: 15),
+        style: TextStyle(color: textColor, fontSize: 15),
       );
     } else if (m.isImageFile && (m.url ?? '').isNotEmpty) {
       content = ClipRRect(
@@ -451,7 +479,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       : Uri.parse(m.url!).pathSegments.last,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: _text,
+                    color: textColor,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -465,48 +493,67 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         ),
       );
     } else {
-      content = Text(
-        m.message ?? '',
-        style: TextStyle(color: _text, fontSize: 15),
-      );
+      content = const SizedBox.shrink();
     }
 
+    // -----------------------------------------------------------------
+    // MAIN LAYOUT – avatar + name row  →  bubble  →  timestamp
+    // -----------------------------------------------------------------
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 320),
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(16),
-              topRight: const Radius.circular(16),
-              bottomLeft: Radius.circular(isMe ? 16 : 4),
-              bottomRight: Radius.circular(isMe ? 4 : 16),
-            ),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
           child: Column(
             crossAxisAlignment: isMe
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: [
-              if (!isMe)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
+              // ---- Avatar + Name (outside the bubble) ----
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _avatar(m.sender?.profilePicUrl), // <-- sender image
+                  const SizedBox(width: 6),
+                  Text(
                     m.sender?.name ?? 'Member',
                     style: TextStyle(
-                      color: _muted,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                      color: muted,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-              content,
+                ],
+              ),
               const SizedBox(height: 4),
-              Text(m.timeLabel, style: TextStyle(color: _muted, fontSize: 11)),
+
+              // ---- The actual bubble ----
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: bg,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(isMe ? 24 : 0),
+                    topRight: Radius.circular(isMe ? 0 : 24),
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: isMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    content,
+                    const SizedBox(height: 4),
+                    Text(
+                      m.timeLabel,
+                      style: TextStyle(color: muted, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

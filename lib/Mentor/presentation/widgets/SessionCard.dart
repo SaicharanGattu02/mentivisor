@@ -936,27 +936,27 @@ class SessionCard extends StatelessWidget {
                   if (status == 'upcoming') ...[
                     Builder(
                       builder: (context) {
-                        bool showChatButton = false;
-
-                        try {
-                          final now = DateTime.now();
-
-                          final sessionDateTimeStart = DateFormat(
-                            "dd MMM yyyy h:mm a",
-                          ).parse("$sessionDate ${sessionStartTime}");
-                          final sessionDateTimeEnd = DateFormat(
-                            "dd MMM yyyy h:mm a",
-                          ).parse("$sessionDate ${sessionEndTime}");
-
-                          if (now.isAfter(sessionDateTimeStart) &&
-                              now.isBefore(sessionDateTimeEnd)) {
-                            showChatButton = true;
-                          }
-                        } catch (e) {
-                          print("DateTime parse error in SessionCard: $e");
-                        }
-
-                        if (!showChatButton) return const SizedBox.shrink();
+                        // bool showChatButton = false;
+                        //
+                        // try {
+                        //   final now = DateTime.now();
+                        //
+                        //   final sessionDateTimeStart = DateFormat(
+                        //     "dd MMM yyyy h:mm a",
+                        //   ).parse("$sessionDate ${sessionStartTime}");
+                        //   final sessionDateTimeEnd = DateFormat(
+                        //     "dd MMM yyyy h:mm a",
+                        //   ).parse("$sessionDate ${sessionEndTime}");
+                        //
+                        //   if (now.isAfter(sessionDateTimeStart) &&
+                        //       now.isBefore(sessionDateTimeEnd)) {
+                        //     showChatButton = true;
+                        //   }
+                        // } catch (e) {
+                        //   print("DateTime parse error in SessionCard: $e");
+                        // }
+                        //
+                        // if (!showChatButton) return const SizedBox.shrink();
 
                         return Expanded(
                           child: Container(

@@ -73,22 +73,39 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      if (selectedResumeFile == null) {
-        CustomSnackBar1.show(context, "Please upload your resume.");
-        return;
-      }
-
       final Map<String, dynamic> data = {
         ...widget.data,
         "portfolio": _portfolioUrlController.text.trim(),
         "linked_in": _linkdnUrlController.text.trim(),
         "git_hub": _githubUrlController.text.trim(),
-        "resume": selectedResumeFile!.path,
+        "resume": selectedResumeFile != null ? selectedResumeFile!.path : null,
       };
 
       context.push("/language_selection", extra: data);
     }
   }
+  //
+  // void _submitForm() {
+  //   if (_formKey.currentState!.validate()) {
+  //     final Map<String, dynamic> data = {
+  //       ...widget.data,
+  //       "portfolio": _portfolioUrlController.text.trim().isEmpty
+  //           ? null
+  //           : _portfolioUrlController.text.trim(),
+  //       "linked_in": _linkdnUrlController.text.trim().isEmpty
+  //           ? null
+  //           : _linkdnUrlController.text.trim(),
+  //       "git_hub": _githubUrlController.text.trim().isEmpty
+  //           ? null
+  //           : _githubUrlController.text.trim(),
+  //       "resume": selectedResumeFile != null ? selectedResumeFile!.path : null,
+  //     };
+  //
+  //     context.push("/language_selection", extra: data);
+  //   }
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -138,16 +155,16 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                 cursorColor: Colors.black,
                 decoration: const InputDecoration(hintText: 'Portfolio URL'),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Portfolio URL is required";
+                  // Only validate if user entered something
+                  if (value != null && value.trim().isNotEmpty) {
+                    final urlPattern =
+                        r'^(http|https):\/\/([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$';
+                    final result = RegExp(urlPattern).hasMatch(value.trim());
+                    if (!result) {
+                      return "Enter a valid URL";
+                    }
                   }
-                  final urlPattern =
-                      r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
-                  final result = RegExp(urlPattern).hasMatch(value);
-                  if (!result) {
-                    return "Enter a valid URL";
-                  }
-                  return null;
+                  return null; // No validation if empty
                 },
               ),
               const SizedBox(height: 20),
@@ -159,14 +176,13 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                 cursorColor: Colors.black,
                 decoration: const InputDecoration(hintText: 'LinkedIn URL'),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "LinkedIn URL is required";
-                  }
-                  final urlPattern =
-                      r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
-                  final result = RegExp(urlPattern).hasMatch(value);
-                  if (!result) {
-                    return "Enter a valid URL";
+                  if (value != null && value.trim().isNotEmpty) {
+                    final urlPattern =
+                        r'^(http|https):\/\/([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$';
+                    final result = RegExp(urlPattern).hasMatch(value.trim());
+                    if (!result) {
+                      return "Enter a valid URL";
+                    }
                   }
                   return null;
                 },
@@ -180,14 +196,13 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                 cursorColor: Colors.black,
                 decoration: const InputDecoration(hintText: 'GitHub URL'),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "GitHub URL is required";
-                  }
-                  final urlPattern =
-                      r'^(http|https)://([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$';
-                  final result = RegExp(urlPattern).hasMatch(value);
-                  if (!result) {
-                    return "Enter a valid URL";
+                  if (value != null && value.trim().isNotEmpty) {
+                    final urlPattern =
+                        r'^(http|https):\/\/([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$';
+                    final result = RegExp(urlPattern).hasMatch(value.trim());
+                    if (!result) {
+                      return "Enter a valid URL";
+                    }
                   }
                   return null;
                 },

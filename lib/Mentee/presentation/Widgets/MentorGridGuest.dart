@@ -194,11 +194,9 @@ class _MentorCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              height: 1,
               color: Color(0xff555555),
             ),
           ),
-          SizedBox(height: 4),
           SizedBox(
             width: SizeConfig.screenWidth * 0.4,
             child: Center(

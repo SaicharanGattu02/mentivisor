@@ -102,7 +102,10 @@ class _ChatScreenState extends State<ChatScreen> {
     getUserId();
     try {
       AppLogger.info("receiverId:${widget.receiverId}");
-      context.read<ChatMessagesCubit>().fetchMessages(widget.receiverId, widget.sessionId);
+      context.read<ChatMessagesCubit>().fetchMessages(
+        widget.receiverId,
+        widget.sessionId,
+      );
     } catch (_) {}
 
     _positionsListener.itemPositions.addListener(() {
@@ -441,10 +444,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             "receiverName.value:${receiverName.value} ${state.chatMessages.receiverDetails?.name}",
                           );
                           receiverProfile.value =
-                              state
-                                  .chatMessages
-                                  .receiverDetails
-                                  ?.profilePic ??
+                              state.chatMessages.receiverDetails?.profilePic ??
                               "";
                         });
                         setState(() => _isLoadingMore = false);
@@ -605,7 +605,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     for (final m in allDesc) {
-      if ((m.type ?? 'text') == 'typing') continue; // skip ephemeral typing
+      if ((m.type ?? 'text') == 'typing') continue;
       final d = m.createdAtDate.toLocal();
       final key = DateTime(d.year, d.month, d.day);
       if (bucketDay == null || bucketDay == key) {
