@@ -1,35 +1,80 @@
 class CoinsPackRespModel {
-  List<Data>? data;
-  Links? links;
-  Meta? meta;
+  bool? status;
+  CoinPackData? data;
 
-  CoinsPackRespModel({this.data, this.links, this.meta});
+  CoinsPackRespModel({this.status, this.data});
 
   CoinsPackRespModel.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
-    }
-    links = json['links'] != null ? new Links.fromJson(json['links']) : null;
-    meta = json['meta'] != null ? new Meta.fromJson(json['meta']) : null;
+    status = json['status'];
+    data = json['data'] != null ? CoinPackData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    if (this.links != null) {
-      data['links'] = this.links!.toJson();
-    }
-    if (this.meta != null) {
-      data['meta'] = this.meta!.toJson();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
 }
+
+class CoinPackData {
+  int? currentPage;
+  List<Data>? data;
+  List<Coinspack>? links;
+  String? path;
+  int? perPage;
+  int? to;
+  int? total;
+
+  CoinPackData({
+    this.currentPage,
+    this.data,
+    this.links,
+    this.path,
+    this.perPage,
+    this.to,
+    this.total,
+  });
+
+  CoinPackData.fromJson(Map<String, dynamic> json) {
+    currentPage = json['current_page'];
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(Data.fromJson(v));
+      });
+    }
+    if (json['links'] != null) {
+      links = <Coinspack>[];
+      json['links'].forEach((v) {
+        links!.add(Coinspack.fromJson(v));
+      });
+    }
+    path = json['path'];
+    perPage = json['per_page'];
+    to = json['to'];
+    total = json['total'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['current_page'] = currentPage;
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    if (this.links != null) {
+      data['links'] = this.links!.map((v) => v.toJson()).toList();
+    }
+    data['path'] = path;
+    data['per_page'] = perPage;
+    data['to'] = to;
+    data['total'] = total;
+    return data;
+  }
+}
+
 
 class Data {
   int? id;

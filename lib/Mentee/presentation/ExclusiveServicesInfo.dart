@@ -134,49 +134,49 @@ class _ExclusiveServiceDetailsState extends State<ExclusiveServiceDetails> {
                             ),
                           ),
                           const SizedBox(height: 16),
-
-                          Row(
-                            children: [
-                              // CachedNetworkImage(
-                              //   imageUrl: image,
-                              //   imageBuilder: (context, imageProvider) =>
-                              //       CircleAvatar(
-                              //         radius: 12,
-                              //         backgroundImage: imageProvider,
-                              //       ),
-                              //   placeholder: (context, url) => CircleAvatar(
-                              //     radius: 12,
-                              //     backgroundColor: Colors.grey,
-                              //     child: SizedBox(
-                              //       width: 12,
-                              //       height: 12,
-                              //       child: Center(
-                              //         child: spinkits.getSpinningLinespinkit(),
-                              //       ),
-                              //     ),
-                              //   ),
-                              //   errorWidget: (context, url, error) =>
-                              //       const CircleAvatar(
-                              //         radius: 12,
-                              //         backgroundImage: AssetImage(
-                              //           "assets/images/profile.png",
-                              //         ),
-                              //       ),
-                              // ),
-                              // const SizedBox(width: 8),
-                              Text(
-                                name.isEmpty ? '—' : name,
-                                style: const TextStyle(
-                                  fontFamily: 'segeo',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF222222),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
+                          //
+                          // Row(
+                          //   children: [
+                          //     // CachedNetworkImage(
+                          //     //   imageUrl: image,
+                          //     //   imageBuilder: (context, imageProvider) =>
+                          //     //       CircleAvatar(
+                          //     //         radius: 12,
+                          //     //         backgroundImage: imageProvider,
+                          //     //       ),
+                          //     //   placeholder: (context, url) => CircleAvatar(
+                          //     //     radius: 12,
+                          //     //     backgroundColor: Colors.grey,
+                          //     //     child: SizedBox(
+                          //     //       width: 12,
+                          //     //       height: 12,
+                          //     //       child: Center(
+                          //     //         child: spinkits.getSpinningLinespinkit(),
+                          //     //       ),
+                          //     //     ),
+                          //     //   ),
+                          //     //   errorWidget: (context, url, error) =>
+                          //     //       const CircleAvatar(
+                          //     //         radius: 12,
+                          //     //         backgroundImage: AssetImage(
+                          //     //           "assets/images/profile.png",
+                          //     //         ),
+                          //     //       ),
+                          //     // ),
+                          //     // const SizedBox(width: 8),
+                          //     // Text(
+                          //     //   name.isEmpty ? '—' : name,
+                          //     //   style: const TextStyle(
+                          //     //     fontFamily: 'segeo',
+                          //     //     fontWeight: FontWeight.w600,
+                          //     //     color: Color(0xFF222222),
+                          //     //     fontSize: 12,
+                          //     //   ),
+                          //     // ),
+                          //   ],
+                          // ),
+                          //
+                          // const SizedBox(height: 12),
 
                           // Title (bold)
                           Text(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/services/SocketService.dart';
@@ -511,20 +512,47 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 : CrossAxisAlignment.start,
             children: [
               // ---- Avatar + Name (outside the bubble) ----
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _avatar(m.sender?.profilePicUrl), // <-- sender image
-                  const SizedBox(width: 6),
-                  Text(
-                    m.sender?.name ?? 'Member',
-                    style: TextStyle(
-                      color: muted,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+              GestureDetector(
+                onTap: () async {
+                  final userIdStr =
+                      await AuthService.getUSerId(); // String? like "107"
+                  final userId = int.tryParse(
+                    userIdStr ?? '',
+                  ); // Parse to int, default 0 if null/invalid
+                  AppLogger.info(
+                    "userId::$userId (parsed as int: $userId)",
+                  );
+
+                  final uploaderId = m.sender?.id;
+                  if (userId == uploaderId) {
+                    context.push("/profile");
+                    AppLogger.info(
+                      "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                    );
+                    AppLogger.info("profile::true");
+                  } else {
+                    context.push("/common_profile/$uploaderId");
+                    AppLogger.info(
+                      "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                    );
+                    AppLogger.info("profile::false...$uploaderId");
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _avatar(m.sender?.profilePicUrl), // <-- sender image
+                    const SizedBox(width: 6),
+                    Text(
+                      m.sender?.name ?? 'Member',
+                      style: TextStyle(
+                        color: muted,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 4),
 

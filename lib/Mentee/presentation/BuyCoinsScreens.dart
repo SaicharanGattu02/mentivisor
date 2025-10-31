@@ -144,7 +144,7 @@ class _BuyCoinsScreenState extends State<BuyCoinsScreens> {
                 if (state is CoinsPackStateLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is CoinsPackStateLoaded) {
-                  final packs = state.coinsPackRespModel.data ?? [];
+                  final packs = state.coinsPackRespModel.data?.data ?? [];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: GridView.builder(
