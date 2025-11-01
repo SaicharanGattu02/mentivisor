@@ -45,8 +45,13 @@ class _EventCardState extends State<EventCard> {
                       imageUrl: widget.eccList.imgUrl ?? "",
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      placeholder: (context, url) =>
-                          Center(child: spinkits.getSpinningLinespinkit()),
+                      placeholder: (context, url) => Container(
+                        height: 160,
+                        color: Colors.grey.shade100,
+                        child: Center(
+                          child: spinkits.getSpinningLinespinkit(),
+                        ),
+                      ),
                       errorWidget: (context, url, error) => Container(
                         height: 160,
                         color: Colors.grey.shade100,

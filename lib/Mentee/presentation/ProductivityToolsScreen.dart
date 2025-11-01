@@ -13,6 +13,7 @@ import '../data/cubits/ProductTools/TaskByStates/task_by_states_cubit.dart';
 import '../data/cubits/ProductTools/TaskByStates/task_by_states_states.dart';
 import '../data/cubits/ProductTools/TaskUpdate/task_update_cubit.dart';
 import '../data/cubits/ProductTools/TaskUpdate/task_update_states.dart';
+import 'Widgets/add_task_bottom_sheet.dart';
 
 class ProductivityScreen extends StatefulWidget {
   ProductivityScreen({super.key});
@@ -310,181 +311,195 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                     ),
                                   ),
                                   onPressed: () {
+                                    // showModalBottomSheet(
+                                    //   context: context,
+                                    //   isScrollControlled: true,
+                                    //   backgroundColor: Colors.white,
+                                    //   shape: const RoundedRectangleBorder(
+                                    //     borderRadius: BorderRadius.vertical(
+                                    //       top: Radius.circular(16),
+                                    //     ),
+                                    //   ),
+                                    //   builder: (context) {
+                                    //     return SafeArea(
+                                    //       child: Padding(
+                                    //         padding: EdgeInsets.only(
+                                    //           bottom: MediaQuery.of(
+                                    //             context,
+                                    //           ).viewInsets.bottom,
+                                    //           left: 16,
+                                    //           right: 16,
+                                    //           top: 16,
+                                    //         ),
+                                    //         child: Column(
+                                    //           mainAxisSize: MainAxisSize.min,
+                                    //           children: [
+                                    //             _buildTextField(
+                                    //               controller:
+                                    //                   _taskNameController,
+                                    //               hint: "Enter Task Name",
+                                    //             ),
+                                    //             const SizedBox(height: 16),
+                                    //             Row(
+                                    //               children: [
+                                    //                 Expanded(
+                                    //                   child:
+                                    //                       CustomOutlinedButton(
+                                    //                         radius: 24,
+                                    //                         text: "Cancel",
+                                    //                         onTap: () {
+                                    //                           context.pop();
+                                    //                         },
+                                    //                       ),
+                                    //                 ),
+                                    //                 const SizedBox(width: 10),
+                                    //                 Expanded(
+                                    //                   child:
+                                    //                       BlocConsumer<
+                                    //                         TaskUpdateCubit,
+                                    //                         TaskUpdateStates
+                                    //                       >(
+                                    //                         listener: (context, state) async {
+                                    //                           if (state
+                                    //                               is TaskUpdateSuccess) {
+                                    //                             final formattedDate =
+                                    //                                 DateFormat(
+                                    //                                   'yyyy-MM-dd',
+                                    //                                 ).format(
+                                    //                                   _selectedDateNotifier
+                                    //                                       .value,
+                                    //                                 );
+                                    //                             await context
+                                    //                                 .read<
+                                    //                                   TaskByDateCubit
+                                    //                                 >()
+                                    //                                 .fetchTasksByDate(
+                                    //                                   formattedDate,
+                                    //                                 );
+                                    //                             context
+                                    //                                 .read<
+                                    //                                   TaskByStatusCubit
+                                    //                                 >()
+                                    //                                 .fetchTasksByStatus();
+                                    //                             context.pop();
+                                    //                           } else if (state
+                                    //                               is TaskUpdateFailure) {
+                                    //                             CustomSnackBar1.show(
+                                    //                               context,
+                                    //                               state.msg,
+                                    //                             );
+                                    //                           }
+                                    //                         },
+                                    //                         builder: (context, state) {
+                                    //                           return ElevatedButton(
+                                    //                             style: ElevatedButton.styleFrom(
+                                    //                               padding:
+                                    //                                   const EdgeInsets.symmetric(
+                                    //                                     horizontal:
+                                    //                                         20,
+                                    //                                     vertical:
+                                    //                                         12,
+                                    //                                   ),
+                                    //                               backgroundColor:
+                                    //                                   const Color(
+                                    //                                     0xff9333EA,
+                                    //                                   ),
+                                    //                               shadowColor:
+                                    //                                   Colors
+                                    //                                       .transparent,
+                                    //                               shape: RoundedRectangleBorder(
+                                    //                                 borderRadius:
+                                    //                                     BorderRadius.circular(
+                                    //                                       24,
+                                    //                                     ),
+                                    //                               ),
+                                    //                             ),
+                                    //                             onPressed: () {
+                                    //                               final formattedDate =
+                                    //                                   DateFormat(
+                                    //                                     'yyyy-MM-dd',
+                                    //                                   ).format(
+                                    //                                     _selectedDateNotifier
+                                    //                                         .value,
+                                    //                                   );
+                                    //                               final Map<
+                                    //                                 String,
+                                    //                                 dynamic
+                                    //                               >
+                                    //                               data = {
+                                    //                                 "task_date":
+                                    //                                     formattedDate,
+                                    //                                 "title":
+                                    //                                     _taskNameController
+                                    //                                         .text,
+                                    //                               };
+                                    //                               context
+                                    //                                   .read<
+                                    //                                     TaskUpdateCubit
+                                    //                                   >()
+                                    //                                   .addTask(
+                                    //                                     data,
+                                    //                                   );
+                                    //                             },
+                                    //                             child:
+                                    //                                 state
+                                    //                                     is TaskUpdateLoading
+                                    //                                 ? const SizedBox(
+                                    //                                     width:
+                                    //                                         20,
+                                    //                                     height:
+                                    //                                         20,
+                                    //                                     child: CircularProgressIndicator(
+                                    //                                       color: Color(
+                                    //                                         0xffF5F5F5,
+                                    //                                       ),
+                                    //                                       strokeWidth:
+                                    //                                           2,
+                                    //                                     ),
+                                    //                                   )
+                                    //                                 : const Text(
+                                    //                                     "Submit",
+                                    //                                     style: TextStyle(
+                                    //                                       color: Color(
+                                    //                                         0xffF5F5F5,
+                                    //                                       ),
+                                    //                                       fontWeight:
+                                    //                                           FontWeight.w600,
+                                    //                                       fontSize:
+                                    //                                           14,
+                                    //                                       fontFamily:
+                                    //                                           "segeo",
+                                    //                                     ),
+                                    //                                   ),
+                                    //                           );
+                                    //                         },
+                                    //                       ),
+                                    //                 ),
+                                    //               ],
+                                    //             ),
+                                    //             const SizedBox(height: 16),
+                                    //           ],
+                                    //         ),
+                                    //       ),
+                                    //     );
+                                    //   },
+                                    // ).whenComplete(() {
+                                    //   _taskNameController.clear();
+                                    // });
                                     showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
                                       backgroundColor: Colors.white,
                                       shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(16),
-                                        ),
+                                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                                       ),
-                                      builder: (context) {
-                                        return SafeArea(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                              bottom: MediaQuery.of(
-                                                context,
-                                              ).viewInsets.bottom,
-                                              left: 16,
-                                              right: 16,
-                                              top: 16,
-                                            ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                _buildTextField(
-                                                  controller:
-                                                      _taskNameController,
-                                                  hint: "Enter Task Name",
-                                                ),
-                                                const SizedBox(height: 16),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child:
-                                                          CustomOutlinedButton(
-                                                            radius: 24,
-                                                            text: "Cancel",
-                                                            onTap: () {
-                                                              context.pop();
-                                                            },
-                                                          ),
-                                                    ),
-                                                    const SizedBox(width: 10),
-                                                    Expanded(
-                                                      child:
-                                                          BlocConsumer<
-                                                            TaskUpdateCubit,
-                                                            TaskUpdateStates
-                                                          >(
-                                                            listener: (context, state) async {
-                                                              if (state
-                                                                  is TaskUpdateSuccess) {
-                                                                final formattedDate =
-                                                                    DateFormat(
-                                                                      'yyyy-MM-dd',
-                                                                    ).format(
-                                                                      _selectedDateNotifier
-                                                                          .value,
-                                                                    );
-                                                                await context
-                                                                    .read<
-                                                                      TaskByDateCubit
-                                                                    >()
-                                                                    .fetchTasksByDate(
-                                                                      formattedDate,
-                                                                    );
-                                                                context
-                                                                    .read<
-                                                                      TaskByStatusCubit
-                                                                    >()
-                                                                    .fetchTasksByStatus();
-                                                                context.pop();
-                                                              } else if (state
-                                                                  is TaskUpdateFailure) {
-                                                                CustomSnackBar1.show(
-                                                                  context,
-                                                                  state.msg,
-                                                                );
-                                                              }
-                                                            },
-                                                            builder: (context, state) {
-                                                              return ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                  padding:
-                                                                      const EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            20,
-                                                                        vertical:
-                                                                            12,
-                                                                      ),
-                                                                  backgroundColor:
-                                                                      const Color(
-                                                                        0xff9333EA,
-                                                                      ),
-                                                                  shadowColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                          24,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                onPressed: () {
-                                                                  final formattedDate =
-                                                                      DateFormat(
-                                                                        'yyyy-MM-dd',
-                                                                      ).format(
-                                                                        _selectedDateNotifier
-                                                                            .value,
-                                                                      );
-                                                                  final Map<
-                                                                    String,
-                                                                    dynamic
-                                                                  >
-                                                                  data = {
-                                                                    "task_date":
-                                                                        formattedDate,
-                                                                    "title":
-                                                                        _taskNameController
-                                                                            .text,
-                                                                  };
-                                                                  context
-                                                                      .read<
-                                                                        TaskUpdateCubit
-                                                                      >()
-                                                                      .addTask(
-                                                                        data,
-                                                                      );
-                                                                },
-                                                                child:
-                                                                    state
-                                                                        is TaskUpdateLoading
-                                                                    ? const SizedBox(
-                                                                        width:
-                                                                            20,
-                                                                        height:
-                                                                            20,
-                                                                        child: CircularProgressIndicator(
-                                                                          color: Color(
-                                                                            0xffF5F5F5,
-                                                                          ),
-                                                                          strokeWidth:
-                                                                              2,
-                                                                        ),
-                                                                      )
-                                                                    : const Text(
-                                                                        "Submit",
-                                                                        style: TextStyle(
-                                                                          color: Color(
-                                                                            0xffF5F5F5,
-                                                                          ),
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                          fontSize:
-                                                                              14,
-                                                                          fontFamily:
-                                                                              "segeo",
-                                                                        ),
-                                                                      ),
-                                                              );
-                                                            },
-                                                          ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 16),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
+                                      builder: (context) => AddTaskBottomSheet(
+                                        selectedDateNotifier: _selectedDateNotifier,
+                                      ),
                                     ).whenComplete(() {
-                                      _taskNameController.clear();
+                                      // optional cleanup
                                     });
+
                                   },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,

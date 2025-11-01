@@ -13,6 +13,7 @@ import 'package:mentivisor/Mentee/data/cubits/HomeDialog/home_dialog_cubit.dart'
 import 'package:mentivisor/Mentee/data/cubits/HomeDialog/home_dialog_states.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Components/Shimmers.dart';
@@ -962,15 +963,30 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(16),
-                                                  child: Image.network(
-                                                    b.imgUrl ?? '',
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: b.imgUrl ?? '',
                                                     fit: BoxFit.cover,
                                                     width: double.infinity,
-                                                    errorBuilder:
+                                                    placeholder:
                                                         (
-                                                          _,
-                                                          __,
-                                                          ___,
+                                                          context,
+                                                          url,
+                                                        ) => Container(
+                                                          color:
+                                                              Colors.grey[200],
+                                                          child: const Center(
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
                                                         ) => Container(
                                                           color:
                                                               Colors.grey[200],
@@ -988,7 +1004,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           },
                                           options: CarouselOptions(
                                             height:
-                                                carouselHeight, // 👈 height based on device type
+                                                carouselHeight, // 👈 dynamic based on device type
                                             autoPlay: true,
                                             autoPlayInterval: const Duration(
                                               seconds: 4,
@@ -1382,6 +1398,48 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                   fontSize: 14,
                                                 ),
                                               ),
+                                              // OutlinedButton.icon(
+                                              //   onPressed: () async {
+                                              //     final profileId =
+                                              //         await AuthService.getUSerId();
+                                              //     final shareUrl =
+                                              //         "https://mentivisor.com/profile/$profileId";
+                                              //     Share.share(
+                                              //       "Check out this profile on Mentivisor:\n$shareUrl",
+                                              //       subject:
+                                              //           "Mentivisor Profile",
+                                              //     );
+                                              //   },
+                                              //   icon: const Icon(
+                                              //     Icons.share_rounded,
+                                              //     size: 16,
+                                              //     color: Color(0xff4A7CF6),
+                                              //   ),
+                                              //   label: const Text(
+                                              //     'Share',
+                                              //     style: TextStyle(
+                                              //       fontFamily: 'segeo',
+                                              //       fontSize: 16,
+                                              //       fontWeight: FontWeight.w600,
+                                              //       color: Color(0xff4A7CF6),
+                                              //     ),
+                                              //   ),
+                                              //   style: OutlinedButton.styleFrom(
+                                              //     side: BorderSide.none,
+                                              //     backgroundColor: Colors.white,
+                                              //     shape: RoundedRectangleBorder(
+                                              //       borderRadius:
+                                              //           BorderRadius.circular(
+                                              //             20,
+                                              //           ),
+                                              //     ),
+                                              //     padding:
+                                              //         const EdgeInsets.symmetric(
+                                              //           horizontal: 20,
+                                              //           vertical: 8,
+                                              //         ),
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         );

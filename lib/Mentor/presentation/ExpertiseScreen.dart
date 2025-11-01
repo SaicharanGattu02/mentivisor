@@ -86,7 +86,6 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                       if (approveState is ApprovedExpertiseLoaded) {
                         showAddButton = !(approveState.model.data?.has_request ?? false);
                       }
-
                       return ExpertiseTabFromState(
                         title: 'List',
                         variant: TileVariant.approved,

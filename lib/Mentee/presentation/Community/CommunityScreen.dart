@@ -450,48 +450,52 @@ class _CommunityScreenState extends State<Communityscreen> {
             valueListenable: _fabVisible, // Listen to FAB visibility
             builder: (context, isVisible, child) {
               // If the user is not a guest, show the FAB based on scroll
-              return Visibility(
-                visible:
-                    isVisible &&
-                    !isGuest, // Hide FAB if guest, else use scroll logic
-                child: Container(
-                  height: 64,
-                  width: 64,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF9B40EF), // #9B40EF
-                        Color(0xFF5B4BEB), // #5B4BEB
-                        Color(0xFF315DEA), // #315DEA
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
+              return AnimatedSlide(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                offset: isVisible ? Offset.zero : const Offset(0, 1.2),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 180),
+                  opacity: isVisible ? 1 : 0,
+                  child: Container(
+                    height: 64,
+                    width: 64,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF9B40EF), // #9B40EF
+                          Color(0xFF5B4BEB), // #5B4BEB
+                          Color(0xFF315DEA), // #315DEA
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
                     ),
-                  ),
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(),
-                    onPressed: () {
-                      if (isGuest) {
-                        // Do guest action
-                      } else {
-                        if (_onCampus.value) {
-                          context.push(
-                            '/group_chat?campus_type=On Campus Chat',
-                          );
+                    child: FloatingActionButton(
+                      shape: const CircleBorder(),
+                      onPressed: () {
+                        if (isGuest) {
+                          // Do guest action
                         } else {
-                          context.push(
-                            '/group_chat?campus_type=Beyond Campus Chat',
-                          );
+                          if (_onCampus.value) {
+                            context.push(
+                              '/group_chat?campus_type=On Campus Chat',
+                            );
+                          } else {
+                            context.push(
+                              '/group_chat?campus_type=Beyond Campus Chat',
+                            );
+                          }
                         }
-                      }
-                    },
-                    backgroundColor: Colors.transparent, // Keep transparent
-                    elevation: 0, // So gradient is visible
-                    child: Image.asset(
-                      "assets/images/ChatCircleDots.png",
-                      width: 28,
-                      height: 28,
+                      },
+                      backgroundColor: Colors.transparent, // Keep transparent
+                      elevation: 0, // So gradient is visible
+                      child: Image.asset(
+                        "assets/images/ChatCircleDots.png",
+                        width: 28,
+                        height: 28,
+                      ),
                     ),
                   ),
                 ),

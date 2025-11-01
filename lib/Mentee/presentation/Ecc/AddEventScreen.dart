@@ -925,7 +925,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                 "tag[]": _selectedTags,
                               };
 
-                              if (file != null) {
+                              if (file != null && !_useDefaultImage.value) {
                                 data["image"] = file.path;
                               }
                               context.read<AddEccCubit>().addEcc(data);

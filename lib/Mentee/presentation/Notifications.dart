@@ -25,6 +25,8 @@ class _NotificationsState extends State<Notifications> {
     "Rewards",
     "Reminders",
     "Mentions",
+    "Approved",
+    "Rejected",
   ];
 
   final Map<String, String> _filterKeywordMap = {
@@ -33,6 +35,8 @@ class _NotificationsState extends State<Notifications> {
     "Rewards": "reward",
     "Reminders": "reminder",
     "Mentions": "mention",
+    "Approved": "approval",
+    "Rejected": "rejection",
   };
 
   @override
@@ -136,14 +140,19 @@ class _NotificationsState extends State<Notifications> {
                       child: CustomScrollView(
                         slivers: [
                           SliverGrid(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: _getCrossAxisCount(context), // 👈 1 on mobile, 2 on tab
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 0,
-                              childAspectRatio: _getChildAspectRatio(context), // 👈 based on screen ratio
-                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: _getCrossAxisCount(
+                                    context,
+                                  ), // 👈 1 on mobile, 2 on tab
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 0,
+                                  childAspectRatio: _getChildAspectRatio(
+                                    context,
+                                  ), // 👈 based on screen ratio
+                                ),
                             delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
+                              (context, index) {
                                 final item = filtered[index];
                                 return _buildNotificationCard(
                                   icon: _getIconForType(item.type),
@@ -206,7 +215,7 @@ class _NotificationsState extends State<Notifications> {
 
     if (width < 600) {
       // Mobile – taller cards for better readability
-      return baseRatio *6.2;
+      return baseRatio * 6.2;
     } else if (width > 600) {
       // Tablet – wider cards
       return baseRatio * 4;
@@ -215,7 +224,6 @@ class _NotificationsState extends State<Notifications> {
       return baseRatio * 2.2;
     }
   }
-
 
   // 🔹 Notification Card Widget
   Widget _buildNotificationCard({
@@ -349,7 +357,7 @@ class NotificationsListShimmer extends StatelessWidget {
 
     if (width < 600) {
       // Mobile – taller cards for better readability
-      return baseRatio *6.5;
+      return baseRatio * 6.5;
     } else if (width > 600) {
       // Tablet – wider cards
       return baseRatio * 4;
@@ -368,13 +376,17 @@ class NotificationsListShimmer extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _getCrossAxisCount(context), // 👈 responsive layout
+              crossAxisCount: _getCrossAxisCount(
+                context,
+              ), // 👈 responsive layout
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: _getChildAspectRatio(context), // 👈 responsive ratio
+              childAspectRatio: _getChildAspectRatio(
+                context,
+              ), // 👈 responsive ratio
             ),
             delegate: SliverChildBuilderDelegate(
-                  (context, index) => const _NotificationCardShimmer(),
+              (context, index) => const _NotificationCardShimmer(),
               childCount: 6, // number of shimmer placeholders
             ),
           ),

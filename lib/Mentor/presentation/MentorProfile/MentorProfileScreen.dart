@@ -110,22 +110,22 @@ class _ProfileBody extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: InkWell(
-                    onTap: () {
-                      context.push(
-                        '/edit_mentor_profile?collegeId=${data.collegeId}',
-                      );
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.only(top: 8.0, right: 4),
-                      child: _EditLink(),
-                    ),
-                  ),
-                ),
-              ),
+              // Positioned.fill(
+              //   child: Align(
+              //     alignment: Alignment.topRight,
+              //     child: InkWell(
+              //       onTap: () {
+              //         context.push(
+              //           '/edit_mentor_profile?collegeId=${data.collegeId}',
+              //         );
+              //       },
+              //       child: const Padding(
+              //         padding: EdgeInsets.only(top: 8.0, right: 4),
+              //         child: _EditLink(),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
 
@@ -151,15 +151,24 @@ class _ProfileBody extends StatelessWidget {
           //     color: Color(0xFF6B7280),
           //   ),
           // ),
-          SizedBox(height: 3),
-          Text(
-            data.email ?? "",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'segeo',
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: Color(0xFF6B7280),
+          // SizedBox(height: 3),
+          // Text(
+          //   data.email ?? "",
+          //   textAlign: TextAlign.center,
+          //   style: const TextStyle(
+          //     fontFamily: 'segeo',
+          //     fontWeight: FontWeight.w600,
+          //     fontSize: 16,
+          //     color: Color(0xFF6B7280),
+          //   ),
+          // ),
+          InkWell(
+            onTap: () {
+              context.push('/edit_mentor_profile?collegeId=${data.collegeId}');
+            },
+            child: const Padding(
+              padding: EdgeInsets.only(top: 8.0, right: 4),
+              child: _EditLink(),
             ),
           ),
           SizedBox(height: 3),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,10 +14,12 @@ import 'package:mentivisor/Mentor/presentation/MentorDashBoard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart';
 import 'package:mentivisor/utils/constants.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Components/Shimmers.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersCubit.dart';
 import '../../Mentee/data/cubits/GetBanners/GetBannersState.dart';
+import '../../services/AuthService.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
 
@@ -122,11 +125,17 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Image.network(
-                                        b?.imgUrl ?? '',
+                                      child: CachedNetworkImage(
+                                        imageUrl: b?.imgUrl ?? '',
                                         fit: BoxFit.cover,
                                         width: double.infinity,
-                                        errorBuilder: (_, __, ___) => Container(
+                                        placeholder: (context, url) => Container(
+                                          color: Colors.grey[200],
+                                          child: const Center(
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) => Container(
                                           color: Colors.grey[200],
                                           alignment: Alignment.center,
                                           child: const Icon(
@@ -218,6 +227,48 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xff444444),
+                                    ),
+                                  ),
+                                  OutlinedButton.icon(
+                                    onPressed: () async {
+                                      final profileId =
+                                      await AuthService.getUSerId();
+                                      final shareUrl =
+                                          "https://mentivisor.com/profile/$profileId";
+                                      Share.share(
+                                        "Check out this profile on Mentivisor:\n$shareUrl",
+                                        subject:
+                                        "Mentivisor Profile",
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.share_rounded,
+                                      size: 16,
+                                      color: Color(0xff4A7CF6),
+                                    ),
+                                    label: const Text(
+                                      'Share',
+                                      style: TextStyle(
+                                        fontFamily: 'segeo',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff4A7CF6),
+                                      ),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide.none,
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(
+                                          20,
+                                        ),
+                                      ),
+                                      padding:
+                                      const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 8,
+                                      ),
                                     ),
                                   ),
                                 ],

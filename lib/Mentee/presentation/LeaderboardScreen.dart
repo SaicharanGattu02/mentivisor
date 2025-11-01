@@ -187,10 +187,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           textAlign: TextAlign.center,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        Text(
-          "${user.score?.toStringAsFixed(1) ?? '0'} pts",
-          style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
-        ),
+        // Text(
+        //   "${user.score?.toStringAsFixed(1) ?? '0'} pts",
+        //   style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+        // ),
       ],
     );
   }
@@ -252,10 +252,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 color: Colors.blueAccent,
               ),
             ),
-            Text(
-              "${user.score?.toStringAsFixed(1)}",
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
+            // Text(
+            //   "${user.score?.toStringAsFixed(1)}",
+            //   style: const TextStyle(fontSize: 12, color: Colors.black54),
+            // ),
           ],
         ),
       ),

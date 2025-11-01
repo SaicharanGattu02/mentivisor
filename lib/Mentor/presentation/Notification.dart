@@ -70,7 +70,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
                       final filterKey = _filters[i];
                       final filterType = _filterKeywordMap[filterKey] ?? "";
                       context.read<NotificationsCubit>().fetchNotifications(
-                        "mentee",
+                        "mentor",
                         filterType,
                       );
                     },
@@ -126,7 +126,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
                               state.hasNextPage) {
                             context
                                 .read<NotificationsCubit>()
-                                .fetchMoreNotifications("mentee", keyword);
+                                .fetchMoreNotifications("mentor", keyword);
                           }
                         }
                         return false;
