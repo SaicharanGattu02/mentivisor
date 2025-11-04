@@ -96,6 +96,10 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  Color get _me => Colors.white;
+  Color get _other => const Color(0xFFDEEBFF);
+  Color get _accent => const Color(0xFF2563EB);
+
   @override
   void initState() {
     super.initState();
@@ -169,6 +173,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   File? _file;
+  String? file_url;
   final ImagePicker _picker = ImagePicker();
   Future<void> _pickImageFromCamera() async {
     final XFile? pickedFile = await _picker.pickImage(
@@ -302,6 +307,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 fontSize: 16,
               ),
             )
+          : null,
+    );
+  }
+
+  Widget _avatar1(String? url, {double size = 28}) {
+    return CircleAvatar(
+      radius: size / 2,
+      backgroundColor: const Color(0xFFE5E7EB),
+      backgroundImage: url != null && url.isNotEmpty ? NetworkImage(url) : null,
+      child: url == null || url.isEmpty
+          ? const Icon(Icons.person, size: 16, color: Colors.grey)
           : null,
     );
   }
@@ -642,12 +658,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageBubble(Messages msg, bool isMe) {
-    final bubbleColor = isMe ? _meBubbleColor : _otherBubbleColor;
-    final bodyStyle = TextStyle(color: _text, fontSize: 15);
-    final timeStyle = TextStyle(color: _muted, fontSize: 11);
-
-    // You may need to adapt these getters to your model
-    final senderName = msg.sender?.name ?? 'User';
+    final bg = isMe ? _me : _other;
+    final textColor = _text;
+    final muted = _muted;
+    final senderName = msg.sender?.name ?? (isMe ? 'You' : 'Member');
     final senderPhoto = msg.sender?.profilePicUrl ?? "";
     final isImage = () {
       final u = (msg.url ?? '').toLowerCase();
@@ -660,7 +674,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     Widget content;
     if (msg.type == 'text') {
-      content = Text(msg.message ?? '', style: bodyStyle);
+      content = Text(
+        msg.message ?? '',
+        style: TextStyle(color: textColor, fontSize: 15),
+      );
     } else if (msg.type == 'file') {
       final url = msg.url ?? '';
       if (isImage && url.isNotEmpty) {
@@ -668,111 +685,169 @@ class _ChatScreenState extends State<ChatScreen> {
           borderRadius: BorderRadius.circular(12),
           child: Image.network(
             url,
-            height: 200,
-            width: 200,
+            width: 220,
+            height: 220,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
               padding: const EdgeInsets.all(8),
-              child: Text('Image unavailable', style: bodyStyle),
+              child: Text(
+                'Image unavailable',
+                style: TextStyle(color: textColor),
+              ),
             ),
           ),
         );
       } else {
-        final fileName = url.split('/').isNotEmpty
-            ? url.split('/').last
-            : (msg.message ?? 'file');
-        content = Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.insert_drive_file,
-                color: Colors.white,
-                size: 28,
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  fileName,
-                  style: bodyStyle.copyWith(fontSize: 14),
-                  overflow: TextOverflow.ellipsis,
+        content = InkWell(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.attach_file, size: 18),
+                const SizedBox(width: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 220),
+                  child: Text(
+                    url.isEmpty
+                        ? 'Attachment'
+                        : Uri.parse(url).pathSegments.last,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 6),
+                if (url.isNotEmpty)
+                  Icon(Icons.open_in_new, size: 16, color: _accent),
+              ],
+            ),
           ),
         );
       }
     } else {
-      content = Text("Unsupported message", style: bodyStyle);
+      content = const SizedBox.shrink();
     }
 
-    final bubble = ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 300),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: bubbleColor,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 4),
-            bottomRight: Radius.circular(isMe ? 4 : 16),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: isMe
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Show sender name (subtle) for others above the content
-            if (!isMe) ...[
-              Text(
-                senderName,
-                style: TextStyle(
-                  color: _muted,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: double.infinity),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: isMe
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  final userIdStr = await AuthService.getUSerId();
+                  final userId = int.tryParse(userIdStr ?? '');
+                  final uploaderId = msg.sender?.id;
+
+                  if (userId == uploaderId) {
+                    context.push("/profile");
+                  } else {
+                    context.push("/common_profile/$uploaderId");
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: isMe
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // ---- For others: avatar + name ----
+                    if (!isMe)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _avatar1(senderPhoto),
+                          const SizedBox(width: 6),
+                          Text(
+                            senderName,
+                            style: TextStyle(
+                              color: muted,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                    // ---- For me: avatar + name on right ----
+                    if (isMe)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _avatar1(senderPhoto),
+                          const SizedBox(width: 6),
+                          Text(
+                            senderName,
+                            style: TextStyle(
+                              color: muted,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                    // ---- Report icon (only if not me) ----
+                    if (!isMe)
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onPressed: () {
+                          // _showReportDialog(msg);
+                        },
+                        icon: Icon(Icons.flag_outlined, size: 20),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 4),
+
+              // ---- The bubble ----
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: bg,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(isMe ? 24 : 0),
+                    topRight: Radius.circular(isMe ? 0 : 24),
+                    bottomLeft: const Radius.circular(24),
+                    bottomRight: const Radius.circular(24),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: isMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    content,
+                    const SizedBox(height: 4),
+                    Text(
+                      msg.formattedTime,
+                      style: TextStyle(color: muted, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
             ],
-            content,
-            const SizedBox(height: 6),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(msg.formattedTime, style: timeStyle),
-            ),
-          ],
+          ),
         ),
-      ),
-    );
-
-    // For me → no avatar, right aligned
-    if (isMe) {
-      return Align(alignment: Alignment.centerRight, child: bubble);
-    }
-
-    // For others → avatar + bubble row
-    return Padding(
-      padding: const EdgeInsets.only(
-        right: 56,
-      ), // keeps it visually balanced vs my bubbles
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const SizedBox(width: 4),
-          UserAvatar(imageUrl: senderPhoto, name: senderName, size: 32),
-          const SizedBox(width: 6),
-          Flexible(child: bubble),
-          const SizedBox(width: 8),
-        ],
       ),
     );
   }
@@ -941,6 +1016,11 @@ class _ChatScreenState extends State<ChatScreen> {
                             setState(
                               () => _file = null,
                             ); // clear preview after sent
+                            _sendText(
+                              context,
+                              type: "file",
+                              url: state.result.url ?? "",
+                            );
                           } else if (state is UploadFileInChatFailure) {
                             CustomSnackBar1.show(context, state.error);
                           }

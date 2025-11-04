@@ -235,7 +235,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     Map<String, dynamic> data,
   ) async {
     try {
-      final url = "${ApiConfig.socket_url}/api/upload-file";
+      final url = "${ApiConfig.socket_url}api/upload-file";
       MultipartFile? filePart;
       final fileVal = data['file'];
       if (fileVal != null) {

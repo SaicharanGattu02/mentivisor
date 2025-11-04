@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -39,11 +40,13 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
   void _init() {
     // Remove old handlers (shared socket)
     _socket.off('receive_private_message', _onReceiveMessage);
+    _socket.off('file_upload_limit', _onFileUpload);
     _socket.off('user_typing', _onUserTyping);
     _socket.off('connect');
 
     // Add listeners
     _socket.on('receive_private_message', _onReceiveMessage);
+    _socket.on('file_upload_limit', _onFileUpload);
     _socket.on('user_typing', _onUserTyping);
     _socket.on('connect', (_) {
       AppLogger.info('[socket] connected: ${_socket.id}');
@@ -162,6 +165,43 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
       _replaceTempWithServer(msg);
     } catch (e, st) {
       AppLogger.info('[socket] malformed receive_private_message: $e\n$st');
+    }
+  }
+
+  void _onFileUpload(dynamic data) {
+    try {
+      AppLogger.info("[socket] file_upload_limit payload: $data");
+
+      if (data is Map) {
+        final status = data['status']?.toString().toLowerCase();
+        final message =
+            data['message']?.toString() ?? 'Upload status received.';
+
+        if (status == 'error') {
+          // Show a snackbar, dialog, or toast to user
+          // _showSnackBar(message, isError: true);
+          return;
+        }
+
+        if (status == 'success') {
+          // _showSnackBar(message, isError: false);
+          // You could also trigger message list refresh or file list update here
+          // e.g. context.read<GroupRoomCubit>().refreshFiles();
+          return;
+        }
+
+        // Unknown status fallback
+        AppLogger.info('[socket] Unrecognized status: $status');
+      } else if (data is String) {
+        // Some socket servers send JSON as string
+        final parsed = jsonDecode(data);
+        return _onFileUpload(parsed);
+      } else {
+        AppLogger.info('[socket] Unexpected payload type: ${data.runtimeType}');
+      }
+    } catch (e, st) {
+      AppLogger.info('[socket] malformed file_upload_limit: $e\n$st');
+      // _showSnackBar("Failed to handle file upload response.", isError: true);
     }
   }
 
