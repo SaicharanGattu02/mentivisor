@@ -78,6 +78,9 @@ class APIEndpointUrls {
   static const String daily_checkins = "${userUrl}checkin";
   static const String common_profile = "${userUrl}common-profile";
   static const String home_diolog = "${userUrl}get-notification";
+  static const String group_chat_report = "${userUrl}report-college-message";
+  static const String private_chat_report = "${userUrl}report-private-message";
+
 
   ///Guest urls
   // static const String guest_study_zone_tags = "${apiUrl}study-zone/tags";

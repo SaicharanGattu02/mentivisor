@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentee/data/cubits/BookSession/book_session_cubit.dar
 import 'package:mentivisor/Mentee/data/cubits/BookSession/session_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Campuses/campuses_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/Chat/private_chat_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ChatMessages/ChatMessagesCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ChatMessages/ChatMessagesRepository.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsPack/coins_pack_cubit.dart';
@@ -126,6 +127,9 @@ import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Cubit.dart';
 import 'Mentee/data/cubits/Verify_Otp/Verify_Otp_Repository.dart';
 import 'Mentee/data/cubits/ViewEccEventDetails/ViewEventDetailsCubit.dart';
 import 'Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
+import 'Mentee/data/cubits/chatReport/GroupChat/groupChatReportCubit.dart';
+import 'Mentee/data/cubits/chatReport/PrivateChat/privateChatReportCubit.dart';
+import 'Mentee/data/cubits/chatReport/chatReportRepo.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/BuyCoupon/BuyCouponCubit.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
@@ -345,6 +349,10 @@ class StateInjector {
       create: (context) => UploadFileInChatRepoImpl(
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
+    ),
+    RepositoryProvider<ChatReportRepo>(
+      create: (context) =>
+          ChatReportImpl(remoteDataSource: context.read<RemoteDataSource>()),
     ),
     RepositoryProvider<StudyZoneCampusRepository>(
       create: (context) => StudyZoneCampusRepositoryImpl(
@@ -674,6 +682,14 @@ class StateInjector {
 
     BlocProvider<LeaderboardCubit>(
       create: (context) => LeaderboardCubit(context.read<LeaderBoardRepo>()),
+    ),
+    BlocProvider<privateChatReportCubit>(
+      create: (context) =>
+          privateChatReportCubit(context.read<ChatReportRepo>()),
+    ),
+
+    BlocProvider<groupChatReportCubit>(
+      create: (context) => groupChatReportCubit(context.read<ChatReportRepo>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

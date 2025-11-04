@@ -163,6 +163,8 @@ abstract class RemoteDataSource {
   Future<GetHomeDilogModel?> homeDiolog();
   Future<LeaderBoardModel?> getLeaderBoard();
   Future<MilestonesModel?> getMilestones();
+  Future<SuccessModel?> groupChatReport(Map<String, dynamic> data);
+  Future<SuccessModel?> privateChatReport(Map<String, dynamic> data);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -1069,6 +1071,38 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('Community Report ::${e}');
+
+      return null;
+    }
+  }
+  @override
+  Future<SuccessModel?> groupChatReport(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.group_chat_report}",
+        data: formData,
+      );
+      AppLogger.log('Group Chat Report::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('Group Chat Report ::${e}');
+
+      return null;
+    }
+  }
+  @override
+  Future<SuccessModel?> privateChatReport(Map<String, dynamic> data) async {
+    final formData = await buildFormData(data);
+    try {
+      Response res = await ApiClient.post(
+        "${APIEndpointUrls.private_chat_report}",
+        data: formData,
+      );
+      AppLogger.log('private Chat Report::${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('private Chat Report ::${e}');
 
       return null;
     }

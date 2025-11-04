@@ -19,7 +19,7 @@ pluginManagement {
     plugins {
         id("com.android.application") version "8.6.1"
         id("com.android.library") version "8.6.1"
-        id("org.jetbrains.kotlin.android") version "1.9.24" // ✅ use this
+        id("org.jetbrains.kotlin.android") version "2.1.0" // ✅ use this
         id("com.google.gms.google-services") version "4.4.2" // ✅ important
     }
 }

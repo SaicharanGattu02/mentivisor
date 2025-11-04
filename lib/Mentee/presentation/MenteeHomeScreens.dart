@@ -1398,48 +1398,41 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              // OutlinedButton.icon(
-                                              //   onPressed: () async {
-                                              //     final profileId =
-                                              //         await AuthService.getUSerId();
-                                              //     final shareUrl =
-                                              //         "https://mentivisor.com/profile/$profileId";
-                                              //     Share.share(
-                                              //       "Check out this profile on Mentivisor:\n$shareUrl",
-                                              //       subject:
-                                              //           "Mentivisor Profile",
-                                              //     );
-                                              //   },
-                                              //   icon: const Icon(
-                                              //     Icons.share_rounded,
-                                              //     size: 16,
-                                              //     color: Color(0xff4A7CF6),
-                                              //   ),
-                                              //   label: const Text(
-                                              //     'Share',
-                                              //     style: TextStyle(
-                                              //       fontFamily: 'segeo',
-                                              //       fontSize: 16,
-                                              //       fontWeight: FontWeight.w600,
-                                              //       color: Color(0xff4A7CF6),
-                                              //     ),
-                                              //   ),
-                                              //   style: OutlinedButton.styleFrom(
-                                              //     side: BorderSide.none,
-                                              //     backgroundColor: Colors.white,
-                                              //     shape: RoundedRectangleBorder(
-                                              //       borderRadius:
-                                              //           BorderRadius.circular(
-                                              //             20,
-                                              //           ),
-                                              //     ),
-                                              //     padding:
-                                              //         const EdgeInsets.symmetric(
-                                              //           horizontal: 20,
-                                              //           vertical: 8,
-                                              //         ),
-                                              //   ),
-                                              // ),
+                                              OutlinedButton.icon(
+                                                onPressed: () async {
+                                                  context.push(
+                                                    '/becomementorscreen',
+                                                  );
+                                                },
+
+                                                label: Text(
+                                                  'Become a Mentor',
+
+                                                  style: TextStyle(
+                                                    fontFamily: 'segeo',
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xff4A7CF6),
+                                                  ),
+                                                ),
+                                                style: OutlinedButton.styleFrom(
+                                                  side: BorderSide.none,
+                                                  backgroundColor: Color(
+                                                    0xFFFAF5FF,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 8,
+                                                      ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         );
