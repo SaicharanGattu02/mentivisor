@@ -1242,7 +1242,6 @@ class SessionCard extends StatelessWidget {
                       },
                       builder: (context, state) {
                         return SizedBox(
-                          // Full width button
                           width: double.infinity,
                           child: CustomAppButton1(
                             isLoading: state is ReportMentorLoading,
@@ -1261,7 +1260,7 @@ class SessionCard extends StatelessWidget {
                                     context,
                                     "Please provide a reason in the text box.",
                                   );
-                                  return; // Stop submission if empty
+                                  return;
                                 }
 
                                 finalReason = otherText;

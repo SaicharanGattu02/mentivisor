@@ -9,7 +9,7 @@ class privateChatReportCubit extends Cubit<PrivateChatReportState> {
   privateChatReportCubit(this.chatReportRepo)
     : super(PrivateChatReportIntailly());
 
-  Future<void> postStudyZoneReport(Map<String, dynamic> data) async {
+  Future<void> privateChatReport(Map<String, dynamic> data) async {
     emit(PrivateChatReportLoading());
     try {
       final res = await chatReportRepo.privateChatReport(data);
