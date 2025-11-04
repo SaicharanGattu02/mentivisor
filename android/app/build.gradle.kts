@@ -34,7 +34,7 @@ android {
             keyAlias = "upload"
             keyPassword = "mentivisor"
             storePassword = "mentivisor"
-            storeFile = file("D:\\mentivisor\\android\\app\\upload-keystore.jks")
+            storeFile = file("C:\\Users\\varun\\Desktop\\VarunWorkSpace\\mentivisor\\android\\app\\upload-keystore.jks")
         }
     }
 
