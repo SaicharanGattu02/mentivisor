@@ -655,15 +655,33 @@ void _showReportSheet(BuildContext context, communityPosts) {
                         child: CustomAppButton1(
                           isLoading: state is CommunityZoneReportLoading,
                           text: "Submit Report",
-                          onPlusTap: () {
-                            final Map<String, dynamic> data = {
-                              "content_id": communityPosts.id,
-                              "reason": _selected,
-                            };
-                            context
-                                .read<CommunityZoneReportCubit>()
-                                .postCommunityZoneReport(data);
-                          },
+                            onPlusTap: () {
+                              String finalReason = _selected;
+
+                              // If user selected 'Other', use the text field value
+                              if (_selected == 'Other') {
+                                final otherText = _otherController.text.trim();
+
+                                if (otherText.isEmpty) {
+                                  CustomSnackBar1.show(
+                                    context,
+                                    "Please provide a reason in the text box.",
+                                  );
+                                  return; // Stop submission if empty
+                                }
+
+                                finalReason = otherText;
+                              }
+
+                              // Build data payload
+                              final Map<String, dynamic> data = {
+                                "content_id": communityPosts.id, // ID of the post
+                                "reason": finalReason,           // Either selected or typed reason
+                              };
+
+                              // Call your Cubit/Bloc
+                              context.read<CommunityZoneReportCubit>().postCommunityZoneReport(data);
+                            },
                         ),
                       );
                     },

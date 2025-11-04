@@ -406,6 +406,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       _mentorStatus.value =
                                           menteeProfile?.user?.mentorStatus ??
                                           "none";
+                                      AppLogger.info(
+                                        "mentorStatus:::${_mentorStatus.value}",
+                                      );
                                       _mentorProfileUrl.value =
                                           menteeProfile?.user?.profilePicUrl ??
                                           "";
@@ -775,7 +778,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               ValueListenableBuilder<String>(
                                 valueListenable: _mentorStatus,
                                 builder: (context, status, _) {
-                                  print("status:${status}");
+                                  print("mentee Status:${status}");
                                   if (status != "approval") {
                                     return Container(
                                       padding: const EdgeInsets.symmetric(
@@ -805,7 +808,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                         ),
                                         onTap: () {
                                           context.pop();
-                                          AppLogger.info("Status :${status}");
+                                          AppLogger.info(
+                                            "mentee Status::${status}",
+                                          );
                                           if (status == "" ||
                                               status == "none") {
                                             context.push('/becomementorscreen');
@@ -1398,40 +1403,60 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              OutlinedButton.icon(
-                                                onPressed: () async {
-                                                  context.push(
-                                                    '/becomementorscreen',
+                                              ValueListenableBuilder<String>(
+                                                valueListenable: _mentorStatus,
+                                                builder: (context, status, _) {
+                                                  print(
+                                                    "mentor Statussss: $status",
                                                   );
-                                                },
+                                                  final cleanStatus = status
+                                                      .trim()
+                                                      .toLowerCase();
 
-                                                label: Text(
-                                                  'Become a Mentor',
-
-                                                  style: TextStyle(
-                                                    fontFamily: 'segeo',
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color(0xff4A7CF6),
-                                                  ),
-                                                ),
-                                                style: OutlinedButton.styleFrom(
-                                                  side: BorderSide.none,
-                                                  backgroundColor: Color(
-                                                    0xFFFAF5FF,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          20,
+                                                  if (cleanStatus !=
+                                                      "approval") {
+                                                    return OutlinedButton.icon(
+                                                      onPressed: () async {
+                                                        context.push(
+                                                          '/becomementorscreen',
+                                                        );
+                                                      },
+                                                      label: const Text(
+                                                        'Become a Mentor',
+                                                        style: TextStyle(
+                                                          fontFamily: 'segeo',
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Color(
+                                                            0xff4A7CF6,
+                                                          ),
                                                         ),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 8,
                                                       ),
-                                                ),
+                                                      style: OutlinedButton.styleFrom(
+                                                        side: BorderSide.none,
+                                                        backgroundColor:
+                                                            const Color(
+                                                              0xFFFAF5FF,
+                                                            ),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                20,
+                                                              ),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 20,
+                                                              vertical: 8,
+                                                            ),
+                                                      ),
+                                                    );
+                                                  }
+
+                                                  // Hide button for 'approval' status
+                                                  return const SizedBox.shrink();
+                                                },
                                               ),
                                             ],
                                           ),

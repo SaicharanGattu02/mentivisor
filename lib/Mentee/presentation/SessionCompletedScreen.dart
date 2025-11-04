@@ -554,12 +554,30 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                           isLoading: state is SessionReportReviewLoading,
                           text: "Submit Report",
                           onPlusTap: () {
+                            String finalReason = _selected;
+
+                            // If user selected 'Other', use the text field value
+                            if (_selected == 'Other') {
+                              final otherText = _otherController.text.trim();
+
+                              if (otherText.isEmpty) {
+                                CustomSnackBar1.show(
+                                  context,
+                                  "Please provide a reason in the text box.",
+                                );
+                                return; // Stop submission if empty
+                              }
+
+                              finalReason = otherText;
+                            }
+
                             final Map<String, dynamic> data = {
-                              "content_id": sessionId,
-                              "reason": _selected == 'Other'
-                                  ? _otherController.text.trim()
-                                  : _selected,
+                              "content_id":
+                                  sessionId, // ID of the session/review
+                              "reason":
+                                  finalReason, // Either selected or typed reason
                             };
+
                             context.read<SubmitReviewCubit>().reportReview(
                               data,
                             );

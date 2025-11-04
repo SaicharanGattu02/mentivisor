@@ -611,14 +611,31 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen> {
                             isLoading: state is StudyZoneReportLoading,
                             text: "Submit Report",
                             onPlusTap: () {
+                              String finalReason = _selected;
+                              if (_selected == 'Other') {
+                                final otherText = _otherController.text.trim();
+
+                                if (otherText.isEmpty) {
+                                  CustomSnackBar1.show(
+                                    context,
+                                    "Please provide a reason in the text box.",
+                                  );
+                                  return; // Stop submission if empty
+                                }
+
+                                finalReason = otherText;
+                              }
+
+                              // Build data payload
                               final Map<String, dynamic> data = {
-                                "content_id": widget.resourceId,
-                                "reason": _selected,
+                                "content_id": widget.resourceId, // Use the relevant ID
+                                "reason": finalReason,           // Either selected or typed reason
                               };
-                              context
-                                  .read<StudyZoneReportCubit>()
-                                  .postStudyZoneReport(data);
+
+                              // Call your Cubit/Bloc
+                              context.read<StudyZoneReportCubit>().postStudyZoneReport(data);
                             },
+
                           ),
                         );
                       },

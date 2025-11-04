@@ -1075,6 +1075,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> groupChatReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);
@@ -1091,6 +1092,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
+
   @override
   Future<SuccessModel?> privateChatReport(Map<String, dynamic> data) async {
     final formData = await buildFormData(data);

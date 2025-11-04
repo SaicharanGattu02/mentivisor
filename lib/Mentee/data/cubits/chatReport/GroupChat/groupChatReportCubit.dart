@@ -8,7 +8,7 @@ class groupChatReportCubit extends Cubit<GroupChatReportState> {
 
   groupChatReportCubit(this.chatReportRepo) : super(GroupChatReportIntailly());
 
-  Future<void> postStudyZoneReport(Map<String, dynamic> data) async {
+  Future<void> groupChatReport(Map<String, dynamic> data) async {
     emit(GroupChatReportLoading());
     try {
       final res = await chatReportRepo.groupChatReport(data);

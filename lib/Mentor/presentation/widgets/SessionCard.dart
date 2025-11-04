@@ -1253,6 +1253,19 @@ class SessionCard extends StatelessWidget {
                                       _otherController.text.isNotEmpty
                                   ? _otherController.text
                                   : _selected ?? "";
+                              if (_selected == "Other") {
+                                final otherText = _otherController.text.trim();
+
+                                if (otherText.isEmpty) {
+                                  CustomSnackBar1.show(
+                                    context,
+                                    "Please provide a reason in the text box.",
+                                  );
+                                  return; // Stop submission if empty
+                                }
+
+                                finalReason = otherText;
+                              }
 
                               final Map<String, dynamic> data = {
                                 "mentee_id": menteeId,
@@ -1264,6 +1277,24 @@ class SessionCard extends StatelessWidget {
                                 data,
                               );
                             },
+
+                            // onPlusTap: () {
+                            //   String finalReason =
+                            //       _selected == "Other" &&
+                            //           _otherController.text.isNotEmpty
+                            //       ? _otherController.text
+                            //       : _selected ?? "";
+                            //
+                            //   final Map<String, dynamic> data = {
+                            //     "mentee_id": menteeId,
+                            //     "session_id": sessionId,
+                            //     "reason": finalReason,
+                            //   };
+                            //
+                            //   context.read<ReportMentorCubit>().reportMentor(
+                            //     data,
+                            //   );
+                            // },
                           ),
                         );
                       },

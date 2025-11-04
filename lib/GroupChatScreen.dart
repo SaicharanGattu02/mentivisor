@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/Mentee/data/cubits/chatReport/GroupChat/groupChatReportCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/chatReport/GroupChat/groupChatReportStates.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/services/SocketService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Components/CustomAppButton.dart';
+import 'Components/CustomSnackBar.dart';
 import 'Mentee/Models/GroupChatMessagesModel.dart';
 import 'Mentee/data/cubits/Chat/GroupRoomCubit.dart';
 import 'Mentee/data/cubits/GroupChatMessages/GroupChatMessagesCubit.dart';
@@ -558,8 +562,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           ),
                         ],
                       ),
-
-                    // ---- Report icon (only if not me) ----
                     if (!isMe)
                       IconButton(
                         style: IconButton.styleFrom(
@@ -567,7 +569,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           visualDensity: VisualDensity.compact,
                         ),
                         onPressed: () {
-                          // _showReportDialog(m);
+                          _showReportSheet(m.id??-1,context);
                         },
                         icon: Icon(Icons.flag_outlined, size: 20),
                       ),
@@ -649,7 +651,173 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       ),
     );
   }
+  void _showReportSheet(int msgId,BuildContext context) {
+    String _selected = 'Copied';
+    final TextEditingController _otherController = TextEditingController();
+    final List<String> _reportReasons = [
+      'Copied',
+      'Scam or Fraud ',
+      'Abusing Chat',
+      'Other',
+    ];
 
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext builderContext) {
+        return SafeArea(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 8,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Close Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Report Content',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'segeo',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.grey),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Report Reasons List
+                    const Text(
+                      'Reason for reporting',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'segeo',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Radio Buttons for Report Reasons
+                    Column(
+                      children: _reportReasons.map((String reason) {
+                        return RadioListTile<String>(
+                          title: Text(
+                            reason,
+                            style: const TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 16,
+                            ),
+                          ),
+                          value: reason,
+                          visualDensity: VisualDensity.compact,
+                          groupValue: _selected,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selected = value!;
+                            });
+                          },
+                          activeColor: const Color(0xFF4A00E0),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    // Custom Reason TextField
+                    if (_selected == 'Other') ...[
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _otherController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Please explain your reason',
+                          hintStyle: const TextStyle(fontFamily: 'segeo'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    // Submit Button
+                    BlocConsumer<groupChatReportCubit, GroupChatReportState>(
+                      listener: (context, state) {
+                        if (state is GroupChatReportSuccess) {
+                          CustomSnackBar1.show(
+                            context,
+                            "Report submitted successfully.",
+                          );
+                          context.pop();
+                        } else if (state is GroupChatReportFailure) {
+                          return CustomSnackBar1.show(
+                            context,
+                            state.message ?? "",
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return SafeArea(
+                          child: CustomAppButton1(
+                            isLoading: state is GroupChatReportLoading,
+                            text: "Submit Report",
+                            onPlusTap: () {
+                              String finalReason = _selected;
+                              if (_selected == 'Other') {
+                                final otherText = _otherController.text.trim();
+
+                                if (otherText.isEmpty) {
+                                  CustomSnackBar1.show(
+                                    context,
+                                    "Please provide a reason in the text box.",
+                                  );
+                                  return; // Stop submission if empty
+                                }
+
+                                finalReason = otherText;
+                              }
+
+                              final Map<String, dynamic> data = {
+                                "message_id": msgId,
+                                "reason": finalReason,
+                              };
+
+                              context.read<groupChatReportCubit>().groupChatReport(data);
+                            },
+
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
   void _sendText() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
