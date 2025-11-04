@@ -117,21 +117,29 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
         final sameSender = (m.senderId ?? 0) == (server.senderId ?? -1);
         final sameType = (m.type ?? '') == (server.type ?? '');
         final sameMsg = (m.message ?? '') == (server.message ?? '');
-        final sameSenderName = (m.sender?.name ?? '') == (server.sender?.name ?? '');
-        final sameSenderImage = (m.sender?.profilePicUrl ?? '') == (server.sender?.profilePicUrl ?? '');
         final sameUrl = (m.url ?? '') == (server.url ?? '');
-        if (!(sameSender && sameType && sameMsg && sameUrl && sameSenderImage && sameSenderName)) return false;
+        if (!(sameSender && sameType && sameMsg && sameUrl)) return false;
 
         final mTs = DateTime.tryParse(m.createdAt ?? '') ?? DateTime.now();
-        return (mTs.difference(serverTs).abs() <= const Duration(seconds: 5));
+        final diff = mTs.difference(serverTs).abs();
+        return diff <= const Duration(seconds: 10);
       });
 
+      // if (idx != -1) {
+      //   debugPrint(
+      //     "🔄 [UPDATE] Replacing temp message with server-confirmed message (id=${server.id})",
+      //   );
+      //   final updated = [...state.messages];
+      //   updated[idx] = server;
+      //   emit(state.copyWith(messages: updated));
+      //   return;
+      // }
       if (idx != -1) {
         debugPrint(
-          "🔄 [UPDATE] Replacing temp message with server-confirmed message (id=${server.id})",
+          "🔄 [UPDATE] Replacing temp message with server-confirmed message",
         );
         final updated = [...state.messages];
-        updated[idx] = server;
+        updated[idx] = server.copyWith(id: server.id ?? updated[idx].id);
         emit(state.copyWith(messages: updated));
         return;
       }

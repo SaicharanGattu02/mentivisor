@@ -938,11 +938,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       >(
                         listener: (context, state) {
                           if (state is UploadFileInChatSuccess) {
-                            _sendText(
-                              context,
-                              type: "file",
-                              url: state.result.url,
-                            );
                             setState(
                               () => _file = null,
                             ); // clear preview after sent

@@ -124,6 +124,31 @@ class GroupMessages {
     this.sender,
   });
 
+  // 👇 ADD THIS METHOD
+  GroupMessages copyWith({
+    int? id,
+    int? collegeId,
+    int? senderId,
+    String? message,
+    String? url,
+    String? type,
+    String? createdAt,
+    String? updatedAt,
+    Sender? sender,
+  }) {
+    return GroupMessages(
+      id: id ?? this.id,
+      collegeId: collegeId ?? this.collegeId,
+      senderId: senderId ?? this.senderId,
+      message: message ?? this.message,
+      url: url ?? this.url,
+      type: type ?? this.type,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      sender: sender ?? this.sender,
+    );
+  }
+
   GroupMessages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     collegeId = json['college_id'];
