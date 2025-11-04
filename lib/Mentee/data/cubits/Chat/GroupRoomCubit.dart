@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import '../../../../core/network/api_config.dart';
 import '../../../../services/SocketService.dart';
 import '../../../Models/GroupChatMessagesModel.dart';
 
@@ -71,6 +72,7 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
 
   GroupMessages _mapSocket(dynamic data) {
     debugPrint("📥 [MAP] Raw socket data received => $data");
+
     Map<String, dynamic> map;
     if (data is Map) {
       map = data.map((k, v) => MapEntry(k.toString(), v));
@@ -79,6 +81,29 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
     }
 
     String? _s(dynamic v) => v?.toString();
+
+    Sender? sender;
+    if (map['sender'] is Map) {
+      final senderMap = Map<String, dynamic>.from(map['sender']);
+      final rawPic = senderMap['profile_pic'];
+
+      // ✅ Automatically add host URL if not null or already full
+      String? fullPicUrl;
+      if (rawPic != null && rawPic.toString().isNotEmpty) {
+        if (rawPic.toString().startsWith('http')) {
+          fullPicUrl = rawPic.toString();
+        } else {
+          fullPicUrl = "${ApiConfig.baseUrl}storage/${rawPic.toString()}";
+        }
+      }
+
+      sender = Sender(
+        id: senderMap['id'],
+        name: senderMap['name'],
+        profilePic: rawPic,
+        profilePicUrl: fullPicUrl,
+      );
+    }
 
     final msg = GroupMessages(
       id: _toInt(map['id']),
@@ -89,11 +114,11 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
       type: _s(map['type']),
       createdAt: _s(map['created_at']) ?? DateTime.now().toIso8601String(),
       updatedAt: _s(map['updated_at']),
-      sender: null,
+      sender: sender,
     );
 
     debugPrint(
-      "✅ [MAP] Parsed message => id:${msg.id}, sender:${msg.senderId}, type:${msg.type}, msg:${msg.message}",
+      "✅ [MAP] Parsed message => id:${msg.id}, sender:${msg.senderId}, type:${msg.type}, msg:${msg.message}, senderName:${msg.sender?.name}",
     );
     return msg;
   }
@@ -136,10 +161,13 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
       // }
       if (idx != -1) {
         debugPrint(
-          "🔄 [UPDATE] Replacing temp message with server-confirmed message",
+          "🔄 [UPDATE] Replacing temp message with server-confirmed message (id=${server.id})",
         );
         final updated = [...state.messages];
-        updated[idx] = server.copyWith(id: server.id ?? updated[idx].id);
+        updated[idx] = server.copyWith(
+          id: server.id ?? updated[idx].id,
+          sender: server.sender ?? updated[idx].sender,
+        );
         emit(state.copyWith(messages: updated));
         return;
       }

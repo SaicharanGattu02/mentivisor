@@ -434,13 +434,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   // 2. Updated _bubble – matches the uploaded design 100%
   // ---------------------------------------------------------------------
   Widget _bubble(GroupMessages m, bool isMe) {
-    final bg = isMe ? _me : _other; // your existing colour vars
-    final textColor = _text; // your existing text colour
-    final muted = _muted; // timestamp / name colour
+    final bg = isMe ? _me : _other;
+    final textColor = _text;
+    final muted = _muted;
 
-    // -----------------------------------------------------------------
-    // Content (text / image / file) – unchanged logic, just wrapped
-    // -----------------------------------------------------------------
     Widget content;
     if (m.isText) {
       content = Text(
@@ -497,13 +494,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       content = const SizedBox.shrink();
     }
 
-    // -----------------------------------------------------------------
-    // MAIN LAYOUT – avatar + name row  →  bubble  →  timestamp
-    // -----------------------------------------------------------------
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 320),
+        constraints: const BoxConstraints(maxWidth: double.infinity),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
           child: Column(
@@ -511,52 +505,78 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: [
-              // ---- Avatar + Name (outside the bubble) ----
               GestureDetector(
                 onTap: () async {
-                  final userIdStr =
-                      await AuthService.getUSerId(); // String? like "107"
-                  final userId = int.tryParse(
-                    userIdStr ?? '',
-                  ); // Parse to int, default 0 if null/invalid
-                  AppLogger.info(
-                    "userId::$userId (parsed as int: $userId)",
-                  );
-
+                  final userIdStr = await AuthService.getUSerId();
+                  final userId = int.tryParse(userIdStr ?? '');
                   final uploaderId = m.sender?.id;
+
                   if (userId == uploaderId) {
                     context.push("/profile");
-                    AppLogger.info(
-                      "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
-                    );
-                    AppLogger.info("profile::true");
                   } else {
                     context.push("/common_profile/$uploaderId");
-                    AppLogger.info(
-                      "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
-                    );
-                    AppLogger.info("profile::false...$uploaderId");
                   }
                 },
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: isMe
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _avatar(m.sender?.profilePicUrl), // <-- sender image
-                    const SizedBox(width: 6),
-                    Text(
-                      m.sender?.name ?? 'Member',
-                      style: TextStyle(
-                        color: muted,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                    // ---- For others: avatar + name on left ----
+                    if (!isMe)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _avatar(m.sender?.profilePicUrl),
+                          const SizedBox(width: 6),
+                          Text(
+                            m.sender?.name ?? 'Member',
+                            style: TextStyle(
+                              color: muted,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+
+                    // ---- For me: avatar + name on right ----
+                    if (isMe)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _avatar(m.sender?.profilePicUrl),
+                          const SizedBox(width: 6),
+                          Text(
+                            m.sender?.name ?? 'You',
+                            style: TextStyle(
+                              color: muted,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                    // ---- Report icon (only if not me) ----
+                    if (!isMe)
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onPressed: () {
+                          // _showReportDialog(m);
+                        },
+                        icon: Icon(Icons.flag_outlined, size: 20),
+                      ),
                   ],
                 ),
               ),
               const SizedBox(height: 4),
 
-              // ---- The actual bubble ----
+              // ---- The bubble ----
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -564,8 +584,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(isMe ? 24 : 0),
                     topRight: Radius.circular(isMe ? 0 : 24),
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(24),
+                    bottomLeft: const Radius.circular(24),
+                    bottomRight: const Radius.circular(24),
                   ),
                 ),
                 child: Column(
