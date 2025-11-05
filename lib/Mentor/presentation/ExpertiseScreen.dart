@@ -51,7 +51,6 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
     }
   }
 
-
   @override
   void dispose() {
     _tab.removeListener(_onTabChanged);
@@ -84,7 +83,8 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                     builder: (context, approveState) {
                       bool showAddButton = false;
                       if (approveState is ApprovedExpertiseLoaded) {
-                        showAddButton = !(approveState.model.data?.has_request ?? false);
+                        showAddButton =
+                            !(approveState.model.data?.has_request ?? false);
                       }
                       return ExpertiseTabFromState(
                         title: 'List',
@@ -140,7 +140,6 @@ class _ExpertiseScreenState extends State<ExpertiseScreen>
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -224,23 +223,23 @@ class ExpertiseTabFromState<T extends Object> extends StatelessWidget {
 
   bool get _isLoading =>
       state is ApprovedExpertiseLoading ||
-          state is PendingExpertiseLoading ||
-          state is RejectedExpertiseLoading;
+      state is PendingExpertiseLoading ||
+      state is RejectedExpertiseLoading;
 
   bool get _isInitial =>
       state is ApprovedExpertiseInitial ||
-          state is PendingExpertiseInitial ||
-          state is RejectedExpertiseInitial;
+      state is PendingExpertiseInitial ||
+      state is RejectedExpertiseInitial;
 
   bool get _isFailure =>
       state is ApprovedExpertiseFailure ||
-          state is PendingExpertiseFailure ||
-          state is RejectedExpertiseFailure;
+      state is PendingExpertiseFailure ||
+      state is RejectedExpertiseFailure;
 
   bool get _isLoaded =>
       state is ApprovedExpertiseLoaded ||
-          state is PendingExpertiseLoaded ||
-          state is RejectedExpertiseLoaded;
+      state is PendingExpertiseLoaded ||
+      state is RejectedExpertiseLoaded;
 
   @override
   Widget build(BuildContext context) {
@@ -277,12 +276,24 @@ class ExpertiseTabFromState<T extends Object> extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: onRetry,
           child: ListView(
-            children: const [
+            children: [
               SizedBox(height: 120),
               Center(
-                child: Text(
-                  'No items found',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      "assets/nodata/no_data.png",
+                      width: 200,
+                      height: 200,
+                    ),
+                    Text(
+                      'No Expertise found',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

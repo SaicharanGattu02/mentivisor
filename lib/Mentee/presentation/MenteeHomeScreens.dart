@@ -204,7 +204,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   top: Radius.circular(20),
                                 ),
                                 child: Image.network(
-                                  homeNotify?.imageUrl ?? "",
+                                  homeNotify?.image ?? "",
                                   width: double.infinity,
                                   height: 160,
                                   fit: BoxFit.cover,
@@ -224,28 +224,27 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               const SizedBox(height: 6),
 
                               // 💬 Subtitle
-                              Text.rich(
-                                TextSpan(
-                                  text: "Get ",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black54,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: "20% ",
-                                      style: TextStyle(
-                                        color: Color(0xFF2563EB),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(text: "off on your first session"),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-
+                              // Text.rich(
+                              //   TextSpan(
+                              //     text: "Get ",
+                              //     style: TextStyle(
+                              //       fontSize: 14,
+                              //       color: Colors.black54,
+                              //       fontWeight: FontWeight.w500,
+                              //     ),
+                              //     children: [
+                              //       TextSpan(
+                              //         text: "20% ",
+                              //         style: TextStyle(
+                              //           color: Color(0xFF2563EB),
+                              //           fontWeight: FontWeight.bold,
+                              //         ),
+                              //       ),
+                              //       TextSpan(text: "off on your first session"),
+                              //     ],
+                              //   ),
+                              //   textAlign: TextAlign.center,
+                              // ),
                               const Spacer(),
 
                               // 🔘 Buttons

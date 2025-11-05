@@ -116,13 +116,16 @@ class AppDrawer extends StatelessWidget {
                                       //             )
                                       //             as ImageProvider,
                                       // ),
-                                      const SizedBox(width: 14),
-                                      Text(
-                                        user_data?.data?.name ?? "",
-                                        style: const TextStyle(
-                                          fontFamily: 'segeo',
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
+                                       SizedBox(width: 14),
+                                      Expanded(
+                                        child: Text(     maxLines: 1,        overflow:
+                                        TextOverflow.ellipsis,
+                                          user_data?.data?.name ?? "",
+                                          style: const TextStyle(
+                                            fontFamily: 'segeo',
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                     ],

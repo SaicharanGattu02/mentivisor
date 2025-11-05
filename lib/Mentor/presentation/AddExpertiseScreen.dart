@@ -89,9 +89,7 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(
-        0xFFF8F8FF,
-      ), // Approximate light purple background
+      backgroundColor: const Color(0xFFF8F8FF),
       body: MultiBlocListener(
         listeners: [
           BlocListener<NonAttachedExpertisesCubit, NonAttachedExpertisesStates>(
@@ -252,142 +250,168 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
               },
             ),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 16.0),
-                itemCount: selectedExpertises.length,
-                itemBuilder: (context, index) {
-                  final exp = selectedExpertises[index];
-                  return BlocBuilder<
-                    NonAttachedExpertiseDetailsCubit,
-                    NonAttachedExpertiseDetailsStates
-                  >(
-                    builder: (context, state) {
-                      List<Data> subs = subExpertises[exp.id] ?? [];
-                      if (state is NonAttachedExpertiseDetailsLoading) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Center(child: DottedProgressWithLogo()),
-                        );
-                      }
-                      if (state is NonAttachedExpertiseDetailsFailure) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Center(child: Text(state.error)),
-                        );
-                      }
-                      if (state is NonAttachedExpertiseDetailsLoaded &&
-                          !subExpertises.containsKey(exp.id)) {
-                        final modelData =
-                            state.nonAttachedExpertiseDetailsModel.data;
-                        subs = (modelData ?? []).whereType<Data>().toList();
-                        subExpertises[exp.id!] = subs;
-                      }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              child: selectedExpertises.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: Chip(
-                              label: Text(exp.name ?? ''),
-                              backgroundColor: Color(0xff726CF7),
-                              labelStyle: const TextStyle(color: Colors.white),
-                              shape: StadiumBorder(
-                                side: const BorderSide(
-                                  color: Color(0xff726CF7),
-                                ),
-                              ),
-                            ),
+                          Image.asset(
+                            "assets/nodata/no_data.png",
+                            width: 200,
+                            height: 160,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 32.0),
-                            child: DottedLine(
-                              direction: Axis.vertical,
-                              lineLength: 20.0,
-                              dashLength: 4.0,
-                              dashGapLength: 4.0,
-                              dashColor: Colors.grey,
-                            ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'No expertise selected',
+                            style: TextStyle(color: Colors.grey, fontSize: 16),
                           ),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: DottedBorder(
-                              color: Colors.grey[400]!,
-                              strokeWidth: 1.5,
-                              borderType: BorderType.RRect,
-                              radius: const Radius.circular(12),
-                              dashPattern: const [6, 3], // 6px line, 3px space
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Wrap(
-                                  spacing: 8.0,
-                                  runSpacing: 8.0,
-                                  children: subs.map((sub) {
-                                    if (sub != null) {
-                                      final isSubSelected =
-                                          selectedSubIds[exp.id]?.contains(
-                                            sub.id,
-                                          ) ??
-                                          false;
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedSubIds.putIfAbsent(
-                                              exp.id!,
-                                              () => {},
-                                            );
-                                            if (isSubSelected) {
-                                              selectedSubIds[exp.id!]!.remove(
-                                                sub.id,
-                                              );
-                                            } else {
-                                              selectedSubIds[exp.id!]!.add(
-                                                sub.id!,
-                                              );
-                                            }
-                                          });
-                                        },
-                                        child: Chip(
-                                          label: Text(sub.name ?? 'Unnamed'),
-                                          backgroundColor: isSubSelected
-                                              ? const Color(
-                                                  0xff726CF7,
-                                                ).withOpacity(0.3)
-                                              : const Color(0xffF5F5F5),
-                                          labelStyle: const TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                          shape: StadiumBorder(
-                                            side: BorderSide(
-                                              color: isSubSelected
-                                                  ? Color(
-                                                      0xff726CF7,
-                                                    ).withOpacity(0.3)
-                                                  : Color(0xffF5F5F5),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 16.0),
                         ],
-                      );
-                    },
-                  );
-                },
-              ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      itemCount: selectedExpertises.length,
+                      itemBuilder: (context, index) {
+                        final exp = selectedExpertises[index];
+                        return BlocBuilder<
+                          NonAttachedExpertiseDetailsCubit,
+                          NonAttachedExpertiseDetailsStates
+                        >(
+                          builder: (context, state) {
+                            List<Data> subs = subExpertises[exp.id] ?? [];
+                            if (state is NonAttachedExpertiseDetailsLoading) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Center(child: DottedProgressWithLogo()),
+                              );
+                            }
+                            if (state is NonAttachedExpertiseDetailsFailure) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
+                                child: Center(child: Text(state.error)),
+                              );
+                            }
+                            if (state is NonAttachedExpertiseDetailsLoaded &&
+                                !subExpertises.containsKey(exp.id)) {
+                              final modelData =
+                                  state.nonAttachedExpertiseDetailsModel.data;
+                              subs = (modelData ?? [])
+                                  .whereType<Data>()
+                                  .toList();
+                              subExpertises[exp.id!] = subs;
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                  ),
+                                  child: Chip(
+                                    label: Text(exp.name ?? ''),
+                                    backgroundColor: Color(0xff726CF7),
+                                    labelStyle: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                    shape: StadiumBorder(
+                                      side: const BorderSide(
+                                        color: Color(0xff726CF7),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 32.0),
+                                  child: DottedLine(
+                                    direction: Axis.vertical,
+                                    lineLength: 20.0,
+                                    dashLength: 4.0,
+                                    dashGapLength: 4.0,
+                                    dashColor: Colors.grey,
+                                  ),
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                  ),
+                                  child: DottedBorder(
+                                    color: Colors.grey[400]!,
+                                    strokeWidth: 1.5,
+                                    borderType: BorderType.RRect,
+                                    radius: const Radius.circular(12),
+                                    dashPattern: const [
+                                      6,
+                                      3,
+                                    ], // 6px line, 3px space
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 8.0,
+                                        children: subs.map((sub) {
+                                          if (sub != null) {
+                                            final isSubSelected =
+                                                selectedSubIds[exp.id]
+                                                    ?.contains(sub.id) ??
+                                                false;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedSubIds.putIfAbsent(
+                                                    exp.id!,
+                                                    () => {},
+                                                  );
+                                                  if (isSubSelected) {
+                                                    selectedSubIds[exp.id!]!
+                                                        .remove(sub.id);
+                                                  } else {
+                                                    selectedSubIds[exp.id!]!
+                                                        .add(sub.id!);
+                                                  }
+                                                });
+                                              },
+                                              child: Chip(
+                                                label: Text(
+                                                  sub.name ?? 'Unnamed',
+                                                ),
+                                                backgroundColor: isSubSelected
+                                                    ? const Color(
+                                                        0xff726CF7,
+                                                      ).withOpacity(0.3)
+                                                    : const Color(0xffF5F5F5),
+                                                labelStyle: const TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                                shape: StadiumBorder(
+                                                  side: BorderSide(
+                                                    color: isSubSelected
+                                                        ? Color(
+                                                            0xff726CF7,
+                                                          ).withOpacity(0.3)
+                                                        : Color(0xffF5F5F5),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          return const SizedBox.shrink();
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 16.0),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),
