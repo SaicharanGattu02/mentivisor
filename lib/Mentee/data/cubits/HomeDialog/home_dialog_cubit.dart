@@ -10,7 +10,7 @@ class HomeDialogCubit extends Cubit<HomeDialogState> {
   HomeDialogRepository homeDialogRepository;
   HomeDialogCubit(this.homeDialogRepository) : super(HomeDialogInitially());
 
-  Future<void> getHomeDialog( ) async {
+  Future<void> getHomeDialog() async {
     emit(HomeDialogLoading());
     try {
       final response = await homeDialogRepository.getHomeDialog();
