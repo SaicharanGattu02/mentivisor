@@ -159,9 +159,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                /// 🔹 Left Section
                                 Expanded(
-                                  flex: 3, // roughly 60% space
+                                  flex: 2,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -193,7 +192,6 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                       ),
                                       const SizedBox(height: 12),
 
-                                      /// Info chips
                                       Wrap(
                                         spacing: 12,
                                         runSpacing: 8,
@@ -227,58 +225,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                         ],
                                       ),
 
-                                      const SizedBox(height: 12),
-
-                                      /// Chat button
-                                      ValueListenableBuilder<Map<int, bool>>(
-                                        valueListenable: chatVisibilityNotifier,
-                                        builder: (context, visibilityMap, _) {
-                                          // final showChat =
-                                          //     visibilityMap[upComingSessions
-                                          //         .id] ??
-                                          //     false;
-                                          // if (!showChat)
-                                          //   return const SizedBox.shrink();
-
-                                          return OutlinedButton.icon(
-                                            onPressed: () {
-                                              context.push(
-                                                '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
-                                              );
-                                            },
-                                            icon: Image.asset(
-                                              "assets/icons/ChatCircle.png",
-                                              width: 20,
-                                              height: 20,
-                                            ),
-                                            label: Text(
-                                              "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: "segeo",
-                                                color: Color(0xff666666),
-                                              ),
-                                            ),
-                                            style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                color: Color(0xffCCCCCC),
-                                                width: 1,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 8,
-                                                    horizontal: 12,
-                                                  ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                      // const SizedBox(height: 12),
                                     ],
                                   ),
                                 ),
@@ -293,7 +240,11 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       CachedNetworkImage(
-                                        imageUrl: upComingSessions.mentor?.mentorProfile ?? "",
+                                        imageUrl:
+                                            upComingSessions
+                                                .mentor
+                                                ?.mentorProfile ??
+                                            "",
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 CircleAvatar(
@@ -352,7 +303,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                             return const SizedBox.shrink();
 
                                           return CustomAppButton1(
-                                            height: 45,
+                                            height: 40,
                                             text: "Join Session",
                                             onPlusTap: () async {
                                               final url =
@@ -369,6 +320,56 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                                 );
                                               }
                                             },
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(height: 8),
+                                      ValueListenableBuilder<Map<int, bool>>(
+                                        valueListenable: chatVisibilityNotifier,
+                                        builder: (context, visibilityMap, _) {
+                                          // final showChat =
+                                          //     visibilityMap[upComingSessions
+                                          //         .id] ??
+                                          //     false;
+                                          // if (!showChat)
+                                          //   return const SizedBox.shrink();
+
+                                          return OutlinedButton.icon(
+                                            onPressed: () {
+                                              context.push(
+                                                '/chat?receiverId=${upComingSessions.mentor?.id}&sessionId=${upComingSessions.id}',
+                                              );
+                                            },
+                                            icon: Image.asset(
+                                              "assets/icons/ChatCircle.png",
+                                              width: 20,
+                                              height: 20,
+                                            ),
+                                            label: Text(
+                                              "Chat with ${upComingSessions.mentor?.name ?? 'Mentor'}",
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "segeo",
+                                                color: Color(0xff666666),
+                                              ),
+                                            ),
+                                            style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                color: Color(0xffCCCCCC),
+                                                width: 1,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                    horizontal: 12,
+                                                  ),
+                                            ),
                                           );
                                         },
                                       ),

@@ -533,7 +533,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
-                                                        children: const [
+                                                        children: [
                                                           Text(
                                                             'Add Attachment',
                                                             style: TextStyle(
@@ -835,10 +835,13 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                       final file = _pickedFile.value!;
                                       final length = await file.length();
                                       if (length > 0) {
-                                        data["attachment"] = await MultipartFile.fromFile(
-                                          file.path,
-                                          filename: path.basename(file.path),
-                                        );
+                                        data["attachment"] =
+                                            await MultipartFile.fromFile(
+                                              file.path,
+                                              filename: path.basename(
+                                                file.path,
+                                              ),
+                                            );
                                       }
                                     }
 

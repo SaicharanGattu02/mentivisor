@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:simple_pdf_compression/simple_pdf_compression.dart';
 
 import '../../../utils/AppLogger.dart';
@@ -31,34 +32,76 @@ class FileImagePicker {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ["pdf"],
+        withData: true, // important
       );
 
-      if (result != null && result.files.single.path != null) {
-        final pickedFile = File(result.files.single.path!);
+      if (result != null && result.files.single.bytes != null) {
+        final bytes = result.files.single.bytes!;
+        final appDir = await getApplicationDocumentsDirectory();
+        final file = File('${appDir.path}/${result.files.single.name}');
+        await file.writeAsBytes(bytes);
 
-        if (pickedFile.path.toLowerCase().endsWith('.pdf')) {
-          final compressor = PDFCompression();
-          final compressedPdf = await compressor.compressPdf(
-            pickedFile,
-            thresholdSize: thresholdSizeInKB * 1024,
-            quality: quality,
-          );
-
-          AppLogger.info(
-            "Compressed size: ${compressedPdf.lengthSync() / 1024} KB",
-          );
-
-          return compressedPdf;
-        } else {
-          return pickedFile;
+        if (file.lengthSync() == 0) {
+          AppLogger.error("Picked PDF is empty");
+          return null;
         }
+
+        // Optional compression
+        final compressor = PDFCompression();
+        final compressedPdf = await compressor.compressPdf(
+          file,
+          thresholdSize: thresholdSizeInKB * 1024,
+          quality: quality,
+        );
+
+        AppLogger.info(
+          "Compressed PDF size: ${compressedPdf.lengthSync() / 1024} KB",
+        );
+
+        return compressedPdf;
       }
     } catch (e) {
       AppLogger.error("Error picking PDF file: $e");
     }
-
     return null;
   }
+
+  // static Future<File?> pickPdfFile({
+  //   int thresholdSizeInKB = 500,
+  //   int quality = 60,
+  // }) async {
+  //   try {
+  //     final result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom,
+  //       allowedExtensions: ["pdf"],
+  //     );
+  //
+  //     if (result != null && result.files.single.path != null) {
+  //       final pickedFile = File(result.files.single.path!);
+  //
+  //       if (pickedFile.path.toLowerCase().endsWith('.pdf')) {
+  //         final compressor = PDFCompression();
+  //         final compressedPdf = await compressor.compressPdf(
+  //           pickedFile,
+  //           thresholdSize: thresholdSizeInKB * 1024,
+  //           quality: quality,
+  //         );
+  //
+  //         AppLogger.info(
+  //           "Compressed size: ${compressedPdf.lengthSync() / 1024} KB",
+  //         );
+  //
+  //         return compressedPdf;
+  //       } else {
+  //         return pickedFile;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     AppLogger.error("Error picking PDF file: $e");
+  //   }
+  //
+  //   return null;
+  // }
 
   /// Show bottom sheet for picking image
   static Future<File?> pickImageBottomSheet(BuildContext context) async {
