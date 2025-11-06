@@ -306,7 +306,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           ),
                                           SizedBox(
                                             width:
-                                                SizeConfig.screenWidth * 0.44,
+                                                SizeConfig.screenWidth * 0.3,
                                             child: Text(
                                               overflow: TextOverflow.ellipsis,
                                               capitalize(
@@ -329,6 +329,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               ],
                             ),
                       actions: [
+                        if (!isGuest)
                         IconButton(
                           style: IconButton.styleFrom(
                             padding: EdgeInsets.only(right: 0),
@@ -345,7 +346,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                         ),
                         if (isGuest)
                           Padding(
-                            padding: const EdgeInsets.only(right: 0.0),
+                            padding: const EdgeInsets.only(right: 16.0),
                             child: CustomAppButton1(
                               text: "Sign Up",
                               width: 105,
@@ -357,7 +358,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           ),
                         if (!isGuest) ...[
                           Padding(
-                            padding: EdgeInsets.only(right: 0.0),
+                            padding: EdgeInsets.only(right: 8.0),
                             child: Row(
                               children: [
                                 IconButton(
