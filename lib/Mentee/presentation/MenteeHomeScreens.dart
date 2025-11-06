@@ -174,154 +174,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
             if (isLoading) {
               return const Scaffold(body: MentorGridCampusShimmer());
             }
-            return BlocListener<HomeDialogCubit, HomeDialogState>(
-              listener: (context, state) {
-                if (state is HomeDialogLoaded) {
-                  AppLogger.info("called::");
-                  final homeNotify = state.homeDilogModel.data;
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        insetPadding: const EdgeInsets.all(20),
-                        child: Container(
-                          width: 350,
-                          height: 320,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // 📸 Image Section
-                              ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                                child: Image.network(
-                                  homeNotify?.image ?? "",
-                                  width: double.infinity,
-                                  height: 160,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-
-                              SizedBox(height: 16),
-                              Text(
-                                homeNotify?.title ?? "",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black,
-                                ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              // 💬 Subtitle
-                              // Text.rich(
-                              //   TextSpan(
-                              //     text: "Get ",
-                              //     style: TextStyle(
-                              //       fontSize: 14,
-                              //       color: Colors.black54,
-                              //       fontWeight: FontWeight.w500,
-                              //     ),
-                              //     children: [
-                              //       TextSpan(
-                              //         text: "20% ",
-                              //         style: TextStyle(
-                              //           color: Color(0xFF2563EB),
-                              //           fontWeight: FontWeight.bold,
-                              //         ),
-                              //       ),
-                              //       TextSpan(text: "off on your first session"),
-                              //     ],
-                              //   ),
-                              //   textAlign: TextAlign.center,
-                              // ),
-                              const Spacer(),
-
-                              // 🔘 Buttons
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    // Maybe Later
-                                    Expanded(
-                                      child: OutlinedButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "Maybe later",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    // Explore Now
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          _launchUrl(homeNotify?.url ?? "");
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFF2563EB,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "Explore Now",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-              child: ValueListenableBuilder<bool>(
+            return  ValueListenableBuilder<bool>(
                 valueListenable: _isGuestNotifier,
                 builder: (context, isGuest, _) {
                   return Scaffold(
@@ -453,7 +306,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           ),
                                           SizedBox(
                                             width:
-                                                SizeConfig.screenWidth * 0.45,
+                                                SizeConfig.screenWidth * 0.44,
                                             child: Text(
                                               overflow: TextOverflow.ellipsis,
                                               capitalize(
@@ -476,9 +329,23 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               ],
                             ),
                       actions: [
+                        IconButton(
+                          style: IconButton.styleFrom(
+                            padding: EdgeInsets.only(right: 0),
+                          ),
+                          onPressed: () {
+                            context.push("/leaderboard");
+                          },
+                          icon: Image.asset(
+                            "assets/icons/competition.png",
+                            width: 30,
+                            height: 30,
+                            color: primarycolor,
+                          ),
+                        ),
                         if (isGuest)
                           Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
+                            padding: const EdgeInsets.only(right: 0.0),
                             child: CustomAppButton1(
                               text: "Sign Up",
                               width: 105,
@@ -490,7 +357,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                           ),
                         if (!isGuest) ...[
                           Padding(
-                            padding: EdgeInsets.only(right: 16.0),
+                            padding: EdgeInsets.only(right: 0.0),
                             child: Row(
                               children: [
                                 IconButton(
@@ -1480,8 +1347,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                     ),
                   );
                 },
-              ),
-            );
+              );
           },
         );
       },

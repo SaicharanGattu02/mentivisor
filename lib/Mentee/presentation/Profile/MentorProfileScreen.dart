@@ -265,7 +265,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
                         if (hasTodaySlots ||
                             hasTomorrowSlots ||
-                            hasRemainingSlots)
+                            hasRemainingSlots) ...[
                           _buildSection(
                             title: 'Available Slots',
                             child: Column(
@@ -286,7 +286,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                         .map(
                                           (slot) => _buildTimeSlot(
                                             "${slot.startTime} - ${slot.endTime}",
-                                            Color(0xFFdcfce7),
+                                            const Color(0xFFdcfce7),
                                           ),
                                         )
                                         .toList(),
@@ -308,7 +308,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                         .map(
                                           (slot) => _buildTimeSlot(
                                             "${slot.startTime} - ${slot.endTime}",
-                                            Color(0xFFdbeafe),
+                                            const Color(0xFFdbeafe),
                                           ),
                                         )
                                         .toList(),
@@ -317,8 +317,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                 ],
                                 if (hasRemainingSlots)
                                   Text(
-                                    'More ${mentorData?.remainingSlots} Slots available within the week',
-                                    style: TextStyle(
+                                    'More ${mentorData?.remainingSlots} slots available within the week',
+                                    style: const TextStyle(
                                       color: Color(0xff666666),
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'segeo',
@@ -328,6 +328,24 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               ],
                             ),
                           ),
+                        ] else ...[
+                          _buildSection(
+                            title: 'Available Slots',
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Center(
+                                child: Text(
+                                  'No slots available',
+                                  style: const TextStyle(
+                                    color: Color(0xff999999),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
 
                         if ((mentorData?.ratings ?? []).isNotEmpty)
                           _buildSection(

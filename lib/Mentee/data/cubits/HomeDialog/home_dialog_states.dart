@@ -11,7 +11,7 @@ class HomeDialogLoading extends HomeDialogState {}
 
 class HomeDialogLoaded extends HomeDialogState {
   GetHomeDilogModel homeDilogModel;
-  HomeDialogLoaded( this.homeDilogModel);
+  HomeDialogLoaded(this.homeDilogModel);
 }
 
 class HomeDialogFailure extends HomeDialogState {

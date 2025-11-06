@@ -8,9 +8,12 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/presentation/studyzone/MeteeStudyzoneScreens.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../bloc/internet_status/internet_status_bloc.dart';
 import '../../services/SocketService.dart';
 import '../../utils/DeepLinkMapper.dart';
+import '../data/cubits/HomeDialog/home_dialog_cubit.dart';
+import '../data/cubits/HomeDialog/home_dialog_states.dart';
 import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
   import 'Ecc/EccScreen.dart';
@@ -90,6 +93,13 @@ class _DashboardState extends State<Dashboard> {
     setState(() => _selectedIndex = index);
   }
 
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -107,30 +117,170 @@ class _DashboardState extends State<Dashboard> {
       },
       child: Scaffold(
         // extendBody: true,
-        body: BlocListener<InternetStatusBloc, InternetStatusState>(
+        body: BlocListener<HomeDialogCubit, HomeDialogState>(
           listener: (context, state) {
-            if (state is InternetStatusLostState) {
-              context.push('/no_internet');
-            } else if (state is InternetStatusBackState) {}
+            if (state is HomeDialogLoaded) {
+              final homeNotify = state.homeDilogModel.data;
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    insetPadding: const EdgeInsets.all(20),
+                    child: Container(
+                      width: 350,
+                      height: 320,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 📸 Image Section
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                            child: Image.network(
+                              homeNotify?.image ?? "",
+                              width: double.infinity,
+                              height: 160,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+
+                          SizedBox(height: 6),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  homeNotify?.title ?? "",
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  homeNotify?.description ?? "",
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Spacer(),
+                          // 🔘 Buttons
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                            child: Row(
+                              children: [
+                                // Maybe Later
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                        color: Colors.grey,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          12,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Maybe later",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Explore Now
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _launchUrl(homeNotify?.url ?? "");
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(
+                                        0xFF2563EB,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          12,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Explore Now",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
           },
-          // Wrap the PageView with our scroll listener wrapper
-          // child: _HideNavbarOnScroll(
-          //   controller: _showBottomBar,
-          child: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            onPageChanged: (i) {
-              HapticFeedback.lightImpact();
-              setState(() => _selectedIndex = i);
+          child: BlocListener<InternetStatusBloc, InternetStatusState>(
+            listener: (context, state) {
+              if (state is InternetStatusLostState) {
+                context.push('/no_internet');
+              } else if (state is InternetStatusBackState) {}
             },
-            children: const [
-              MenteeHomeScreen(),
-              MenteeStudyZone(),
-              EccScreen(),
-              Communityscreen(),
-            ],
+            // Wrap the PageView with our scroll listener wrapper
+            // child: _HideNavbarOnScroll(
+            //   controller: _showBottomBar,
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (i) {
+                HapticFeedback.lightImpact();
+                setState(() => _selectedIndex = i);
+              },
+              children: const [
+                MenteeHomeScreen(),
+                MenteeStudyZone(),
+                EccScreen(),
+                Communityscreen(),
+              ],
+            ),
+            // ),
           ),
-          // ),
         ),
         bottomNavigationBar: ValueListenableBuilder<bool>(
           valueListenable: _showBottomBar,
