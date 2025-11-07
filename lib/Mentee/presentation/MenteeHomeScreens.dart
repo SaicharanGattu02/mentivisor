@@ -771,8 +771,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 ),
                                 color: Colors.white,
                                 child: ListTile(
-                                  leading: const Icon(
-                                    Icons.exit_to_app,
+                                  leading:  Icon(Icons.logout,
                                     color: Colors.red,
                                   ),
                                   title: const Text(

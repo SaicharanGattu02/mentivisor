@@ -16,7 +16,7 @@ import '../data/cubits/HomeDialog/home_dialog_cubit.dart';
 import '../data/cubits/HomeDialog/home_dialog_states.dart';
 import 'Community/CommunityScreen.dart';
 import '../../utils/color_constants.dart';
-  import 'Ecc/EccScreen.dart';
+import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';
 import 'package:flutter/rendering.dart';
 
@@ -155,7 +155,9 @@ class _DashboardState extends State<Dashboard> {
 
                           SizedBox(height: 6),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -199,9 +201,7 @@ class _DashboardState extends State<Dashboard> {
                                         color: Colors.grey,
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          12,
-                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 12,
@@ -224,13 +224,9 @@ class _DashboardState extends State<Dashboard> {
                                       _launchUrl(homeNotify?.url ?? "");
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(
-                                        0xFF2563EB,
-                                      ),
+                                      backgroundColor: const Color(0xFF2563EB),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          12,
-                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 12,

@@ -15,7 +15,7 @@ class CustomerServiceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<MenteeCustomersupportCubit>().CustomersupportDetails(
       1,
-    ); // Example ID
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,

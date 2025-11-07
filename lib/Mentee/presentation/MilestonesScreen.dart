@@ -86,7 +86,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(
-        title: "Milestones",
+        title: "Monthly Milestones",
         actions: [
           IconButton(
             style: IconButton.styleFrom(padding: EdgeInsets.only(right: 15)),

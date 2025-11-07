@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 
 import 'services/AuthService.dart';
 
@@ -65,24 +66,19 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ElasticIn(
-                    child: Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.check_circle,
-                        color: Color(0xFF8B5CF6),
-                        size: 48,
-                      ),
+
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      "assets/images/mentivisorlogo.png",
+                      width: SizeConfig.screenWidth * 0.2,
+                      height: SizeConfig.screenHeight * 0.085,
                     ),
                   ),
                   const SizedBox(height: 24),
                   FadeInUp(
-                    duration: const Duration(milliseconds: 600),
-                    child: const Text(
+                    duration: Duration(milliseconds: 600),
+                    child: Text(
                       'Mentivisor',
                       style: TextStyle(
                         fontSize: 26,

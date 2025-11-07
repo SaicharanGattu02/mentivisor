@@ -10,10 +10,7 @@ import '../../data/cubits/ProductTools/TaskUpdate/task_update_states.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   final ValueNotifier<DateTime> selectedDateNotifier;
-  const AddTaskBottomSheet({
-    super.key,
-    required this.selectedDateNotifier,
-  });
+  const AddTaskBottomSheet({super.key, required this.selectedDateNotifier});
 
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
@@ -28,9 +25,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       context: context,
       initialTime: selectedTime ?? TimeOfDay.now(),
       builder: (context, child) {
-        // Force 24-hour format in the picker UI
+        // Force 12-hour display in the picker UI
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
           child: child!,
         );
       },
@@ -39,16 +36,57 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     if (time != null) {
       setState(() {
         selectedTime = time;
-        // Format manually in 24-hour style
+
+        // ---- Format display (12-hour) ----
         final now = DateTime.now();
-        final formatted = DateFormat('HH:mm').format(
-          DateTime(now.year, now.month, now.day, time.hour, time.minute),
+        final dateTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          time.hour,
+          time.minute,
         );
-        _timeController.text = formatted;
+        final displayTime = DateFormat(
+          'hh:mm a',
+        ).format(dateTime); // For showing in TextField
+
+        // ---- Format saving (24-hour) ----
+        final saveTime = DateFormat('HH:mm').format(dateTime);
+
+        // Display 12-hour formatted time to user
+        _timeController.text = displayTime;
+
+        // Optional: If you also want to keep both
+        debugPrint("🕒 Display (12h): $displayTime | Saved (24h): $saveTime");
       });
     }
   }
 
+  // Future<void> _pickTime() async {
+  //   final time = await showTimePicker(
+  //     context: context,
+  //     initialTime: selectedTime ?? TimeOfDay.now(),
+  //     builder: (context, child) {
+  //       // Force 24-hour format in the picker UI
+  //       return MediaQuery(
+  //         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //
+  //   if (time != null) {
+  //     setState(() {
+  //       selectedTime = time;
+  //       // Format manually in 24-hour style
+  //       final now = DateTime.now();
+  //       final formatted = DateFormat('HH:mm').format(
+  //         DateTime(now.year, now.month, now.day, time.hour, time.minute),
+  //       );
+  //       _timeController.text = formatted;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -71,11 +109,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Add Task",style:TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),),
-            SizedBox(height: 15,),
+            Text(
+              "Add Task",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 15),
             _buildTextField(
               controller: _taskNameController,
               hint: "Enter Task Name",
@@ -106,9 +144,12 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   child: BlocConsumer<TaskUpdateCubit, TaskUpdateStates>(
                     listener: (context, state) async {
                       if (state is TaskUpdateSuccess) {
-                        final formattedDate =
-                        DateFormat('yyyy-MM-dd').format(widget.selectedDateNotifier.value);
-                        await context.read<TaskByDateCubit>().fetchTasksByDate(formattedDate);
+                        final formattedDate = DateFormat(
+                          'yyyy-MM-dd',
+                        ).format(widget.selectedDateNotifier.value);
+                        await context.read<TaskByDateCubit>().fetchTasksByDate(
+                          formattedDate,
+                        );
                         context.read<TaskByStatusCubit>().fetchTasksByStatus();
                         Navigator.pop(context);
                       } else if (state is TaskUpdateFailure) {
@@ -129,33 +170,40 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                           ),
                         ),
                         onPressed: () {
-                          final formattedDate =
-                          DateFormat('yyyy-MM-dd').format(widget.selectedDateNotifier.value);
+                          final parsedTime = DateFormat(
+                            'hh:mm a',
+                          ).parse(_timeController.text);
+                          final saveTime = DateFormat(
+                            'HH:mm',
+                          ).format(parsedTime);
+                          final formattedDate = DateFormat(
+                            'yyyy-MM-dd',
+                          ).format(widget.selectedDateNotifier.value);
                           final Map<String, dynamic> data = {
                             "task_date": formattedDate,
                             "title": _taskNameController.text,
-                            "task_time": _timeController.text,
+                            "task_time": saveTime,
                           };
                           context.read<TaskUpdateCubit>().addTask(data);
                         },
                         child: state is TaskUpdateLoading
                             ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Color(0xffF5F5F5),
-                            strokeWidth: 2,
-                          ),
-                        )
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Color(0xffF5F5F5),
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Text(
-                          "Submit",
-                          style: TextStyle(
-                            color: Color(0xffF5F5F5),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            fontFamily: "segeo",
-                          ),
-                        ),
+                                "Submit",
+                                style: TextStyle(
+                                  color: Color(0xffF5F5F5),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  fontFamily: "segeo",
+                                ),
+                              ),
                       );
                     },
                   ),
@@ -179,10 +227,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       decoration: InputDecoration(
         hintText: hint,
         suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 14,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       ),
     );
   }

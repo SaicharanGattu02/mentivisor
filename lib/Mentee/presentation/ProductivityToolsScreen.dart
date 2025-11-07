@@ -89,7 +89,8 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                     final data = state is TaskByStatusLoaded
                         ? state.taskStatesModel
                         : null;
-                    return Row(spacing: 10,
+                    return Row(
+                      spacing: 10,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
@@ -105,7 +106,6 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                         ),
                         Expanded(
                           child: SizedBox(
-
                             height: 110,
                             child: _buildStatCard(
                               'Completed Task',
@@ -117,7 +117,6 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                         ),
                         Expanded(
                           child: SizedBox(
-
                             height: 110,
                             child: _buildStatCard(
                               'Today  \n Task',
@@ -491,15 +490,17 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                       isScrollControlled: true,
                                       backgroundColor: Colors.white,
                                       shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16),
+                                        ),
                                       ),
                                       builder: (context) => AddTaskBottomSheet(
-                                        selectedDateNotifier: _selectedDateNotifier,
+                                        selectedDateNotifier:
+                                            _selectedDateNotifier,
                                       ),
                                     ).whenComplete(() {
                                       // optional cleanup
                                     });
-
                                   },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
