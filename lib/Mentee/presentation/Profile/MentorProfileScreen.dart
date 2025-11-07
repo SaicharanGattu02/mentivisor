@@ -356,6 +356,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               ) {
                                 return ReviewCard(
                                   name: review.user?.name ?? "",
+                                  id: review.userId??0,
                                   rating: review.rating ?? 0,
                                   createdAt: review.createdAt ?? "",
                                   review: review.feedback ?? "",

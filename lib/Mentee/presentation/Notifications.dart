@@ -215,7 +215,7 @@ class _NotificationsState extends State<Notifications> {
 
     if (width < 600) {
       // Mobile – taller cards for better readability
-      return baseRatio * 6.2;
+      return baseRatio * 6.8;
     } else if (width > 600) {
       // Tablet – wider cards
       return baseRatio * 4;
