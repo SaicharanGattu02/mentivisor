@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../services/AuthService.dart';
+import '../../../utils/AppLogger.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommentsModel.dart';
 
 class CommentCard extends StatelessWidget {
   final int id;
+  final int user_id;
   final String name;
   final String profileUrl;
   final String content;
@@ -27,6 +31,7 @@ class CommentCard extends StatelessWidget {
   const CommentCard({
     super.key,
     required this.id,
+    required this.user_id,
     required this.name,
     required this.profileUrl,
     required this.content,
@@ -50,22 +55,46 @@ class CommentCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CachedNetworkImage(
-                imageUrl: profileUrl,
-                imageBuilder: (context, imageProvider) =>
-                    CircleAvatar(radius: 18, backgroundImage: imageProvider),
-                placeholder: (context, url) => CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Colors.grey.shade300,
-                  child: SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: spinkits.getSpinningLinespinkit(),
+              GestureDetector(
+                onTap: () async {
+                  final userIdStr =
+                      await AuthService.getUSerId(); // String? like "107"
+                  final userId = int.tryParse(
+                    userIdStr ?? '',
+                  ); // Parse to int, default 0 if null/invalid
+                  AppLogger.info("userId::$userId (parsed as int: $userId)");
+                  final uploaderId = user_id;
+                  if (userId == uploaderId) {
+                    context.push("/profile");
+                    AppLogger.info(
+                      "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                    );
+                    AppLogger.info("profile::true");
+                  } else {
+                    context.push("/common_profile/$uploaderId");
+                    AppLogger.info(
+                      "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                    );
+                    AppLogger.info("profile::false...$uploaderId");
+                  }
+                },
+                child: CachedNetworkImage(
+                  imageUrl: profileUrl,
+                  imageBuilder: (context, imageProvider) =>
+                      CircleAvatar(radius: 18, backgroundImage: imageProvider),
+                  placeholder: (context, url) => CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.grey.shade300,
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: spinkits.getSpinningLinespinkit(),
+                    ),
                   ),
-                ),
-                errorWidget: (context, url, error) => const CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage("assets/images/profileimg.png"),
+                  errorWidget: (context, url, error) => const CircleAvatar(
+                    radius: 20,
+                    backgroundImage: AssetImage("assets/images/profileimg.png"),
+                  ),
                 ),
               ),
               Expanded(
@@ -205,22 +234,46 @@ class _ReplyTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CachedNetworkImage(
-            imageUrl: reply.user?.profilePicUrl ?? '',
-            imageBuilder: (context, imageProvider) =>
-                CircleAvatar(radius: 16, backgroundImage: imageProvider),
-            placeholder: (context, url) => CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.grey.shade300,
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: spinkits.getSpinningLinespinkit(),
+          GestureDetector(
+            onTap: () async {
+              final userIdStr =
+                  await AuthService.getUSerId(); // String? like "107"
+              final userId = int.tryParse(
+                userIdStr ?? '',
+              ); // Parse to int, default 0 if null/invalid
+              AppLogger.info("userId::$userId (parsed as int: $userId)");
+              final uploaderId = userId;
+              if (userId == uploaderId) {
+                context.push("/profile");
+                AppLogger.info(
+                  "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                );
+                AppLogger.info("profile::true");
+              } else {
+                context.push("/common_profile/$uploaderId");
+                AppLogger.info(
+                  "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                );
+                AppLogger.info("profile::false...$uploaderId");
+              }
+            },
+            child: CachedNetworkImage(
+              imageUrl: reply.user?.profilePicUrl ?? '',
+              imageBuilder: (context, imageProvider) =>
+                  CircleAvatar(radius: 16, backgroundImage: imageProvider),
+              placeholder: (context, url) => CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.grey.shade300,
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: spinkits.getSpinningLinespinkit(),
+                ),
               ),
-            ),
-            errorWidget: (context, url, error) => const CircleAvatar(
-              radius: 16,
-              backgroundImage: AssetImage("assets/images/profileimg.png"),
+              errorWidget: (context, url, error) => const CircleAvatar(
+                radius: 16,
+                backgroundImage: AssetImage("assets/images/profileimg.png"),
+              ),
             ),
           ),
           Expanded(

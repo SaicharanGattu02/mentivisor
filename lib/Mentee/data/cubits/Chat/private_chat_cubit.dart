@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import '../../../../core/network/api_config.dart';
 import '../../../../services/SocketService.dart';
 import '../../../../utils/AppLogger.dart';
 import '../../../Models/ChatMessagesModel.dart';
@@ -70,25 +71,6 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
     );
   }
 
-  // Ensure we map to your Messages model (note: uses `url`, not `imageUrl`)
-  Messages _mapSocketToMessages(Map<String, dynamic> map) {
-    String? _s(dynamic v) => v?.toString();
-
-    return Messages(
-      id: _safeInt(map['id']),
-      senderId: _safeInt(map['senderId'] ?? map['sender_id']),
-      receiverId: _safeInt(map['receiverId'] ?? map['receiver_id']),
-      type: _s(map['type']),
-      message: _s(map['message']),
-      url: _s(map['url'] ?? map['image_url']), // accept either key
-      createdAt:
-          _s(map['createdAt'] ?? map['created_at']) ??
-          DateTime.now().toIso8601String(),
-      updatedAt: _s(map['updatedAt'] ?? map['updated_at']),
-      sender: null,
-      receiver: null,
-    );
-  }
 
   int? _safeInt(dynamic v) {
     if (v == null) return null;
@@ -156,7 +138,50 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
     }
   }
 
-  // ---- Listeners ----
+  // Ensure we map to your Messages model (note: uses `url`, not `imageUrl`)
+// ---- Mapping socket payload to your Messages model ----
+  Messages _mapSocketToMessages(Map<String, dynamic> map) {
+    String? _s(dynamic v) => v?.toString();
+    int? _safeInt(dynamic v) =>
+        v == null ? null : int.tryParse(v.toString()) ?? v;
+
+    // ✅ Parse sender if available (with profile pic full URL)
+    Sender? _parseSender(dynamic senderMap) {
+      if (senderMap is Map<String, dynamic>) {
+        final rawPic = _s(senderMap['profile_pic']);
+        final fullPicUrl = (rawPic != null && rawPic.isNotEmpty)
+            ? (rawPic.startsWith('http')
+            ? rawPic
+            : '${ApiConfig.baseUrl}storage/$rawPic') // ✅ add host if not full URL
+            : null;
+
+        return Sender(
+          id: _safeInt(senderMap['id']),
+          name: _s(senderMap['name']),
+          profilePic: rawPic,
+          profilePicUrl: fullPicUrl,
+        );
+      }
+      return null;
+    }
+
+    return Messages(
+      id: _safeInt(map['id']),
+      senderId: _safeInt(map['senderId'] ?? map['sender_id']),
+      receiverId: _safeInt(map['receiverId'] ?? map['receiver_id']),
+      type: _s(map['type']),
+      message: _s(map['message']),
+      url: _s(map['url'] ?? map['image_url']),
+      createdAt: _s(map['createdAt'] ?? map['created_at']) ??
+          DateTime.now().toIso8601String(),
+      updatedAt: _s(map['updatedAt'] ?? map['updated_at']),
+      sender: _parseSender(map['sender']), // ✅ includes full profile URL
+      receiver: null, // optional: add later if socket provides receiver info
+    );
+  }
+
+
+// ---- Socket listener ----
   void _onReceiveMessage(dynamic data) {
     try {
       AppLogger.info("[socket] receive_private_message payload: $data");
@@ -167,6 +192,7 @@ class PrivateChatCubit extends Cubit<PrivateChatState> {
       AppLogger.info('[socket] malformed receive_private_message: $e\n$st');
     }
   }
+
 
   void _onFileUpload(dynamic data) {
     try {

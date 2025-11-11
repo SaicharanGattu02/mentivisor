@@ -384,6 +384,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 data.user?.id ?? 0,
                                 data.user?.name ?? "",
                                 data.user?.email ?? "",
+                                data.user?.profilePicUrl ?? "",
                                 data.user?.contact ?? 0,
                               );
                               await _handleRememberMe(

@@ -168,7 +168,8 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
   }
-  void _showReportSheet(int msgId,BuildContext context) {
+
+  void _showReportSheet(int msgId, BuildContext context) {
     String _selected = 'Copied';
     final TextEditingController _otherController = TextEditingController();
     final List<String> _reportReasons = [
@@ -277,7 +278,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     ],
                     const SizedBox(height: 24),
                     // Submit Button
-                    BlocConsumer<privateChatReportCubit, PrivateChatReportState>(
+                    BlocConsumer<
+                      privateChatReportCubit,
+                      PrivateChatReportState
+                    >(
                       listener: (context, state) {
                         if (state is PrivateChatReportSuccess) {
                           CustomSnackBar1.show(
@@ -318,9 +322,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                 "reason": finalReason,
                               };
 
-                              context.read<privateChatReportCubit>().privateChatReport(data);
+                              context
+                                  .read<privateChatReportCubit>()
+                                  .privateChatReport(data);
                             },
-
                           ),
                         );
                       },
@@ -335,6 +340,7 @@ class _ChatScreenState extends State<ChatScreen> {
       },
     );
   }
+
   Future<void> getUserId() async {
     final userId = await AuthService.getUSerId();
     AppLogger.info("userId: ${userId}");
@@ -555,54 +561,54 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         actions: [
-          PopupMenuButton<_MenuAction>(
-            icon: Icon(Icons.more_vert, color: _text, size: 26),
-            onSelected: (value) {
-              switch (value) {
-                case _MenuAction.report:
-                  // openReportSheetForChat(context, userId: int.parse(widget.receiverId));
-                  break;
-                case _MenuAction.safetyTips:
-
-                  break;
-              }
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem<_MenuAction>(
-                value: _MenuAction.report,
-                child: Row(
-                  children: [
-                    Icon(Icons.flag_outlined, color: Colors.red, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Report user',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<_MenuAction>(
-                value: _MenuAction.safetyTips,
-                child: Row(
-                  children: [
-                    Icon(Icons.shield_outlined, color: Colors.blue, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Safety tips',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            color: _card,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 2,
-            tooltip: 'More options',
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          ),
+          // PopupMenuButton<_MenuAction>(
+          //   icon: Icon(Icons.more_vert, color: _text, size: 26),
+          //   onSelected: (value) {
+          //     switch (value) {
+          //       case _MenuAction.report:
+          //         // openReportSheetForChat(context, userId: int.parse(widget.receiverId));
+          //         break;
+          //       case _MenuAction.safetyTips:
+          //
+          //         break;
+          //     }
+          //   },
+          //   itemBuilder: (context) => const [
+          //     PopupMenuItem<_MenuAction>(
+          //       value: _MenuAction.report,
+          //       child: Row(
+          //         children: [
+          //           Icon(Icons.flag_outlined, color: Colors.red, size: 20),
+          //           SizedBox(width: 8),
+          //           Text(
+          //             'Report user',
+          //             style: TextStyle(fontWeight: FontWeight.w600),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //     PopupMenuItem<_MenuAction>(
+          //       value: _MenuAction.safetyTips,
+          //       child: Row(
+          //         children: [
+          //           Icon(Icons.shield_outlined, color: Colors.blue, size: 20),
+          //           SizedBox(width: 8),
+          //           Text(
+          //             'Safety tips',
+          //             style: TextStyle(fontWeight: FontWeight.w600),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          //   color: _card,
+          //   shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.circular(12),
+          //   ),
+          //   elevation: 2,
+          //   tooltip: 'More options',
+          //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          // ),
         ],
       ),
       body: Padding(
@@ -761,7 +767,6 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
-
   }
 
   String _dateLabel(DateTime day) {
@@ -831,8 +836,78 @@ class _ChatScreenState extends State<ChatScreen> {
     final bg = isMe ? _me : _other;
     final textColor = _text;
     final muted = _muted;
-    final senderName = msg.sender?.name ?? (isMe ? 'You' : 'Member');
-    final senderPhoto = msg.sender?.profilePicUrl ?? "";
+
+    // 🔹 Default placeholders
+    String senderName = msg.sender?.name ?? (isMe ? 'You' : 'Member');
+    String senderPhoto = msg.sender?.profilePicUrl ?? "";
+    int? senderId = msg.sender?.id;
+
+    // 🔹 When it's "me", override with stored values
+    if (isMe) {
+      // Using FutureBuilder to fetch locally stored data once
+      return FutureBuilder(
+        future: Future.wait([
+          AuthService.getUSerId(),
+          AuthService.getProfilePic(),
+          AuthService.getName(), // optional helper (see below)
+        ]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const SizedBox.shrink(); // Loading placeholder
+          }
+
+          final userIdStr = snapshot.data?[0] as String?;
+          final profilePic = snapshot.data?[1] as String?;
+          final name = snapshot.data?[2] as String?;
+
+          final userId = int.tryParse(userIdStr ?? '');
+
+          final myName = name ?? 'You';
+          final myPhoto = (profilePic?.isNotEmpty ?? false)
+              ? (profilePic!.startsWith('http')
+                    ? profilePic
+                    : "https://yourapi.com/$profilePic") // ✅ add host if relative
+              : "";
+
+          // Now rebuild the same bubble but with my info
+          return _messageBubbleContent(
+            msg,
+            true,
+            myName,
+            myPhoto,
+            userId,
+            bg,
+            textColor,
+            muted,
+          );
+        },
+      );
+    }
+
+    // 🔹 If not me, use sender info directly
+    return _messageBubbleContent(
+      msg,
+      false,
+      senderName,
+      senderPhoto,
+      senderId,
+      bg,
+      textColor,
+      muted,
+    );
+  }
+
+  /// Extracted UI builder for clarity (avoids code duplication)
+  Widget _messageBubbleContent(
+    Messages msg,
+    bool isMe,
+    String senderName,
+    String senderPhoto,
+    int? senderId,
+    Color bg,
+    Color textColor,
+    Color muted,
+  ) {
     final isImage = () {
       final u = (msg.url ?? '').toLowerCase();
       return u.endsWith('.jpg') ||
@@ -869,6 +944,7 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       } else {
         content = InkWell(
+          onTap: () {},
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -921,13 +997,11 @@ class _ChatScreenState extends State<ChatScreen> {
               GestureDetector(
                 onTap: () async {
                   final userIdStr = await AuthService.getUSerId();
-                  final userId = int.tryParse(userIdStr ?? '');
-                  final uploaderId = msg.sender?.id;
-
-                  if (userId == uploaderId) {
+                  final myId = int.tryParse(userIdStr ?? '');
+                  if (isMe) {
                     context.push("/profile");
                   } else {
-                    context.push("/common_profile/$uploaderId");
+                    context.push("/common_profile/$senderId");
                   }
                 },
                 child: Row(
@@ -936,7 +1010,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       : MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // ---- For others: avatar + name ----
                     if (!isMe)
                       Row(
                         mainAxisSize: MainAxisSize.min,
@@ -953,8 +1026,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ],
                       ),
-
-                    // ---- For me: avatar + name on right ----
                     if (isMe)
                       Row(
                         mainAxisSize: MainAxisSize.min,
@@ -971,8 +1042,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ],
                       ),
-
-                    // ---- Report icon (only if not me) ----
                     if (!isMe)
                       IconButton(
                         style: IconButton.styleFrom(
@@ -980,16 +1049,14 @@ class _ChatScreenState extends State<ChatScreen> {
                           visualDensity: VisualDensity.compact,
                         ),
                         onPressed: () {
-                          _showReportSheet(msg.id??-1, context);
+                          _showReportSheet(msg.id ?? -1, context);
                         },
-                        icon: Icon(Icons.flag_outlined, size: 20),
+                        icon: const Icon(Icons.flag_outlined, size: 20),
                       ),
                   ],
                 ),
               ),
               const SizedBox(height: 4),
-
-              // ---- The bubble ----
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -1206,13 +1273,19 @@ class _ChatScreenState extends State<ChatScreen> {
                           return IconButton(
                             icon: Image.asset("assets/icons/Vector.png"),
                             onPressed: _file != null
-                                ? () {
+                                ? () async {
+                                    final user_id =
+                                        await AuthService.getUSerId();
                                     final Map<String, dynamic> data = {
                                       "file": _file,
                                     };
                                     context
                                         .read<UploadFileInChatCubit>()
-                                        .uploadFileInChat(data);
+                                        .uploadFileInChat(
+                                          data,
+                                          user_id ?? "",
+                                          widget.sessionId,
+                                        );
                                   }
                                 : () => _sendText(context),
                           );
@@ -1226,7 +1299,6 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
 
   void _sendText(BuildContext context, {String type = 'text', String? url}) {
     final text = _controller.text.trim();

@@ -3,7 +3,7 @@ import '../../../Models/UploadFileInChatModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class UploadFileInChatRepo {
-  Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
+  Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data,String user_id, String session_id);
 }
 
 class UploadFileInChatRepoImpl implements UploadFileInChatRepo {
@@ -13,7 +13,7 @@ class UploadFileInChatRepoImpl implements UploadFileInChatRepo {
 
   @override
   Future<UploadFileInChatModel?> uploadFileInChat(
-      Map<String, dynamic> data) async {
-    return await remoteDataSource.uploadFileInChat(data);
+      Map<String, dynamic> data, String user_id, String session_id) async {
+    return await remoteDataSource.uploadFileInChat(data,user_id, session_id);
   }
 }

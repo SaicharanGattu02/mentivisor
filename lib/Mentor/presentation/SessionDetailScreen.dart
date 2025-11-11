@@ -11,7 +11,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Components/CustomAppButton.dart';
 import '../../Components/CustomSnackBar.dart';
+import '../../services/AuthService.dart';
 import '../../utils/spinkittsLoader.dart';
+import '../data/Cubits/MentorDashboardCubit/mentor_dashboard_cubit.dart';
 import '../data/Cubits/SessionComplete/session_complete_cubit.dart';
 import '../data/Cubits/SessionComplete/session_complete_states.dart';
 import '../data/Cubits/Sessions/SessionsCubit.dart';
@@ -141,23 +143,50 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                             const SizedBox(width: 12),
 
                             // Right Section — Mentee image
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: CachedNetworkImage(
-                                imageUrl: session.mentee?.profile ?? "",
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Center(
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: spinkits.getSpinningLinespinkit(),
+                            GestureDetector(
+                              onTap: () async {
+                                final userIdStr =
+                                    await AuthService.getUSerId(); // String? like "107"
+                                final userId = int.tryParse(
+                                  userIdStr ?? '',
+                                ); // Parse to int, default 0 if null/invalid
+                                AppLogger.info(
+                                  "userId::$userId (parsed as int: $userId)",
+                                );
+
+                                final uploaderId =  session.mentee?.id ?? 0;
+                                if (userId == uploaderId) {
+                                  context.push("/profile");
+                                  AppLogger.info(
+                                    "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                                  );
+                                  AppLogger.info("profile::true");
+                                } else {
+                                  context.push("/common_profile/$uploaderId");
+                                  AppLogger.info(
+                                    "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                                  );
+                                  AppLogger.info("profile::false...$uploaderId");
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: CachedNetworkImage(
+                                  imageUrl: session.mentee?.profile ?? "",
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: spinkits.getSpinningLinespinkit(),
+                                    ),
                                   ),
-                                ),
-                                errorWidget: (context, url, error) => const CircleAvatar(
-                                  radius: 35,
-                                  backgroundImage: AssetImage("assets/images/profile.png"),
+                                  errorWidget: (context, url, error) => const CircleAvatar(
+                                    radius: 35,
+                                    backgroundImage: AssetImage("assets/images/profile.png"),
+                                  ),
                                 ),
                               ),
                             ),
@@ -289,6 +318,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                             "Session has been completed.",
                           );
                           context.read<SessionCubit>().getSessions("upcoming");
+                          context.read<MentorDashboardCubit>().fetchDashboard();
                           context.pop();
                         } else if (state is SessionCompletdFailure) {
                           CustomSnackBar1.show(context, state.error);

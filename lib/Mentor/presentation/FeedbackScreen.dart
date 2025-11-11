@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/services/AuthService.dart';
 import '../../Mentor/Models/ReviewsModel.dart';
+import '../../utils/AppLogger.dart';
 import '../Models/FeedbackModel.dart' hide Reviews;
 import '../data/Cubits/FeedBack/feedback_cubit.dart';
 import '../data/Cubits/FeedBack/feedback_states.dart';
@@ -484,15 +486,39 @@ class _ReviewCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Avatar
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: const Color(0xFFE5E7EB),
-                backgroundImage: (user?.image?.isNotEmpty ?? false)
-                    ? NetworkImage(user!.image!)
-                    : null,
-                child: (user?.image?.isEmpty ?? true)
-                    ? const Icon(Icons.person, color: Color(0xFF6B7280))
-                    : null,
+              GestureDetector(
+                onTap: () async {
+                  final userIdStr =
+                      await AuthService.getUSerId(); // String? like "107"
+                  final userId = int.tryParse(
+                    userIdStr ?? '',
+                  ); // Parse to int, default 0 if null/invalid
+                  AppLogger.info("userId::$userId (parsed as int: $userId)");
+                  final uploaderId = user?.id??0;
+                  if (userId == uploaderId) {
+                    context.push("/profile");
+                    AppLogger.info(
+                      "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                    );
+                    AppLogger.info("profile::true");
+                  } else {
+                    context.push("/common_profile/$uploaderId");
+                    AppLogger.info(
+                      "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                    );
+                    AppLogger.info("profile::false...$uploaderId");
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundColor: const Color(0xFFE5E7EB),
+                  backgroundImage: (user?.image?.isNotEmpty ?? false)
+                      ? NetworkImage(user!.image!)
+                      : null,
+                  child: (user?.image?.isEmpty ?? true)
+                      ? const Icon(Icons.person, color: Color(0xFF6B7280))
+                      : null,
+                ),
               ),
               const SizedBox(width: 12),
               // Left block: Name + Institution

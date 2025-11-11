@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +9,7 @@ import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../Components/Shimmers.dart';
 import '../../../services/AuthService.dart';
+import '../../../utils/AppLogger.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
@@ -174,36 +174,62 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                   // ),
                   const SizedBox(height: 12),
                   if (communityDetails?.anonymous == 0) ...[
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 16,
-                          backgroundImage:
-                              (communityDetails
-                                      ?.uploader
-                                      ?.profilePicUrl
-                                      ?.isNotEmpty ??
-                                  false)
-                              ? NetworkImage(
-                                  communityDetails!.uploader!.profilePicUrl!,
-                                )
-                              : const AssetImage("assets/images/profile.png")
-                                    as ImageProvider,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          communityDetails?.anonymous == 1
-                              ? "Anonymous"
-                              : capitalize(
-                                  communityDetails?.uploader?.name ?? "",
-                                ),
-                          style: const TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 13,
-                            color: Color(0xff222222),
+                    GestureDetector(
+                      onTap: () async {
+                        final userIdStr = await AuthService.getUSerId(); // String? like "107"
+                        final userId = int.tryParse(
+                          userIdStr ?? '',
+                        ); // Parse to int, default 0 if null/invalid
+                        AppLogger.info(
+                          "userId::$userId (parsed as int: $userId)",
+                        );
+                        final uploaderId =
+                            communityDetails?.uploader?.id;
+                        if (userId == uploaderId) {
+                          context.push("/profile");
+                          AppLogger.info(
+                            "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                          );
+                          AppLogger.info("profile::true");
+                        } else {
+                          context.push("/common_profile/$uploaderId");
+                          AppLogger.info(
+                            "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                          );
+                          AppLogger.info("profile::false...$uploaderId");
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 16,
+                            backgroundImage:
+                                (communityDetails
+                                        ?.uploader
+                                        ?.profilePicUrl
+                                        ?.isNotEmpty ??
+                                    false)
+                                ? NetworkImage(
+                                    communityDetails!.uploader!.profilePicUrl!,
+                                  )
+                                : const AssetImage("assets/images/profile.png")
+                                      as ImageProvider,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 8),
+                          Text(
+                            communityDetails?.anonymous == 1
+                                ? "Anonymous"
+                                : capitalize(
+                                    communityDetails?.uploader?.name ?? "",
+                                  ),
+                            style: const TextStyle(
+                              fontFamily: 'segeo',
+                              fontSize: 13,
+                              color: Color(0xff222222),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ] else ...[
                     Text(
@@ -442,6 +468,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                               return CommentCard(
                                 key: ValueKey(c.id),
                                 id: c.id ?? 0,
+                                user_id: c.user?.id??0,
                                 name: c.user?.name ?? 'Unknown',
                                 profileUrl: c.user?.profilePicUrl ?? '',
                                 content: c.content ?? '',
@@ -767,14 +794,14 @@ class _CommunityDetailsState extends State<CommunityDetails> {
 
                             final Map<String, dynamic> data = {
                               "content_id": communityPosts.id, // ID of the post
-                              "reason": finalReason,           // Either selected or typed reason
+                              "reason":
+                                  finalReason, // Either selected or typed reason
                             };
 
                             context
                                 .read<CommunityZoneReportCubit>()
                                 .postCommunityZoneReport(data);
                           },
-
                         );
                       },
                     ),

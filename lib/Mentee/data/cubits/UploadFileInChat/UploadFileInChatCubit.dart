@@ -11,15 +11,19 @@ class UploadFileInChatCubit extends Cubit<UploadFileInChatStates> {
   UploadFileInChatCubit(this.uploadFileInChatRepo)
     : super(UploadFileInChatInitial());
 
-  Future<void> uploadFileInChat(Map<String, dynamic> data) async {
+  Future<void> uploadFileInChat(
+    Map<String, dynamic> data,
+    String user_id,
+    String session_id,
+  ) async {
     emit(UploadFileInChatLoading());
     try {
       final UploadFileInChatModel? response = await uploadFileInChatRepo
-          .uploadFileInChat(data);
+          .uploadFileInChat(data, user_id, session_id);
       if (response != null && (response.success == true)) {
         emit(UploadFileInChatSuccess(response));
       } else {
-        emit(UploadFileInChatFailure("Something went wrong"));
+        emit(UploadFileInChatFailure(response?.message??""));
       }
     } catch (e) {
       emit(

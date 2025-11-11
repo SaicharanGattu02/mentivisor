@@ -16,6 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../Components/CommonLoader.dart';
 import '../../Components/Shimmers.dart';
+import '../../services/AuthService.dart';
+import '../../utils/AppLogger.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/spinkittsLoader.dart';
@@ -239,56 +241,83 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            upComingSessions
-                                                .mentor
-                                                ?.mentorProfile ??
-                                            "",
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                CircleAvatar(
-                                                  radius: 36,
-                                                  backgroundImage:
-                                                      imageProvider,
-                                                ),
-                                        placeholder: (context, url) =>
-                                            CircleAvatar(
-                                              radius: 36,
-                                              backgroundColor: Colors.grey,
-                                              child: SizedBox(
-                                                width: 16,
-                                                height: 16,
-                                                child: Center(
-                                                  child: spinkits
-                                                      .getSpinningLinespinkit(),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          final userIdStr =
+                                              await AuthService.getUSerId(); // String? like "107"
+                                          final userId = int.tryParse(
+                                            userIdStr ?? '',
+                                          ); // Parse to int, default 0 if null/invalid
+                                          AppLogger.info(
+                                            "userId::$userId (parsed as int: $userId)",
+                                          );
+
+                                          final uploaderId =  upComingSessions.mentor?.id ?? 0;
+                                          if (userId == uploaderId) {
+                                            context.push("/profile");
+                                            AppLogger.info(
+                                              "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                                            );
+                                            AppLogger.info("profile::true");
+                                          } else {
+                                            context.push("/common_profile/$uploaderId");
+                                            AppLogger.info(
+                                              "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                                            );
+                                            AppLogger.info("profile::false...$uploaderId");
+                                          }
+                                        },
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              upComingSessions
+                                                  .mentor
+                                                  ?.mentorProfile ??
+                                              "",
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  CircleAvatar(
+                                                    radius: 36,
+                                                    backgroundImage:
+                                                        imageProvider,
+                                                  ),
+                                          placeholder: (context, url) =>
+                                              CircleAvatar(
+                                                radius: 36,
+                                                backgroundColor: Colors.grey,
+                                                child: SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: Center(
+                                                    child: spinkits
+                                                        .getSpinningLinespinkit(),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                        errorWidget: (context, url, error) =>
-                                            CircleAvatar(
-                                              radius: 36,
-                                              backgroundColor:
-                                                  Colors.grey.shade300,
-                                              child: Text(
-                                                (upComingSessions.mentor?.name
-                                                            ?.trim()
-                                                            .isNotEmpty ??
-                                                        false)
-                                                    ? upComingSessions
-                                                          .mentor!
-                                                          .name!
-                                                          .trim()[0]
-                                                          .toUpperCase()
-                                                    : 'U',
-                                                style: const TextStyle(
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Color(0xff333333),
-                                                  fontFamily: 'segeo',
+                                          errorWidget: (context, url, error) =>
+                                              CircleAvatar(
+                                                radius: 36,
+                                                backgroundColor:
+                                                    Colors.grey.shade300,
+                                                child: Text(
+                                                  (upComingSessions.mentor?.name
+                                                              ?.trim()
+                                                              .isNotEmpty ??
+                                                          false)
+                                                      ? upComingSessions
+                                                            .mentor!
+                                                            .name!
+                                                            .trim()[0]
+                                                            .toUpperCase()
+                                                      : 'U',
+                                                  style: const TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xff333333),
+                                                    fontFamily: 'segeo',
+                                                  ),
                                                 ),
                                               ),
-                                            ),
+                                        ),
                                       ),
                                       const SizedBox(height: 12),
                                       ValueListenableBuilder<Map<int, bool>>(

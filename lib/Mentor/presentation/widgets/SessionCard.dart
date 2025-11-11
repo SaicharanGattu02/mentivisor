@@ -582,6 +582,7 @@ import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
+import '../../../services/AuthService.dart';
 import '../../../utils/color_constants.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
@@ -778,36 +779,63 @@ class SessionCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8), // Consistent spacing
-                      Container(
-                        width: imageSize,
-                        height: imageSize,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.brown.withOpacity(0.5),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: sessionImage ?? "",
-                            width: imageSize - 16, // Adjust for padding
-                            height: imageSize - 16,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Center(
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: spinkits.getSpinningLinespinkit(),
+                      GestureDetector(
+                        onTap: () async {
+                          final userIdStr =
+                              await AuthService.getUSerId(); // String? like "107"
+                          final userId = int.tryParse(
+                            userIdStr ?? '',
+                          ); // Parse to int, default 0 if null/invalid
+                          AppLogger.info(
+                            "userId::$userId (parsed as int: $userId)",
+                          );
+
+                          final uploaderId =  menteeId ?? 0;
+                          if (userId == uploaderId) {
+                            context.push("/profile");
+                            AppLogger.info(
+                              "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
+                            );
+                            AppLogger.info("profile::true");
+                          } else {
+                            context.push("/common_profile/$uploaderId");
+                            AppLogger.info(
+                              "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
+                            );
+                            AppLogger.info("profile::false...$uploaderId");
+                          }
+                        },
+                        child: Container(
+                          width: imageSize,
+                          height: imageSize,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Colors.brown.withOpacity(0.5),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              imageUrl: sessionImage ?? "",
+                              width: imageSize - 16, // Adjust for padding
+                              height: imageSize - 16,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: spinkits.getSpinningLinespinkit(),
+                                ),
                               ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                image: const DecorationImage(
-                                  image: AssetImage(
-                                    "assets/images/profile.png",
+                              errorWidget: (context, url, error) => Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                      "assets/images/profile.png",
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),

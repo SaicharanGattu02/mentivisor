@@ -237,9 +237,7 @@ class _ProfileBody extends StatelessWidget {
                   .toList(),
             ),
           ),
-
           const SizedBox(height: 30),
-
           if ((data.expertise ?? []).isNotEmpty) ...[
             Align(
               alignment: Alignment.centerLeft,

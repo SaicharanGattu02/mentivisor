@@ -240,14 +240,15 @@ class _NotificationsState extends State<Notifications> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               icon,
-              width: 40,
-              height: 40,
+              width: 50,
+              height: 80,
               fit: BoxFit.contain,
             ),
           ),

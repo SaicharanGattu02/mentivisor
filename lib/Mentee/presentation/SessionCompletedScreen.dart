@@ -246,7 +246,7 @@ class _SessionCompletedScreenState extends State<SessionCompletedScreen> {
                                           ),
                                         ),
                                         child: const Text(
-                                          "Rate Us",
+                                          "Rate Mentor",
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontFamily: "segeo",

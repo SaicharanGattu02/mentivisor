@@ -9,6 +9,7 @@ class AuthService {
   static const String _tokenExpiryKey = "token_expiry";
   static const String _role = "role";
   static const String _userId = "user_id";
+  static const String _profile_pic = "profile_pic";
   static const String _userName = "user_name";
   static const String _email = "email";
   static const String _mobile = "mobile";
@@ -37,6 +38,11 @@ class AuthService {
   /// Get USer_id
   static Future<String?> getUSerId() async {
     return await _storage.read(key: _userId);
+  }
+
+  /// Get profile_pic
+  static Future<String?> getProfilePic() async {
+    return await _storage.read(key: _profile_pic);
   }
 
   static Future<String?> getCollegeID() async {
@@ -109,6 +115,7 @@ class AuthService {
     int userid,
     String userName,
     String email,
+    String profile_pic,
     int mobile,
   ) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
@@ -119,6 +126,7 @@ class AuthService {
     await _storage.write(key: _userId, value: userid.toString());
     await _storage.write(key: _email, value: email.toString());
     await _storage.write(key: _mobile, value: mobile.toString());
+    await _storage.write(key: _profile_pic, value: profile_pic.toString());
   }
 
   /// Refresh token

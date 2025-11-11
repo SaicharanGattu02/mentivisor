@@ -20,6 +20,8 @@ import 'Ecc/EccScreen.dart';
 import 'MenteeHomeScreens.dart';
 import 'package:flutter/rendering.dart';
 
+import 'Widgets/custom_ad_dialog.dart';
+
 class Dashboard extends StatefulWidget {
   final int? selectedIndex;
   const Dashboard({super.key, this.selectedIndex});
@@ -124,131 +126,12 @@ class _DashboardState extends State<Dashboard> {
               showDialog(
                 context: context,
                 barrierDismissible: false,
-                builder: (context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    insetPadding: const EdgeInsets.all(20),
-                    child: Container(
-                      width: 350,
-                      height: 320,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 📸 Image Section
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                            child: Image.network(
-                              homeNotify?.image ?? "",
-                              width: double.infinity,
-                              height: 160,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-
-                          SizedBox(height: 6),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  homeNotify?.title ?? "",
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  homeNotify?.description ?? "",
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          // 🔘 Buttons
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
-                            ),
-                            child: Row(
-                              children: [
-                                // Maybe Later
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    style: OutlinedButton.styleFrom(
-                                      side: const BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      "Maybe later",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                // Explore Now
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      _launchUrl(homeNotify?.url ?? "");
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF2563EB),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      "Explore Now",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                builder: (context) => CustomAdDialog(
+                  image: homeNotify?.image,
+                  title: homeNotify?.title,
+                  description: homeNotify?.description,
+                  url: homeNotify?.url,
+                ),
               );
             }
           },

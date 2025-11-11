@@ -37,7 +37,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
     "All": "",
     "Sessions": "session",
     "Rewards": "reward",
-    "Expertise updates": "expertise_update",
+    "Expertise updates": "expertise",
   };
 
   @override
@@ -211,14 +211,14 @@ class _NotificationMentorState extends State<NotificationMentor> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               icon,
-              width: 40,
-              height: 40,
+              width: 50,
+              height: 70,
               fit: BoxFit.contain,
             ),
           ),

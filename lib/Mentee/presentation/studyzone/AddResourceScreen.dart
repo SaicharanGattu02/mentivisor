@@ -22,6 +22,7 @@ import '../Widgets/CommonImgeWidget.dart';
 import '../Widgets/common_widgets.dart';
 import 'package:image/image.dart' as img;
 
+
 class AddResourceScreen extends StatefulWidget {
   const AddResourceScreen({super.key});
   @override
@@ -503,90 +504,88 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                             borderRadius: const BorderRadius.all(
                               Radius.circular(8),
                             ),
-                            child: Container(
-                              width: double.infinity,
-                              color: Colors.white,
-                              child: isLoading
-                                  ? const SizedBox(
-                                      height: 100,
-                                      child: Center(
-                                        child: Column(
-                                          spacing: 10,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Colors.blue,
-                                            ),
-                                            Text("Uploading...."),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  : file == null
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 14,
-                                        horizontal: 16,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            "assets/icons/upload.png",
-                                            width: 20,
-                                            height: 20,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          const Text(
-                                            "Upload your Resources here",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: Color(0xff9CA3AF),
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Stack(
-                                      children: [
-                                        Container(
-                                          height: 100,
-                                          alignment: Alignment.center,
-                                          color: const Color(0xffF8FAFE),
-                                          child: Text(
-                                            file.path.split('/').last,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black87,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 8,
-                                          right: 8,
-                                          child: GestureDetector(
-                                            onTap: _cancelFile,
-                                            child: const CircleAvatar(
-                                              backgroundColor: Colors.black54,
-                                              radius: 16,
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 18,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                            child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeIn,
+                          switchOutCurve: Curves.easeOut,
+                          child: isLoading
+                              ? const SizedBox(
+                            key: ValueKey('loading'),
+                            height: 100,
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.blue,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text("Uploading...."),
+                                ],
+                              ),
                             ),
+                          )
+                              : file == null
+                              ? Padding(
+                            key: const ValueKey('empty'),
+                            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  "assets/icons/upload.png",
+                                  width: 20,
+                                  height: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "Upload your Resources here",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff9CA3AF),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                              : Stack(
+                            key: const ValueKey('file'),
+                            children: [
+                              Container(
+                                height: 100,
+                                alignment: Alignment.center,
+                                color: const Color(0xffF8FAFE),
+                                child: Text(
+                                  file.path.split('/').last,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: GestureDetector(
+                                  onTap: _cancelFile,
+                                  child: const CircleAvatar(
+                                    backgroundColor: Colors.black54,
+                                    radius: 16,
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
+                        ),
+                      ),
                         ),
                       );
                     },

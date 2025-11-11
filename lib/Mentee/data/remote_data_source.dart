@@ -154,7 +154,11 @@ abstract class RemoteDataSource {
     String sessionId,
   );
   Future<GroupChatMessagesModel?> getGroupChatMessages(int page, String Scope);
-  Future<UploadFileInChatModel?> uploadFileInChat(Map<String, dynamic> data);
+  Future<UploadFileInChatModel?> uploadFileInChat(
+    Map<String, dynamic> data,
+    String user_id,
+    String session_id,
+  );
   Future<ViewEccDetailsModel?> viewEccDetails(int eventId, String scope);
   Future<TagsModel?> getEccTags(String searchQuery);
   Future<StudyZoneTagsModel?> getStudyZoneTags(String searchQuery);
@@ -232,12 +236,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<UploadFileInChatModel?> uploadFileInChat(
-    Map<String, dynamic> data,
-  ) async {
+      Map<String, dynamic> data,
+      String user_id,
+      String session_id,
+      ) async {
     try {
-      final url = "${ApiConfig.socket_url}api/upload-file";
+      final url = "${ApiConfig.socket_url}/api/upload-file";
       MultipartFile? filePart;
       final fileVal = data['file'];
+
       if (fileVal != null) {
         if (fileVal is String) {
           filePart = await MultipartFile.fromFile(
@@ -254,7 +261,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
       // Build a new map for FormData (don’t mutate the original)
       final Map<String, dynamic> payload = {
-        ...data, // copies other fields
+        ...data,
         if (filePart != null) 'file': filePart,
       };
 
@@ -263,18 +270,31 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       final response = await dio.post(
         url,
         data: formData,
-        options: Options(contentType: 'multipart/form-data'),
+        queryParameters: {
+          "session_id": session_id,
+          "user_id": user_id,
+        },
+        options: Options(
+          contentType: 'multipart/form-data',
+          // 👇 this ensures Dio never throws for non-2xx responses
+          validateStatus: (_) => true,
+        ),
       );
 
+      // 👇 now you can handle all response statuses manually
       if (response.statusCode == 200 || response.statusCode == 201) {
         return UploadFileInChatModel.fromJson(response.data);
+      } else {
+        print("Upload failed with status ${response.statusCode}: ${response.data}");
+        return UploadFileInChatModel.fromJson(response.data);
       }
-      return null;
-    } catch (e) {
+    } catch (e, st) {
       print("Upload error: $e");
+      print(st);
       return null;
     }
   }
+
 
   @override
   Future<GroupChatMessagesModel?> getGroupChatMessages(

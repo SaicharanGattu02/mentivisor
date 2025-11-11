@@ -155,6 +155,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                               return CommentCard(
                                 key: ValueKey(c.id),
                                 id: c.id ?? 0,
+                                user_id: c.user?.id??0,
                                 name: c.user?.name ?? 'Unknown',
                                 profileUrl: c.user?.profilePicUrl ?? '',
                                 content: c.content ?? '',
@@ -464,6 +465,7 @@ class _CommentBottomSheet1State extends State<CommentBottomSheet1> {
                           return CommentCard(
                             key: ValueKey(c.id),
                             id: c.id ?? 0,
+                            user_id: c.user?.id??0,
                             name: c.user?.name ?? 'Unknown',
                             profileUrl: c.user?.profilePicUrl ?? '',
                             content: c.content ?? '',
