@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../core/network/api_config.dart';
 import '../core/network/mentee_endpoints.dart';
@@ -20,25 +21,25 @@ class ApiClient {
     ),
   );
 
-  static const List<String> _unauthenticatedEndpoints = [
-    '/api/user-login',
-    '/api/registration-step-1',
-    '/api/registration-verify-step-2',
-    '/api/final-registration',
-    '/api/campuses',
-    '/api/years',
-    '/api/banners',
-    '/api/study-zone/tags',
-    '/api/study-zone/top-downloads',
-    '/api/guest-list-ecc',
-    '/api/community-zone-post-without-login',
-    '/api/top-mentors',
-    '/api/tags',
-    '/api/forget-password',
-    '/api/verify-otp',
-    '/api/reset-password',
-    '/api/upload-file',
-  ];
+  // static const List<String> _unauthenticatedEndpoints = [
+  //   '/api/user-login',
+  //   '/api/registration-step-1',
+  //   '/api/registration-verify-step-2',
+  //   '/api/final-registration',
+  //   '/api/campuses',
+  //   '/api/years',
+  //   '/api/banners',
+  //   '/api/study-zone/tags',
+  //   '/api/study-zone/top-downloads',
+  //   '/api/guest-list-ecc',
+  //   '/api/community-zone-post-without-login',
+  //   '/api/top-mentors',
+  //   '/api/tags',
+  //   '/api/forget-password',
+  //   '/api/verify-otp',
+  //   '/api/reset-password',
+  //   '/api/upload-file',
+  // ];
 
   static void setupInterceptors() {
     try {
@@ -63,31 +64,46 @@ class ApiClient {
       _dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) async {
-            final isUnauthenticated = _unauthenticatedEndpoints.any(
-                  (endpoint) => options.uri.path.startsWith(endpoint),
-            );
+            // final isUnauthenticated = _unauthenticatedEndpoints.any(
+            //       (endpoint) => options.uri.path.startsWith(endpoint),
+            // );
+            //
+            // // Attach feature name optionally: options.extra['feature'] = 'profile_update';
+            // // Allow opt-out per call: options.extra['skipCrashlytics'] = true;
+            //
+            // if (isUnauthenticated) {
+            //   return handler.next(options);
+            // }
 
-            // Attach feature name optionally: options.extra['feature'] = 'profile_update';
-            // Allow opt-out per call: options.extra['skipCrashlytics'] = true;
-
-            if (isUnauthenticated) {
+            final isGuestUser = await AuthService.isGuest;
+            if (isGuestUser) {
+              debugPrint('Guest user → skipping token for ${options.uri}');
+              options.headers.remove('Authorization');
               return handler.next(options);
             }
 
-            final accessToken = await AuthService.getAccessToken();
-            AppLogger.info("accesstoken: $accessToken");
+            final isExpired = await AuthService.isTokenExpired();
+            if (isExpired) {
+              debugPrint('Token expired → trying refresh...');
+              // final refreshed = await _refreshToken();
+              // if (!refreshed) {
+              //   debugPrint('❌ Token refresh failed, logging out...');
+              //   await AuthService.logout();
+              //   return handler.reject(
+              //     DioException(
+              //       requestOptions: options,
+              //       error: 'Token refresh failed, please log in again',
+              //       type: DioExceptionType.cancel,
+              //     ),
+              //   );
+              // }
+            }
 
-            if (accessToken == null || accessToken.isEmpty) {
-              await AuthService.logout();
-              return handler.reject(
-                DioException(
-                  requestOptions: options,
-                  error: 'No access token, please log in again',
-                  type: DioExceptionType.cancel,
-                ),
-              );
-            } else {
+            final accessToken = await AuthService.getAccessToken();
+            if (accessToken?.isNotEmpty == true) {
               options.headers['Authorization'] = 'Bearer $accessToken';
+            } else {
+              debugPrint('⚠️ Non-guest but no token found');
             }
 
             return handler.next(options);
@@ -115,25 +131,113 @@ class ApiClient {
 
             return handler.next(response);
           },
+        ),
+      );
+      // 2) Global status handling interceptor
+      _dio.interceptors.add(
+        InterceptorsWrapper(
+          onResponse: (response, handler) async {
+            final status = response.statusCode ?? 0;
 
-          onError: (DioException e, handler) async {
-            final isUnauthenticated = _unauthenticatedEndpoints.any(
-                  (endpoint) => e.requestOptions.uri.path.startsWith(endpoint),
-            );
-
-            if (!isUnauthenticated && e.response?.statusCode == 401) {
+            if (status >= 200 && status <= 400) {
+              // success
+              return handler.next(response);
+            }
+            // 4xx arrive here because validateStatus(<500) returns true
+            if (status == 401) {
+              debugPrint('❌ 401 Unauthorized, logging out...');
               await AuthService.logout();
-              // Let the UI catch this rejection and route to login
               return handler.reject(
                 DioException(
-                  requestOptions: e.requestOptions,
+                  requestOptions: response.requestOptions,
+                  response: response,
                   error: 'Unauthorized, please log in again',
                   type: DioExceptionType.badResponse,
+                ),
+              );
+            }
+
+            if (status == 403) {
+              debugPrint('❌ 403 Account Blocked');
+              final context = navigatorKey.currentContext;
+              context?.go('/blocked_account');
+              return handler.reject(
+                DioException(
+                  requestOptions: response.requestOptions,
+                  response: response,
+                  error: 'Your account is blocked',
+                  type: DioExceptionType.badResponse,
+                ),
+              );
+            }
+
+            // Any other 4xx -> normalize as DioException so repos/cubits can handle uniformly
+            return handler.reject(
+              DioException(
+                requestOptions: response.requestOptions,
+                response: response,
+                error: 'Request failed (${response.statusCode})',
+                type: DioExceptionType.badResponse,
+              ),
+            );
+          },
+
+          onError: (DioException e, handler) {
+            // Only 5xx (and network/timeout/cancel) reach here due to validateStatus(<500)
+            final code = e.response?.statusCode;
+
+            if (code == 401) {
+              // defensive: if a 401 still ends up here
+              AuthService.logout();
+              return handler.next(
+                DioException(
+                  requestOptions: e.requestOptions,
+                  response: e.response,
+                  error: 'Unauthorized, please log in again',
+                  type: DioExceptionType.badResponse,
+                ),
+              );
+            }
+
+            if (code == 403) {
+              final context = navigatorKey.currentContext;
+              context?.go('/blocked_account');
+              return handler.next(
+                DioException(
+                  requestOptions: e.requestOptions,
+                  response: e.response,
+                  error: 'Your account is blocked',
+                  type: DioExceptionType.badResponse,
+                ),
+              );
+            }
+
+            // Optionally map timeouts / no-internet to friendly errors
+            if (e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout ||
+                e.type == DioExceptionType.sendTimeout) {
+              return handler.next(
+                DioException(
+                  requestOptions: e.requestOptions,
+                  error: 'Network timeout, please try again',
+                  type: e.type,
                   response: e.response,
                 ),
               );
             }
 
+            if (e.type == DioExceptionType.connectionError) {
+              return handler.next(
+                DioException(
+                  requestOptions: e.requestOptions,
+                  error: 'No internet connection',
+                  type: e.type,
+                  response: e.response,
+                ),
+              );
+            }
+
+            // leave others as-is (includes 5xx)
             return handler.next(e);
           },
         ),

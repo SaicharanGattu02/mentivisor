@@ -7,6 +7,7 @@ import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states
 import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/CommonChoiceChip.dart';
 import '../../utils/color_constants.dart';
+import '../../utils/constants.dart';
 import '../../utils/media_query_helper.dart';
 
 class NotificationMentor extends StatefulWidget {
@@ -144,22 +145,20 @@ class _NotificationMentorState extends State<NotificationMentor> {
                           }
                           return false;
                         },
-                        child: CustomScrollView(
+                        child:CustomScrollView(
                           slivers: [
                             SliverPadding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
                               sliver: SliverList(
                                 delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
+                                      (context, index) {
                                     final item = filtered[index];
+
                                     return _buildNotificationCard(
                                       icon: _getIconForType(item.type),
                                       title: item.title ?? "",
-                                      subtitle:
-                                          item.remarks ?? item.message ?? "",
-                                      date: item.createdAt ?? "",
+                                      subtitle: item.remarks ?? item.message ?? "",
+                                      date: formatDate(item.createdAt), // 👈 formatted date here
                                     );
                                   },
                                   childCount: filtered.length,
@@ -169,14 +168,13 @@ class _NotificationMentorState extends State<NotificationMentor> {
                                 ),
                               ),
                             ),
+
                             if (state is NotificationsLoadingMore)
                               const SliverToBoxAdapter(
                                 child: Padding(
                                   padding: EdgeInsets.all(25.0),
                                   child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 1,
-                                    ),
+                                    child: CircularProgressIndicator(strokeWidth: 1),
                                   ),
                                 ),
                               ),
@@ -211,14 +209,14 @@ class _NotificationMentorState extends State<NotificationMentor> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               icon,
               width: 50,
-              height: 70,
+              height: 60,
               fit: BoxFit.contain,
             ),
           ),

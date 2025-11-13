@@ -87,10 +87,12 @@ import '../Mentee/presentation/SessionCompletedScreen.dart';
 import '../Mentee/presentation/BookSessionScreen.dart';
 import '../Mentee/presentation/DashBoard.dart';
 import '../services/AuthService.dart';
+import '../services/NotificationService.dart';
 import '../utils/CrashlyticsNavObserver.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
+  navigatorKey: rootNavigatorKey,
   // debugLogDiagnostics: false,
   // observers: [CrashlyticsNavObserver()],
   // overridePlatformDefaultLocation: false,

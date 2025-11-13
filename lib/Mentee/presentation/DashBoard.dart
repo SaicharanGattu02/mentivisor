@@ -251,30 +251,3 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
-
-/// Listens to scroll direction bubbling up from any ScrollView inside `child`.
-/// Hides on scroll down, shows on scroll up.
-class _HideNavbarOnScroll extends StatelessWidget {
-  final Widget child;
-  final ValueNotifier<bool> controller;
-  const _HideNavbarOnScroll({required this.child, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return NotificationListener<UserScrollNotification>(
-      onNotification: (notification) {
-        final direction = notification.direction;
-        if (direction == ScrollDirection.reverse) {
-          // Scrolling down
-          if (controller.value) controller.value = false;
-        } else if (direction == ScrollDirection.forward) {
-          // Scrolling up
-          if (!controller.value) controller.value = true;
-        }
-        // If idle, do nothing
-        return false; // let it continue bubbling
-      },
-      child: child,
-    );
-  }
-}

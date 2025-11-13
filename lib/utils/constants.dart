@@ -178,7 +178,7 @@ class AppStateMentorCostPerMinuteCoins {
   }
 }
 
-String formatDate(String? rawDate) {
+  String formatDate(String? rawDate) {
   if (rawDate == null || rawDate.isEmpty) return "";
   try {
     final date = DateTime.parse(rawDate);
@@ -271,3 +271,4 @@ String formatSmartDateTime(String isoString) {
 
   return DateFormat("d'$suffix' MMM yyyy, h:mm a").format(dateTime);
 }
+

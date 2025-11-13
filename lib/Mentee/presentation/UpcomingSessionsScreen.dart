@@ -252,7 +252,8 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                             "userId::$userId (parsed as int: $userId)",
                                           );
 
-                                          final uploaderId =  upComingSessions.mentor?.id ?? 0;
+                                          final uploaderId =
+                                              upComingSessions.mentor?.id ?? 0;
                                           if (userId == uploaderId) {
                                             context.push("/profile");
                                             AppLogger.info(
@@ -260,11 +261,15 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                             );
                                             AppLogger.info("profile::true");
                                           } else {
-                                            context.push("/common_profile/$uploaderId");
+                                            context.push(
+                                              "/common_profile/$uploaderId",
+                                            );
                                             AppLogger.info(
                                               "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
                                             );
-                                            AppLogger.info("profile::false...$uploaderId");
+                                            AppLogger.info(
+                                              "profile::false...$uploaderId",
+                                            );
                                           }
                                         },
                                         child: CachedNetworkImage(
@@ -276,13 +281,13 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                           imageBuilder:
                                               (context, imageProvider) =>
                                                   CircleAvatar(
-                                                    radius: 36,
+                                                    radius: 45,
                                                     backgroundImage:
                                                         imageProvider,
                                                   ),
                                           placeholder: (context, url) =>
                                               CircleAvatar(
-                                                radius: 36,
+                                                radius: 45,
                                                 backgroundColor: Colors.grey,
                                                 child: SizedBox(
                                                   width: 16,
@@ -295,7 +300,7 @@ class _UpcomingSessionsScreenState extends State<UpcomingSessionsScreen> {
                                               ),
                                           errorWidget: (context, url, error) =>
                                               CircleAvatar(
-                                                radius: 36,
+                                                radius: 45,
                                                 backgroundColor:
                                                     Colors.grey.shade300,
                                                 child: Text(

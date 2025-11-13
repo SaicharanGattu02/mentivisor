@@ -1,24 +1,94 @@
 class CampusesModel {
   bool? status;
-  List<CampusData>? data;
+  PaginationData? data;
 
   CampusesModel({this.status, this.data});
 
   CampusesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    if (json['data'] != null &&
-        json['data'] is Map &&
-        json['data']['data'] != null) {
-      data = (json['data']['data'] as List)
-          .map((e) => CampusData.fromJson(e))
-          .toList();
-    } else {
-      data = [];
-    }
+    data = json['data'] != null ? PaginationData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    return {'status': status, 'data': data?.map((v) => v.toJson()).toList()};
+    return {
+      'status': status,
+      'data': data?.toJson(),
+    };
+  }
+}
+
+class PaginationData {
+  int? currentPage;
+  List<CampusData>? campuses;
+  String? firstPageUrl;
+  int? from;
+  int? lastPage;
+  String? lastPageUrl;
+  List<dynamic>? links;
+  String? nextPageUrl;
+  String? path;
+  int? perPage;
+  String? prevPageUrl;
+  int? to;
+  int? total;
+
+  PaginationData({
+    this.currentPage,
+    this.campuses,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
+
+  PaginationData.fromJson(Map<String, dynamic> json) {
+    currentPage = json['current_page'];
+
+    // campuses list
+    campuses = json['data'] != null
+        ? (json['data'] as List)
+        .map((e) => CampusData.fromJson(e))
+        .toList()
+        : [];
+
+    firstPageUrl = json['first_page_url'];
+    from = json['from'];
+    lastPage = json['last_page'];
+    lastPageUrl = json['last_page_url'];
+    links = json['links'];
+    nextPageUrl = json['next_page_url'];
+    path = json['path'];
+    perPage = json['per_page'] is int
+        ? json['per_page']
+        : int.tryParse(json['per_page'].toString());
+    prevPageUrl = json['prev_page_url'];
+    to = json['to'];
+    total = json['total'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'current_page': currentPage,
+      'data': campuses?.map((e) => e.toJson()).toList(),
+      'first_page_url': firstPageUrl,
+      'from': from,
+      'last_page': lastPage,
+      'last_page_url': lastPageUrl,
+      'links': links,
+      'next_page_url': nextPageUrl,
+      'path': path,
+      'per_page': perPage,
+      'prev_page_url': prevPageUrl,
+      'to': to,
+      'total': total,
+    };
   }
 }
 

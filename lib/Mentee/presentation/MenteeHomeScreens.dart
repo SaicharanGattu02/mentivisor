@@ -59,7 +59,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
   Future<void> _loadAll() async {
     _isLoadingNotifier.value = true;
-
     try {
       final guest = await AuthService.isGuest;
       _isGuestNotifier.value = guest;

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Components/Shimmers.dart';
+import '../../utils/constants.dart';
 import 'Widgets/CommonChoiceChip.dart';
 
 class Notifications extends StatefulWidget {
@@ -137,49 +139,78 @@ class _NotificationsState extends State<Notifications> {
                         }
                         return false;
                       },
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverGrid(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: _getCrossAxisCount(
-                                    context,
-                                  ), // 👈 1 on mobile, 2 on tab
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 0,
-                                  childAspectRatio: _getChildAspectRatio(
-                                    context,
-                                  ), // 👈 based on screen ratio
-                                ),
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverMasonryGrid.count(
+                              crossAxisCount: _getCrossAxisCount(context), // 👈 1 mobile, 2 tab
+                              mainAxisSpacing: 5,
+                              crossAxisSpacing: 12,
+                              childCount: filtered.length,
+                              itemBuilder: (context, index) {
                                 final item = filtered[index];
                                 return _buildNotificationCard(
                                   icon: _getIconForType(item.type),
                                   title: item.title ?? "",
                                   subtitle: item.remarks ?? item.message ?? "",
-                                  date: item.createdAt ?? "",
+                                  date: formatDate(item.createdAt),
                                 );
                               },
-                              childCount: filtered.length,
-                              addAutomaticKeepAlives: false,
-                              addRepaintBoundaries: true,
-                              addSemanticIndexes: false,
                             ),
-                          ),
-                          if (state is NotificationsLoadingMore)
-                            const SliverToBoxAdapter(
-                              child: Padding(
-                                padding: EdgeInsets.all(25.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1,
+
+                            if (state is NotificationsLoadingMore)
+                              const SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: EdgeInsets.all(25.0),
+                                  child: Center(
+                                    child: CircularProgressIndicator(strokeWidth: 1),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      // child: CustomScrollView(
+                      //   slivers: [
+                      //     SliverGrid(
+                      //       gridDelegate:
+                      //           SliverGridDelegateWithFixedCrossAxisCount(
+                      //             crossAxisCount: _getCrossAxisCount(
+                      //               context,
+                      //             ), // 👈 1 on mobile, 2 on tab
+                      //             crossAxisSpacing: 12,
+                      //             mainAxisSpacing: 0,
+                      //             childAspectRatio: _getChildAspectRatio(
+                      //               context,
+                      //             ), // 👈 based on screen ratio
+                      //           ),
+                      //       delegate: SliverChildBuilderDelegate(
+                      //         (context, index) {
+                      //           final item = filtered[index];
+                      //           return _buildNotificationCard(
+                      //             icon: _getIconForType(item.type),
+                      //             title: item.title ?? "",
+                      //             subtitle: item.remarks ?? item.message ?? "",
+                      //             date: item.createdAt ?? "",
+                      //           );
+                      //         },
+                      //         childCount: filtered.length,
+                      //         addAutomaticKeepAlives: false,
+                      //         addRepaintBoundaries: true,
+                      //         addSemanticIndexes: false,
+                      //       ),
+                      //     ),
+                      //     if (state is NotificationsLoadingMore)
+                      //       const SliverToBoxAdapter(
+                      //         child: Padding(
+                      //           padding: EdgeInsets.all(25.0),
+                      //           child: Center(
+                      //             child: CircularProgressIndicator(
+                      //               strokeWidth: 1,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //   ],
+                      // ),
                     );
                   } else {
                     return const SizedBox.shrink();
@@ -240,15 +271,15 @@ class _NotificationsState extends State<Notifications> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               icon,
               width: 50,
-              height: 80,
+              height: 60,
               fit: BoxFit.contain,
             ),
           ),

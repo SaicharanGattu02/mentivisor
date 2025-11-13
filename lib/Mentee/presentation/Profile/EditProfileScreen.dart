@@ -19,6 +19,7 @@ import '../../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart
 import '../../data/cubits/MenteeProfile/MenteeProfileUpdate/MenteeProfileCubit.dart';
 import '../../data/cubits/Years/years_cubit.dart';
 import '../../data/cubits/Years/years_states.dart';
+import '../Widgets/CollegeSelectionSheet.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final int collegeId;
@@ -329,71 +330,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
       ),
-      builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.6,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: BlocBuilder<CampusesCubit, CampusesStates>(
-              builder: (context, state) {
-                if (state is CampusesLoading) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (state is CampusesLoaded) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Select College",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: state.campusesModel.data!.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(
-                                state.campusesModel.data![index].name!,
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              onTap: () {
-                                _collegeController.text =
-                                    state.campusesModel.data![index].name!;
-                                _collegeId =
-                                    state.campusesModel.data![index].id;
-                                Navigator.pop(context);
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                } else if (state is CampusesFailure) {
-                  return Center(
-                    child: Text(
-                      state.error,
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
-          ),
-        );
-      },
+      builder: (_) => CollegeSelectionSheet(
+        onSelect: (name, id) {
+          _collegeController.text = name;
+          _collegeId = id;
+        },
+      ),
     );
   }
 

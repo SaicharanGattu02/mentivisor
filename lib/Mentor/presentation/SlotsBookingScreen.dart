@@ -148,23 +148,25 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        // const Spacer(),
-                        // IconButton(
-                        //   onPressed: visibleMonth.isAfter(DateTime(2025, 9))
-                        //       ? prevMonth
-                        //       : null,
-                        //   icon: Icon(
-                        //     Icons.chevron_left,
-                        //     color: visibleMonth.isAfter(DateTime(2025, 9))
-                        //         ? Colors.black
-                        //         : Colors.grey.withOpacity(0.5), // make it visually disabled
-                        //   ),
-                        // ),
-                        //
-                        // IconButton(
-                        //   onPressed: nextMonth,
-                        //   icon: const Icon(Icons.chevron_right),
-                        // ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: visibleMonth.isAfter(DateTime(2025, 9))
+                              ? prevMonth
+                              : null,
+                          icon: Icon(
+                            Icons.chevron_left,
+                            color: visibleMonth.isAfter(DateTime(2025, 9))
+                                ? Colors.black
+                                : Colors.grey.withOpacity(
+                                    0.5,
+                                  ), // make it visually disabled
+                          ),
+                        ),
+
+                        IconButton(
+                          onPressed: nextMonth,
+                          icon: const Icon(Icons.chevron_right),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -1545,8 +1547,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
   // small pill used inside dialog (matches your style)
   Widget _timeFieldPill(IconData icon, String text) {
-    return Container(height: 40,
-      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 4),
+    return Container(
+      height: 40,
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(8),
@@ -1555,10 +1558,10 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 18, color: const Color(0xFF6C6F7B)),
-           SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(
             text,
-            style:  TextStyle(
+            style: TextStyle(
               fontFamily: 'segeo',
               fontSize: 14,
               fontWeight: FontWeight.w500,

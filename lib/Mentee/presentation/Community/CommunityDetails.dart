@@ -176,15 +176,15 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                   if (communityDetails?.anonymous == 0) ...[
                     GestureDetector(
                       onTap: () async {
-                        final userIdStr = await AuthService.getUSerId(); // String? like "107"
+                        final userIdStr =
+                            await AuthService.getUSerId(); // String? like "107"
                         final userId = int.tryParse(
                           userIdStr ?? '',
                         ); // Parse to int, default 0 if null/invalid
                         AppLogger.info(
                           "userId::$userId (parsed as int: $userId)",
                         );
-                        final uploaderId =
-                            communityDetails?.uploader?.id;
+                        final uploaderId = communityDetails?.uploader?.id;
                         if (userId == uploaderId) {
                           context.push("/profile");
                           AppLogger.info(
@@ -468,7 +468,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                               return CommentCard(
                                 key: ValueKey(c.id),
                                 id: c.id ?? 0,
-                                user_id: c.user?.id??0,
+                                user_id: c.user?.id ?? 0,
                                 name: c.user?.name ?? 'Unknown',
                                 profileUrl: c.user?.profilePicUrl ?? '',
                                 content: c.content ?? '',
