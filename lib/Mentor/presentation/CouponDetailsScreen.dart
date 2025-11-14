@@ -251,7 +251,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                         borderRadius: BorderRadius.circular(16),
                         child: CachedNetworkImage(
                           imageUrl: couponsDetails?.image ?? "",
-                          height: 200,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(

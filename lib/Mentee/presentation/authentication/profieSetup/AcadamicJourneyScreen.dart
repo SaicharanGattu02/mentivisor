@@ -32,8 +32,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
   @override
   void initState() {
     super.initState();
-    AppLogger.log("Final data:${widget.data}");
-    context.read<CampusesCubit>().getCampuses();
+    context.read<CampusesCubit>().getCampuses("");
     context.read<YearsCubit>().getYears();
   }
 
@@ -331,6 +330,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
       ),
     );
   }
+
   void _openCollegeSelectionBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -350,7 +350,6 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
       ),
     );
   }
-
 
   void _openYearSelectionBottomSheet(BuildContext context) {
     showModalBottomSheet(

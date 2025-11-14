@@ -3,7 +3,7 @@ import 'package:mentivisor/Mentee/data/remote_data_source.dart';
 import '../../../Models/CampusesModel.dart';
 
 abstract class CampusesRepository {
-  Future<CampusesModel?> getCampuses(int page);
+  Future<CampusesModel?> getCampuses(int page, String search);
 }
 
 class CampusesRepositoryImpl implements CampusesRepository {
@@ -11,7 +11,7 @@ class CampusesRepositoryImpl implements CampusesRepository {
   CampusesRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<CampusesModel?> getCampuses(int page) async {
-    return await remoteDataSource.getCampuses(page);
+  Future<CampusesModel?> getCampuses(int page,String search) async {
+    return await remoteDataSource.getCampuses(page,search);
   }
 }

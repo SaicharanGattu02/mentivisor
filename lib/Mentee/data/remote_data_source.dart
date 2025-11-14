@@ -101,7 +101,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> addCommunityPost(Map<String, dynamic> data);
   Future<SuccessModel?> addTask(final Map<String, dynamic> data);
   Future<SuccessModel?> addResource(Map<String, dynamic> data);
-  Future<CampusesModel?> getCampuses(int page);
+  Future<CampusesModel?> getCampuses(int page, String search);
   Future<YearsModel?> getYears();
   Future<CoinsPackRespModel?> getcoinspack();
   Future<GetExpertiseModel?> getExpertiseSubCategory(int id);
@@ -511,9 +511,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<CampusesModel?> getCampuses(int page) async {
+  Future<CampusesModel?> getCampuses(int page,String search) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.get_campuses}?page=$page");
+      Response res = await ApiClient.get("${APIEndpointUrls.get_campuses}?page=$page&search=$search");
       debugPrint('getCampuses::$res');
       return CampusesModel.fromJson(res.data);
     } catch (e) {

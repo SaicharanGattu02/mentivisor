@@ -49,7 +49,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<CampusesCubit>().getCampuses();
+    context.read<CampusesCubit>().getCampuses("");
     context.read<YearsCubit>().getYears();
     context.read<MenteeProfileCubit>().fetchMenteeProfile().then((userData) {
       if (userData != null) {

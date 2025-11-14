@@ -18,13 +18,16 @@ class CampusesCubit extends Cubit<CampusesStates> {
   /// ============================
   /// INITIAL FETCH
   /// ============================
-  Future<void> getCampuses() async {
+  Future<void> getCampuses(String search) async {
     emit(CampusesLoading());
 
     _currentPage = 1;
 
     try {
-      final response = await campusesRepository.getCampuses(_currentPage);
+      final response = await campusesRepository.getCampuses(
+        _currentPage,
+        search,
+      );
 
       if (response != null && response.status == true) {
         campusesModel = response;
@@ -44,7 +47,7 @@ class CampusesCubit extends Cubit<CampusesStates> {
   /// ============================
   /// LOAD MORE
   /// ============================
-  Future<void> fetchMoreCampuses() async {
+  Future<void> fetchMoreCampuses(String search) async {
     if (_isLoadingMore || !_hasNextPage) return;
 
     _isLoadingMore = true;
@@ -53,16 +56,16 @@ class CampusesCubit extends Cubit<CampusesStates> {
     emit(CampusesLoadingMore(campusesModel, _hasNextPage));
 
     try {
-      final newData =
-      await campusesRepository.getCampuses(_currentPage);
+      final newData = await campusesRepository.getCampuses(
+        _currentPage,
+        search,
+      );
 
-      if (newData != null &&
-          newData.data?.campuses?.isNotEmpty == true) {
-
+      if (newData != null && newData.data?.campuses?.isNotEmpty == true) {
         // combine old + new
         final combinedList = List<CampusData>.from(
-            campusesModel.data?.campuses ?? [])
-          ..addAll(newData.data!.campuses!);
+          campusesModel.data?.campuses ?? [],
+        )..addAll(newData.data!.campuses!);
 
         // Build updated pagination data
         final updatedPagination = PaginationData(
@@ -98,5 +101,3 @@ class CampusesCubit extends Cubit<CampusesStates> {
     }
   }
 }
-
-

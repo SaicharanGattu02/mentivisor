@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
@@ -88,196 +89,187 @@ class _CouponsListState extends State<CouponsList> {
                 }
                 return false;
               },
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
-                    ),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: _getCrossAxisCount(context),
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      sliver: SliverMasonryGrid.count(
+                        crossAxisCount: _getCrossAxisCount(context), // 2 or 3 based on device
                         mainAxisSpacing: 12,
                         crossAxisSpacing: 12,
-                        childAspectRatio: _getChildAspectRatio(context),
-                      ),
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final coupon = coupons[index];
-                        return GestureDetector(
-                          onTap: () {
-                            context.push(
-                              '/coupon_details?couponId=${coupon.id ?? ""}',
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x0F0E1240),
-                                  blurRadius: 14,
-                                  offset: Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisSize:
-                                  MainAxisSize.min, // ✅ fixes overflow
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Top Image + Expiry badge
-                                Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(16),
-                                      ),
-                                      child: CachedNetworkImage(
-                                        imageUrl: coupon.image ?? "",
-                                        height: 140,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            Container(
-                                              height: 140,
-                                              color: Colors.grey.shade200,
-                                              child: const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      strokeWidth: 1,
-                                                    ),
-                                              ),
-                                            ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                              height: 140,
-                                              color: Colors.grey.shade100,
-                                              child: const Icon(
-                                                Icons.broken_image,
-                                                size: 40,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                      ),
-                                    ),
-                                    if ((coupon.expiryDate ?? "").isNotEmpty)
-                                      Positioned(
-                                        right: 10,
-                                        top: 10,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 6,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black.withOpacity(
-                                              0.6,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
+                        childCount: coupons.length,
+                        itemBuilder: (context, index) {
+                          final coupon = coupons[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              context.push(
+                                '/coupon_details?couponId=${coupon.id ?? ""}',
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x0F0E1240),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // ============================
+                                  // TOP IMAGE + EXPIRY BADGE
+                                  // ============================
+                                  Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.vertical(
+                                          top: Radius.circular(16),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: coupon.image ?? "",
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Container(
+                                            height: 150,
+                                            color: Colors.grey.shade200,
+                                            child: const Center(
+                                              child: CircularProgressIndicator(strokeWidth: 1),
                                             ),
                                           ),
-                                          child: Text(
-                                            "Expires: ${coupon.expiryDate}",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'segeo',
-                                            ),
+                                          errorWidget: (context, url, error) => Container(
+                                            height: 150,
+                                            color: Colors.grey.shade100,
+                                            child: const Icon(Icons.broken_image, size: 40),
                                           ),
                                         ),
                                       ),
-                                  ],
-                                ),
 
-                                // Bottom content
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
+                                      if ((coupon.expiryDate ?? "").isNotEmpty)
+                                        Positioned(
+                                          right: 10,
+                                          top: 10,
+                                          child: Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 8,
-                                              vertical: 4,
+                                              vertical: 6,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Colors.grey.shade100,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
+                                              color: Colors.black.withOpacity(0.6),
+                                              borderRadius: BorderRadius.circular(20),
                                             ),
                                             child: Text(
-                                              coupon.vendor ?? "Vendor",
+                                              "Expires: ${coupon.expiryDate}",
                                               style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
                                                 fontFamily: 'segeo',
-                                                fontSize: 12,
-                                                color: Color(0xFF666666),
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
-                                          if ((coupon.website ?? "").isNotEmpty)
-                                            Icon(
-                                              Icons.language,
-                                              size: 16,
-                                              color: Colors.blueGrey.shade300,
-                                            ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        coupon.title ?? "",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontFamily: 'segeo',
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF222222),
                                         ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        coupon.description ?? "",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontFamily: 'segeo',
-                                          fontSize: 12,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
                                     ],
                                   ),
-                                ),
-                              ],
+
+                                  // ============================
+                                  // BOTTOM DETAILS
+                                  // ============================
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade100,
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                coupon.vendor ?? "Vendor",
+                                                style: const TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontSize: 12,
+                                                  color: Color(0xFF666666),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            if ((coupon.website ?? "").isNotEmpty)
+                                              Icon(
+                                                Icons.language,
+                                                size: 16,
+                                                color: Colors.blueGrey.shade300,
+                                              ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          coupon.title ?? "",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontFamily: 'segeo',
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF222222),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          coupon.description ?? "",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontFamily: 'segeo',
+                                            fontSize: 12,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      }, childCount: coupons.length),
-                    ),
-                  ),
-                  if (state is CouponsListLoadingMore)
-                    const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Center(
-                          child: CircularProgressIndicator(strokeWidth: 1.5),
-                        ),
+                          );
+                        },
                       ),
                     ),
-                ],
-              ),
+
+                    // ============================
+                    // PAGINATION LOADER
+                    // ============================
+                    if (state is CouponsListLoadingMore)
+                      const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Center(
+                            child: CircularProgressIndicator(strokeWidth: 1.5),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
             );
           } else {
             return const SizedBox.shrink();
