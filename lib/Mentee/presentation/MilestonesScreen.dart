@@ -26,17 +26,17 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
   String getTitle(String type) {
     switch (type) {
       case 'study_zone':
-        return "Study Zone";
+        return "Upload notes in studyzone";
       case 'community_post':
-        return "Community Post";
+        return "Upload posts in community";
       case 'session':
-        return "Mentor Session";
+        return "Complete mentor sessions";
       case 'feedback':
-        return "Feedback";
+        return "Give mentor feedback";
       case 'daily_checkin':
-        return "Daily Check-In";
+        return "Daily checkin streak";
       case 'ecc':
-        return "Event, Challenge & Competition";
+        return "Upload opportunities in ECC";
       default:
         return type;
     }
@@ -106,7 +106,6 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
         builder: (context, constraints) {
           // Adaptive logic: 1 column on mobile, 2 on tablets
           final crossAxisCount = constraints.maxWidth < 600 ? 1 : 2;
-
           return BlocBuilder<MilestonesCubit, MilesStoneStates>(
             builder: (context, state) {
               if (state is MilesStoneLoading) {
@@ -131,11 +130,10 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                     crossAxisCount: crossAxisCount,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    itemCount: milestones?.length,
+                    itemCount: milestones.length,
                     itemBuilder: (context, index) {
                       final milestone = milestones[index];
                       final percent = (milestone.progressPercent ?? 0) / 100;
-
                       return Container(
                         decoration: BoxDecoration(
                           // color: getCardColor(milestone.type ?? ''),
@@ -146,7 +144,6 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Icon + Title
                             Row(
                               children: [
                                 Icon(
@@ -167,7 +164,6 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                               ],
                             ),
                             const SizedBox(height: 8),
-
                             // Progress bar
                             LinearPercentIndicator(
                               lineHeight: 8,

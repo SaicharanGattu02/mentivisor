@@ -683,6 +683,15 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                               );
                                                             },
                                                           ),
+                                                          Spacer(),
+                                                          // IconButton(
+                                                          //   onPressed: () {},
+                                                          //   icon: Image.asset(
+                                                          //     'assets/icons/delete.png',
+                                                          //     width: 25,
+                                                          //     height: 25,
+                                                          //   ),
+                                                          // ),
                                                         ],
                                                       );
                                                     },
