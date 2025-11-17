@@ -1,11 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
+import 'package:mentivisor/Mentee/data/cubits/DownloadDelete/DownloadActionCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DownloadDelete/DownloadActionStates.dart';
 
 import '../../../Components/CustomAppButton.dart';
 import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
+import '../../data/cubits/Downloads/downloads_cubit.dart';
 
 class DownloadCard extends StatelessWidget {
   final Downloads downloads;
@@ -53,20 +57,65 @@ class DownloadCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      downloads.title ?? "",
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      downloads.description ?? "",
-                      style: TextStyle(fontSize: 14, color: Color(0xff666666)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                downloads.title ?? "",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                downloads.description ?? "",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xff666666),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        BlocConsumer<DownloadActionCubit, DownloadActionStates>(
+                          listener: (context, state) {
+                            if (state is DownloadActionSuccess) {
+                              context.read<DownloadsCubit>().getDownloads();
+                            }
+                          },
+                          builder: (context, state) {
+                            final isLoading = state is DownloadActionLoading;
+                            return IconButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                      context
+                                          .read<DownloadActionCubit>()
+                                          .downloadAction(
+                                            downloads.downloadId.toString() ??
+                                                "",
+                                          );
+                                    },
+                              style: IconButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              icon: Image.asset(
+                                'assets/icons/delete.png',
+                                width: 25,
+                                height: 25,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     SizedBox(height: 10),
                     if ((downloads.tag?.isNotEmpty ?? false))

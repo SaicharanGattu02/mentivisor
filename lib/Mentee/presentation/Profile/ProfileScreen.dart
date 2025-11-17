@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteECC/EccActionCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteECC/EccActionStates.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeletePost/DeletePostCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeletePost/DeletePostStates.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
 import 'package:mentivisor/utils/color_constants.dart';
@@ -684,14 +688,52 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                             },
                                                           ),
                                                           Spacer(),
-                                                          // IconButton(
-                                                          //   onPressed: () {},
-                                                          //   icon: Image.asset(
-                                                          //     'assets/icons/delete.png',
-                                                          //     width: 25,
-                                                          //     height: 25,
-                                                          //   ),
-                                                          // ),
+                                                          BlocConsumer<
+                                                            DeletePostCubit,
+                                                            DeletePostStates
+                                                          >(
+                                                            listener: (context, state) {
+                                                              if (state
+                                                                  is DeletePostSuccess) {
+                                                                context
+                                                                    .read<
+                                                                      MenteeProfileCubit
+                                                                    >()
+                                                                    .fetchMenteeProfile();
+                                                              } else if (state
+                                                                  is DeletePostFailure) {
+                                                                CustomSnackBar1.show(
+                                                                  context,
+                                                                  state.error,
+                                                                );
+                                                              }
+                                                            },
+                                                            builder: (context, state) {
+                                                              final isLoading =
+                                                                  state
+                                                                      is DeletePostLoading;
+                                                              return IconButton(
+                                                                onPressed:
+                                                                    isLoading
+                                                                    ? null
+                                                                    : () {
+                                                                        context
+                                                                            .read<
+                                                                              DeletePostCubit
+                                                                            >()
+                                                                            .deletePost(
+                                                                              menteePosts?.id.toString() ??
+                                                                                  "",
+                                                                            );
+                                                                      },
+                                                                icon: Image.asset(
+                                                                  'assets/icons/delete.png',
+                                                                  width: 25,
+                                                                  height: 25,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
                                                         ],
                                                       );
                                                     },
@@ -784,7 +826,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           MediaQuery.of(
                                                             context,
                                                           ).size.width *
-                                                          0.25,
+                                                          0.23,
                                                       height: 130,
                                                       imageUrl:
                                                           campusList?.image ??
@@ -835,38 +877,103 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Text(
-                                                          campusList?.title ??
-                                                              "",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            fontFamily: 'segeo',
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            fontSize: 12,
-                                                            height: 1,
-                                                            letterSpacing: 0.5,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                        Text(
-                                                          campusList
-                                                                  ?.description ??
-                                                              "",
-                                                          maxLines: 2,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontFamily:
-                                                                    'segeo',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 11,
-                                                                height: 1,
-                                                              ),
+                                                        Row(
+                                                          children: [
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  campusList
+                                                                          ?.title ??
+                                                                      "",
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  style: TextStyle(
+                                                                    fontFamily:
+                                                                        'segeo',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    fontSize:
+                                                                        12,
+                                                                    height: 1,
+                                                                    letterSpacing:
+                                                                        0.5,
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 8,
+                                                                ),
+                                                                Text(
+                                                                  campusList
+                                                                          ?.description ??
+                                                                      "",
+                                                                  maxLines: 2,
+                                                                  style: const TextStyle(
+                                                                    fontFamily:
+                                                                        'segeo',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        11,
+                                                                    height: 1,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            BlocConsumer<
+                                                              EccActionCubit,
+                                                              EccActionStates
+                                                            >(
+                                                              listener: (context, state) {
+                                                                if (state
+                                                                    is EccActionSuccess) {
+                                                                  context
+                                                                      .read<
+                                                                        MenteeProfileCubit
+                                                                      >()
+                                                                      .fetchMenteeProfile();
+                                                                }
+                                                              },
+                                                              builder: (context, state) {
+                                                                final isLoading =
+                                                                    state
+                                                                        is EccActionLoading;
+                                                                return IconButton(
+                                                                  onPressed:
+                                                                      isLoading
+                                                                      ? null
+                                                                      : () {
+                                                                          context
+                                                                              .read<
+                                                                                EccActionCubit
+                                                                              >()
+                                                                              .eccAction(
+                                                                                campusList?.id.toString() ??
+                                                                                    "",
+                                                                              );
+                                                                        },
+                                                                  style: IconButton.styleFrom(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    visualDensity:
+                                                                        VisualDensity
+                                                                            .compact,
+                                                                  ),
+                                                                  icon: Image.asset(
+                                                                    'assets/icons/delete.png',
+                                                                    width: 25,
+                                                                    height: 25,
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ],
                                                         ),
                                                         SizedBox(height: 12),
                                                         if ((campusList

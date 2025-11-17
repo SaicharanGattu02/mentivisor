@@ -19,6 +19,7 @@ import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepos
 import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeletePost/DeletePostCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
@@ -88,6 +89,8 @@ import 'Mentee/data/cubits/CommunityPostReport/CommunityZoneReportCubit.dart';
 import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsCubit.dart';
 import 'Mentee/data/cubits/DailyCheckIns/DailyCheckInsRepo.dart';
 import 'Mentee/data/cubits/DailySlots/daily_slots_cubit.dart';
+import 'Mentee/data/cubits/DeleteECC/EccActionCubit.dart';
+import 'Mentee/data/cubits/DownloadDelete/DownloadActionCubit.dart';
 import 'Mentee/data/cubits/EccTags/tags_cubit.dart';
 import 'Mentee/data/cubits/EccTags/tags_repository.dart';
 import 'Mentee/data/cubits/ExclusiveServiceDetails/ExclusiveServiceDetails_Cubit.dart';
@@ -690,6 +693,15 @@ class StateInjector {
 
     BlocProvider<groupChatReportCubit>(
       create: (context) => groupChatReportCubit(context.read<ChatReportRepo>()),
+    ),
+    BlocProvider<DeletePostCubit>(
+      create: (context) => DeletePostCubit(context.read<CommunityPostsRepo>()),
+    ),
+    BlocProvider<EccActionCubit>(
+      create: (context) => EccActionCubit(context.read<ECCRepository>()),
+    ),
+    BlocProvider<DownloadActionCubit >(
+      create: (context) => DownloadActionCubit(context.read<DownloadsRepository>()),
     ),
 
     BlocProvider<MenteeDashboardCubit>(

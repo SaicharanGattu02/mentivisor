@@ -169,6 +169,9 @@ abstract class RemoteDataSource {
   Future<MilestonesModel?> getMilestones();
   Future<SuccessModel?> groupChatReport(Map<String, dynamic> data);
   Future<SuccessModel?> privateChatReport(Map<String, dynamic> data);
+  Future<SuccessModel?> deletePost(String id);
+  Future<SuccessModel?> deleteECC(String id);
+  Future<SuccessModel?> deleteDownload(String id);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -211,6 +214,48 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<SuccessModel?> deleteDownload(String id) async {
+    try {
+      Response res = await ApiClient.delete(
+        "${APIEndpointUrls.delete_download}/$id",
+      );
+      AppLogger.log('deleteDownload: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('deleteDownload:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> deletePost(String id) async {
+    try {
+      Response res = await ApiClient.delete(
+        "${APIEndpointUrls.delete_community}/$id",
+      );
+      AppLogger.log('deletePost: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('deletePost:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> deleteECC(String id) async {
+    try {
+      Response res = await ApiClient.delete(
+        "${APIEndpointUrls.delete_studyzone}/$id",
+      );
+      AppLogger.log('deleteECC: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('deleteECC:${e}');
+      return null;
+    }
+  }
+
+  @override
   Future<MilestonesModel?> getMilestones() async {
     try {
       Response res = await ApiClient.get("${APIEndpointUrls.mile_stone}");
@@ -236,10 +281,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<UploadFileInChatModel?> uploadFileInChat(
-      Map<String, dynamic> data,
-      String user_id,
-      String session_id,
-      ) async {
+    Map<String, dynamic> data,
+    String user_id,
+    String session_id,
+  ) async {
     try {
       final url = "${ApiConfig.socket_url}/api/upload-file";
       MultipartFile? filePart;
@@ -270,10 +315,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       final response = await dio.post(
         url,
         data: formData,
-        queryParameters: {
-          "session_id": session_id,
-          "user_id": user_id,
-        },
+        queryParameters: {"session_id": session_id, "user_id": user_id},
         options: Options(
           contentType: 'multipart/form-data',
           // 👇 this ensures Dio never throws for non-2xx responses
@@ -285,7 +327,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return UploadFileInChatModel.fromJson(response.data);
       } else {
-        print("Upload failed with status ${response.statusCode}: ${response.data}");
+        print(
+          "Upload failed with status ${response.statusCode}: ${response.data}",
+        );
         return UploadFileInChatModel.fromJson(response.data);
       }
     } catch (e, st) {
@@ -294,7 +338,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return null;
     }
   }
-
 
   @override
   Future<GroupChatMessagesModel?> getGroupChatMessages(
@@ -511,9 +554,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<CampusesModel?> getCampuses(int page,String search) async {
+  Future<CampusesModel?> getCampuses(int page, String search) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.get_campuses}?page=$page&search=$search");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.get_campuses}?page=$page&search=$search",
+      );
       debugPrint('getCampuses::$res');
       return CampusesModel.fromJson(res.data);
     } catch (e) {
