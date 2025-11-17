@@ -171,24 +171,24 @@ class _ProfileBody extends StatelessWidget {
               child: _EditLink(),
             ),
           ),
-          SizedBox(height: 3),
-          if (bio.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Text(
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                bio,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'segeo',
-                  fontSize: 14,
-                  height: 1.5,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF6B7280),
-                ),
-              ),
-            ),
+          // SizedBox(height: 3),
+          // if (bio.isNotEmpty)
+          //   Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 6),
+          //     child: Text(
+          //       maxLines: 3,
+          //       overflow: TextOverflow.ellipsis,
+          //       bio,
+          //       textAlign: TextAlign.center,
+          //       style: const TextStyle(
+          //         fontFamily: 'segeo',
+          //         fontSize: 14,
+          //         height: 1.5,
+          //         fontWeight: FontWeight.w400,
+          //         color: Color(0xFF6B7280),
+          //       ),
+          //     ),
+          //   ),
 
           const SizedBox(height: 10),
           Row(
