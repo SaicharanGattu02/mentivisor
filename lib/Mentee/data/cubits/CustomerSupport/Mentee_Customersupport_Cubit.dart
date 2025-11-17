@@ -7,7 +7,7 @@ class MenteeCustomersupportCubit extends Cubit<MenteeCustomersupportStates> {
   MenteeCustomersupportCubit(this.menteeCustomersupportRepo)
     : super(MenteeCustomersupportIntially());
 
-  Future<void>CustomersupportDetails(int id) async {
+  Future<void>CustomersupportDetails() async {
     emit(MenteeCustomersupportLoading());
     try {
       final response = await menteeCustomersupportRepo

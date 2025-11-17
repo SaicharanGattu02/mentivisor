@@ -6,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_States.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServiceList_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/ExclusiveServicesList/ExclusiveServicesList_state.dart';
 
@@ -13,6 +14,7 @@ import '../../Components/Shimmers.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/media_query_helper.dart';
 import '../../utils/spinkittsLoader.dart';
+import '../data/cubits/CustomerSupport/Mentee_Customersupport_Cubit.dart';
 
 class ExclusiveServices extends StatefulWidget {
   @override
@@ -27,6 +29,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   @override
   void initState() {
     super.initState();
+    context.read<MenteeCustomersupportCubit>().CustomersupportDetails();
     context.read<ExclusiveservicelistCubit>().getExclusiveServiceList("");
   }
 
@@ -40,7 +43,6 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFF4F5FA),
       appBar: CustomAppBar1(title: "Exclusive Services", actions: []),
       body: Container(
@@ -52,14 +54,23 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
         ),
         child: Column(
           children: [
-            Text(
-              "To Post your Services mail to rohit@gmail.com",
-              style: TextStyle(
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-                color: Color(0xff666666),
-              ),
+            BlocBuilder<MenteeCustomersupportCubit,MenteeCustomersupportStates>(
+              builder: (context, state) {
+                if(state is MenteeCustomersupportLoaded){
+                  final data =  state.menteeCustmor_supportModel.data;
+                  return Text(
+                    "To Post your Services mail to ${data?.email??""}",
+                    style: TextStyle(
+                      fontFamily: 'segeo',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: Color(0xff666666),
+                    ),
+                  );
+                }else{
+                  return SizedBox.shrink();
+                }
+              },
             ),
             SizedBox(height: 20),
             SizedBox(
@@ -227,26 +238,6 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
       return 2; // Tablet
     } else {
       return 3; // Larger screens
-    }
-  }
-
-  double _getChildAspectRatio(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-
-    // base ratio derived from screen proportions
-    double baseRatio = width / height;
-
-    if (width < 600) {
-      // Mobile – taller cards
-      return baseRatio * 3.15;
-    } else if (width > 600) {
-      // Tablet – more square
-      return baseRatio * 2.2;
-    } else {
-      // Desktop or large tablet
-      return baseRatio * 2.2;
     }
   }
 }

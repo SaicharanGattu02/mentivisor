@@ -479,6 +479,14 @@ class StateInjector {
     BlocProvider<YearsCubit>(
       create: (context) => YearsCubit(context.read<YearsRepository>()),
     ),
+    BlocProvider<MenteeCustomersupportCubit>(
+      create: (context) =>
+          MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
+    ),
+    BlocProvider<ExclusiveservicelistCubit>(
+      create: (context) =>
+          ExclusiveservicelistCubit(context.read<ExclusiveserviceslistRepo>()),
+    ),
     BlocProvider<GuestMentorsCubit>(
       create: (context) =>
           GuestMentorsCubit(context.read<GuestMentorsRepository>()),
@@ -599,10 +607,6 @@ class StateInjector {
       create: (context) =>
           MenteeProfileCubit(context.read<MenteeProfileRepository>()),
     ),
-    BlocProvider<ExclusiveservicelistCubit>(
-      create: (context) =>
-          ExclusiveservicelistCubit(context.read<ExclusiveserviceslistRepo>()),
-    ),
     BlocProvider<CommunityZoneReportCubit>(
       create: (context) =>
           CommunityZoneReportCubit(context.read<CommunityPostsRepo>()),
@@ -643,11 +647,6 @@ class StateInjector {
     ),
     BlocProvider<PaymentCubit>(
       create: (context) => PaymentCubit(context.read<PaymentRepository>()),
-    ),
-
-    BlocProvider<MenteeCustomersupportCubit>(
-      create: (context) =>
-          MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
     ),
     BlocProvider<HighlightedCoinsCubit>(
       create: (context) =>
@@ -703,7 +702,6 @@ class StateInjector {
     BlocProvider<DownloadActionCubit >(
       create: (context) => DownloadActionCubit(context.read<DownloadsRepository>()),
     ),
-
     BlocProvider<MenteeDashboardCubit>(
       create: (context) => MenteeDashboardCubit(
         bannersCubit: Getbannerscubit(context.read<Getbannersrepository>()),
