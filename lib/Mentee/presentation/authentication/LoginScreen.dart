@@ -407,7 +407,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               child: CustomAppButton1(
                                 isLoading: state is LoginLoading,
-                                text: "Next",
+                                text: "Sign In",
                                 onPlusTap: validateAndSubmit,
                               ),
                             );

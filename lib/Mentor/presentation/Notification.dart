@@ -32,6 +32,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
     "Sessions",
     "Rewards",
     "Expertise updates",
+    "Updates",
   ];
 
   final Map<String, String> _filterKeywordMap = {
@@ -39,6 +40,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
     "Sessions": "session",
     "Rewards": "reward",
     "Expertise updates": "expertise",
+    "updates": "updates",
   };
 
   @override

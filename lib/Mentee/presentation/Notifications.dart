@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states.dart';
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Components/Shimmers.dart';
+import '../../Mentee/Models/NotificationModel.dart';
+import '../../services/NotificationService.dart';
 import '../../utils/constants.dart';
 import 'Widgets/CommonChoiceChip.dart';
 
@@ -27,8 +30,7 @@ class _NotificationsState extends State<Notifications> {
     "Rewards",
     "Reminders",
     "Mentions",
-    "Approved",
-    "Rejected",
+    "Updates",
   ];
 
   final Map<String, String> _filterKeywordMap = {
@@ -37,8 +39,7 @@ class _NotificationsState extends State<Notifications> {
     "Rewards": "reward",
     "Reminders": "reminder",
     "Mentions": "mention",
-    "Approved": "approval",
-    "Rejected": "rejection",
+    "Updates": "updates",
   };
 
   @override
@@ -139,35 +140,40 @@ class _NotificationsState extends State<Notifications> {
                         }
                         return false;
                       },
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverMasonryGrid.count(
-                              crossAxisCount: _getCrossAxisCount(context), // 👈 1 mobile, 2 tab
-                              mainAxisSpacing: 5,
-                              crossAxisSpacing: 12,
-                              childCount: filtered.length,
-                              itemBuilder: (context, index) {
-                                final item = filtered[index];
-                                return _buildNotificationCard(
-                                  icon: _getIconForType(item.type),
-                                  title: item.title ?? "",
-                                  subtitle: item.remarks ?? item.message ?? "",
-                                  date: formatDate(item.createdAt),
-                                );
-                              },
-                            ),
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverMasonryGrid.count(
+                            crossAxisCount: _getCrossAxisCount(
+                              context,
+                            ), // 👈 1 mobile, 2 tab
+                            mainAxisSpacing: 5,
+                            crossAxisSpacing: 12,
+                            childCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final item = filtered[index];
+                              return _buildNotificationCard(
+                                icon: _getIconForType(item.type),
+                                title: item.title ?? "",
+                                subtitle: item.remarks ?? item.message ?? "",
+                                date: formatDate(item.createdAt),
+                                item: item,
+                              );
+                            },
+                          ),
 
-                            if (state is NotificationsLoadingMore)
-                              const SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: EdgeInsets.all(25.0),
-                                  child: Center(
-                                    child: CircularProgressIndicator(strokeWidth: 1),
+                          if (state is NotificationsLoadingMore)
+                            const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.all(25.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1,
                                   ),
                                 ),
                               ),
-                          ],
-                        ),
+                            ),
+                        ],
+                      ),
                       // child: CustomScrollView(
                       //   slivers: [
                       //     SliverGrid(
@@ -224,6 +230,61 @@ class _NotificationsState extends State<Notifications> {
     );
   }
 
+  /// Simple logger
+  void _log(String tag, dynamic data) {
+    debugPrint("[$tag] ${data}");
+  }
+
+  /// Handle navigation
+  void _handleNotificationTap(Data data) {
+    final String? type = data.content_type ?? "";
+    final String? role = data.role ?? "";
+    final String? id = data.content_id ?? "";
+
+    _log("NOTIFICATION_PAYLOAD", data.content_type);
+
+    String? route;
+
+    switch (type) {
+      case 'community':
+        route = '/community_details/$id';
+        break;
+      case 'studyzone':
+        route = '/resource_details_screen/$id';
+        break;
+      case 'ecc':
+        route = '/view_event/$id';
+        break;
+      case 'task':
+        route = '/productivity_screen';
+        break;
+      case 'session':
+        if (role == 'mentee') {
+          route = '/upcoming_session';
+        } else if (role == 'mentor') {
+          route = '/mentor_dashboard';
+        }
+        break;
+      case 'expertise':
+        route = '/update_expertise';
+        break;
+      case 'rewards':
+        route = '/wallet_screen';
+        break;
+
+      default:
+        _log("UNKNOWN_TYPE", type);
+        return;
+    }
+
+    if (route == null) return;
+
+    _log("NAVIGATING TO", route);
+
+    // THIS IS THE FIX
+    context.push(route, extra: data);
+  }
+
   int _getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
@@ -262,67 +323,74 @@ class _NotificationsState extends State<Notifications> {
     required String title,
     required String subtitle,
     required String date,
+    required Data item,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              icon,
-              width: 50,
-              height: 60,
-              fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: () {
+        debugPrint("Tapped! ID: ${item.id}"); // ← Will this print?
+        _handleNotificationTap(item);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                icon,
+                width: 50,
+                height: 60,
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xff222222),
-                    fontFamily: 'segeo',
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xff222222),
+                      fontFamily: 'segeo',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xff666666),
-                    fontFamily: 'segeo',
+                  const SizedBox(height: 6),
+                  Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xff666666),
+                      fontFamily: 'segeo',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  date,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xff999999),
-                    fontFamily: 'segeo',
+                  const SizedBox(height: 6),
+                  Text(
+                    date,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xff999999),
+                      fontFamily: 'segeo',
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -119,6 +119,8 @@ class Data {
   String? title;
   String? remarks;
   String? message;
+  String? content_type;
+  String? content_id;
   int? isRead;
   String? role;
   String? createdAt;
@@ -133,6 +135,8 @@ class Data {
     this.remarks,
     this.message,
     this.isRead,
+    this.content_type,
+    this.content_id,
     this.role,
     this.createdAt,
     this.updatedAt,
@@ -143,6 +147,8 @@ class Data {
     id = json['id'];
     userId = json['userId'];
     type = json['type'];
+    content_type = json['content_type'];
+    content_id = json['content_id'];
     title = json['title'];
     remarks = json['remarks'];
     message = json['message'];
@@ -158,6 +164,8 @@ class Data {
     map['id'] = id;
     map['userId'] = userId;
     map['type'] = type;
+    map['content_type'] = content_type;
+    map['content_id'] = content_id;
     map['title'] = title;
     map['remarks'] = remarks;
     map['message'] = message;

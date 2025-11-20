@@ -702,22 +702,28 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 isLoading: isLoading,
                 onPlusTap: () {
                   FocusScope.of(context).unfocus();
+
+                  // FORM VALIDATION
                   if (!(_formKey.currentState?.validate() ?? false)) return;
+
                   final isHighlighted = _isHighlighted.value;
                   final anonymous = _anonymousNotifier.value;
                   final file = _imageFile.value;
+
+                  // 🔥 IMAGE MANDATORY CHECK
+                  if (file == null) {
+                    CustomSnackBar1.show(context, "Please upload an image");
+                    return; // STOP SUBMISSION
+                  }
 
                   final Map<String, dynamic> data = {
                     "heading": _headingController.text.trim(),
                     "description": _describeController.text.trim(),
                     "anonymous": anonymous ? 1 : 0,
                     "popular": isHighlighted ? 1 : 0,
-                    // "tags[]": _selectedTags,
+                    "image": file.path, // 🔥 safe because file is not null
                   };
 
-                  if (file != null) {
-                    data["image"] = file.path;
-                  }
                   if (isHighlighted) {
                     data["coins"] =
                         double.tryParse(highlitedCoinValue.value)?.toInt() ?? 0;
@@ -725,6 +731,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
                   context.read<AddCommunityPostCubit>().addCommunityPost(data);
                 },
+
               );
             },
           ),
