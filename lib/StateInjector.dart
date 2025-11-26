@@ -45,6 +45,8 @@ import 'package:mentivisor/Mentee/data/cubits/Payment/payment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/SelectSlot/select_slot_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/TermsAndConditions/TermsAndConditionCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/TermsAndConditions/TermsAndConditionRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_repo.dart';
 import 'package:mentivisor/Mentee/data/cubits/UploadFileInChat/UploadFileInChatCubit.dart';
@@ -176,6 +178,11 @@ class StateInjector {
     RepositoryProvider<RegisterRepository>(
       create: (context) =>
           RegisterImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<TermsAndConditionRepo>(
+      create: (context) => TermsAndConditionRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
     ),
     RepositoryProvider<VerifyOtpRepository>(
       create: (context) =>
@@ -699,8 +706,13 @@ class StateInjector {
     BlocProvider<EccActionCubit>(
       create: (context) => EccActionCubit(context.read<ECCRepository>()),
     ),
-    BlocProvider<DownloadActionCubit >(
-      create: (context) => DownloadActionCubit(context.read<DownloadsRepository>()),
+    BlocProvider<DownloadActionCubit>(
+      create: (context) =>
+          DownloadActionCubit(context.read<DownloadsRepository>()),
+    ),
+    BlocProvider<TermsAndConditionCubit>(
+      create: (context) =>
+          TermsAndConditionCubit(context.read<TermsAndConditionRepo>()),
     ),
     BlocProvider<MenteeDashboardCubit>(
       create: (context) => MenteeDashboardCubit(

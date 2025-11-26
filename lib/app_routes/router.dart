@@ -30,6 +30,7 @@ import 'package:mentivisor/Mentee/presentation/Ecc/ViewEventScreen.dart';
 import 'package:mentivisor/Mentor/presentation/MentorInfoScreen.dart';
 import 'package:mentivisor/Mentor/presentation/PendingSubExpertiseScreen.dart';
 import 'package:mentivisor/Mentor/presentation/SubExpertisesScreen.dart';
+import 'package:mentivisor/Mentor/presentation/TermsAndConditionScreen.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../ChatScreen.dart';
 import '../Components/NoInternet.dart';
@@ -839,6 +840,12 @@ final GoRouter appRouter = GoRouter(
       path: '/leaderboard',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(LeaderboardScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/terms_conditions',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(TermsAndConditionScreen(), state);
       },
     ),
   ],

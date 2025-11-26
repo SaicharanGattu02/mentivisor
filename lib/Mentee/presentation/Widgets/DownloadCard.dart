@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Mentee/Models/DownloadsModel.dart';
 import 'package:mentivisor/Mentee/data/cubits/DownloadDelete/DownloadActionCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/DownloadDelete/DownloadActionStates.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../Components/CustomAppButton.dart';
 import '../../../utils/media_query_helper.dart';
@@ -58,6 +59,7 @@ class DownloadCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Column(
@@ -157,14 +159,36 @@ class DownloadCard extends StatelessWidget {
                         ),
                       ),
                     SizedBox(height: 15),
-                    CustomOutlinedButton(
-                      text: "View",
-                      radius: 24,
-                      onTap: () {
-                        context.push(
-                          "/pdf_viewer?file_url=${downloads.filePath}",
-                        );
-                      },
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Expanded(
+                          child: CustomOutlinedButton(
+                            text: "View",
+                            radius: 24,
+                            onTap: () {
+                              context.push(
+                                "/pdf_viewer?file_url=${downloads.filePath}",
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomAppButton1(
+                            text: "Share",
+                            radius: 24,
+                            onPlusTap: () {
+                              final study_zone_Id = downloads.downloadId;
+                              final shareUrl =
+                                  "https://mentivisor.com/study_zone/$study_zone_Id";
+                              Share.share(
+                                "Check out this Study Zone on Mentivisor:\n$shareUrl",
+                                subject: "Mentivisor Study Zone",
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -52,6 +52,7 @@ import '../Models/RegisterModel.dart';
 import '../../services/ApiClient.dart';
 import '../Models/TagsModel.dart';
 import '../Models/TaskStatesModel.dart';
+import '../Models/TermsAndCondition.dart';
 import '../Models/UpComingSessionModel.dart';
 import '../Models/UploadFileInChatModel.dart';
 import '../Models/ViewEccDetailsModel.dart';
@@ -172,6 +173,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> deletePost(String id);
   Future<SuccessModel?> deleteECC(String id);
   Future<SuccessModel?> deleteDownload(String id);
+  Future<TermsAndConditionModel?> getTermsAndCondition();
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -211,6 +213,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<TermsAndConditionModel?> getTermsAndCondition() async {
+    try {
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.termsandconditions}",
+      );
+      AppLogger.log('getTermsAndCondition: ${res.data}');
+      return TermsAndConditionModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('getTermsAndCondition:${e}');
+      return null;
+    }
   }
 
   @override

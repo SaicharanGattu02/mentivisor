@@ -101,4 +101,5 @@ class APIEndpointUrls {
   static const String delete_community = "${userUrl}delete-community";
   static const String delete_studyzone = "${userUrl}delete-studyzone";
   static const String delete_download = "${userUrl}/download/user/delete";
+  static const String termsandconditions = "${apiUrl}/terms";
 }

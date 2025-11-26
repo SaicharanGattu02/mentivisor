@@ -50,7 +50,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     'On Campus',
   );
   final ValueNotifier<bool> _isGuestNotifier = ValueNotifier<bool>(false);
-
+  final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
   @override
   void initState() {
     super.initState();
@@ -147,6 +147,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         break;
       case 'info':
         context.push('/info');
+        break;
+      case 'terms':
+        context.push('/terms_conditions');
         break;
       case 'Logout':
         showLogoutDialog(context);
@@ -529,7 +532,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           color: Color(0xffFFCC00),
                                         ),
                                         const SizedBox(width: 4),
-
                                         FutureBuilder<String?>(
                                           future: AuthService.getCoins(),
                                           builder: (context, snapshot) {
@@ -730,6 +732,11 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     label: 'Info',
                                     onTap: () => _navigateToScreen('info'),
                                   ),
+                                  _buildDrawerItem(
+                                    assetpath: "assets/icons/file.png",
+                                    label: 'Terms And Conditions',
+                                    onTap: () => _navigateToScreen('terms'),
+                                  ),
                                   // _buildDrawerItem(
                                   //   assetpath: "assets/icons/UserCircleCheck.png",
                                   //   label: 'Invite Friend',
@@ -796,65 +803,103 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           ? size.height * 0.3
                                           : size.height * 0.25;
 
-                                      return CarouselSlider.builder(
-                                        itemCount: banners.length,
-                                        itemBuilder: (ctx, i, _) {
-                                          final b = banners[i];
-                                          return GestureDetector(
-                                            onTap: () {
-                                              if (b.link != null)
-                                                _launchUrl(b.link!);
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 2.5,
+                                      return Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          CarouselSlider.builder(
+                                            itemCount: banners.length,
+                                            itemBuilder: (ctx, i, _) {
+                                              final b = banners[i];
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  if (b.link != null)
+                                                    _launchUrl(b.link!);
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 2.5,
+                                                      ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(16),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: b.imgUrl ?? '',
+                                                      fit: BoxFit.cover,
+                                                      width: double.infinity,
+                                                      placeholder: (context, url) =>
+                                                          Container(
+                                                            color: Colors.grey[200],
+                                                            child: const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                    strokeWidth: 2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                      errorWidget:
+                                                          (
+                                                            context,
+                                                            url,
+                                                            error,
+                                                          ) => Container(
+                                                            color: Colors.grey[200],
+                                                            alignment:
+                                                                Alignment.center,
+                                                            child: const Icon(
+                                                              Icons.broken_image,
+                                                              color: Colors.grey,
+                                                            ),
+                                                          ),
+                                                    ),
                                                   ),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: b.imgUrl ?? '',
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  placeholder: (context, url) =>
-                                                      Container(
-                                                        color: Colors.grey[200],
-                                                        child: const Center(
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                  errorWidget:
-                                                      (
-                                                        context,
-                                                        url,
-                                                        error,
-                                                      ) => Container(
-                                                        color: Colors.grey[200],
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: const Icon(
-                                                          Icons.broken_image,
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
                                                 ),
+                                              );
+                                            },
+                                            options: CarouselOptions(
+                                              height:
+                                                  carouselHeight, // 👈 dynamic based on device type
+                                              autoPlay: true,
+                                              autoPlayInterval: const Duration(
+                                                seconds: 4,
                                               ),
+                                              viewportFraction: 1.0,
+                                              onPageChanged: (index, reason) {
+                                                _currentIndex.value = index;
+                                              },
                                             ),
-                                          );
-                                        },
-                                        options: CarouselOptions(
-                                          height:
-                                              carouselHeight, // 👈 dynamic based on device type
-                                          autoPlay: true,
-                                          autoPlayInterval: const Duration(
-                                            seconds: 4,
                                           ),
-                                          viewportFraction: 1.0,
-                                        ),
+                                          const SizedBox(height: 8),
+                                          ValueListenableBuilder<int>(
+                                            valueListenable: _currentIndex,
+                                            builder: (context, currentIndex, _) {
+                                              return Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: List.generate(
+                                                  banners.length ?? 0,
+                                                      (index) {
+                                                    return AnimatedContainer(
+                                                      duration: const Duration(milliseconds: 300),
+                                                      margin: const EdgeInsets.symmetric(
+                                                        horizontal: 3,
+                                                      ),
+                                                      height: SizeConfig.screenHeight * 0.008,
+                                                      width: currentIndex == index
+                                                          ? SizeConfig.screenWidth * 0.05
+                                                          : SizeConfig.screenWidth * 0.014,
+                                                      decoration: BoxDecoration(
+                                                        color: currentIndex == index
+                                                            ? primarycolor
+                                                            : Colors.grey.shade400,
+                                                        borderRadius: BorderRadius.circular(100),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
                                       );
                                     },
                                   );
