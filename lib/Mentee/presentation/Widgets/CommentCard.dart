@@ -1,16 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteComment/DeleteCommentCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteComment/DeleteCommentStates.dart';
 
+import '../../../Components/CustomSnackBar.dart';
 import '../../../services/AuthService.dart';
 import '../../../utils/AppLogger.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommentsModel.dart';
+import '../../data/cubits/Comments/FetchCommentsCubit.dart';
 
 class CommentCard extends StatelessWidget {
   final int id;
   final int user_id;
+  final int post_id;
   final String name;
   final String profileUrl;
   final String content;
@@ -32,6 +38,7 @@ class CommentCard extends StatelessWidget {
     super.key,
     required this.id,
     required this.user_id,
+    required this.post_id,
     required this.name,
     required this.profileUrl,
     required this.content,
@@ -110,22 +117,65 @@ class CommentCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'segeo',
-                              fontSize: 14,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'segeo',
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  DateHelper.timeAgo(createdAt),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'segeo',
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            DateHelper.timeAgo(createdAt),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'segeo',
-                              color: Colors.grey,
-                            ),
+                          BlocConsumer<DeleteCommentCubit, DeleteCommentStates>(
+                            listener: (context, state) {
+                              if (state is DeleteCommentLoaded) {
+                                Navigator.pop(context); // Close dialog if open
+                                context.read<FetchCommentsCubit>().getComments(
+                                  post_id ?? 0,
+                                );
+                              } else if (state is DeleteCommentFailure) {
+                                CustomSnackBar1.show(context, state.error);
+                              }
+                            },
+                            builder: (context, state) {
+                              final isLoading = state is DeleteCommentLoading;
+                              return IconButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        showDeleteConfirmationDialog(
+                                          context,
+                                          () {
+                                            context
+                                                .read<DeleteCommentCubit>()
+                                                .deleteComment(
+                                                  id.toString() ?? "",
+                                                );
+                                          },
+                                        );
+                                      },
+                                icon: Image.asset(
+                                  'assets/icons/delete.png',
+                                  width: 25,
+                                  height: 25,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -200,6 +250,7 @@ class CommentCard extends StatelessWidget {
                 children: replies.map((r) {
                   return _ReplyTile(
                     reply: r,
+                    post_id: post_id,
                     onLike: () => onReplyLike(r.id ?? 0),
                     onReply: () => onReplyReply(
                       r.user?.name ?? 'Unknown',
@@ -216,17 +267,76 @@ class CommentCard extends StatelessWidget {
   }
 }
 
+Future<void> showDeleteConfirmationDialog(
+  BuildContext context,
+  VoidCallback onConfirm,
+) async {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return BlocBuilder<DeleteCommentCubit, DeleteCommentStates>(
+        builder: (context, state) {
+          final isLoading = state is DeleteCommentLoading;
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.red, size: 30),
+                const SizedBox(width: 8),
+                const Text("Delete Comment"),
+              ],
+            ),
+            content: const Text(
+              "Are you sure you want to delete this Comment? This action cannot be undone.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: isLoading ? null : () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: isLoading ? null : onConfirm,
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text("Delete"),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 class _ReplyTile extends StatelessWidget {
   final Replies reply;
+  final int post_id;
   final VoidCallback onLike;
   final VoidCallback onReply;
-
   const _ReplyTile({
     required this.reply,
+    required this.post_id,
     required this.onLike,
     required this.onReply,
   });
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -289,22 +399,63 @@ class _ReplyTile extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        reply.user?.name ?? 'Unknown',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'segeo',
-                          fontSize: 13,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              reply.user?.name ?? 'Unknown',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'segeo',
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              DateHelper.timeAgo(reply.createdAt ?? ''),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'segeo',
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        DateHelper.timeAgo(reply.createdAt ?? ''),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'segeo',
-                          color: Colors.grey,
-                        ),
+                      BlocConsumer<DeleteCommentCubit, DeleteCommentStates>(
+                        listener: (context, state) {
+                          // if (state is DeleteCommentLoaded) {
+                          //   Navigator.pop(context);
+                          //   context.read<FetchCommentsCubit>().getComments(
+                          //     post_id ?? 0,
+                          //   );
+                          // } else
+                          if (state is DeleteCommentFailure) {
+                            CustomSnackBar1.show(context, state.error);
+                          }
+                        },
+                        builder: (context, state) {
+                          final isLoading = state is DeleteCommentLoading;
+                          return IconButton(
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    showDeleteConfirmationDialog(context, () {
+                                      context
+                                          .read<DeleteCommentCubit>()
+                                          .deleteComment(
+                                            reply.id.toString() ?? "",
+                                          );
+                                    });
+                                  },
+                            icon: Image.asset(
+                              'assets/icons/delete.png',
+                              width: 25,
+                              height: 25,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

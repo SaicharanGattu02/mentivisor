@@ -239,7 +239,7 @@ class _NotificationsState extends State<Notifications> {
   void _handleNotificationTap(Data data) {
     final String? type = data.content_type ?? "";
     final String? role = data.role ?? "";
-    final String? id = data.content_id ?? "";
+    final String? id = data.content_id.toString() ?? "";
 
     _log("NOTIFICATION_PAYLOAD", data.content_type);
 

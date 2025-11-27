@@ -108,7 +108,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
     AppLogger.info("tag::${widget.type}");
     searchController.clear();
     context.read<EccTagsCubit>().getEccTags("");
-    context.read<HighlightedCoinsCubit>().highlitedCoins("ecc");
     super.initState();
   }
 

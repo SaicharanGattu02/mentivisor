@@ -120,7 +120,7 @@ class Data {
   String? remarks;
   String? message;
   String? content_type;
-  String? content_id;
+  int? content_id;
   int? isRead;
   String? role;
   String? createdAt;

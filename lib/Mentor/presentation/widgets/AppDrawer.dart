@@ -228,7 +228,7 @@ class AppDrawer extends StatelessWidget {
                       decoration: BoxDecoration(color: Colors.white),
                       child: _DrawerItem(
                         icon: Icon(Icons.info_outline),
-                        title: 'Info',
+                        title: 'User Guide',
                         onTap: () {
                           context.pop();
                           context.push('/mentees_Info');

@@ -602,11 +602,11 @@ class _EccScreenState extends State<EccScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'No Data Found!',
+                                  'Be the first student to upload opportunities in your campus.',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: primarycolor,
-                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: 'Poppins',
                                   ),

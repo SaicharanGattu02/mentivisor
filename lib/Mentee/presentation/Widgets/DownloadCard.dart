@@ -83,12 +83,23 @@ class DownloadCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                              SizedBox(height: 5),
+                              Text(
+                                downloads.downloadedAt ?? "",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xff666666),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ],
                           ),
                         ),
                         BlocConsumer<DownloadActionCubit, DownloadActionStates>(
                           listener: (context, state) {
                             if (state is DownloadActionSuccess) {
+                              Navigator.pop(context);
                               context.read<DownloadsCubit>().getDownloads();
                             }
                           },
@@ -98,12 +109,14 @@ class DownloadCard extends StatelessWidget {
                               onPressed: isLoading
                                   ? null
                                   : () {
-                                      context
-                                          .read<DownloadActionCubit>()
-                                          .downloadAction(
-                                            downloads.downloadId.toString() ??
-                                                "",
-                                          );
+                                      showDeleteConfirmationDialog(context, () {
+                                        context
+                                            .read<DownloadActionCubit>()
+                                            .downloadAction(
+                                              downloads.downloadId.toString() ??
+                                                  "",
+                                            );
+                                      });
                                     },
                               style: IconButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -197,6 +210,69 @@ class DownloadCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> showDeleteConfirmationDialog(
+    BuildContext context,
+    VoidCallback onConfirm,
+  ) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return BlocBuilder<DownloadActionCubit, DownloadActionStates>(
+          builder: (context, state) {
+            final isLoading = state is DownloadActionLoading;
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text("Delete Resource"),
+                ],
+              ),
+              content: const Text(
+                "Are you sure you want to delete this Downloaded Resource? This action cannot be undone.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: isLoading ? null : onConfirm,
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text("Delete"),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

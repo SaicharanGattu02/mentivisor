@@ -6,10 +6,10 @@ class LeaderboardCubit extends Cubit<LeaderBoardStates> {
   LeaderBoardRepo leaderBoardRepo;
   LeaderboardCubit(this.leaderBoardRepo) : super(LeaderBoardInitially());
 
-  Future<void> getLeaderBoard() async {
+  Future<void> getLeaderBoard(String college) async {
     emit(LeaderBoardLoading());
     try {
-      final response = await leaderBoardRepo.getLeaderBoard();
+      final response = await leaderBoardRepo.getLeaderBoard(college);
       if (response != null && response.status == true) {
         emit(LeaderBoardLoaded(response));
       } else {

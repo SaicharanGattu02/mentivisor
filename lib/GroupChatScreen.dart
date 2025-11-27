@@ -803,7 +803,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
                               context.read<groupChatReportCubit>().groupChatReport(data);
                             },
-
                           ),
                         );
                       },

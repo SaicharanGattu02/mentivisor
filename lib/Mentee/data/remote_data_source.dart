@@ -131,7 +131,7 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> postToggleLike(Map<String, dynamic> data);
   Future<SuccessModel?> commentLike(int id);
   Future<SuccessModel?> resourceDownload(String id);
-  Future<HighlightedCoinsModel?> highlihtedCoins(String catgory);
+  Future<HighlightedCoinsModel?> highlihtedCoins();
   Future<NotificationModel?> notifications(
     String role,
     String filter,
@@ -166,7 +166,7 @@ abstract class RemoteDataSource {
   Future<CoinsAchievementModel?> getcoinsAchievements(int page);
   Future<checkInModel?> dailyCheckins();
   Future<GetHomeDilogModel?> homeDiolog();
-  Future<LeaderBoardModel?> getLeaderBoard();
+  Future<LeaderBoardModel?> getLeaderBoard(String college);
   Future<MilestonesModel?> getMilestones();
   Future<SuccessModel?> groupChatReport(Map<String, dynamic> data);
   Future<SuccessModel?> privateChatReport(Map<String, dynamic> data);
@@ -174,6 +174,12 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> deleteECC(String id);
   Future<SuccessModel?> deleteDownload(String id);
   Future<TermsAndConditionModel?> getTermsAndCondition();
+  Future<SuccessModel?> deleteComment({
+    required String commentId,
+  });
+  Future<SuccessModel?> deleteSlot({
+    required String slotId,
+  });
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -213,6 +219,38 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
 
     return FormData.fromMap(formMap);
+  }
+
+  @override
+  Future<SuccessModel?> deleteSlot({
+    required String slotId,
+  }) async {
+    try {
+      Response res = await ApiClient.delete(
+        "${APIEndpointUrls.delete_slot}/$slotId",
+      );
+      AppLogger.log('deleteSlot: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('deleteSlot:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> deleteComment({
+    required String commentId,
+  }) async {
+    try {
+      Response res = await ApiClient.delete(
+        "${APIEndpointUrls.delete_comment}/$commentId",
+      );
+      AppLogger.log('deleteComment: ${res.data}');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.error('deleteComment:${e}');
+      return null;
+    }
   }
 
   @override
@@ -284,9 +322,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<LeaderBoardModel?> getLeaderBoard() async {
+  Future<LeaderBoardModel?> getLeaderBoard(String college) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.leader_board}");
+      Response res = await ApiClient.get("${APIEndpointUrls.leader_board}?college=${college}");
       AppLogger.log('getLeaderBoard: ${res.data}');
       return LeaderBoardModel.fromJson(res.data);
     } catch (e) {
@@ -425,10 +463,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<HighlightedCoinsModel?> highlihtedCoins(String catgory) async {
+  Future<HighlightedCoinsModel?> highlihtedCoins() async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.highlated_coins}?category=${catgory}",
+        "${APIEndpointUrls.highlated_coins}",
       );
       AppLogger.log('highlated Coins: ${res.data}');
       return HighlightedCoinsModel.fromJson(res.data);

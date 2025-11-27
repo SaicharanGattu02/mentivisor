@@ -19,7 +19,11 @@ import 'package:mentivisor/Mentee/data/cubits/CommunityPosts/CommunityPostsRepos
 import 'package:mentivisor/Mentee/data/cubits/CommunityTags/community_tags_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CustomerSupport/Mentee_Customersupport_Repo.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteComment/DeleteCommentCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteComment/DeleteCommentRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/DeletePost/DeletePostCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteSlot/DeleteSlotCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteSlot/DeleteSlotRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Downloads/downloads_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/ECC/ecc_cubit.dart';
@@ -384,6 +388,11 @@ class StateInjector {
         remoteDataSource: context.read<RemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<DeleteCommentRepo>(
+      create: (context) => DeleteCommentRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
 
     ///Mentor Repositories
     RepositoryProvider<SessionSRepo>(
@@ -479,6 +488,11 @@ class StateInjector {
         mentorRemoteDataSource: context.read<MentorRemoteDataSource>(),
       ),
     ),
+    RepositoryProvider<DeleteSlotRepo>(
+      create: (context) => DeleteSlotRepoImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -489,6 +503,14 @@ class StateInjector {
     BlocProvider<MenteeCustomersupportCubit>(
       create: (context) =>
           MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
+    ),
+    BlocProvider<DeleteSlotCubit>(
+      create: (context) =>
+          DeleteSlotCubit(context.read<DeleteSlotRepo>()),
+    ),
+    BlocProvider<DeleteCommentCubit>(
+      create: (context) =>
+          DeleteCommentCubit(context.read<DeleteCommentRepo>()),
     ),
     BlocProvider<ExclusiveservicelistCubit>(
       create: (context) =>

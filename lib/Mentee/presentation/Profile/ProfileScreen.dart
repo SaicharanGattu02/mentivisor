@@ -625,7 +625,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                             vertical:
                                                                                 12,
                                                                           ),
-                                                                          child: CommentBottomSheet(
+                                                                          child: CommentBottomSheet1(
                                                                             communityPost: CommunityPosts(
                                                                               id: post?.id,
                                                                               heading: post?.heading,
@@ -695,6 +695,9 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                             listener: (context, state) {
                                                               if (state
                                                                   is DeletePostSuccess) {
+                                                                Navigator.pop(
+                                                                  context,
+                                                                ); // Close dialog if open
                                                                 context
                                                                     .read<
                                                                       MenteeProfileCubit
@@ -717,14 +720,19 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                     isLoading
                                                                     ? null
                                                                     : () {
-                                                                        context
-                                                                            .read<
-                                                                              DeletePostCubit
-                                                                            >()
-                                                                            .deletePost(
-                                                                              menteePosts?.id.toString() ??
-                                                                                  "",
-                                                                            );
+                                                                        showDeleteConfirmationDialog(
+                                                                          context,
+                                                                          () {
+                                                                            context
+                                                                                .read<
+                                                                                  DeletePostCubit
+                                                                                >()
+                                                                                .deletePost(
+                                                                                  menteePosts?.id.toString() ??
+                                                                                      "",
+                                                                                );
+                                                                          },
+                                                                        );
                                                                       },
                                                                 icon: Image.asset(
                                                                   'assets/icons/delete.png',
@@ -795,6 +803,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                             );
                                           },
                                           child: Container(
+                                            width: double.infinity,
                                             margin: EdgeInsets.only(
                                               bottom: 16,
                                               left: 16,
@@ -802,7 +811,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                             ),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(24),
+                                                  BorderRadius.circular(12),
                                               color: Colors.white,
                                             ),
 
@@ -879,51 +888,53 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  campusList
-                                                                          ?.title ??
-                                                                      "",
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  style: TextStyle(
-                                                                    fontFamily:
-                                                                        'segeo',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    fontSize:
-                                                                        12,
-                                                                    height: 1,
-                                                                    letterSpacing:
-                                                                        0.5,
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    campusList
+                                                                            ?.title ??
+                                                                        "",
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                      fontFamily:
+                                                                          'segeo',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      fontSize:
+                                                                          12,
+                                                                      height: 1,
+                                                                      letterSpacing:
+                                                                          0.5,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 8,
-                                                                ),
-                                                                Text(
-                                                                  campusList
-                                                                          ?.description ??
-                                                                      "",
-                                                                  maxLines: 2,
-                                                                  style: const TextStyle(
-                                                                    fontFamily:
-                                                                        'segeo',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontSize:
-                                                                        11,
-                                                                    height: 1,
+                                                                  const SizedBox(
+                                                                    height: 8,
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                  Text(
+                                                                    campusList
+                                                                            ?.description ??
+                                                                        "",
+                                                                    maxLines: 2,
+                                                                    style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'segeo',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      fontSize:
+                                                                          11,
+                                                                      height: 1,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                             BlocConsumer<
                                                               EccActionCubit,
@@ -932,6 +943,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                               listener: (context, state) {
                                                                 if (state
                                                                     is EccActionSuccess) {
+                                                                  Navigator.pop(context);
                                                                   context
                                                                       .read<
                                                                         MenteeProfileCubit
@@ -948,14 +960,19 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                       isLoading
                                                                       ? null
                                                                       : () {
-                                                                          context
-                                                                              .read<
-                                                                                EccActionCubit
-                                                                              >()
-                                                                              .eccAction(
-                                                                                campusList?.id.toString() ??
-                                                                                    "",
-                                                                              );
+                                                                        showDeleteConfirmationDialog1(
+                                                                          context,
+                                                                              () {
+                                                                                context
+                                                                                    .read<
+                                                                                    EccActionCubit
+                                                                                >()
+                                                                                    .eccAction(
+                                                                                  campusList?.id.toString() ??
+                                                                                      "",
+                                                                                );
+                                                                          },
+                                                                        );
                                                                         },
                                                                   style: IconButton.styleFrom(
                                                                     padding:
@@ -1083,66 +1100,86 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                 },
                                                               ),
                                                             ),
-
-                                                            BlocConsumer<
-                                                              AddResourceCubit,
-                                                              AddResourceStates
-                                                            >(
-                                                              listener: (context, state) {
-                                                                if (state
-                                                                    is AddResourceLoaded) {
-                                                                  CustomSnackBar1.show(
-                                                                    context,
-                                                                    "Downloaded Successfully",
+                                                            Expanded(
+                                                              child: CustomAppButton1(
+                                                                height: 40,
+                                                                width: double
+                                                                    .infinity,
+                                                                text: "Share",
+                                                                onPlusTap: () {
+                                                                  final study_zone_Id =
+                                                                      campusList
+                                                                          ?.id ??
+                                                                      "";
+                                                                  final shareUrl =
+                                                                      "https://mentivisor.com/study_zone/$study_zone_Id";
+                                                                  Share.share(
+                                                                    "Check out this Study Zone on Mentivisor:\n$shareUrl",
+                                                                    subject:
+                                                                        "Mentivisor Study Zone",
                                                                   );
-                                                                } else if (state
-                                                                    is AddResourceFailure) {
-                                                                  CustomSnackBar1.show(
-                                                                    context,
-                                                                    state
-                                                                            .error
-                                                                            .isNotEmpty
-                                                                        ? state
-                                                                              .error
-                                                                        : "Download Failed",
-                                                                  );
-                                                                }
-                                                              },
-                                                              builder: (context, state) {
-                                                                final currentId =
-                                                                    campusList
-                                                                        ?.id
-                                                                        .toString() ??
-                                                                    "";
-                                                                final isLoading =
-                                                                    state
-                                                                        is AddResourceLoading &&
-                                                                    state.resourceId ==
-                                                                        currentId;
-
-                                                                return Expanded(
-                                                                  child: CustomAppButton1(
-                                                                    radius: 24,
-                                                                    height: 38,
-                                                                    isLoading:
-                                                                        isLoading,
-                                                                    text:
-                                                                        "Download",
-                                                                    textSize:
-                                                                        14,
-                                                                    onPlusTap: () {
-                                                                      context
-                                                                          .read<
-                                                                            AddResourceCubit
-                                                                          >()
-                                                                          .resourceDownload(
-                                                                            currentId,
-                                                                          );
-                                                                    },
-                                                                  ),
-                                                                );
-                                                              },
+                                                                },
+                                                              ),
                                                             ),
+                                                            // BlocConsumer<
+                                                            //   AddResourceCubit,
+                                                            //   AddResourceStates
+                                                            // >(
+                                                            //   listener: (context, state) {
+                                                            //     if (state
+                                                            //         is AddResourceLoaded) {
+                                                            //       CustomSnackBar1.show(
+                                                            //         context,
+                                                            //         "Downloaded Successfully",
+                                                            //       );
+                                                            //     } else if (state
+                                                            //         is AddResourceFailure) {
+                                                            //       CustomSnackBar1.show(
+                                                            //         context,
+                                                            //         state
+                                                            //                 .error
+                                                            //                 .isNotEmpty
+                                                            //             ? state
+                                                            //                   .error
+                                                            //             : "Download Failed",
+                                                            //       );
+                                                            //     }
+                                                            //   },
+                                                            //   builder: (context, state) {
+                                                            //     final currentId =
+                                                            //         campusList
+                                                            //             ?.id
+                                                            //             .toString() ??
+                                                            //         "";
+                                                            //     final isLoading =
+                                                            //         state
+                                                            //             is AddResourceLoading &&
+                                                            //         state.resourceId ==
+                                                            //             currentId;
+                                                            //
+                                                            //     return Expanded(
+                                                            //       child: CustomAppButton1(
+                                                            //         radius: 24,
+                                                            //         height: 38,
+                                                            //         isLoading:
+                                                            //             isLoading,
+                                                            //         text:
+                                                            //             "Download",
+                                                            //         textSize:
+                                                            //             14,
+                                                            //         onPlusTap: () {
+                                                            //           context
+                                                            //               .read<
+                                                            //                 AddResourceCubit
+                                                            //               >()
+                                                            //               .resourceDownload(
+                                                            //                 currentId,
+                                                            //               );
+                                                            //         },
+                                                            //       ),
+                                                            //     );
+                                                            //   },
+                                                            // ),
                                                           ],
                                                         ),
                                                       ],
@@ -1180,6 +1217,132 @@ class _ProfileScreen1State extends State<ProfileScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> showDeleteConfirmationDialog(
+    BuildContext context,
+    VoidCallback onConfirm,
+  ) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return BlocBuilder<DeletePostCubit, DeletePostStates>(
+          builder: (context, state) {
+            final isLoading = state is DeletePostLoading;
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text("Delete Post"),
+                ],
+              ),
+              content: const Text(
+                "Are you sure you want to delete this post? This action cannot be undone.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: isLoading ? null : onConfirm,
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text("Delete"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> showDeleteConfirmationDialog1(
+      BuildContext context,
+      VoidCallback onConfirm,
+      ) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return BlocBuilder<EccActionCubit, EccActionStates>(
+          builder: (context, state) {
+            final isLoading = state is EccActionLoading;
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text("Delete StudyZone"),
+                ],
+              ),
+              content: const Text(
+                "Are you sure you want to delete StudyZone? This action cannot be undone.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: isLoading ? null : onConfirm,
+                  child: isLoading
+                      ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : const Text("Delete"),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

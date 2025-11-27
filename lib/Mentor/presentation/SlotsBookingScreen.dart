@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteSlot/DeleteSlotCubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/DeleteSlot/DeleteSlotStates.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/add_slot_dialog.dart';
 import '../../Components/CustomSnackBar.dart';
@@ -690,20 +692,56 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.calendar_month_outlined,
-                  size: 18,
-                  color: Color(0xFF333333),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'segeo',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                Expanded(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_month_outlined,
+                        size: 18,
+                        color: Color(0xFF333333),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: 'segeo',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                // BlocConsumer<DeleteSlotCubit, DeleteSlotStates>(
+                //   listener: (context, state) {
+                //     if (state is DeleteSlotLoaded) {
+                //       Navigator.pop(context);
+                //       context.read<AvailableSlotsCubit>().getAvailableSlots(_weekFilter);
+                //     }
+                //   },
+                //   builder: (context, state) {
+                //     final isLoading = state is DeleteSlotLoading;
+                //     return IconButton(
+                //       onPressed: isLoading
+                //           ? null
+                //           : () {
+                //         showDeleteConfirmationDialog(context, () {
+                //           context
+                //               .read<DeleteSlotCubit>().deleteSlot();
+                //         });
+                //       },
+                //       style: IconButton.styleFrom(
+                //         padding: EdgeInsets.zero,
+                //         visualDensity: VisualDensity.compact,
+                //       ),
+                //       icon: Image.asset(
+                //         'assets/icons/delete.png',
+                //         width: 25,
+                //         height: 25,
+                //       ),
+                //     );
+                //   },
+                // ),
               ],
             ),
             const SizedBox(height: 8),
@@ -731,6 +769,70 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         ),
       ),
     );
+
+  }
+
+  Future<void> showDeleteConfirmationDialog(
+      BuildContext context,
+      VoidCallback onConfirm,
+      ) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return BlocBuilder<DeleteSlotCubit, DeleteSlotStates>(
+          builder: (context, state) {
+            final isLoading = state is DeleteSlotLoading;
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text("Delete Slot"),
+                ],
+              ),
+              content: const Text(
+                "Are you sure you want to delete this Slot? This action cannot be undone.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: isLoading ? null : onConfirm,
+                  child: isLoading
+                      ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : const Text("Delete"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _slotChip(String slotTime, bool isBooked) {
@@ -754,58 +856,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     return "$startTime";
   }
 
-  Future<TimeOfDay?> _pickTime(BuildContext context, TimeOfDay initial) async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: initial,
-      builder: (context, child) {
-        // Optional: match your theme
-        return Theme(
-          data: Theme.of(context).copyWith(
-            timePickerTheme: const TimePickerThemeData(
-              hourMinuteTextStyle: TextStyle(
-                fontFamily: 'segeo',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    return picked;
-  }
-
-  String _fmt(TimeOfDay t) {
-    final hh = t.hour.toString().padLeft(2, '0');
-    final mm = t.minute.toString().padLeft(2, '0');
-    return "$hh:$mm";
-  }
-
-  Duration _diffOnDay(TimeOfDay from, TimeOfDay to, DateTime day) {
-    final a = DateTime(day.year, day.month, day.day, from.hour, from.minute);
-    final b = DateTime(day.year, day.month, day.day, to.hour, to.minute);
-    return b.difference(a);
-  }
-
-  DateTime _parseYmd(String ymd) => DateTime.parse(ymd); // "2025-09-04"
-  DateTime _combine(DateTime d, String hhmmss) {
-    final t = DateFormat('HH:mm:ss').parse(hhmmss);
-    return DateTime(d.year, d.month, d.day, t.hour, t.minute, t.second);
-  }
-
-  String _fmtDay(DateTime d) => DateFormat('d MMM yy').format(d);
-  String _fmtTime(String hhmmss) {
-    final t = DateFormat('HH:mm:ss').parse(hhmmss);
-    return DateFormat('h:mm').format(t); // 9:00
-  }
-
-  // week starts on Sunday (to match your calendar header Su–Sa)
-  DateTime _weekStartSunday(DateTime d) {
-    final dow = d.weekday % 7; // Sun=0, Mon=1,... Sat=6
-    return d.subtract(Duration(days: dow));
-  }
-
   // Helper: keep first occurrence per key (stable order)
   List<T> uniqueBy<T, K>(Iterable<T> list, K Function(T) key) {
     final seen = <K>{};
@@ -817,342 +867,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     return out;
   }
 
-  // List<_Grouped> _groupRecent(List<RecentSlots> raw) {
-  //   final weekly = <RecentSlots>[];
-  //   final singles = <RecentSlots>[];
-  //   for (final r in raw) (r.repeatWeekly == 1 ? weekly : singles).add(r);
-  //
-  //   final out = <_Grouped>[];
-  //
-  //   // Weekly groups (Sun–Sat)
-  //   final Map<DateTime, List<RecentSlots>> byWeek = {};
-  //   for (final r in weekly) {
-  //     final d = _parseYmd(r.date!);
-  //     final ws = _weekStartSunday(d);
-  //     final key = DateTime(ws.year, ws.month, ws.day);
-  //     byWeek.putIfAbsent(key, () => []).add(r);
-  //   }
-  //
-  //   byWeek.forEach((start, items) {
-  //     // ✅ Dedupe by time range within the same week
-  //     final uniq = uniqueBy<RecentSlots, String>(
-  //       items,
-  //           (e) => "${e.startTime}-${e.endTime}",
-  //     );
-  //
-  //     final end = start.add(const Duration(days: 6));
-  //     final title =
-  //         "${DateFormat('d MMM').format(start)} - ${DateFormat('d MMM yy').format(end)}";
-  //
-  //     final chips = uniq
-  //         .map((e) => _rangeTime(e.startTime!, e.endTime!))
-  //         .toList();
-  //
-  //     out.add(_Grouped(start, title, "1 week", chips, uniq.length)); // count = unique
-  //   });
-  //
-  //   // Single-day groups (leave as-is)
-  //   final Map<DateTime, List<RecentSlots>> byDate = {};
-  //   for (final r in singles) {
-  //     final d = _parseYmd(r.date!);
-  //     final key = DateTime(d.year, d.month, d.day);
-  //     byDate.putIfAbsent(key, () => []).add(r);
-  //   }
-  //   byDate.forEach((day, items) {
-  //     final title = _fmtDay(day);
-  //     final chips = items
-  //         .map((e) => _rangeTime(e.startTime!, e.endTime!))
-  //         .toList();
-  //     out.add(_Grouped(day, title, null, chips, items.length));
-  //   });
-  //
-  //   out.sort((a, b) => b.sortKey.compareTo(a.sortKey));
-  //   return out;
-  // }
 
-  // Future<void> _showAddSlotDialog() async {
-  //   TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
-  //   TimeOfDay to = const TimeOfDay(hour: 10, minute: 0);
-  //   final coinsCtl = TextEditingController(text: "00");
-  //   String? errorText;
-  //
-  //   await showDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     builder: (ctx) {
-  //       return StatefulBuilder(
-  //         builder: (ctx, setLocal) {
-  //           Future<void> pickFrom() async {
-  //             final p = await _pickTime(ctx, from);
-  //             if (p != null) setLocal(() => from = p);
-  //           }
-  //
-  //           Future<void> pickTo() async {
-  //             final p = await _pickTime(ctx, to);
-  //             if (p != null) setLocal(() => to = p);
-  //           }
-  //
-  //           void onAdd() async {
-  //             // basic validation
-  //             final d = _diffOnDay(from, to, selectedDate);
-  //             if (d.inMinutes < 0) {
-  //               setLocal(
-  //                 () => errorText = "End time must be after start time.",
-  //               );
-  //               return;
-  //             }
-  //             if (d.inMinutes < 30) {
-  //               setLocal(() => errorText = "Minimum slot is 30 minutes.");
-  //               return;
-  //             }
-  //             if (d.inMinutes > 180) {
-  //               setLocal(() => errorText = "Maximum slot is 3 hours.");
-  //               return;
-  //             }
-  //
-  //             // build API data map (24-hour format)
-  //             String fmtTime(TimeOfDay t) =>
-  //                 "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
-  //
-  //             final mapData = {
-  //               "date": DateFormat("yyyy-MM-dd").format(selectedDate),
-  //               "start_time": fmtTime(from), // e.g. 11:35
-  //               "end_time": fmtTime(to), // e.g. 12:35
-  //               "repeat_weekly": keepForWeek ? "1" : "0",
-  //             };
-  //
-  //             // call cubit
-  //             final response = await context
-  //                 .read<MentorAvailabilityCubit>()
-  //                 .addMentorAvailability(mapData);
-  //
-  //             Navigator.of(ctx).pop(); // close dialog
-  //           }
-  //
-  //           return Dialog(
-  //             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(18),
-  //             ),
-  //             child: Container(
-  //               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.circular(18),
-  //               ),
-  //               child: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   // Title
-  //                   const Text(
-  //                     "Add Slot",
-  //                     style: TextStyle(
-  //                       fontFamily: 'segeo',
-  //                       fontSize: 16,
-  //                       fontWeight: FontWeight.w700,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 6),
-  //                   Text(
-  //                     DateFormat('d MMM yy').format(selectedDate),
-  //                     style: const TextStyle(
-  //                       fontFamily: 'segeo',
-  //                       fontSize: 12,
-  //                       color: Color(0xFF7C8596),
-  //                       fontWeight: FontWeight.w600,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 12),
-  //
-  //                   SizedBox(
-  //                     height: 40,
-  //                     child: Row(
-  //                       children: [
-  //                         // From
-  //                         Expanded(
-  //                           child: GestureDetector(
-  //                             onTap: pickFrom,
-  //                             child: _timeFieldPill(Icons.schedule, _fmt(from)),
-  //                           ),
-  //                         ),
-  //                         SizedBox(width: 12),
-  //                         Text(
-  //                           "to",
-  //                           style: TextStyle(
-  //                             fontFamily: 'segeo',
-  //                             fontSize: 16,
-  //                             fontWeight: FontWeight.w600,
-  //                             color: Color(0xff666666),
-  //                           ),
-  //                         ),
-  //                         const SizedBox(width: 12),
-  //                         Expanded(
-  //                           child: GestureDetector(
-  //                             onTap: pickTo,
-  //                             child: _timeFieldPill(
-  //                               Icons.access_time_filled_rounded,
-  //                               _fmt(to),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                         const SizedBox(width: 12),
-  //                         Container(
-  //                           height: 40,
-  //                           padding: EdgeInsets.all(8),
-  //                           decoration: BoxDecoration(
-  //                             color: Color(0xffFFEACE),
-  //                             borderRadius: BorderRadius.circular(8),
-  //                           ),
-  //                           child: Row(
-  //                             spacing: 4,
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               Image.asset(
-  //                                 "assets/images/GoldCoins.png",
-  //                                 height: 24,
-  //                                 width: 24,
-  //                                 color: Color(0xffFFCC00),
-  //                               ),
-  //                               ValueListenableBuilder<int>(
-  //                                 valueListenable:
-  //                                     AppStateMentorCostPerMinuteCoins
-  //                                         .mentorCoinsNotifier,
-  //                                 builder: (context, coins, _) {
-  //                                   return Text(
-  //                                     "$coins",
-  //                                     style: TextStyle(
-  //                                       fontFamily: 'segeo',
-  //                                       fontWeight: FontWeight.w600,
-  //                                       fontSize: 16,
-  //                                       color: Color(0xFF000000),
-  //                                     ),
-  //                                   );
-  //                                 },
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //
-  //                   if (errorText != null) ...[
-  //                     const SizedBox(height: 8),
-  //                     Text(
-  //                       errorText!,
-  //                       style: const TextStyle(
-  //                         color: Colors.red,
-  //                         fontSize: 12,
-  //                         fontFamily: 'segeo',
-  //                         fontWeight: FontWeight.w600,
-  //                       ),
-  //                     ),
-  //                   ],
-  //
-  //                   const SizedBox(height: 14),
-  //                   const SizedBox(height: 10),
-  //
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: Row(
-  //                           children: [
-  //                             const Text(
-  //                               "Want to keep this timing for the full week",
-  //                               style: TextStyle(
-  //                                 fontFamily: 'segeo',
-  //                                 fontSize: 13,
-  //                                 fontWeight: FontWeight.w600,
-  //                               ),
-  //                             ),
-  //                             const SizedBox(width: 8),
-  //                             SizedBox(
-  //                               width: 22,
-  //                               height: 13,
-  //                               child: FittedBox(
-  //                                 fit: BoxFit.fill,
-  //                                 child: Switch(
-  //                                   value: keepForWeek, // <- same variable
-  //                                   onChanged: (v) => setLocal(() {
-  //                                     // <- use setLocal, not setState
-  //                                     keepForWeek = v;
-  //                                   }),
-  //                                   activeColor: Color(0xFF4076ED),
-  //                                   materialTapTargetSize:
-  //                                       MaterialTapTargetSize.shrinkWrap,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //
-  //                   const SizedBox(height: 6),
-  //                   const Text.rich(
-  //                     TextSpan(
-  //                       children: [
-  //                         TextSpan(
-  //                           text: "Note: ",
-  //                           style: TextStyle(
-  //                             fontFamily: 'segeo',
-  //                             fontSize: 12,
-  //                             fontWeight: FontWeight.w700,
-  //                             color: Colors.red,
-  //                           ),
-  //                         ),
-  //                         TextSpan(
-  //                           text:
-  //                               "The minimum time is half an hour and the maximum is three hours.",
-  //                           style: TextStyle(
-  //                             fontFamily: 'segeo',
-  //                             fontSize: 12,
-  //                             color: Color(0xFF5F6473),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 10),
-  //                   SizedBox(
-  //                     width: double.infinity,
-  //                     child:
-  //                         BlocConsumer<
-  //                           MentorAvailabilityCubit,
-  //                           MentorAvailabilityStates
-  //                         >(
-  //                           listener: (context, state) {
-  //                             if (state is MentorAvailabilityLoaded) {
-  //                               _showSuccessDialog();
-  //                               context
-  //                                   .read<AvailableSlotsCubit>()
-  //                                   .getAvailableSlots("this_week");
-  //                             } else if (state is MentorAvailabilityFailure) {
-  //                               CustomSnackBar1.show(context, state.error);
-  //                             }
-  //                           },
-  //                           builder: (context, state) {
-  //                             final isLoading =
-  //                                 state is MentorAvailabilityLoading;
-  //                             return CustomAppButton1(
-  //                               text: "Add",
-  //                               isLoading: isLoading,
-  //                               onPlusTap: onAdd,
-  //                             );
-  //                           },
-  //                         ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
   Future<void> _showAddSlotDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -1161,416 +876,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     );
   }
 
-  // Future<void> _showAddSlotDialog() async {
-  //   TimeOfDay from = const TimeOfDay(hour: 9, minute: 0);
-  //   TimeOfDay to = const TimeOfDay(hour: 10, minute: 0);
-  //   String? errorText;
-  //   final ValueNotifier<int> totalSessionCoinsNotifier = ValueNotifier<int>(0);
-  //
-  //   Future<void> _updateCoinCost() async {
-  //     final fromMinutes = from.hour * 60 + from.minute;
-  //     final toMinutes = to.hour * 60 + to.minute;
-  //
-  //     int difference = toMinutes - fromMinutes;
-  //     if (difference < 0) difference += 24 * 60;
-  //
-  //     final coinsPerMinute =
-  //         AppStateMentorCostPerMinuteCoins.mentorCoinsNotifier.value;
-  //
-  //     totalSessionCoinsNotifier.value = difference * coinsPerMinute;
-  //   }
-  //
-  //   await showDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     builder: (ctx) {
-  //       return StatefulBuilder(
-  //         builder: (ctx, setLocal) {
-  //           Future<void> pickFrom() async {
-  //             final p = await _pickTime(ctx, from);
-  //             if (p != null) {
-  //               from = p;
-  //               await _updateCoinCost();
-  //               setLocal(() {});
-  //             }
-  //           }
-  //
-  //           Future<void> pickTo() async {
-  //             final p = await _pickTime(ctx, to);
-  //             if (p != null) {
-  //               to = p;
-  //               await _updateCoinCost();
-  //               setLocal(() {});
-  //             }
-  //           }
-  //
-  //           void onAdd() async {
-  //             final d = _diffOnDay(from, to, selectedDate);
-  //             if (d.inMinutes < 0) {
-  //               setLocal(
-  //                 () => errorText = "End time must be after start time.",
-  //               );
-  //               return;
-  //             }
-  //             if (d.inMinutes < 30) {
-  //               setLocal(() => errorText = "Minimum slot is 30 minutes.");
-  //               return;
-  //             }
-  //             if (d.inMinutes > 180) {
-  //               setLocal(() => errorText = "Maximum slot is 3 hours.");
-  //               return;
-  //             }
-  //
-  //             String fmtTime(TimeOfDay t) =>
-  //                 "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
-  //
-  //             final mapData = {
-  //               "date": DateFormat("yyyy-MM-dd").format(selectedDate),
-  //               "start_time": fmtTime(from),
-  //               "end_time": fmtTime(to),
-  //               "repeat_weekly": keepForWeek ? "1" : "0",
-  //               "coins": totalSessionCoinsNotifier.value.toString(),
-  //             };
-  //
-  //             final response = await context
-  //                 .read<MentorAvailabilityCubit>()
-  //                 .addMentorAvailability(mapData);
-  //
-  //             Navigator.of(ctx).pop();
-  //           }
-  //
-  //           return Dialog(
-  //             insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(18),
-  //             ),
-  //             child: Container(
-  //               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.circular(18),
-  //               ),
-  //               child: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   const Text(
-  //                     "Add Slot",
-  //                     style: TextStyle(
-  //                       fontFamily: 'segeo',
-  //                       fontSize: 16,
-  //                       fontWeight: FontWeight.w700,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 6),
-  //                   Text(
-  //                     DateFormat('d MMM yy').format(selectedDate),
-  //                     style: const TextStyle(
-  //                       fontFamily: 'segeo',
-  //                       fontSize: 12,
-  //                       color: Color(0xFF7C8596),
-  //                       fontWeight: FontWeight.w600,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 12),
-  //
-  //                   // ⏰ Time Row with Coin Calculation
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: GestureDetector(
-  //                           onTap: pickFrom,
-  //                           child: _timeFieldPill(
-  //                             Icons.schedule,
-  //                             formatTime(from),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       const SizedBox(width: 12),
-  //                       const Text(
-  //                         "to",
-  //                         style: TextStyle(
-  //                           fontFamily: 'segeo',
-  //                           fontSize: 16,
-  //                           fontWeight: FontWeight.w600,
-  //                           color: Color(0xff666666),
-  //                         ),
-  //                       ),
-  //                       const SizedBox(width: 12),
-  //                       Expanded(
-  //                         child: GestureDetector(
-  //                           onTap: pickTo,
-  //                           child: _timeFieldPill(
-  //                             Icons.access_time_filled_rounded,
-  //                             formatTime(to),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       const SizedBox(width: 12),
-  //                       Container(
-  //                         height: 40,
-  //                         padding: const EdgeInsets.all(8),
-  //                         decoration: BoxDecoration(
-  //                           color: const Color(0xffFFEACE),
-  //                           borderRadius: BorderRadius.circular(8),
-  //                         ),
-  //                         child: Row(
-  //                           spacing: 4,
-  //                           mainAxisAlignment: MainAxisAlignment.center,
-  //                           children: [
-  //                             Image.asset(
-  //                               "assets/images/GoldCoins.png",
-  //                               height: 24,
-  //                               width: 24,
-  //                               color: const Color(0xffFFCC00),
-  //                             ),
-  //                             ValueListenableBuilder<int>(
-  //                               valueListenable: totalSessionCoinsNotifier,
-  //                               builder: (context, totalCoins, _) {
-  //                                 return Text(
-  //                                   "$totalCoins",
-  //                                   style: const TextStyle(
-  //                                     fontFamily: 'segeo',
-  //                                     fontWeight: FontWeight.w600,
-  //                                     fontSize: 16,
-  //                                     color: Color(0xFF000000),
-  //                                   ),
-  //                                 );
-  //                               },
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //
-  //                   if (errorText != null) ...[
-  //                     const SizedBox(height: 8),
-  //                     Text(
-  //                       errorText!,
-  //                       style: const TextStyle(
-  //                         color: Colors.red,
-  //                         fontSize: 12,
-  //                         fontFamily: 'segeo',
-  //                         fontWeight: FontWeight.w600,
-  //                       ),
-  //                     ),
-  //                   ],
-  //
-  //                   const SizedBox(height: 14),
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: Row(
-  //                           children: [
-  //                             const Text(
-  //                               "Want to keep this timing for the full week",
-  //                               style: TextStyle(
-  //                                 fontFamily: 'segeo',
-  //                                 fontSize: 13,
-  //                                 fontWeight: FontWeight.w600,
-  //                               ),
-  //                             ),
-  //                             const SizedBox(width: 8),
-  //                             SizedBox(
-  //                               width: 22,
-  //                               height: 13,
-  //                               child: FittedBox(
-  //                                 fit: BoxFit.fill,
-  //                                 child: Switch(
-  //                                   value: keepForWeek,
-  //                                   onChanged: (v) => setLocal(() {
-  //                                     keepForWeek = v;
-  //                                   }),
-  //                                   activeColor: const Color(0xFF4076ED),
-  //                                   materialTapTargetSize:
-  //                                       MaterialTapTargetSize.shrinkWrap,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   const SizedBox(height: 6),
-  //                   const Text.rich(
-  //                     TextSpan(
-  //                       children: [
-  //                         TextSpan(
-  //                           text: "Note: ",
-  //                           style: TextStyle(
-  //                             fontFamily: 'segeo',
-  //                             fontSize: 12,
-  //                             fontWeight: FontWeight.w700,
-  //                             color: Colors.red,
-  //                           ),
-  //                         ),
-  //                         TextSpan(
-  //                           text:
-  //                               "The minimum time is half an hour and the maximum is three hours.",
-  //                           style: TextStyle(
-  //                             fontFamily: 'segeo',
-  //                             fontSize: 12,
-  //                             color: Color(0xFF5F6473),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 10),
-  //
-  //                   // ✅ Add Slot Button
-  //                   SizedBox(
-  //                     width: double.infinity,
-  //                     child:
-  //                         BlocConsumer<
-  //                           MentorAvailabilityCubit,
-  //                           MentorAvailabilityStates
-  //                         >(
-  //                           listener: (context, state) {
-  //                             if (state is MentorAvailabilityLoaded) {
-  //                               _showSuccessDialog();
-  //                               context
-  //                                   .read<AvailableSlotsCubit>()
-  //                                   .getAvailableSlots("this_week");
-  //                             } else if (state is MentorAvailabilityFailure) {
-  //                               CustomSnackBar1.show(context, state.error);
-  //                             }
-  //                           },
-  //                           builder: (context, state) {
-  //                             final isLoading =
-  //                                 state is MentorAvailabilityLoading;
-  //                             return CustomAppButton1(
-  //                               text: "Add",
-  //                               isLoading: isLoading,
-  //                               onPlusTap: onAdd,
-  //                             );
-  //                           },
-  //                         ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  //
-  //   totalSessionCoinsNotifier.dispose(); // ✅ cleanup
-  // }
-
-  Future<void> _showSuccessDialog() async {
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (ctx) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Green check
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE8F7EF),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    color: Color(0xFF22C55E),
-                    size: 36,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "New Slot added",
-                  style: TextStyle(
-                    fontFamily: 'segeo',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(ctx).pop(),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                    ),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF8A4DFF), Color(0xFF2F8BFF)],
-                        ),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: const Text(
-                          "Okay",
-                          style: TextStyle(
-                            fontFamily: 'segeo',
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // small pill used inside dialog (matches your style)
-  Widget _timeFieldPill(IconData icon, String text) {
-    return Container(
-      height: 40,
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 18, color: const Color(0xFF6C6F7B)),
-          SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              fontFamily: 'segeo',
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _Grouped {

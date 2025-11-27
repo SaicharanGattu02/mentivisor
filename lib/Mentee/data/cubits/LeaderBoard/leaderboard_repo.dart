@@ -2,7 +2,7 @@ import 'package:mentivisor/Mentee/Models/LeaderBoardModel.dart';
 import 'package:mentivisor/Mentee/data/remote_data_source.dart';
 
 abstract class LeaderBoardRepo {
-  Future<LeaderBoardModel?> getLeaderBoard();
+  Future<LeaderBoardModel?> getLeaderBoard(String college);
 }
 
 class LeaderBoardRepoImpl implements LeaderBoardRepo {
@@ -10,7 +10,7 @@ class LeaderBoardRepoImpl implements LeaderBoardRepo {
   LeaderBoardRepoImpl({required this.remoteDataSource});
 
   @override
-  Future<LeaderBoardModel?> getLeaderBoard() async {
-    return await remoteDataSource.getLeaderBoard();
+  Future<LeaderBoardModel?> getLeaderBoard(String college) async {
+    return await remoteDataSource.getLeaderBoard(college);
   }
 }

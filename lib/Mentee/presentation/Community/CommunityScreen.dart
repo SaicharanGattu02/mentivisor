@@ -314,10 +314,10 @@ class _CommunityScreenState extends State<Communityscreen> {
                             ),
                             Text(
                               textAlign: TextAlign.center,
-                              'No Data Found!',
+                              'Be the first student to upload post in your campus campus.',
                               style: TextStyle(
-                                color: primarycolor,
-                                fontSize: 18,
+                                color: Colors.black,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Poppins',
                               ),

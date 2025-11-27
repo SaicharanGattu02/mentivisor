@@ -59,10 +59,10 @@ class _SignupScreenState extends State<SignupScreen> {
       showPasswordError = true;
       isValid = false;
     }
-    // if (!agree) {
-    //   CustomSnackBar.show(context, 'You must agree to the terms');
-    //   isValid = false;
-    // }
+    if (!agree) {
+      CustomSnackBar.show(context, 'You must agree to the terms');
+      isValid = false;
+    }
 
     if (isValid) {
       final data = {"email": email, "contact": mobile, "password": password};
@@ -171,23 +171,23 @@ class _SignupScreenState extends State<SignupScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
 
-              // Row(
-              //   children: [
-              //     Checkbox(
-              //       value: agree,
-              //       onChanged: (val) => setState(() => agree = val ?? false),
-              //     ),
-              //     Expanded(
-              //       child: GestureDetector(
-              //         onTap: () => setState(() => agree = !agree),
-              //         child: const Text(
-              //           "I agree to terms and conditions",
-              //           style: TextStyle(fontFamily: 'segeo', fontSize: 14),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: agree,
+                    onChanged: (val) => setState(() => agree = val ?? false),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => agree = !agree),
+                      child: const Text(
+                        "I agree to terms and conditions",
+                        style: TextStyle(fontFamily: 'segeo', fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 8),
               BlocConsumer<RegisterCubit, RegisterState>(
                 listener: (context, state) {

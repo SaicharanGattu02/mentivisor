@@ -12,7 +12,6 @@ const Color white = Color(0xffF2F2F2);
 const Color textColor = Color(0xff222222);
 const Color borderColor = Color(0xffe2e8f0);
 
-
 const LinearGradient kCommonGradient = LinearGradient(
   colors: [
     Color(0xFFA258F7), // Purple

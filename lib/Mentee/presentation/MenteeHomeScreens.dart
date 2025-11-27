@@ -729,7 +729,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 children: [
                                   _buildDrawerItem(
                                     assetpath: "assets/icons/Info.png",
-                                    label: 'Info',
+                                    label: 'User Guide',
                                     onTap: () => _navigateToScreen('info'),
                                   ),
                                   _buildDrawerItem(
@@ -804,7 +804,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                           : size.height * 0.25;
 
                                       return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           CarouselSlider.builder(
                                             itemCount: banners.length,
@@ -822,18 +823,25 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                       ),
                                                   child: ClipRRect(
                                                     borderRadius:
-                                                        BorderRadius.circular(16),
+                                                        BorderRadius.circular(
+                                                          16,
+                                                        ),
                                                     child: CachedNetworkImage(
                                                       imageUrl: b.imgUrl ?? '',
                                                       fit: BoxFit.cover,
                                                       width: double.infinity,
-                                                      placeholder: (context, url) =>
-                                                          Container(
-                                                            color: Colors.grey[200],
+                                                      placeholder:
+                                                          (
+                                                            context,
+                                                            url,
+                                                          ) => Container(
+                                                            color: Colors
+                                                                .grey[200],
                                                             child: const Center(
                                                               child:
                                                                   CircularProgressIndicator(
-                                                                    strokeWidth: 2,
+                                                                    strokeWidth:
+                                                                        2,
                                                                   ),
                                                             ),
                                                           ),
@@ -843,12 +851,15 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                             url,
                                                             error,
                                                           ) => Container(
-                                                            color: Colors.grey[200],
-                                                            alignment:
-                                                                Alignment.center,
+                                                            color: Colors
+                                                                .grey[200],
+                                                            alignment: Alignment
+                                                                .center,
                                                             child: const Icon(
-                                                              Icons.broken_image,
-                                                              color: Colors.grey,
+                                                              Icons
+                                                                  .broken_image,
+                                                              color:
+                                                                  Colors.grey,
                                                             ),
                                                           ),
                                                     ),
@@ -874,24 +885,43 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                             valueListenable: _currentIndex,
                                             builder: (context, currentIndex, _) {
                                               return Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: List.generate(
                                                   banners.length ?? 0,
-                                                      (index) {
+                                                  (index) {
                                                     return AnimatedContainer(
-                                                      duration: const Duration(milliseconds: 300),
-                                                      margin: const EdgeInsets.symmetric(
-                                                        horizontal: 3,
+                                                      duration: const Duration(
+                                                        milliseconds: 300,
                                                       ),
-                                                      height: SizeConfig.screenHeight * 0.008,
-                                                      width: currentIndex == index
-                                                          ? SizeConfig.screenWidth * 0.05
-                                                          : SizeConfig.screenWidth * 0.014,
+                                                      margin:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 3,
+                                                          ),
+                                                      height:
+                                                          SizeConfig
+                                                              .screenHeight *
+                                                          0.008,
+                                                      width:
+                                                          currentIndex == index
+                                                          ? SizeConfig
+                                                                    .screenWidth *
+                                                                0.05
+                                                          : SizeConfig
+                                                                    .screenWidth *
+                                                                0.014,
                                                       decoration: BoxDecoration(
-                                                        color: currentIndex == index
+                                                        color:
+                                                            currentIndex ==
+                                                                index
                                                             ? primarycolor
-                                                            : Colors.grey.shade400,
-                                                        borderRadius: BorderRadius.circular(100),
+                                                            : Colors
+                                                                  .grey
+                                                                  .shade400,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              100,
+                                                            ),
                                                       ),
                                                     );
                                                   },

@@ -52,7 +52,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void initState() {
     super.initState();
     searchController.clear();
-    context.read<HighlightedCoinsCubit>().highlitedCoins("community");
+    context.read<HighlightedCoinsCubit>().highligtedCoins();
   }
 
   @override
@@ -528,24 +528,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                   builder: (context, state) {
                                     if (state is GetHighlightedCoinsLoading) {
                                       return Center(
-                                        child: DottedProgressWithLogo(),
+                                        child: CircularProgressIndicator(strokeWidth: 1,),
                                       );
                                     } else if (state
                                         is GetHighlightedCoinsLoaded) {
                                       final coins =
-                                          (state.highlightedCoinsModel.data !=
-                                                  null &&
-                                              state
-                                                  .highlightedCoinsModel
-                                                  .data!
-                                                  .isNotEmpty)
+                                          (state.highlightedCoinsModel.data != null)
                                           ? state
                                                 .highlightedCoinsModel
-                                                .data!
-                                                .first
-                                                .coins
+                                                .data?.coins
                                           : "0";
-                                      highlitedCoinValue.value = coins ?? "";
+                                      highlitedCoinValue.value = coins.toString() ?? "";
                                       return Text(
                                         'Make your post Highlight with $coins coins ',
                                         style: TextStyle(

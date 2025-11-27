@@ -137,7 +137,6 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       ),
     );
   }
-
   int _getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 

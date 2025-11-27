@@ -12,10 +12,10 @@ class AvailableSlotsModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.recentSlots != null) {
-      data['recent_slots'] = this.recentSlots!.toJson();
+    final Map<String, dynamic> data = {};
+    data['status'] = status;
+    if (recentSlots != null) {
+      data['recent_slots'] = recentSlots!.toJson();
     }
     return data;
   }
@@ -31,31 +31,36 @@ class RecentSlots {
   StatusCounts? statusCounts;
   List<DaySlot>? days;
 
-  RecentSlots(
-      {this.filter,
-        this.range,
-        this.duration,
-        this.uniqueDates,
-        this.uniqueTimeSlots,
-        this.totalSlots,
-        this.statusCounts,
-        this.days});
+  RecentSlots({
+    this.filter,
+    this.range,
+    this.duration,
+    this.uniqueDates,
+    this.uniqueTimeSlots,
+    this.totalSlots,
+    this.statusCounts,
+    this.days,
+  });
 
   RecentSlots.fromJson(Map<String, dynamic> json) {
     filter = json['filter'];
     range = json['range'];
     duration = json['duration'];
     uniqueDates = List<String>.from(json['unique_dates']);
+
     if (json['unique_time_slots'] != null) {
       uniqueTimeSlots = [];
       json['unique_time_slots'].forEach((v) {
         uniqueTimeSlots!.add(UniqueTimeSlot.fromJson(v));
       });
     }
+
     totalSlots = json['total_slots'];
+
     statusCounts = json['status_counts'] != null
         ? StatusCounts.fromJson(json['status_counts'])
         : null;
+
     if (json['days'] != null) {
       days = [];
       json['days'].forEach((v) {
@@ -65,22 +70,27 @@ class RecentSlots {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['filter'] = this.filter;
-    data['range'] = this.range;
-    data['duration'] = this.duration;
-    data['unique_dates'] = this.uniqueDates;
-    if (this.uniqueTimeSlots != null) {
+    final data = <String, dynamic>{};
+    data['filter'] = filter;
+    data['range'] = range;
+    data['duration'] = duration;
+    data['unique_dates'] = uniqueDates;
+
+    if (uniqueTimeSlots != null) {
       data['unique_time_slots'] =
-          this.uniqueTimeSlots!.map((v) => v.toJson()).toList();
+          uniqueTimeSlots!.map((v) => v.toJson()).toList();
     }
-    data['total_slots'] = this.totalSlots;
-    if (this.statusCounts != null) {
-      data['status_counts'] = this.statusCounts!.toJson();
+
+    data['total_slots'] = totalSlots;
+
+    if (statusCounts != null) {
+      data['status_counts'] = statusCounts!.toJson();
     }
-    if (this.days != null) {
-      data['days'] = this.days!.map((v) => v.toJson()).toList();
+
+    if (days != null) {
+      data['days'] = days!.map((v) => v.toJson()).toList();
     }
+
     return data;
   }
 }
@@ -97,10 +107,10 @@ class UniqueTimeSlot {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['time'] = this.time;
-    data['status'] = this.status;
-    return data;
+    return {
+      'time': time,
+      'status': status,
+    };
   }
 }
 
@@ -116,10 +126,10 @@ class StatusCounts {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['active'] = this.active;
-    data['booked'] = this.booked;
-    return data;
+    return {
+      'active': active,
+      'booked': booked,
+    };
   }
 }
 
@@ -134,9 +144,11 @@ class DaySlot {
   DaySlot.fromJson(Map<String, dynamic> json) {
     date = json['date'];
     count = json['count'];
+
     statusCounts = json['status_counts'] != null
         ? StatusCounts.fromJson(json['status_counts'])
         : null;
+
     if (json['slots'] != null) {
       slots = [];
       json['slots'].forEach((v) {
@@ -146,34 +158,40 @@ class DaySlot {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['date'] = this.date;
-    data['count'] = this.count;
-    if (this.statusCounts != null) {
-      data['status_counts'] = this.statusCounts!.toJson();
+    final data = <String, dynamic>{};
+    data['date'] = date;
+    data['count'] = count;
+
+    if (statusCounts != null) {
+      data['status_counts'] = statusCounts!.toJson();
     }
-    if (this.slots != null) {
-      data['slots'] = this.slots!.map((v) => v.toJson()).toList();
+
+    if (slots != null) {
+      data['slots'] = slots!.map((v) => v.toJson()).toList();
     }
+
     return data;
   }
 }
 
 class TimeSlot {
+  int? id;
   String? time;
   String? status;
 
-  TimeSlot({this.time, this.status});
+  TimeSlot({this.id, this.time, this.status});
 
   TimeSlot.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     time = json['time'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['time'] = this.time;
-    data['status'] = this.status;
-    return data;
+    return {
+      'id': id,
+      'time': time,
+      'status': status,
+    };
   }
 }

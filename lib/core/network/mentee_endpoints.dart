@@ -65,7 +65,7 @@ class APIEndpointUrls {
   static const String sessions_report_submit = "${userUrl}session-report";
   static const String community_toggle_like = "${userUrl}community/toggle-like";
   static const String resource_download = "${userUrl}study-zone/download";
-  static const String highlated_coins = "${userUrl}list-highlated";
+  static const String highlated_coins = "${apiUrl}highlight-coins";
   static const String notification = "${userUrl}get_user_notification";
   static const String comment_like = "${userUrl}comments/";
   static const String community_zone_report = "${userUrl}community-zone-report";
@@ -100,6 +100,8 @@ class APIEndpointUrls {
   static const String mile_stone = "${userUrl}mile-stone";
   static const String delete_community = "${userUrl}delete-community";
   static const String delete_studyzone = "${userUrl}delete-studyzone";
+  static const String delete_comment = "${userUrl}comment";
+  static const String delete_slot = "${userUrl}delete-slot";
   static const String delete_download = "${userUrl}/download/user/delete";
   static const String termsandconditions = "${apiUrl}/terms";
 }

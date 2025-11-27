@@ -541,11 +541,11 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     ),
                                     const SizedBox(height: 10),
                                     Text(
-                                      'No Data Found!',
+                                      'Be the first student to upload your notes in your campus',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: primarycolor,
-                                        fontSize: 18,
+                                        color: Colors.black,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w400,
                                         fontFamily: 'Poppins',
                                       ),

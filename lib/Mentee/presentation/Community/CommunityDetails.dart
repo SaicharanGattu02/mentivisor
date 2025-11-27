@@ -468,6 +468,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                               return CommentCard(
                                 key: ValueKey(c.id),
                                 id: c.id ?? 0,
+                                post_id: widget.communityId,
                                 user_id: c.user?.id ?? 0,
                                 name: c.user?.name ?? 'Unknown',
                                 profileUrl: c.user?.profilePicUrl ?? '',

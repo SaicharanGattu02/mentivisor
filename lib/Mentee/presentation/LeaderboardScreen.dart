@@ -10,6 +10,7 @@ import '../../services/AuthService.dart';
 import '../../utils/AppLogger.dart';
 import '../Models/LeaderBoardModel.dart';
 import '../data/cubits/LeaderBoard/leaderboard_states.dart';
+import 'Widgets/FilterButton.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -19,10 +20,11 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  final ValueNotifier<bool> onCampusNotifier = ValueNotifier<bool>(true);
   @override
   void initState() {
     super.initState();
-    context.read<LeaderboardCubit>().getLeaderBoard();
+    context.read<LeaderboardCubit>().getLeaderBoard("oncampus");
   }
 
   @override
@@ -62,6 +64,45 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8EBF7),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: onCampusNotifier,
+                      builder: (context, isOnCampus, _) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: FilterButton(
+                                text: 'On Campus',
+                                isSelected: isOnCampus,
+                                onPressed: () {
+                                  onCampusNotifier.value =
+                                      true; // ✅ update first
+                                  context.read<LeaderboardCubit>().getLeaderBoard("oncampus");
+                                },
+                              ),
+                            ),
+
+                            Expanded(
+                              child: FilterButton(
+                                text: 'Beyond Campus',
+                                isSelected: !isOnCampus,
+                                onPressed: () {
+                                  onCampusNotifier.value = false;
+                                  context.read<LeaderboardCubit>().getLeaderBoard("beyond");
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+
                   Text(
                     leaderboardModel.month ?? '',
                     style: const TextStyle(
@@ -182,10 +223,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        Text(
-          user.name ?? '',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+        SizedBox(
+          width: MediaQuery.sizeOf(context).width*0.3,
+          child: Text(
+            user.name ?? '',
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
         ),
         // Text(
         //   "${user.score?.toStringAsFixed(1) ?? '0'} pts",
