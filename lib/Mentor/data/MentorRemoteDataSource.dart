@@ -438,15 +438,29 @@ class MentorRemoteDataSourceImpl implements MentorRemoteDataSource {
   Future<BuyCouponModel?> buyCoupon(int couponId) async {
     try {
       Response res = await ApiClient.get(
-        "${MentorEndpointsUrls.buy_coupon}/${couponId}",
+        "${MentorEndpointsUrls.buy_coupon}/$couponId",
       );
       AppLogger.log('get Buy coupon: ${res.data}');
       return BuyCouponModel.fromJson(res.data);
+
+    } on DioException catch (e) {
+      // Handle HTTP error responses
+      if (e.response != null) {
+        AppLogger.error(
+          'Buy coupon error response: ${e.response!.data}',
+        );
+        // if backend returns message, pass it back
+        return BuyCouponModel.fromJson(e.response!.data);
+      }
+      AppLogger.error('Buy coupon Dio error: $e');
+      return null;
+
     } catch (e) {
-      AppLogger.error('get Buy Coupons :${e}');
+      AppLogger.error('Unexpected error buy coupon: $e');
       return null;
     }
   }
+
 
   @override
   Future<RedeemedCouponsModel?> redeemedCoupons(

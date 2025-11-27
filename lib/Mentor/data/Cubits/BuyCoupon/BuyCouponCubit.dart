@@ -16,7 +16,7 @@ class BuyCouponCubit extends Cubit<BuyCouponStates> {
       if (response != null && response.status == true) {
         emit(BuyCouponLoaded(response));
       } else {
-        emit(BuyCouponFailure("Failed to load coupons."));
+        emit(BuyCouponFailure(response?.message ??"Failed Buying Coupon."));
       }
     } catch (e) {
       emit(BuyCouponFailure("An error occurred: $e"));

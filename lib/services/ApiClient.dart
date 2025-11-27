@@ -21,26 +21,6 @@ class ApiClient {
     ),
   );
 
-  // static const List<String> _unauthenticatedEndpoints = [
-  //   '/api/user-login',
-  //   '/api/registration-step-1',
-  //   '/api/registration-verify-step-2',
-  //   '/api/final-registration',
-  //   '/api/campuses',
-  //   '/api/years',
-  //   '/api/banners',
-  //   '/api/study-zone/tags',
-  //   '/api/study-zone/top-downloads',
-  //   '/api/guest-list-ecc',
-  //   '/api/community-zone-post-without-login',
-  //   '/api/top-mentors',
-  //   '/api/tags',
-  //   '/api/forget-password',
-  //   '/api/verify-otp',
-  //   '/api/reset-password',
-  //   '/api/upload-file',
-  // ];
-
   static void setupInterceptors() {
     try {
       _dio.interceptors.clear();

@@ -779,7 +779,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       Response res = await ApiClient.get(
         "${APIEndpointUrls.community_zone_post_details}/${communityId}?scope=${scope}",
       );
-
       debugPrint('Community Details::$res');
       return CommunityDetailsModel.fromJson(res.data);
     } catch (e) {
@@ -790,23 +789,25 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<ECCModel?> getEcc(
-    String scope,
-    String updates,
-    String search,
-    int page,
-  ) async {
+      String scope,
+      String updates,
+      String search,
+      int page,
+      ) async {
     try {
-      Response res;
       final token = await AuthService.getAccessToken();
-      if (token != null) {
-        res = await ApiClient.get(
-          "${APIEndpointUrls.list_ecc}?scope=${scope}&tag=${updates}&search=${search}&page=${page}",
-        );
-      } else {
-        res = await ApiClient.get(
-          "${APIEndpointUrls.guest_list_ecc}?scope=${scope}&tag=${updates}&search=${search}&page=${page}",
-        );
-      }
+
+      // Encode parameters to avoid space + & issues
+      final encodedScope = Uri.encodeQueryComponent(scope);
+      final encodedUpdates = Uri.encodeQueryComponent(updates);
+      final encodedSearch = Uri.encodeQueryComponent(search);
+
+      final url = token != null
+          ? "${APIEndpointUrls.list_ecc}?scope=$encodedScope&tag=$encodedUpdates&search=$encodedSearch&page=$page"
+          : "${APIEndpointUrls.guest_list_ecc}?scope=$encodedScope&tag=$encodedUpdates&search=$encodedSearch&page=$page";
+
+      Response res = await ApiClient.get(url);
+
       debugPrint('getEcc::$res');
       return ECCModel.fromJson(res.data);
     } catch (e) {
@@ -977,23 +978,24 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
-    String scope,
-    String tag,
-    String search,
-    int page,
-  ) async {
+      String scope,
+      String tag,
+      String search,
+      int page,
+      ) async {
     try {
-      Response res;
       final token = await AuthService.getAccessToken();
-      if (token != null) {
-        res = await ApiClient.get(
-          "${APIEndpointUrls.study_zone_campus}?scope=${scope}&tag=${tag}&search=${search}&page=${page}",
-        );
-      } else {
-        res = await ApiClient.get(
-          "${APIEndpointUrls.guest_study_zone}?page=${page}&tag=${tag}&search=${search}",
-        );
-      }
+
+      final encodedScope = Uri.encodeQueryComponent(scope);
+      final encodedTag = Uri.encodeQueryComponent(tag);
+      final encodedSearch = Uri.encodeQueryComponent(search);
+
+      final url = token != null
+          ? "${APIEndpointUrls.study_zone_campus}?scope=$encodedScope&tag=$encodedTag&search=$encodedSearch&page=$page"
+          : "${APIEndpointUrls.guest_study_zone}?page=$page&tag=$encodedTag&search=$encodedSearch";
+
+      Response res = await ApiClient.get(url);
+
       AppLogger.log('get StudyZoneCampus::${res.data}');
       return StudyZoneCampusModel.fromJson(res.data);
     } catch (e) {
