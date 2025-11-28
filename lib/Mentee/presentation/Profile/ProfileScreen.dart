@@ -803,7 +803,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                             );
                                           },
                                           child: Container(
-                                            width: double.infinity,
+                                            width:360,
                                             margin: EdgeInsets.only(
                                               bottom: 16,
                                               left: 16,

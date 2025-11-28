@@ -75,7 +75,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       backgroundColor: const Color(0xfff6faff),
       body: SafeArea(
-        child: SingleChildScrollView(physics: NeverScrollableScrollPhysics(),
+        child: SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Column(
@@ -170,20 +171,27 @@ class _SignupScreenState extends State<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-
               Row(
                 children: [
                   Checkbox(
                     value: agree,
                     onChanged: (val) => setState(() => agree = val ?? false),
                   ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => agree = !agree),
-                      child: const Text(
-                        "I agree to terms and conditions",
-                        style: TextStyle(fontFamily: 'segeo', fontSize: 14),
-                      ),
+                  GestureDetector(
+                    onTap: () => setState(() => agree = !agree),
+                    child: const Text(
+                      "I agree to terms and conditions",
+                      style: TextStyle(fontFamily: 'segeo', fontSize: 14),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      context.push("/terms_conditions");
+                    },
+                    icon: Image.asset(
+                      "assets/icons/Info.png",
+                      width: 20,
+                      height: 20,
                     ),
                   ),
                 ],

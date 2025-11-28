@@ -24,7 +24,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<LeaderboardCubit>().getLeaderBoard("oncampus");
+    context.read<LeaderboardCubit>().getLeaderBoard("same");
   }
 
   @override
@@ -64,6 +64,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
+                  Text(
+                    leaderboardModel.month ?? '',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFE8EBF7),
@@ -82,7 +90,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                 onPressed: () {
                                   onCampusNotifier.value =
                                       true; // ✅ update first
-                                  context.read<LeaderboardCubit>().getLeaderBoard("oncampus");
+                                  context.read<LeaderboardCubit>().getLeaderBoard("same");
                                 },
                               ),
                             ),
@@ -102,16 +110,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       },
                     ),
                   ),
-
-                  Text(
-                    leaderboardModel.month ?? '',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                   const SizedBox(height: 16),
-
                   // 🥇 Top 3 Podium
                   if (top3.isNotEmpty) _buildTopThree(top3),
 
@@ -159,7 +158,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         if (third != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 20), // ⬆ slightly lower
-            child: _buildPodiumUser(third, 3, 110),
+            child: _buildPodiumUser(third, 3, 120),
           ),
       ],
     );

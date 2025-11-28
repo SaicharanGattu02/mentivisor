@@ -9,7 +9,6 @@ import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states
 import 'package:mentivisor/utils/color_constants.dart';
 import '../../Components/Shimmers.dart';
 import '../../Mentee/Models/NotificationModel.dart';
-import '../../services/NotificationService.dart';
 import '../../utils/constants.dart';
 import 'Widgets/CommonChoiceChip.dart';
 
@@ -261,7 +260,7 @@ class _NotificationsState extends State<Notifications> {
       case 'session':
         if (role == 'mentee') {
           route = '/upcoming_session';
-        } else if (role == 'mentor') {
+        } else if (role == 'mentor'|| role =="both") {
           route = '/mentor_dashboard';
         }
         break;
@@ -369,8 +368,8 @@ class _NotificationsState extends State<Notifications> {
                   const SizedBox(height: 6),
                   Text(
                     subtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    // maxLines: 2,
+                    // overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xff666666),

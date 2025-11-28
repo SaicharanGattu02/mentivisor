@@ -142,7 +142,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                             ),
                           );
                         }
-
                         return RefreshIndicator(
                           onRefresh: () => context
                               .read<FetchCommentsCubit>()
@@ -152,7 +151,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                             itemCount: list.length,
                             itemBuilder: (ctx, i) {
                               final c = list[i];
-                              return CommentCard(
+                              return CommentCard1(
                                 key: ValueKey(c.id),
                                 id: c.id ?? 0,
                                 post_id: widget.communityPost.id??0,

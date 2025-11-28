@@ -64,7 +64,6 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-enum _MenuAction { report, safetyTips }
 
 class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
@@ -370,7 +369,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp', 'pdf', 'doc', 'docx'],
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp',],
     );
 
     if (result != null && result.files.single.path != null) {
@@ -910,6 +909,7 @@ class _ChatScreenState extends State<ChatScreen> {
   ) {
     final isImage = () {
       final u = (msg.url ?? '').toLowerCase();
+      debugPrint("URL:${u}");
       return u.endsWith('.jpg') ||
           u.endsWith('.jpeg') ||
           u.endsWith('.png') ||

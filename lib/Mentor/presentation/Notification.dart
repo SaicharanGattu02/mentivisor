@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Notifications/notifications_states.dart';
-import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/CommonChoiceChip.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
-import '../../utils/media_query_helper.dart';
+import '../../Mentee/Models/NotificationModel.dart';
 
 class NotificationMentor extends StatefulWidget {
   const NotificationMentor({super.key});
@@ -30,18 +30,83 @@ class _NotificationMentorState extends State<NotificationMentor> {
   final List<String> _filters = [
     "All",
     "Sessions",
-    "Rewards",
+    // "Rewards",
     "Expertise updates",
-    "Updates",
   ];
 
   final Map<String, String> _filterKeywordMap = {
     "All": "",
     "Sessions": "session",
-    "Rewards": "reward",
+    // "Rewards": "reward",
     "Expertise updates": "expertise",
-    "updates": "updates",
   };
+
+
+  // 🔹 Icon helper
+  String _getIconForType(String? type) {
+    final t = type?.toLowerCase() ?? "";
+    if (t.contains("session")) return "assets/icons/meet.png";
+    if (t.contains("reward")) return "assets/images/coinsimage.png";
+    if (t.contains("reminder")) return "assets/images/coinsimage.png";
+    if (t.contains("expertise")) return "assets/icons/updates.png";
+    return "assets/images/coinsimage.png";
+  }
+  /// Handle navigation
+  void _handleNotificationTap(Data data) {
+    final String? type = data.content_type ?? "";
+    final String? role = data.role ?? "";
+    final String? id = data.content_id.toString() ?? "";
+
+    _log("NOTIFICATION_PAYLOAD", data.content_type);
+
+    String? route;
+
+    switch (type) {
+      case 'community':
+        route = '/community_details/$id';
+        break;
+      case 'studyzone':
+        route = '/resource_details_screen/$id';
+        break;
+      case 'ecc':
+        route = '/view_event/$id';
+        break;
+      case 'task':
+        route = '/productivity_screen';
+        break;
+      case 'session':
+        if (role == 'mentee') {
+          route = '/upcoming_session';
+        } else if (role == 'mentor' || role =="both") {
+          route = '/mentor_dashboard';
+        }
+        break;
+      case 'expertise':
+        route = '/update_expertise';
+        break;
+      case 'rewards':
+        route = '/wallet_screen';
+        break;
+
+      default:
+        _log("UNKNOWN_TYPE", type);
+        return;
+    }
+
+    if (route == null) return;
+
+    _log("NAVIGATING TO", route);
+
+    // THIS IS THE FIX
+    context.push(route, extra: data);
+  }
+
+
+  /// Simple logger
+  void _log(String tag, dynamic data) {
+    debugPrint("[$tag] ${data}");
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +226,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
                                       title: item.title ?? "",
                                       subtitle: item.remarks ?? item.message ?? "",
                                       date: formatDate(item.createdAt), // 👈 formatted date here
+                                      item: item,
                                     );
                                   },
                                   childCount: filtered.length,
@@ -202,79 +268,78 @@ class _NotificationMentorState extends State<NotificationMentor> {
     required String title,
     required String subtitle,
     required String date,
+    required Data item,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              icon,
-              width: 50,
-              height: 60,
-              fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: () {
+        debugPrint("Tapped! ID: ${item.id}"); // ← Will this print?
+        _handleNotificationTap(item);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                icon,
+                width: 50,
+                height: 60,
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xff222222),
-                    fontFamily: 'segeo',
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xff222222),
+                      fontFamily: 'segeo',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xff666666),
-                    fontFamily: 'segeo',
+                  const SizedBox(height: 6),
+                  Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xff666666),
+                      fontFamily: 'segeo',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  date,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xff999999),
-                    fontFamily: 'segeo',
+                  const SizedBox(height: 6),
+                  Text(
+                    date,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xff999999),
+                      fontFamily: 'segeo',
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // 🔹 Icon helper
-  String _getIconForType(String? type) {
-    final t = type?.toLowerCase() ?? "";
-    if (t.contains("session")) return "assets/icons/meet.png";
-    if (t.contains("reward")) return "assets/images/coinsimage.png";
-    if (t.contains("reminder")) return "assets/images/coinsimage.png";
-    if (t.contains("mention")) return "assets/icons/approval.png";
-    return "assets/images/coinsimage.png";
-  }
+
 
   // 🔹 Empty state
   Widget _noDataWidget() {

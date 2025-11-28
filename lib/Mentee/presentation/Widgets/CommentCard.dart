@@ -396,42 +396,42 @@ class CommentCard1 extends StatelessWidget {
                               ],
                             ),
                           ),
-                          BlocConsumer<DeleteCommentCubit, DeleteCommentStates>(
-                            listener: (context, state) {
-                              if (state is DeleteCommentLoaded) {
-                                Navigator.pop(context); // Close dialog if open
-                                context.read<FetchCommentsCubit>().getComments(
-                                  post_id ?? 0,
-                                );
-                              } else if (state is DeleteCommentFailure) {
-                                CustomSnackBar1.show(context, state.error);
-                              }
-                            },
-                            builder: (context, state) {
-                              final isLoading = state is DeleteCommentLoading;
-                              return IconButton(
-                                onPressed: isLoading
-                                    ? null
-                                    : () {
-                                        showDeleteConfirmationDialog(
-                                          context,
-                                          () {
-                                            context
-                                                .read<DeleteCommentCubit>()
-                                                .deleteComment(
-                                                  id.toString() ?? "",
-                                                );
-                                          },
-                                        );
-                                      },
-                                icon: Image.asset(
-                                  'assets/icons/delete.png',
-                                  width: 25,
-                                  height: 25,
-                                ),
-                              );
-                            },
-                          ),
+                          // BlocConsumer<DeleteCommentCubit, DeleteCommentStates>(
+                          //   listener: (context, state) {
+                          //     if (state is DeleteCommentLoaded) {
+                          //       Navigator.pop(context); // Close dialog if open
+                          //       context.read<FetchCommentsCubit>().getComments(
+                          //         post_id ?? 0,
+                          //       );
+                          //     } else if (state is DeleteCommentFailure) {
+                          //       CustomSnackBar1.show(context, state.error);
+                          //     }
+                          //   },
+                          //   builder: (context, state) {
+                          //     final isLoading = state is DeleteCommentLoading;
+                          //     return IconButton(
+                          //       onPressed: isLoading
+                          //           ? null
+                          //           : () {
+                          //               showDeleteConfirmationDialog(
+                          //                 context,
+                          //                 () {
+                          //                   context
+                          //                       .read<DeleteCommentCubit>()
+                          //                       .deleteComment(
+                          //                         id.toString() ?? "",
+                          //                       );
+                          //                 },
+                          //               );
+                          //             },
+                          //       icon: Image.asset(
+                          //         'assets/icons/delete.png',
+                          //         width: 25,
+                          //         height: 25,
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                         ],
                       ),
                       const SizedBox(height: 6),
@@ -503,7 +503,7 @@ class CommentCard1 extends StatelessWidget {
               padding: const EdgeInsets.only(left: 32, top: 8),
               child: Column(
                 children: replies.map((r) {
-                  return _ReplyTile(
+                  return _ReplyTile1(
                     reply: r,
                     post_id: post_id,
                     onLike: () => onReplyLike(r.id ?? 0),
@@ -678,40 +678,40 @@ class _ReplyTile1 extends StatelessWidget {
                           ],
                         ),
                       ),
-                      BlocConsumer<DeleteCommentCubit, DeleteCommentStates>(
-                        listener: (context, state) {
-                          // if (state is DeleteCommentLoaded) {
-                          //   Navigator.pop(context);
-                          //   context.read<FetchCommentsCubit>().getComments(
-                          //     post_id ?? 0,
-                          //   );
-                          // } else
-                          if (state is DeleteCommentFailure) {
-                            CustomSnackBar1.show(context, state.error);
-                          }
-                        },
-                        builder: (context, state) {
-                          final isLoading = state is DeleteCommentLoading;
-                          return IconButton(
-                            onPressed: isLoading
-                                ? null
-                                : () {
-                              showDeleteConfirmationDialog(context, () {
-                                context
-                                    .read<DeleteCommentCubit>()
-                                    .deleteComment(
-                                  reply.id.toString() ?? "",
-                                );
-                              });
-                            },
-                            icon: Image.asset(
-                              'assets/icons/delete.png',
-                              width: 25,
-                              height: 25,
-                            ),
-                          );
-                        },
-                      ),
+                      // BlocConsumer<DeleteCommentCubit, DeleteCommentStates>(
+                      //   listener: (context, state) {
+                      //     // if (state is DeleteCommentLoaded) {
+                      //     //   Navigator.pop(context);
+                      //     //   context.read<FetchCommentsCubit>().getComments(
+                      //     //     post_id ?? 0,
+                      //     //   );
+                      //     // } else
+                      //     if (state is DeleteCommentFailure) {
+                      //       CustomSnackBar1.show(context, state.error);
+                      //     }
+                      //   },
+                      //   builder: (context, state) {
+                      //     final isLoading = state is DeleteCommentLoading;
+                      //     return IconButton(
+                      //       onPressed: isLoading
+                      //           ? null
+                      //           : () {
+                      //         showDeleteConfirmationDialog(context, () {
+                      //           context
+                      //               .read<DeleteCommentCubit>()
+                      //               .deleteComment(
+                      //             reply.id.toString() ?? "",
+                      //           );
+                      //         });
+                      //       },
+                      //       icon: Image.asset(
+                      //         'assets/icons/delete.png',
+                      //         width: 25,
+                      //         height: 25,
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 4),

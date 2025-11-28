@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Sign in to your mentee account',
+                    'Sign in to your Mentivisor account',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,

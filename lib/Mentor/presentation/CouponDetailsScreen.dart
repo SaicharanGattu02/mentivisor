@@ -465,34 +465,32 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                                 color: Colors.green.shade700,
                               ),
                             ),
-                            if (couponsDetails?.totalCoupons != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  "${couponsDetails!.totalCoupons} left",
-                                  style: TextStyle(
-                                    fontFamily: 'segoe',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.orange.shade700,
-                                  ),
-                                ),
-                              ),
+                            // if (couponsDetails?.totalCoupons != null)
+                            //   Container(
+                            //     padding: const EdgeInsets.symmetric(
+                            //       horizontal: 8,
+                            //       vertical: 4,
+                            //     ),
+                            //     decoration: BoxDecoration(
+                            //       color: Colors.orange.withOpacity(0.2),
+                            //       borderRadius: BorderRadius.circular(12),
+                            //     ),
+                            //     child: Text(
+                            //       "${couponsDetails!.totalCoupons} left",
+                            //       style: TextStyle(
+                            //         fontFamily: 'segoe',
+                            //         fontSize: 12,
+                            //         fontWeight: FontWeight.w600,
+                            //         color: Colors.orange.shade700,
+                            //       ),
+                            //     ),
+                            //   ),
                           ],
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   if (couponsDetails?.startDate != null ||
                       couponsDetails?.expiryDate != null)
                     Container(
@@ -538,7 +536,6 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                         ],
                       ),
                     ),
-
                   const SizedBox(height: 20),
                   Container(
                     width: double.infinity,

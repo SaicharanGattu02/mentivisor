@@ -22,7 +22,7 @@ class _InfoScreenState extends State<InfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar1(
-        title: "Info",
+        title: "User Guide",
         actions: [],
         color: Color(0xffFAF5FF),
       ),

@@ -21,7 +21,7 @@ class _MentorinfoscreenState extends State<Mentorinfoscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar1(title: "Info", actions: [],color: Color(0xffFAF5FF),),
+      appBar: CustomAppBar1(title: "User Guide", actions: [],color: Color(0xffFAF5FF),),
       body: SafeArea(
         child: Container(
           // Apply gradient background here

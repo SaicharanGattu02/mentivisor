@@ -1,3 +1,5 @@
+import '../../core/network/api_config.dart';
+
 class ChatMessagesModel {
   bool? status;
   Message? message;
@@ -149,13 +151,22 @@ class Messages {
     receiverId = json['receiver_id'];
     sessionId = json['session_id'];
     message = json['message'];
-    url = json['url'];
+
+    // ⭐ FIX: prepend baseUrl to file url
+    if (json['url'] != null && json['url'] != "") {
+      url = ApiConfig.socket_url + json['url'].toString().replaceFirst('/', '');
+    } else {
+      url = null;
+    }
+
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     type = json['type'];
+
     sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
     receiver = json['receiver'] != null ? Sender.fromJson(json['receiver']) : null;
   }
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};

@@ -314,7 +314,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                             ),
                             Text(
                               textAlign: TextAlign.center,
-                              'Be the first student to upload post in your campus campus.',
+                              selectedFilter=="On Campuses"?
+                              'Be the first student to upload post in your campus campus.':"No Data Found",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
