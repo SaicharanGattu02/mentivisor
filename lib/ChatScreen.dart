@@ -23,6 +23,7 @@ import 'Mentee/data/cubits/ChatMessages/ChatMessagesCubit.dart';
 import 'Mentee/data/cubits/ChatMessages/ChatMessagesStates.dart';
 import 'Mentee/data/cubits/UploadFileInChat/UploadFileInChatCubit.dart';
 import 'Mentee/data/cubits/chatReport/PrivateChat/privateChatReportStates.dart';
+import 'Mentee/presentation/Widgets/FullImageViewer.dart';
 import 'Mentee/presentation/Widgets/UserAvatar.dart';
 
 extension ChatScreenMessagesX on Messages {
@@ -63,7 +64,6 @@ class ChatScreen extends StatefulWidget {
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
-
 
 class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
@@ -369,7 +369,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp',],
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
     );
 
     if (result != null && result.files.single.path != null) {
@@ -926,18 +926,22 @@ class _ChatScreenState extends State<ChatScreen> {
     } else if (msg.type == 'file') {
       final url = msg.url ?? '';
       if (isImage && url.isNotEmpty) {
-        content = ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            url,
-            width: 220,
-            height: 220,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                'Image unavailable',
-                style: TextStyle(color: textColor),
+        content = InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => FullImageViewer(imageUrl: url)),
+            );
+          },
+          child: Hero(
+            tag: url,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                url,
+                width: 220,
+                height: 220,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -1005,56 +1009,99 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
                 },
                 child: Row(
-                  mainAxisAlignment: isMe
-                      ? MainAxisAlignment.end
-                      : MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                  isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (!isMe)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _avatar1(senderPhoto),
-                          const SizedBox(width: 6),
-                          Text(
-                            senderName,
-                            style: TextStyle(
-                              color: muted,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                    // Avatar
+                    _avatar1(senderPhoto),
+                    const SizedBox(width: 6),
+
+                    // Name
+                    Text(
+                      senderName,
+                      style: TextStyle(
+                        color: muted,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
-                    if (isMe)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _avatar1(senderPhoto),
-                          const SizedBox(width: 6),
-                          Text(
-                            senderName,
-                            style: TextStyle(
-                              color: muted,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    if (!isMe)
-                      IconButton(
+                    ),
+
+                    // If NOT me → show report button beside name
+                    // If NOT me → show report button beside name
+                    if (!isMe) ...[
+                      const SizedBox(width: 4),
+                      IconButton.filled(
                         style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
+                          padding: const EdgeInsets.all(6),
                           visualDensity: VisualDensity.compact,
+                          backgroundColor: Colors.grey.shade200,   // soft background
                         ),
                         onPressed: () {
                           _showReportSheet(msg.id ?? -1, context);
                         },
-                        icon: const Icon(Icons.flag_outlined, size: 20),
+                        icon: const Icon(
+                          Icons.flag_outlined,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                       ),
+                    ],
+
                   ],
                 ),
+
+                // child: Row(
+                //   mainAxisAlignment: isMe
+                //       ? MainAxisAlignment.end
+                //       : MainAxisAlignment.spaceBetween,
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   children: [
+                //     if (!isMe)
+                //       Row(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [
+                //           _avatar1(senderPhoto),
+                //           const SizedBox(width: 6),
+                //           Text(
+                //             senderName,
+                //             style: TextStyle(
+                //               color: muted,
+                //               fontSize: 12,
+                //               fontWeight: FontWeight.w600,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     if (isMe)
+                //       Row(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [
+                //           _avatar1(senderPhoto),
+                //           const SizedBox(width: 6),
+                //           Text(
+                //             senderName,
+                //             style: TextStyle(
+                //               color: muted,
+                //               fontSize: 12,
+                //               fontWeight: FontWeight.w600,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     if (!isMe)
+                //       IconButton(
+                //         style: IconButton.styleFrom(
+                //           padding: EdgeInsets.zero,
+                //           visualDensity: VisualDensity.compact,
+                //         ),
+                //         onPressed: () {
+                //           _showReportSheet(msg.id ?? -1, context);
+                //         },
+                //         icon: const Icon(Icons.flag_outlined, size: 20),
+                //       ),
+                //   ],
+                // ),
               ),
               const SizedBox(height: 4),
               Container(

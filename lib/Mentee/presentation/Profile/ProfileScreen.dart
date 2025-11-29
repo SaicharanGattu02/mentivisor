@@ -828,7 +828,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          4,
+                                                          8,
                                                         ),
                                                     child: CachedNetworkImage(
                                                       width:
@@ -895,9 +895,8 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                         .start,
                                                                 children: [
                                                                   Text(
-                                                                    campusList
-                                                                            ?.title ??
-                                                                        "",
+                                                                    // "kjg kljagjkagjdf kfjgnakfj kjgk kjgnjkgndo;g;dgldf ldf;gnd;ljgn",
+                                                                    campusList?.title ?? "",
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -918,10 +917,11 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                     height: 8,
                                                                   ),
                                                                   Text(
+                                                                    // "kjg kljagjkagjdf kfjgnakfj kjgk kjgnjkgndo;g;dgldf ldf;gnd;ljgn oigj  odgd ijgnj igdjk ighnogno",
                                                                     campusList
                                                                             ?.description ??
                                                                         "",
-                                                                    maxLines: 2,
+                                                                    maxLines: 1,
                                                                     style: const TextStyle(
                                                                       fontFamily:
                                                                           'segeo',
@@ -930,7 +930,6 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                               .w400,
                                                                       fontSize:
                                                                           11,
-                                                                      height: 1,
                                                                     ),
                                                                   ),
                                                                 ],

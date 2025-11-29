@@ -602,7 +602,8 @@ class _EccScreenState extends State<EccScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'Be the first student to upload opportunities in your campus.',
+                                  selectedFilter == "On Campuses"?
+                                  'Be the first student to upload opportunities in your campus.':"No Data Found!",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.black,

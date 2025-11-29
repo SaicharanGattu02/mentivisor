@@ -154,7 +154,7 @@ class Messages {
 
     // ⭐ FIX: prepend baseUrl to file url
     if (json['url'] != null && json['url'] != "") {
-      url = ApiConfig.socket_url + json['url'].toString().replaceFirst('/', '');
+      url = ApiConfig.socket_url1 + json['url'].toString().replaceFirst('/', '');
     } else {
       url = null;
     }

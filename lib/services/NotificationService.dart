@@ -185,11 +185,8 @@ class NotificationService {
     final String? type = data['content_type'];
     final String? role = data['role'];
     final String? id = data['content_id'];
-
     _log("NOTIFICATION_PAYLOAD", data);
-
     String? route;
-
     if (type == null) {
       _log("ERROR", "Missing notification type");
       return;

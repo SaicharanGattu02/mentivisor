@@ -521,60 +521,101 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     context.push("/common_profile/$uploaderId");
                   }
                 },
+                // child: Row(
+                //   mainAxisAlignment: isMe
+                //       ? MainAxisAlignment.end
+                //       : MainAxisAlignment.spaceBetween,
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   children: [
+                //     // ---- For others: avatar + name on left ----
+                //     if (!isMe)
+                //       Row(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [
+                //           _avatar(m.sender?.profilePicUrl),
+                //           const SizedBox(width: 6),
+                //           Text(
+                //             m.sender?.name ?? 'Member',
+                //             style: TextStyle(
+                //               color: muted,
+                //               fontSize: 12,
+                //               fontWeight: FontWeight.w600,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //
+                //     // ---- For me: avatar + name on right ----
+                //     if (isMe)
+                //       Row(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [
+                //           _avatar(m.sender?.profilePicUrl),
+                //           const SizedBox(width: 6),
+                //           Text(
+                //             m.sender?.name ?? 'You',
+                //             style: TextStyle(
+                //               color: muted,
+                //               fontSize: 12,
+                //               fontWeight: FontWeight.w600,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     if (!isMe)
+                //       IconButton(
+                //         style: IconButton.styleFrom(
+                //           padding: EdgeInsets.zero,
+                //           visualDensity: VisualDensity.compact,
+                //         ),
+                //         onPressed: () {
+                //           _showReportSheet(m.id??-1,context);
+                //         },
+                //         icon: Icon(Icons.flag_outlined, size: 20),
+                //       ),
+                //   ],
+                // ),
                 child: Row(
-                  mainAxisAlignment: isMe
-                      ? MainAxisAlignment.end
-                      : MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                  isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // ---- For others: avatar + name on left ----
-                    if (!isMe)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _avatar(m.sender?.profilePicUrl),
-                          const SizedBox(width: 6),
-                          Text(
-                            m.sender?.name ?? 'Member',
-                            style: TextStyle(
-                              color: muted,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
+                    // ----- Avatar -----
+                    _avatar(m.sender?.profilePicUrl),
+                    const SizedBox(width: 6),
 
-                    // ---- For me: avatar + name on right ----
-                    if (isMe)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _avatar(m.sender?.profilePicUrl),
-                          const SizedBox(width: 6),
-                          Text(
-                            m.sender?.name ?? 'You',
-                            style: TextStyle(
-                              color: muted,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                    // ----- Name -----
+                    Text(
+                      m.sender?.name ?? (isMe ? 'You' : 'Member'),
+                      style: TextStyle(
+                        color: muted,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
-                    if (!isMe)
-                      IconButton(
+                    ),
+
+                    // ----- Report button (only for other users) -----
+                    if (!isMe) ...[
+                      const SizedBox(width: 4),
+                      IconButton.filled(
                         style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
+                          padding: const EdgeInsets.all(6),
                           visualDensity: VisualDensity.compact,
+                          backgroundColor: Colors.grey.shade200,
                         ),
                         onPressed: () {
-                          _showReportSheet(m.id??-1,context);
+                          _showReportSheet(m.id ?? -1, context);
                         },
-                        icon: Icon(Icons.flag_outlined, size: 20),
+                        icon: const Icon(
+                          Icons.flag_outlined,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                       ),
+                    ],
                   ],
                 ),
+
               ),
               const SizedBox(height: 4),
 

@@ -541,7 +541,8 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     ),
                                     const SizedBox(height: 10),
                                     Text(
-                                      'Be the first student to upload your notes in your campus',
+                                      onCampusNotifier.value==true?
+                                      'Be the first student to upload your notes in your campus':"No Data Found!",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.black,
