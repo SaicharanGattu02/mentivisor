@@ -170,6 +170,8 @@ class AppState {
   }
 }
 
+final ValueNotifier<int> mentorCoinPerMinNotifier = ValueNotifier<int>(0);
+
 class AppStateMentorCostPerMinuteCoins {
   static final ValueNotifier<int> mentorCoinsNotifier = ValueNotifier<int>(0);
 

@@ -51,10 +51,13 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
   );
   final ValueNotifier<bool> _isGuestNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
+
   @override
   void initState() {
     super.initState();
-    _loadAll();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAll();
+    });
   }
 
   Future<void> _loadAll() async {
@@ -71,53 +74,15 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
           context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
         if (guest) context.read<GuestMentorsCubit>().fetchGuestMentorList(),
       ];
-
       await Future.wait(futures);
     } catch (e, st) {
       debugPrint("Error while loading dashboard data: $e");
-      debugPrintStack(stackTrace: st);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Something went wrong while loading data")),
-      );
     } finally {
       if (mounted) {
         if (mounted) _isLoadingNotifier.value = false;
       }
     }
   }
-  // Future<void> _loadAll() async {
-  //   _isLoadingNotifier.value = true;
-  //
-  //   try {
-  //     final guest = await AuthService.isGuest;
-  //     _isGuestNotifier.value = guest;
-  //
-  //     final List<Future> futures = [
-  //       context.read<Getbannerscubit>().getbanners(),
-  //       context.read<MenteeProfileCubit>().fetchMenteeProfile(),
-  //       context.read<DailyCheckInsCubit>().getDailyCheckIns(),
-  //
-  //       // 👇 This triggers your API call for dialog
-  //       context.read<HomeDialogCubit>().getHomeDialog(),
-  //
-  //       if (!guest)
-  //         context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
-  //       if (guest) context.read<GuestMentorsCubit>().fetchGuestMentorList(),
-  //     ];
-  //
-  //     await Future.wait(futures);
-  //   } catch (e, st) {
-  //     debugPrint("Error while loading dashboard data: $e");
-  //     debugPrintStack(stackTrace: st);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text("Something went wrong while loading data"),
-  //       ),
-  //     );
-  //   } finally {
-  //     if (mounted) _isLoadingNotifier.value = false;
-  //   }
-  // }
 
   void _navigateToScreen(String name) {
     switch (name) {
@@ -229,50 +194,16 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 onPressed: () =>
                                     _scaffoldKey.currentState?.openDrawer(),
                               ),
-                              BlocConsumer<
+                              BlocBuilder<
                                 MenteeProfileCubit,
                                 MenteeProfileState
                               >(
-                                listener: (context, menteeProfilestate) {
-                                  // if (menteeProfilestate
-                                  //     is MenteeProfileLoaded) {
-                                  //   AppLogger.info(
-                                  //     "_role.value:${_role.value}",
-                                  //   );
-                                  //   final menteeProfile = menteeProfilestate
-                                  //       .menteeProfileModel
-                                  //       .data;
-                                  //   setState(() {
-                                  //     _role.value =
-                                  //         menteeProfile?.user?.role ?? "";
-                                  //   });
-                                  //   AppLogger.info(
-                                  //     "_role.value:${_role.value}",
-                                  //   );
-                                  // }
-                                },
                                 builder: (context, menteeProfilestate) {
                                   if (menteeProfilestate
                                       is MenteeProfileLoaded) {
                                     final menteeProfile = menteeProfilestate
                                         .menteeProfileModel
                                         .data;
-                                    _mentorStatus.value =
-                                        menteeProfile?.user?.mentorStatus ??
-                                        "none";
-                                    AppLogger.info(
-                                      "mentorStatus:::${_mentorStatus.value}",
-                                    );
-                                    _mentorProfileUrl.value =
-                                        menteeProfile?.user?.profilePicUrl ??
-                                        "";
-                                    _role.value =
-                                        menteeProfile?.user?.role ?? "";
-                                    AppLogger.info(
-                                      "_role.value:${_role.value}",
-                                    );
-                                    _mentorProfileName.value =
-                                        menteeProfile?.user?.name ?? "";
                                     final coins =
                                         menteeProfile
                                             ?.user
@@ -398,125 +329,88 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               color: Colors.white,
                               child: Column(
                                 children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      context.pop();
-                                      context.push("/profile");
-                                    },
-                                    child: Row(
-                                      children: [
-                                        ValueListenableBuilder<String?>(
-                                          valueListenable: _mentorProfileUrl,
-                                          builder: (context, url, _) {
-                                            return ValueListenableBuilder<
-                                              String?
-                                            >(
-                                              valueListenable:
-                                                  _mentorProfileName,
-                                              builder: (context, name, _) {
-                                                final hasImage =
-                                                    url != null &&
-                                                    url.trim().isNotEmpty;
-                                                final initials =
-                                                    (name != null &&
-                                                        name.trim().isNotEmpty)
-                                                    ? name
-                                                          .trim()[0]
-                                                          .toUpperCase()
-                                                    : 'U';
+                                  BlocBuilder<
+                                    MenteeProfileCubit,
+                                    MenteeProfileState
+                                  >(
+                                    builder: (context, state) {
+                                      if (state is! MenteeProfileLoaded) {
+                                        return SizedBox.shrink();
+                                      }
 
-                                                return hasImage
-                                                    ? CachedNetworkImage(
-                                                        imageUrl: url,
-                                                        imageBuilder:
-                                                            (
-                                                              context,
-                                                              imageProvider,
-                                                            ) => CircleAvatar(
-                                                              radius: 20,
-                                                              backgroundImage:
-                                                                  imageProvider,
-                                                            ),
-                                                        placeholder:
-                                                            (
-                                                              context,
-                                                              url,
-                                                            ) => CircleAvatar(
-                                                              radius: 20,
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .grey
-                                                                      .shade300,
-                                                              child: SizedBox(
-                                                                width: 16,
-                                                                height: 16,
-                                                                child: Center(
-                                                                  child: spinkits
-                                                                      .getSpinningLinespinkit(),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                        errorWidget:
-                                                            (
-                                                              context,
-                                                              url,
-                                                              error,
-                                                            ) => CircleAvatar(
-                                                              radius: 20,
-                                                              backgroundImage:
-                                                                  const AssetImage(
-                                                                    "assets/images/profile.png",
-                                                                  ),
-                                                            ),
-                                                      )
-                                                    : CircleAvatar(
-                                                        radius: 20,
-                                                        backgroundColor: Colors
-                                                            .grey
-                                                            .shade300,
-                                                        child: Text(
-                                                          initials,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
+                                      final user =
+                                          state.menteeProfileModel.data?.user;
+                                      final profileUrl =
+                                          user?.profilePicUrl ?? "";
+                                      final name = user?.name ?? "User";
+                                      final initials = name.isNotEmpty
+                                          ? name[0].toUpperCase()
+                                          : "U";
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context.pop();
+                                          context.push("/profile");
+                                        },
+                                        child: Row(
+                                          children: [
+                                            // PROFILE IMAGE
+                                            profileUrl.isNotEmpty
+                                                ? CachedNetworkImage(
+                                                    imageUrl: profileUrl,
+                                                    imageBuilder: (_, img) =>
+                                                        CircleAvatar(
+                                                          radius: 20,
+                                                          backgroundImage: img,
+                                                        ),
+                                                    placeholder: (_, __) =>
+                                                        CircleAvatar(
+                                                          radius: 20,
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .grey
+                                                                  .shade300,
+                                                        ),
+                                                    errorWidget: (_, __, ___) =>
+                                                        CircleAvatar(
+                                                          radius: 20,
+                                                          backgroundImage:
+                                                              AssetImage(
+                                                                "assets/images/profile.png",
                                                               ),
                                                         ),
-                                                      );
-                                              },
-                                            );
-                                          },
-                                        ),
-
-                                        const SizedBox(width: 12),
-
-                                        Expanded(
-                                          child:
-                                              ValueListenableBuilder<String?>(
-                                                valueListenable:
-                                                    _mentorProfileName,
-                                                builder: (context, name, _) {
-                                                  return Text(
-                                                    capitalize(name ?? "User"),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
+                                                  )
+                                                : CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundColor:
+                                                        Colors.grey.shade300,
+                                                    child: Text(
+                                                      initials,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
-                                                  );
-                                                },
+                                                  ),
+                                            const SizedBox(width: 12),
+                                            // NAME
+                                            Expanded(
+                                              child: Text(
+                                                name,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   ),
                                   SizedBox(width: 16),
                                   _buildDrawerItem(
@@ -632,93 +526,90 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     _navigateToScreen('Executive services'),
                               ),
                             ),
-                            ValueListenableBuilder<String>(
-                              valueListenable: _mentorStatus,
-                              builder: (context, status, _) {
-                                print("mentee Status:${status}");
-                                if (status != "approval") {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                      horizontal: 16,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: kCommonGradient.withOpacity(
-                                        0.5,
-                                      ),
-                                    ),
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      visualDensity: VisualDensity.compact,
-                                      leading: Image.asset(
-                                        "assets/icons/mentor.png",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                      title: const Text(
-                                        "Become Mentor",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        context.pop();
-                                        AppLogger.info(
-                                          "mentee Status::${status}",
-                                        );
-                                        if (status == "" || status == "none") {
-                                          context.push('/becomementorscreen');
-                                        } else if (status == "inreview") {
-                                          context.push('/in_review');
-                                        } else if (status == "rejected") {
-                                          context.push('/profile_rejected');
-                                        }
-                                      },
-                                    ),
-                                  );
+                            BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
+                              builder: (context, state) {
+                                if (state is! MenteeProfileLoaded)
+                                  return SizedBox.shrink();
+
+                                final user =
+                                    state.menteeProfileModel.data?.user;
+                                final status = (user?.mentorStatus ?? "none")
+                                    .toLowerCase();
+                                if (status == "approval") {
+                                  return SizedBox.shrink();
                                 }
-                                return const SizedBox.shrink();
+                                return Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 4,
+                                    horizontal: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: kCommonGradient.withOpacity(0.5),
+                                  ),
+                                  child: ListTile(
+                                    leading: Image.asset(
+                                      "assets/icons/mentor.png",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                    title: Text(
+                                      "Become Mentor",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      context.pop();
+
+                                      if (status == "none") {
+                                        context.push('/becomementorscreen');
+                                      } else if (status == "inreview") {
+                                        context.push('/in_review');
+                                      } else if (status == "rejected") {
+                                        context.push('/profile_rejected');
+                                      }
+                                    },
+                                  ),
+                                );
                               },
                             ),
-                            ValueListenableBuilder(
-                              valueListenable: _role,
-                              builder: (context, value, child) {
-                                return value == "Both"
-                                    ? Container(
-                                        margin: EdgeInsets.symmetric(
-                                          vertical: 10,
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                          // vertical: 12,
-                                          horizontal: 14,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffFFF7CE),
-                                        ),
-                                        child: _DrawerItem(
-                                          icon: Image.asset(
-                                            "assets/icons/ArrowCircleleft.png",
-                                            fit: BoxFit.cover,
-                                            width:
-                                                SizeConfig.screenWidth * 0.082,
-                                            height:
-                                                SizeConfig.screenHeight * 0.065,
-                                          ),
-                                          title: 'Switch to Mentor',
-                                          onTap: () {
-                                            context.pop();
-                                            context.pushReplacement(
-                                              '/mentor_dashboard',
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    : SizedBox.shrink();
+                            BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
+                              builder: (context, state) {
+                                if (state is! MenteeProfileLoaded)
+                                  return SizedBox.shrink();
+
+                                final user =
+                                    state.menteeProfileModel.data?.user;
+                                final role = (user?.role ?? "").toLowerCase();
+
+                                if (role != "both") return SizedBox.shrink();
+
+                                return Container(
+                                  margin: EdgeInsets.symmetric(vertical: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffFFF7CE),
+                                  ),
+                                  child: _DrawerItem(
+                                    icon: Image.asset(
+                                      "assets/icons/ArrowCircleleft.png",
+                                      width: SizeConfig.screenWidth * 0.082,
+                                      height: SizeConfig.screenHeight * 0.068,
+                                    ),
+                                    title: 'Switch to Mentor',
+                                    onTap: () {
+                                      context.pop();
+                                      context.pushReplacement(
+                                        '/mentor_dashboard',
+                                      );
+                                    },
+                                  ),
+                                );
                               },
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 4,
@@ -1034,37 +925,39 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   ),
                                 ),
                                 if (!isGuest) ...[
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    onPressed: () {
-                                      if (_onCampusNotifier.value == true) {
-                                        context.push(
-                                          '/campus_mentor_list?scope=',
-                                        );
-                                      } else {
-                                        context.push(
-                                          '/campus_mentor_list?scope=beyond',
-                                        );
-                                      }
+                                  ValueListenableBuilder(
+                                    valueListenable: _onCampusNotifier,
+                                    builder: (context, isCampus, _) {
+                                      return TextButton(
+                                        style: TextButton.styleFrom(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.zero,
+                                        ),
+                                        onPressed: () {
+                                          context.push(
+                                            isCampus
+                                                ? '/campus_mentor_list?scope='
+                                                : '/campus_mentor_list?scope=beyond',
+                                          );
+                                        },
+                                        child: Text(
+                                          'View All',
+                                          style: TextStyle(
+                                            color: Color(0xff4076ED),
+                                            fontFamily: 'segeo',
+                                            fontWeight: FontWeight.w600,
+                                            fontStyle: FontStyle.normal,
+                                            fontSize: 14,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationStyle:
+                                                TextDecorationStyle.solid,
+                                            decorationColor: Color(0xff4076ED),
+                                            decorationThickness: 1,
+                                          ),
+                                        ),
+                                      );
                                     },
-                                    child: Text(
-                                      'View All',
-                                      style: TextStyle(
-                                        color: Color(0xff4076ED),
-                                        fontFamily: 'segeo',
-                                        fontWeight: FontWeight.w600,
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: 14,
-                                        decoration: TextDecoration.underline,
-                                        decorationStyle:
-                                            TextDecorationStyle.solid,
-                                        decorationColor: Color(0xff4076ED),
-                                        decorationThickness: 1,
-                                      ),
-                                    ),
                                   ),
                                 ],
                               ],
@@ -1290,75 +1183,128 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     if (campusMentorlist.isEmpty) {
                                       return Center(
                                         child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Image.asset(
                                               "assets/nodata/no_data.png",
-                                              width: 200,
-                                              height: 200,
+                                              width: 220,
+                                              height: 220,
                                             ),
-                                            Text(
-                                              _onCampusNotifier.value
-                                                  ? "Become the first mentor of your college"
-                                                  : "No Mentors Found",
-                                              style: TextStyle(
-                                                color: Color(0xff333333),
-                                                fontFamily: 'segeo',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            ValueListenableBuilder<String>(
-                                              valueListenable: _mentorStatus,
-                                              builder: (context, status, _) {
-                                                print(
-                                                  "mentor Statussss: $status",
-                                                );
-                                                final cleanStatus = status
+                                            BlocBuilder<
+                                              MenteeProfileCubit,
+                                              MenteeProfileState
+                                            >(
+                                              builder: (context, state) {
+                                                if (state
+                                                    is! MenteeProfileLoaded)
+                                                  return SizedBox.shrink();
+                                                final user = state
+                                                    .menteeProfileModel
+                                                    .data
+                                                    ?.user;
+                                                final role = (user?.role ?? "")
                                                     .trim()
                                                     .toLowerCase();
-
-                                                if (cleanStatus != "approval") {
-                                                  return OutlinedButton.icon(
-                                                    onPressed: () async {
-                                                      context.push(
-                                                        '/becomementorscreen',
-                                                      );
-                                                    },
-                                                    label: const Text(
-                                                      'Become a Mentor',
-                                                      style: TextStyle(
-                                                        fontFamily: 'segeo',
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Color(
-                                                          0xff4A7CF6,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    style: OutlinedButton.styleFrom(
-                                                      side: BorderSide.none,
-                                                      backgroundColor:
-                                                          const Color(
-                                                            0xFFFAF5FF,
-                                                          ),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              20,
+                                                return ValueListenableBuilder<
+                                                  bool
+                                                >(
+                                                  valueListenable:
+                                                      _onCampusNotifier,
+                                                  builder: (context, isOnCampus, _) {
+                                                    String message;
+                                                    Widget? actionButton;
+                                                    if (isOnCampus) {
+                                                      if (role == "both") {
+                                                        message =
+                                                            "No mentors in your campus yet";
+                                                        actionButton = null;
+                                                      } else {
+                                                        message =
+                                                            "Be the first mentor in your campus!";
+                                                        actionButton = Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                                top: 16,
+                                                              ),
+                                                          child: OutlinedButton.icon(
+                                                            onPressed: () =>
+                                                                context.push(
+                                                                  '/becomementorscreen',
+                                                                ),
+                                                            label: const Text(
+                                                              "Become a Mentor",
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'segeo',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 16,
+                                                                color: Color(
+                                                                  0xff4A7CF6,
+                                                                ),
+                                                              ),
                                                             ),
-                                                      ),
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 20,
-                                                            vertical: 8,
+                                                            style: OutlinedButton.styleFrom(
+                                                              backgroundColor:
+                                                                  const Color(
+                                                                    0xFFF5F8FF,
+                                                                  ),
+                                                              side: const BorderSide(
+                                                                color: Color(
+                                                                  0xff4A7CF6,
+                                                                ),
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      30,
+                                                                    ),
+                                                              ),
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        28,
+                                                                    vertical:
+                                                                        10,
+                                                                  ),
+                                                            ),
                                                           ),
-                                                    ),
-                                                  );
-                                                }
-
-                                                // Hide button for 'approval' status
-                                                return const SizedBox.shrink();
+                                                        );
+                                                      }
+                                                    } else {
+                                                      // BEYOND CAMPUS
+                                                      message =
+                                                          "No mentors found beyond campus";
+                                                      actionButton = null;
+                                                    }
+                                                    return Column(
+                                                      children: [
+                                                        Text(
+                                                          message,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontFamily:
+                                                                    'segeo',
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: Color(
+                                                                  0xff333333,
+                                                                ),
+                                                              ),
+                                                        ),
+                                                        if (actionButton !=
+                                                            null)
+                                                          actionButton,
+                                                      ],
+                                                    );
+                                                  },
+                                                );
                                               },
                                             ),
                                           ],
@@ -1575,7 +1521,7 @@ class _DrawerItem extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            icon, // Directly use the passed widget
+            icon,
             const SizedBox(width: 16),
             Expanded(
               child: Text(

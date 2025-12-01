@@ -46,7 +46,16 @@ class _MentorProfileScreenState extends State<MentorProfileScreen1> {
                 ],
               ),
             ),
-            child: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
+            child: BlocConsumer<MentorProfileCubit1, MentorProfileStates>(
+              listener: (context, state) {
+                if (state is MentorProfile1Loaded) {
+                  final user_data = state is MentorProfile1Loaded
+                      ? state.mentorProfileModel.data
+                      : null;
+                  final cost = user_data?.coinsPerMinute ?? "";
+                  mentorCoinPerMinNotifier.value = int.parse(cost);
+                }
+              },
               builder: (context, state) {
                 if (state is MentorProfileLoading ||
                     state is MentorProfileInitially) {
@@ -171,6 +180,7 @@ class _ProfileBody extends StatelessWidget {
               child: _EditLink(),
             ),
           ),
+
           // SizedBox(height: 3),
           // if (bio.isNotEmpty)
           //   Padding(
@@ -189,7 +199,6 @@ class _ProfileBody extends StatelessWidget {
           //       ),
           //     ),
           //   ),
-
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

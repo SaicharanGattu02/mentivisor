@@ -8,6 +8,7 @@ import 'package:mentivisor/Mentee/data/cubits/DeleteSlot/DeleteSlotCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/DeleteSlot/DeleteSlotStates.dart';
 import 'package:mentivisor/Mentor/data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/add_slot_dialog.dart';
+import 'package:mentivisor/utils/color_constants.dart';
 import '../../Components/CustomSnackBar.dart';
 import '../../Components/Shimmers.dart';
 import '../../Mentee/data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
@@ -29,26 +30,6 @@ const TextStyle kTitle16Bold = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.w700,
 );
-
-// small helper pill (used in the group cards)
-Widget _slotChip(String label) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    decoration: BoxDecoration(
-      color: Color(0xFFF5F5F5), // light lavender background
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Text(
-      label,
-      style: const TextStyle(
-        fontFamily: 'segeo',
-        fontWeight: FontWeight.w600,
-        fontSize: 13,
-        color: Colors.black,
-      ),
-    ),
-  );
-}
 
 class Slotsbookingscreen extends StatefulWidget {
   const Slotsbookingscreen({super.key});
@@ -536,16 +517,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                       for (final day in recentSlots.days!) ...[
                         _recentGroupCard(
                           title: day.date ?? '',
-                          slots:
-                              day.slots
-                                  ?.map((slot) => _rangeTime(slot.time!))
-                                  .toList() ??
-                              [],
-                          count:
-                              day.slots?.length ??
-                              0, // Number of slots for the day
-                          statusCounts: day
-                              .statusCounts, // To check if it's booked or active
+                          slots: day.slots ?? [],
+                          count: day.slots?.length??0,// ← Send the slot objects directly
+                          statusCounts: day.statusCounts,
                         ),
                         const SizedBox(height: 12),
                       ],
@@ -671,11 +645,12 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
   Widget _recentGroupCard({
     required String title,
-    required List<String> slots,
-    required int count, // Count of slots for the day
+    required List<TimeSlot> slots,
+    required int count,
     required StatusCounts? statusCounts,
   }) {
     String countLabel = "$count slot${count == 1 ? '' : 's'}";
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -690,63 +665,31 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Title Row
             Row(
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_month_outlined,
-                        size: 18,
-                        color: Color(0xFF333333),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontFamily: 'segeo',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+                const Icon(
+                  Icons.calendar_month_outlined,
+                  size: 18,
+                  color: Color(0xFF333333),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'segeo',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-                // BlocConsumer<DeleteSlotCubit, DeleteSlotStates>(
-                //   listener: (context, state) {
-                //     if (state is DeleteSlotLoaded) {
-                //       Navigator.pop(context);
-                //       context.read<AvailableSlotsCubit>().getAvailableSlots(_weekFilter);
-                //     }
-                //   },
-                //   builder: (context, state) {
-                //     final isLoading = state is DeleteSlotLoading;
-                //     return IconButton(
-                //       onPressed: isLoading
-                //           ? null
-                //           : () {
-                //         showDeleteConfirmationDialog(context, () {
-                //           context
-                //               .read<DeleteSlotCubit>().deleteSlot();
-                //         });
-                //       },
-                //       style: IconButton.styleFrom(
-                //         padding: EdgeInsets.zero,
-                //         visualDensity: VisualDensity.compact,
-                //       ),
-                //       icon: Image.asset(
-                //         'assets/icons/delete.png',
-                //         width: 25,
-                //         height: 25,
-                //       ),
-                //     );
-                //   },
-                // ),
               ],
             ),
+
             const SizedBox(height: 8),
+
+            // ⭐ Slot Count (RESTORED)
             Text(
-              countLabel, // DYNAMIC
+              countLabel,
               style: const TextStyle(
                 fontFamily: 'segeo',
                 fontSize: 13,
@@ -754,23 +697,74 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
+
             const SizedBox(height: 10),
+
+            // Slot Pills
             Wrap(
               spacing: 10,
               runSpacing: 10,
               children: slots.map((slot) {
-                bool isBooked =
-                    (statusCounts?.booked ?? 0) >
-                    0; // Check if any slots are booked
-                return _slotChip(slot, isBooked);
+                bool isBooked = (slot.status?.toLowerCase() == "booked");
+                return _slotItem(
+                  timeSlot: slot,
+                  isBooked: isBooked,
+                );
               }).toList(),
             ),
           ],
         ),
       ),
     );
-
   }
+
+
+  Widget _slotItem({required TimeSlot timeSlot, required bool isBooked}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isBooked ? Colors.grey.shade200 : Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isBooked ? Colors.grey.shade300 : Colors.blue.shade200,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            timeSlot.time ?? "",
+            style: TextStyle(
+              color: isBooked ? Colors.grey : Colors.black,
+              fontSize: 14,
+              fontFamily: 'segeo',
+            ),
+          ),
+
+          const SizedBox(width: 6),
+
+          // ❌ Hide delete icon if booked
+          if (!isBooked)
+            GestureDetector(
+              onTap: () {
+                showDeleteConfirmationDialog(
+                  context,
+                      () {
+                    context.read<DeleteSlotCubit>().deleteSlot(timeSlot.id.toString());
+                  },
+                );
+              },
+              child: Icon(
+                Icons.cancel,
+                size: 18,
+                color: primarycolor,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
 
   Future<void> showDeleteConfirmationDialog(
       BuildContext context,
@@ -780,21 +774,26 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return BlocBuilder<DeleteSlotCubit, DeleteSlotStates>(
+        return BlocConsumer<DeleteSlotCubit, DeleteSlotStates>(
+          listener: (context, state) {
+            if (state is DeleteSlotLoaded) {
+              Navigator.pop(context); // close dialog
+              context.read<AvailableSlotsCubit>().getAvailableSlots(_weekFilter);
+            }
+            if (state is DeleteSlotFailure) {
+              Navigator.pop(context);
+              CustomSnackBar1.show(context, state.error);
+            }
+          },
           builder: (context, state) {
             final isLoading = state is DeleteSlotLoading;
-
             return AlertDialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               title: Row(
                 children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.red,
-                    size: 30,
-                  ),
+                  Icon(Icons.warning_amber_rounded, color: Colors.red, size: 30),
                   const SizedBox(width: 8),
                   const Text("Delete Slot"),
                 ],
@@ -834,6 +833,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       },
     );
   }
+
 
   Widget _slotChip(String slotTime, bool isBooked) {
     return Opacity(
@@ -878,22 +878,13 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
 
 }
 
-class _Grouped {
-  final DateTime sortKey;
-  final String title;
-  final String? badge;
-  final List<String> chips;
-  final int count; // NEW
-  _Grouped(this.sortKey, this.title, this.badge, this.chips, this.count);
-}
 
 class AvailableSlotsShimmer extends StatelessWidget {
   const AvailableSlotsShimmer({super.key});
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

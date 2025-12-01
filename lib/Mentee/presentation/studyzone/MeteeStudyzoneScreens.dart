@@ -523,33 +523,66 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     .studyZoneCampusModel;
                           final studyZoneData =
                               studyZoneCampusModel.studyZoneData;
-                          if ((studyZoneData?.studyZoneCampusData?.length ??
-                                  0) ==
-                              0) {
+                          if ((studyZoneData?.studyZoneCampusData?.length ?? 0) == 0) {
                             return Center(
                               child: SingleChildScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SizedBox(
-                                      height: 200,
-                                      width: 200,
-                                      child: Image.asset(
-                                        "assets/nodata/no_data.png",
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      onCampusNotifier.value==true?
-                                      'Be the first student to upload your notes in your campus':"No Data Found!",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Poppins',
-                                      ),
+                                    Image.asset("assets/nodata/no_data.png", width: 200, height: 200),
+                                    const SizedBox(height: 24),
+                                    ValueListenableBuilder<bool>(
+                                      valueListenable: onCampusNotifier,
+                                      builder: (context, isOnCampus, _) {
+                                        return ValueListenableBuilder<int>(
+                                          valueListenable: _selectedTagIndex,
+                                          builder: (context, tagIndex, _) {
+                                            // Get current selected tag safely
+                                            String currentTag = "All";
+                                            final tagsState = context.read<TagsCubit>().state;
+
+                                            if (tagsState is TagsLoaded) {
+                                              final modifiedTags = [
+                                                StudyZone(id: -1, tags: "All"),
+                                                ...?tagsState.tagsModel.data,
+                                              ];
+                                              if (tagIndex >= 0 && tagIndex < modifiedTags.length) {
+                                                currentTag = modifiedTags[tagIndex].tags ?? "All";
+                                              }
+                                            }
+
+                                            final String scope = isOnCampus ? "on campus" : "beyond campus";
+
+                                            String message;
+
+                                            if (isOnCampus) {
+                                              if (currentTag.toLowerCase() == "all") {
+                                                message = "Be the first to upload notes, books, or study materials on your campus!";
+                                              } else {
+                                                message = "No $currentTag resources available on campus yet.\nShare yours and help others!";
+                                              }
+                                            } else {
+                                              if (currentTag.toLowerCase() == "all") {
+                                                message = "No study resources found beyond campus yet.";
+                                              } else {
+                                                message = "No $currentTag resources found beyond campus.";
+                                              }
+                                            }
+
+                                            return Text(
+                                              message,
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                fontFamily: 'Poppins',
+                                                color: Colors.black,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),

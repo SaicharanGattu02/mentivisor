@@ -592,25 +592,53 @@ class _EccScreenState extends State<EccScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(
-                                  height: 200,
-                                  width: 200,
-                                  child: Center(
-                                    child: Image.asset(
-                                      "assets/nodata/no_data.png",
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  selectedFilter == "On Campuses"?
-                                  'Be the first student to upload opportunities in your campus.':"No Data Found!",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Poppins',
-                                  ),
+                                Image.asset("assets/nodata/no_data.png", width: 200, height: 200),
+                                const SizedBox(height: 24),
+                                ValueListenableBuilder<bool>(
+                                  valueListenable: onCampusNotifier,
+                                  builder: (context, isOnCampus, _) {
+                                    return ValueListenableBuilder<int>(
+                                      valueListenable: _selectedTagIndex,
+                                      builder: (context, tagIndex, _) {
+                                        // Safely get the current tag (including "All")
+                                        String currentTag = "All";
+                                        final tagsState = context.read<EccTagsCubit>().state;
+                                        if (tagsState is EccTagsLoaded) {
+                                          final modifiedTags = ["All", ...?tagsState.tagsModel.data];
+                                          if (tagIndex >= 0 && tagIndex < modifiedTags.length) {
+                                            currentTag = modifiedTags[tagIndex];
+                                          }
+                                        }
+
+                                        final String scope = isOnCampus ? "on campus" : "beyond campus";
+
+                                        String message;
+                                        if (isOnCampus) {
+                                          if (currentTag.toLowerCase() == "all") {
+                                            message = "Be the first to share events, competitions, or challenges on your campus!";
+                                          } else {
+                                            message = "No $currentTag events on campus yet.\nBe the first to add one!";
+                                          }
+                                        } else {
+                                          if (currentTag.toLowerCase() == "all") {
+                                            message = "No events, competitions, or challenges beyond campus yet.";
+                                          } else {
+                                            message = "No $currentTag events beyond campus.";
+                                          }
+                                        }
+                                        return Text(
+                                          message,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black87,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
                                 ),
                               ],
                             ),

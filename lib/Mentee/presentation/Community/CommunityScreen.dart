@@ -299,32 +299,85 @@ class _CommunityScreenState extends State<Communityscreen> {
                     final communityposts =
                         communityPostsModel.data?.communityposts;
                     if (communityposts?.length == 0) {
-                      return Center(
-                        child: Column(
-                          spacing: 10,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 200,
-                              width: 200,
-                              child: Center(
+                      return Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 200,
+                                width: 200,
                                 child: Image.asset("assets/nodata/no_data.png"),
                               ),
-                            ),
-                            Text(
-                              textAlign: TextAlign.center,
-                              selectedFilter == "On Campuses"
-                                  ? 'Be the first student to upload post in your campus campus.'
-                                  : "No Data Found",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'Poppins',
+                              const SizedBox(height: 24),
+                              ValueListenableBuilder<int>(
+                                valueListenable: _selectedFilter,
+                                builder: (context, filterIndex, _) {
+                                  final currentFilter = _filters[filterIndex];
+                                  final isOnCampus = _onCampus.value;
+
+                                  String message;
+
+                                  if (isOnCampus) {
+                                    switch (currentFilter.toLowerCase()) {
+                                      case 'all':
+                                        message =
+                                            "No posts on campus yet.\nBe the first to share something!";
+                                        break;
+                                      case 'recent':
+                                        message =
+                                            "No recent posts on campus yet.\nStart the conversation!";
+                                        break;
+                                      case 'trending':
+                                        message =
+                                            "Nothing trending on campus right now.\nShare something cool!";
+                                        break;
+                                      case 'highlighted':
+                                        message =
+                                            "No highlighted posts yet.\nYour post could be next!";
+                                        break;
+                                      default:
+                                        message =
+                                            "Be the first to post on your campus!";
+                                    }
+                                  } else {
+                                    // Beyond Campus
+                                    switch (currentFilter.toLowerCase()) {
+                                      case 'all':
+                                        message =
+                                            "No posts from beyond campus yet.";
+                                        break;
+                                      case 'recent':
+                                        message =
+                                            "No recent posts from beyond campus.";
+                                        break;
+                                      case 'trending':
+                                        message =
+                                            "Nothing trending beyond campus right now.";
+                                        break;
+                                      case 'highlighted':
+                                        message =
+                                            "No highlighted posts from beyond campus.";
+                                        break;
+                                      default:
+                                        message =
+                                            "No posts found beyond campus.";
+                                    }
+                                  }
+                                  return Text(
+                                    message,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  );
+                                },
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }

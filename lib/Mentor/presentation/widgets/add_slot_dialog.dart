@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentivisor/services/AuthService.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
+import '../../../utils/constants.dart';
 import '../../data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
 import '../../data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 import '../../data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
@@ -39,15 +41,29 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
   }
 
   Future<void> _updateCoinCost() async {
+    // compute minutes difference (handles wrap-around midnight)
     final fromMinutes = from.hour * 60 + from.minute;
     final toMinutes = to.hour * 60 + to.minute;
     int difference = toMinutes - fromMinutes;
-    if (difference < 0) difference += 24 * 60;
 
-    // Replace with your app coin logic
-    const coinsPerMinute = 2;
-    totalSessionCoinsNotifier.value = difference * coinsPerMinute;
+    if (difference <= 0) {
+      difference += 24 * 60; // next day (if needed)
+    }
+
+    // Read coins string
+    final coinsString = mentorCoinPerMinNotifier.value;
+    debugPrint('coinsString:${coinsString}');
+
+    // Convert safely to int (avoid null/parse failure)
+    final coinsPerMinute = coinsString;
+
+    // Calculate coins for the entire duration
+    final total = difference * coinsPerMinute;
+
+    // Update notifier
+    totalSessionCoinsNotifier.value = total;
   }
+
 
   Future<void> _pickTime(BuildContext context, bool isFrom) async {
     final picked = await showTimePicker(

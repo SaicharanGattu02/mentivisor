@@ -90,7 +90,16 @@ class _MentorDashboardState extends State<MentorDashboard> {
         appBar: AppBar(
           backgroundColor: const Color(0xffF7F9FE),
           automaticallyImplyLeading: false,
-          title: BlocBuilder<MentorProfileCubit1, MentorProfileStates>(
+          title: BlocConsumer<MentorProfileCubit1, MentorProfileStates>(
+            listener: (context, state) {
+              if(state is MentorProfile1Loaded){
+                final user_data = state is MentorProfile1Loaded
+                    ? state.mentorProfileModel.data
+                    : null;
+                final cost = user_data?.coinsPerMinute ?? "";
+                mentorCoinPerMinNotifier.value= int.parse(cost);
+              }
+            },
             builder: (context, state) {
               final user_data = state is MentorProfile1Loaded
                   ? state.mentorProfileModel.data
