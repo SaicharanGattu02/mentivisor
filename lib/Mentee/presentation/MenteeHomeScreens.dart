@@ -586,14 +586,15 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 return Container(
                                   height: 56,
                                   margin: EdgeInsets.symmetric(vertical: 10),
+                                  padding: EdgeInsets.only(left: 5),
                                   decoration: BoxDecoration(
                                     color: Color(0xffFFF7CE),
                                   ),
                                   child: _DrawerItem(
                                     icon: Image.asset(
                                       "assets/icons/ArrowCircleleft.png",
-                                      width: 52,
-                                      height: 52,
+                                      width: 40,
+                                      height: 40,
                                     ),
                                     title:'Switch to Mentor',
                                     onTap: () {
