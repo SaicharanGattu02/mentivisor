@@ -593,8 +593,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                   child: _DrawerItem(
                                     icon: Image.asset(
                                       "assets/icons/ArrowCircleleft.png",
-                                      width: 40,
-                                      height: 40,
+                                      width: 50,
+                                      height: 50,
                                     ),
                                     title:'Switch to Mentor',
                                     onTap: () {
