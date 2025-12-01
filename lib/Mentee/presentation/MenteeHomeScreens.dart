@@ -579,26 +579,23 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               builder: (context, state) {
                                 if (state is! MenteeProfileLoaded)
                                   return SizedBox.shrink();
-
                                 final user =
                                     state.menteeProfileModel.data?.user;
                                 final role = (user?.role ?? "").toLowerCase();
-
                                 if (role != "both") return SizedBox.shrink();
-
                                 return Container(
+                                  height: 56,
                                   margin: EdgeInsets.symmetric(vertical: 10),
-                                  padding: EdgeInsets.symmetric(horizontal: 14),
                                   decoration: BoxDecoration(
                                     color: Color(0xffFFF7CE),
                                   ),
                                   child: _DrawerItem(
                                     icon: Image.asset(
                                       "assets/icons/ArrowCircleleft.png",
-                                      width: SizeConfig.screenWidth * 0.082,
-                                      height: SizeConfig.screenHeight * 0.068,
+                                      width: 52,
+                                      height: 52,
                                     ),
-                                    title: 'Switch to Mentor',
+                                    title:'Switch to Mentor',
                                     onTap: () {
                                       context.pop();
                                       context.pushReplacement(
@@ -1522,7 +1519,6 @@ class _DrawerItem extends StatelessWidget {
         child: Row(
           children: [
             icon,
-            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,

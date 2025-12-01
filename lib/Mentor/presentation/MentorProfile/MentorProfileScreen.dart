@@ -204,7 +204,7 @@ class _ProfileBody extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Per Minute Cost is $cost',
+                'Coin Per Minute Cost is $cost',
                 style: const TextStyle(
                   fontFamily: 'segeo',
                   fontWeight: FontWeight.w700,

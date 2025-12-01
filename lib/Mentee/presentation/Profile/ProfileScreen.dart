@@ -625,7 +625,7 @@ class _ProfileScreen1State extends State<ProfileScreen> {
                                                                             vertical:
                                                                                 12,
                                                                           ),
-                                                                          child: CommentBottomSheet1(
+                                                                          child: CommentBottomSheet(
                                                                             communityPost: CommunityPosts(
                                                                               id: post?.id,
                                                                               heading: post?.heading,

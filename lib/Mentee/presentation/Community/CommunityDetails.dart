@@ -465,7 +465,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                             itemCount: list.length,
                             itemBuilder: (ctx, i) {
                               final c = list[i];
-                              return CommentCard1(
+                              return CommentCard(
                                 key: ValueKey(c.id),
                                 id: c.id ?? 0,
                                 post_id: widget.communityId,

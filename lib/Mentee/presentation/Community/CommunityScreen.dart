@@ -309,7 +309,7 @@ class _CommunityScreenState extends State<Communityscreen> {
                                 width: 200,
                                 child: Image.asset("assets/nodata/no_data.png"),
                               ),
-                              const SizedBox(height: 24),
+                              // const SizedBox(height: 24),
                               ValueListenableBuilder<int>(
                                 valueListenable: _selectedFilter,
                                 builder: (context, filterIndex, _) {
@@ -326,15 +326,15 @@ class _CommunityScreenState extends State<Communityscreen> {
                                         break;
                                       case 'recent':
                                         message =
-                                            "No recent posts on campus yet.\nStart the conversation!";
+                                            "No recent posts on campus yet.\nBe the first to Start the conversation!";
                                         break;
                                       case 'trending':
                                         message =
-                                            "Nothing trending on campus right now.\nShare something cool!";
+                                            "Nothing trending on campus right now.\nBe the first to Share something cool!";
                                         break;
                                       case 'highlighted':
                                         message =
-                                            "No highlighted posts yet.\nYour post could be next!";
+                                            "No highlighted posts yet.\nBe the first to Your post could be next!";
                                         break;
                                       default:
                                         message =
@@ -454,24 +454,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                                 },
                               ),
                             ),
-                            // SliverGrid(
-                            //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            //     crossAxisCount: _getCrossAxisCount(context),
-                            //     mainAxisSpacing: 16,
-                            //     crossAxisSpacing: 16,
-                            //     childAspectRatio: _getChildAspectRatio(context),
-                            //   ),
-                            //   delegate: SliverChildBuilderDelegate(
-                            //         (context, index) {
-                            //       final communitypost = communityposts?[index];
-                            //       return PostCard(
-                            //         scope: _onCampus.value ? "" : "beyond",
-                            //         communityPosts: communitypost ?? CommunityPosts(),
-                            //       );
-                            //     },
-                            //     childCount: communityposts?.length ?? 0,
-                            //   ),
-                            // ),
                             if (state is CommunityPostsLoadingMore)
                               const SliverToBoxAdapter(
                                 child: Padding(

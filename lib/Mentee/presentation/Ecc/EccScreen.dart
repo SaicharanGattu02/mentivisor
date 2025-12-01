@@ -593,7 +593,7 @@ class _EccScreenState extends State<EccScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset("assets/nodata/no_data.png", width: 200, height: 200),
-                                const SizedBox(height: 24),
+                                // const SizedBox(height: 24),
                                 ValueListenableBuilder<bool>(
                                   valueListenable: onCampusNotifier,
                                   builder: (context, isOnCampus, _) {
@@ -609,9 +609,7 @@ class _EccScreenState extends State<EccScreen> {
                                             currentTag = modifiedTags[tagIndex];
                                           }
                                         }
-
                                         final String scope = isOnCampus ? "on campus" : "beyond campus";
-
                                         String message;
                                         if (isOnCampus) {
                                           if (currentTag.toLowerCase() == "all") {

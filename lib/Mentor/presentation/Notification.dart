@@ -49,7 +49,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
     if (t.contains("reward")) return "assets/images/coinsimage.png";
     if (t.contains("reminder")) return "assets/images/coinsimage.png";
     if (t.contains("expertise")) return "assets/icons/updates.png";
-    return "assets/images/coinsimage.png";
+    return "assets/icons/approval.png";
   }
   /// Handle navigation
   void _handleNotificationTap(Data data) {
@@ -224,7 +224,7 @@ class _NotificationMentorState extends State<NotificationMentor> {
                                     return _buildNotificationCard(
                                       icon: _getIconForType(item.type),
                                       title: item.title ?? "",
-                                      subtitle: item.remarks ?? item.message ?? "",
+                                      subtitle: item.message ?? item.remarks ?? "",
                                       date: formatDate(item.createdAt), // 👈 formatted date here
                                       item: item,
                                     );

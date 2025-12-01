@@ -153,13 +153,12 @@ class _NotificationsState extends State<Notifications> {
                               return _buildNotificationCard(
                                 icon: _getIconForType(item.type),
                                 title: item.title ?? "",
-                                subtitle: item.remarks ?? item.message ?? "",
+                                subtitle: item.message ?? item.remarks ?? "",
                                 date: formatDate(item.createdAt),
                                 item: item,
                               );
                             },
                           ),
-
                           if (state is NotificationsLoadingMore)
                             const SliverToBoxAdapter(
                               child: Padding(
@@ -399,8 +398,8 @@ class _NotificationsState extends State<Notifications> {
     final t = type?.toLowerCase() ?? "";
     if (t.contains("session")) return "assets/icons/meet.png";
     if (t.contains("reward")) return "assets/images/coinsimage.png";
-    if (t.contains("reminder")) return "assets/icons/approval.png";
-    if (t.contains("mention")) return "assets/icons/approval.png";
+    if (t.contains("reminder")) return "assets/icons/notification-bell.png";
+    if (t.contains("mention")) return "assets/icons/mention.png";
     return "assets/icons/approval.png";
   }
 

@@ -531,7 +531,6 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Image.asset("assets/nodata/no_data.png", width: 200, height: 200),
-                                    const SizedBox(height: 24),
                                     ValueListenableBuilder<bool>(
                                       valueListenable: onCampusNotifier,
                                       builder: (context, isOnCampus, _) {
@@ -560,7 +559,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                               if (currentTag.toLowerCase() == "all") {
                                                 message = "Be the first to upload notes, books, or study materials on your campus!";
                                               } else {
-                                                message = "No $currentTag resources available on campus yet.\nShare yours and help others!";
+                                                message = "Be the first to upload notes, books, or study materials on your campus!";
                                               }
                                             } else {
                                               if (currentTag.toLowerCase() == "all") {
