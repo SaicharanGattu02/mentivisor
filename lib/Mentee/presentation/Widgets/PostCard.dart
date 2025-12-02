@@ -75,8 +75,6 @@ class _PostCardState extends State<PostCard>
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -164,89 +162,83 @@ class _PostCardState extends State<PostCard>
                 ),
               ),
               Padding(
-                padding:   EdgeInsets.all(12),
+                padding: EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.communityPosts.anonymous == 0)...[
+                    if (widget.communityPosts.anonymous == 0) ...[
                       Row(
                         children: [
                           GestureDetector(
                             onTap: () async {
+                              // ---- 1. Check Guest ----
+                              final isGuest = await AuthService.isGuest;
+                              if (isGuest) {
+                                if (mounted) context.push('/auth_landing');
+                                return; // Stop further execution
+                              }
+                              // ---- 2. Proceed with normal logic ----
                               final userIdStr =
-                              await AuthService.getUSerId(); // String? like "107"
-                              final userId = int.tryParse(
-                                userIdStr ?? '',
-                              ); // Parse to int, default 0 if null/invalid
-                              AppLogger.info(
-                                "userId::$userId (parsed as int: $userId)",
-                              );
-
+                                  await AuthService.getUSerId(); // String? like "107"
+                              final userId = int.tryParse(userIdStr ?? '');
                               final uploaderId =
                                   widget.communityPosts.uploader?.id;
                               if (userId == uploaderId) {
                                 context.push("/profile");
-                                AppLogger.info(
-                                  "Navigating to own profile (userId: $userId == uploaderId: $uploaderId)",
-                                );
                                 AppLogger.info("profile::true");
                               } else {
                                 context.push("/common_profile/$uploaderId");
-                                AppLogger.info(
-                                  "Navigating to common profile (userId: $userId != uploaderId: $uploaderId)",
-                                );
-                                AppLogger.info("profile::false...$uploaderId");
                               }
                             },
                             child: widget.communityPosts.imgUrl?.isEmpty == true
                                 ? CircleAvatar(
-                              radius: 16,
-                              backgroundColor: Colors.grey.shade400,
-                              child: Text(
-                                widget.communityPosts.uploader?.name![0]
-                                    .toUpperCase() ??
-                                    "",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                                : CachedNetworkImage(
-                              imageUrl:
-                              widget.communityPosts.anonymous == 1
-                                  ? "assets/images/profile.png"
-                                  : widget
-                                  .communityPosts
-                                  .uploader
-                                  ?.profilePicUrl ??
-                                  "",
-                              imageBuilder: (context, imageProvider) =>
-                                  CircleAvatar(
                                     radius: 16,
-                                    backgroundImage: imageProvider,
+                                    backgroundColor: Colors.grey.shade400,
+                                    child: Text(
+                                      widget.communityPosts.uploader?.name![0]
+                                              .toUpperCase() ??
+                                          "",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl:
+                                        widget.communityPosts.anonymous == 1
+                                        ? "assets/images/profile.png"
+                                        : widget
+                                                  .communityPosts
+                                                  .uploader
+                                                  ?.profilePicUrl ??
+                                              "",
+                                    imageBuilder: (context, imageProvider) =>
+                                        CircleAvatar(
+                                          radius: 16,
+                                          backgroundImage: imageProvider,
+                                        ),
+                                    placeholder: (context, url) => CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: Colors.grey,
+                                      child: SizedBox(
+                                        width: 14,
+                                        height: 14,
+                                        child: Center(
+                                          child: spinkits
+                                              .getSpinningLinespinkit(),
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                          radius: 16,
+                                          backgroundImage: AssetImage(
+                                            "assets/images/profile.png",
+                                          ),
+                                        ),
                                   ),
-                              placeholder: (context, url) => CircleAvatar(
-                                radius: 16,
-                                backgroundColor: Colors.grey,
-                                child: SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: Center(
-                                    child: spinkits
-                                        .getSpinningLinespinkit(),
-                                  ),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                              const CircleAvatar(
-                                radius: 16,
-                                backgroundImage: AssetImage(
-                                  "assets/images/profile.png",
-                                ),
-                              ),
-                            ),
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -262,7 +254,7 @@ class _PostCardState extends State<PostCard>
                           ),
                         ],
                       ),
-                    ]else...[
+                    ] else ...[
                       Text(
                         "Anonymous Post",
                         style: const TextStyle(
@@ -275,7 +267,7 @@ class _PostCardState extends State<PostCard>
                     ],
                     const SizedBox(height: 4),
                     Text(
-                      "Posted At ${formatSmartDateTime(widget.communityPosts.createdAt??"")}",
+                      "Posted At ${formatSmartDateTime(widget.communityPosts.createdAt ?? "")}",
                       style: const TextStyle(
                         fontFamily: 'segeo',
                         fontWeight: FontWeight.w500,
@@ -655,33 +647,36 @@ void _showReportSheet(BuildContext context, communityPosts) {
                         child: CustomAppButton1(
                           isLoading: state is CommunityZoneReportLoading,
                           text: "Submit Report",
-                            onPlusTap: () {
-                              String finalReason = _selected;
+                          onPlusTap: () {
+                            String finalReason = _selected;
 
-                              // If user selected 'Other', use the text field value
-                              if (_selected == 'Other') {
-                                final otherText = _otherController.text.trim();
+                            // If user selected 'Other', use the text field value
+                            if (_selected == 'Other') {
+                              final otherText = _otherController.text.trim();
 
-                                if (otherText.isEmpty) {
-                                  CustomSnackBar1.show(
-                                    context,
-                                    "Please provide a reason in the text box.",
-                                  );
-                                  return; // Stop submission if empty
-                                }
-
-                                finalReason = otherText;
+                              if (otherText.isEmpty) {
+                                CustomSnackBar1.show(
+                                  context,
+                                  "Please provide a reason in the text box.",
+                                );
+                                return; // Stop submission if empty
                               }
 
-                              // Build data payload
-                              final Map<String, dynamic> data = {
-                                "content_id": communityPosts.id, // ID of the post
-                                "reason": finalReason,           // Either selected or typed reason
-                              };
+                              finalReason = otherText;
+                            }
 
-                              // Call your Cubit/Bloc
-                              context.read<CommunityZoneReportCubit>().postCommunityZoneReport(data);
-                            },
+                            // Build data payload
+                            final Map<String, dynamic> data = {
+                              "content_id": communityPosts.id, // ID of the post
+                              "reason":
+                                  finalReason, // Either selected or typed reason
+                            };
+
+                            // Call your Cubit/Bloc
+                            context
+                                .read<CommunityZoneReportCubit>()
+                                .postCommunityZoneReport(data);
+                          },
                         ),
                       );
                     },

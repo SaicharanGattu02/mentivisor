@@ -119,9 +119,10 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                   horizontal: 14,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           monthTitle,
@@ -131,25 +132,25 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: visibleMonth.isAfter(DateTime(2025, 9))
-                              ? prevMonth
-                              : null,
-                          icon: Icon(
-                            Icons.chevron_left,
-                            color: visibleMonth.isAfter(DateTime(2025, 9))
-                                ? Colors.black
-                                : Colors.grey.withOpacity(
-                                    0.5,
-                                  ), // make it visually disabled
-                          ),
-                        ),
-
-                        IconButton(
-                          onPressed: nextMonth,
-                          icon: const Icon(Icons.chevron_right),
-                        ),
+                        // const Spacer(),
+                        // IconButton(
+                        //   onPressed: visibleMonth.isAfter(DateTime(2025, 9))
+                        //       ? prevMonth
+                        //       : null,
+                        //   icon: Icon(
+                        //     Icons.chevron_left,
+                        //     color: visibleMonth.isAfter(DateTime(2025, 9))
+                        //         ? Colors.black
+                        //         : Colors.grey.withOpacity(
+                        //             0.5,
+                        //           ), // make it visually disabled
+                        //   ),
+                        // ),
+                        //
+                        // IconButton(
+                        //   onPressed: nextMonth,
+                        //   icon: const Icon(Icons.chevron_right),
+                        // ),
                       ],
                     ),
                     const SizedBox(height: 16),

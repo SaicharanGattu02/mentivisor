@@ -39,10 +39,6 @@ class MenteeHomeScreen extends StatefulWidget {
 }
 
 class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
-  ValueNotifier<String> _mentorStatus = ValueNotifier<String>("none");
-  ValueNotifier<String> _role = ValueNotifier<String>("");
-  ValueNotifier<String?> _mentorProfileUrl = ValueNotifier<String?>("");
-  ValueNotifier<String?> _mentorProfileName = ValueNotifier<String?>("");
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final ValueNotifier<bool> _isLoadingNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _onCampusNotifier = ValueNotifier<bool>(true);
@@ -62,27 +58,42 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
   Future<void> _loadAll() async {
     _isLoadingNotifier.value = true;
+
     try {
       final guest = await AuthService.isGuest;
       _isGuestNotifier.value = guest;
+
       final List<Future> futures = [
         context.read<Getbannerscubit>().getbanners(),
-        context.read<MenteeProfileCubit>().fetchMenteeProfile(),
-        context.read<DailyCheckInsCubit>().getDailyCheckIns(),
-        context.read<HomeDialogCubit>().getHomeDialog(),
-        if (!guest)
-          context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
-        if (guest) context.read<GuestMentorsCubit>().fetchGuestMentorList(),
       ];
+
+      // ---- Call only when NOT a guest ----
+      if (!guest) {
+        futures.addAll([
+          context.read<MenteeProfileCubit>().fetchMenteeProfile(),
+          context.read<DailyCheckInsCubit>().getDailyCheckIns(),
+          context.read<HomeDialogCubit>().getHomeDialog(),
+          context.read<CampusMentorListCubit>().fetchCampusMentorList("", ""),
+        ]);
+      }
+
+      // ---- Call only when guest ----
+      if (guest) {
+        futures.add(
+          context.read<GuestMentorsCubit>().fetchGuestMentorList(),
+        );
+      }
+
       await Future.wait(futures);
     } catch (e, st) {
       debugPrint("Error while loading dashboard data: $e");
     } finally {
       if (mounted) {
-        if (mounted) _isLoadingNotifier.value = false;
+        _isLoadingNotifier.value = false;
       }
     }
   }
+
 
   void _navigateToScreen(String name) {
     switch (name) {

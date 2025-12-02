@@ -39,6 +39,36 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
   final TextEditingController searchController = TextEditingController();
   List<NotAttachedExpertises> filteredExpertises = [];
 
+  final ScrollController scrollController = ScrollController();
+  Map<int, GlobalKey> expertiseKeys = {};
+
+  void _scrollToExpertise(int id) {
+    final key = expertiseKeys[id];
+    if (key == null) return;
+
+    final ctx = key.currentContext;
+    if (ctx == null) return;
+
+    // Get the position of the widget on the screen
+    final box = ctx.findRenderObject() as RenderBox?;
+    if (box == null) return;
+
+    final offset = box.localToGlobal(Offset.zero);
+
+    // The SingleChildScrollView padding starts AFTER app bar + status bar.
+    final targetOffset =
+        scrollController.offset + offset.dy - 120; // Adjust as needed
+
+    scrollController.animateTo(
+      targetOffset.clamp(0.0, scrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+
+
+
   @override
   void initState() {
     super.initState();
@@ -128,129 +158,158 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
             },
           ),
         ],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const Expanded(
-                      child: Center(
-                        child: Text(
-                          'Add Expertise',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(36),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(36),
-                    borderSide: BorderSide.none,
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(36),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(36),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            BlocBuilder<
-              NonAttachedExpertisesCubit,
-              NonAttachedExpertisesStates
-            >(
-              builder: (context, state) {
-                if (state is NonAttachedExpertisesLoading) {
-                  return const Center(child: DottedProgressWithLogo());
-                }
-                if (state is NonAttachedExpertisesFailure) {
-                  return Center(child: Text(state.error));
-                }
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: filteredExpertises.map((exp) {
-                      final isSelected = selectedExpertises.any(
-                        (s) => s.id == exp.id,
-                      );
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              selectedExpertises.removeWhere(
-                                (s) => s.id == exp.id,
-                              );
-                              subExpertises.remove(exp.id);
-                              selectedSubIds.remove(exp.id);
-                            } else {
-                              selectedExpertises.add(exp);
-                              if (!subExpertises.containsKey(exp.id)) {
-                                lastRequestedId = exp.id;
-                                context
-                                    .read<NonAttachedExpertiseDetailsCubit>()
-                                    .getNonAttachedExpertiseDetails(exp.id!);
-                              }
-                            }
-                          });
-                        },
-                        child: Chip(
-                          label: Text(exp.name ?? ''),
-                          backgroundColor: Colors.white,
-                          labelStyle: TextStyle(color: Colors.black),
-                          shape: StadiumBorder(
-                            side: BorderSide(
-                              color: isSelected
-                                  ? Color(0xff726CF7)
-                                  : Colors.white,
+                      const Expanded(
+                        child: Center(
+                          child: Text(
+                            'Add Expertise',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
-            Expanded(
-              child: selectedExpertises.isEmpty
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(36),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(36),
+                      borderSide: BorderSide.none,
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(36),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(36),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              BlocBuilder<
+                NonAttachedExpertisesCubit,
+                NonAttachedExpertisesStates
+              >(
+                builder: (context, state) {
+                  if (state is NonAttachedExpertisesLoading) {
+                    return const Center(child: DottedProgressWithLogo());
+                  }
+                  if (state is NonAttachedExpertisesFailure) {
+                    return Center(child: Text(state.error));
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: filteredExpertises.map((exp) {
+                        final isSelected = selectedExpertises.any(
+                          (s) => s.id == exp.id,
+                        );
+                        return GestureDetector(
+                          // onTap: () {
+                          //   setState(() {
+                          //     if (isSelected) {
+                          //       selectedExpertises.removeWhere(
+                          //         (s) => s.id == exp.id,
+                          //       );
+                          //       subExpertises.remove(exp.id);
+                          //       selectedSubIds.remove(exp.id);
+                          //     } else {
+                          //       selectedExpertises.add(exp);
+                          //       if (!subExpertises.containsKey(exp.id)) {
+                          //         lastRequestedId = exp.id;
+                          //         context
+                          //             .read<NonAttachedExpertiseDetailsCubit>()
+                          //             .getNonAttachedExpertiseDetails(exp.id!);
+                          //       }
+                          //     }
+                          //   });
+                          // },
+                          onTap: () {
+                            final wasSelected = isSelected; // before setState
+
+                            setState(() {
+                              if (wasSelected) {
+                                selectedExpertises.removeWhere((s) => s.id == exp.id);
+                                subExpertises.remove(exp.id);
+                                selectedSubIds.remove(exp.id);
+                              } else {
+                                selectedExpertises.add(exp);
+
+                                if (!subExpertises.containsKey(exp.id)) {
+                                  lastRequestedId = exp.id;
+
+                                  context
+                                      .read<NonAttachedExpertiseDetailsCubit>()
+                                      .getNonAttachedExpertiseDetails(exp.id!);
+                                }
+                              }
+                            });
+
+                            // 👉 Only scroll when selecting (not unselecting)
+                            if (!wasSelected) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                _scrollToExpertise(exp.id!);
+                              });
+                            }
+                          },
+                          child: Chip(
+                            label: Text(exp.name ?? ''),
+                            backgroundColor: Colors.white,
+                            labelStyle: TextStyle(color: Colors.black),
+                            shape: StadiumBorder(
+                              side: BorderSide(
+                                color: isSelected
+                                    ? Color(0xff726CF7)
+                                    : Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                },
+              ),
+              selectedExpertises.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -263,12 +322,17 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                           const SizedBox(height: 8),
                           const Text(
                             'No expertise selected',
-                            style: TextStyle(color: Colors.grey, fontSize: 16),
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
                           ),
                         ],
                       ),
                     )
                   : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.only(top: 16.0),
                       itemCount: selectedExpertises.length,
                       itemBuilder: (context, index) {
@@ -279,12 +343,16 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                         >(
                           builder: (context, state) {
                             List<Data> subs = subExpertises[exp.id] ?? [];
-                            if (state is NonAttachedExpertiseDetailsLoading) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                                child: Center(child: DottedProgressWithLogo()),
-                              );
-                            }
+                            // if (state is NonAttachedExpertiseDetailsLoading) {
+                            //   return const Padding(
+                            //     padding: EdgeInsets.symmetric(
+                            //       horizontal: 16.0,
+                            //     ),
+                            //     child: Center(
+                            //       child: DottedProgressWithLogo(),
+                            //     ),
+                            //   );
+                            // }
                             if (state is NonAttachedExpertiseDetailsFailure) {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -302,118 +370,121 @@ class _AddExpertiseViewState extends State<AddExpertiseView> {
                                   .toList();
                               subExpertises[exp.id!] = subs;
                             }
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0,
-                                  ),
-                                  child: Chip(
-                                    label: Text(exp.name ?? ''),
-                                    backgroundColor: Color(0xff726CF7),
-                                    labelStyle: const TextStyle(
-                                      color: Colors.white,
+                            return Container(
+                              key: expertiseKeys.putIfAbsent(exp.id!, () => GlobalKey()),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
                                     ),
-                                    shape: StadiumBorder(
-                                      side: const BorderSide(
-                                        color: Color(0xff726CF7),
+                                    child: Chip(
+                                      label: Text(exp.name ?? ''),
+                                      backgroundColor: Color(0xff726CF7),
+                                      labelStyle: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      shape: StadiumBorder(
+                                        side: const BorderSide(
+                                          color: Color(0xff726CF7),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 32.0),
-                                  child: DottedLine(
-                                    direction: Axis.vertical,
-                                    lineLength: 20.0,
-                                    dashLength: 4.0,
-                                    dashGapLength: 4.0,
-                                    dashColor: Colors.grey,
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 32.0),
+                                    child: DottedLine(
+                                      direction: Axis.vertical,
+                                      lineLength: 20.0,
+                                      dashLength: 4.0,
+                                      dashGapLength: 4.0,
+                                      dashColor: Colors.grey,
+                                    ),
                                   ),
-                                ),
 
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0,
-                                  ),
-                                  child: DottedBorder(
-                                    color: Colors.grey[400]!,
-                                    strokeWidth: 1.5,
-                                    borderType: BorderType.RRect,
-                                    radius: const Radius.circular(12),
-                                    dashPattern: const [
-                                      6,
-                                      3,
-                                    ], // 6px line, 3px space
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 8.0,
-                                        children: subs.map((sub) {
-                                          if (sub != null) {
-                                            final isSubSelected =
-                                                selectedSubIds[exp.id]
-                                                    ?.contains(sub.id) ??
-                                                false;
-                                            return GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedSubIds.putIfAbsent(
-                                                    exp.id!,
-                                                    () => {},
-                                                  );
-                                                  if (isSubSelected) {
-                                                    selectedSubIds[exp.id!]!
-                                                        .remove(sub.id);
-                                                  } else {
-                                                    selectedSubIds[exp.id!]!
-                                                        .add(sub.id!);
-                                                  }
-                                                });
-                                              },
-                                              child: Chip(
-                                                label: Text(
-                                                  sub.name ?? 'Unnamed',
-                                                ),
-                                                backgroundColor: isSubSelected
-                                                    ? const Color(
-                                                        0xff726CF7,
-                                                      ).withOpacity(0.3)
-                                                    : const Color(0xffF5F5F5),
-                                                labelStyle: const TextStyle(
-                                                  color: Colors.black,
-                                                ),
-                                                shape: StadiumBorder(
-                                                  side: BorderSide(
-                                                    color: isSubSelected
-                                                        ? Color(
-                                                            0xff726CF7,
-                                                          ).withOpacity(0.3)
-                                                        : Color(0xffF5F5F5),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
+                                    child: DottedBorder(
+                                      color: Colors.grey[400]!,
+                                      strokeWidth: 1.5,
+                                      borderType: BorderType.RRect,
+                                      radius: const Radius.circular(12),
+                                      dashPattern: const [
+                                        6,
+                                        3,
+                                      ], // 6px line, 3px space
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 8.0,
+                                          children: subs.map((sub) {
+                                            if (sub != null) {
+                                              final isSubSelected =
+                                                  selectedSubIds[exp.id]
+                                                      ?.contains(sub.id) ??
+                                                  false;
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    selectedSubIds.putIfAbsent(
+                                                      exp.id!,
+                                                      () => {},
+                                                    );
+                                                    if (isSubSelected) {
+                                                      selectedSubIds[exp.id!]!
+                                                          .remove(sub.id);
+                                                    } else {
+                                                      selectedSubIds[exp.id!]!
+                                                          .add(sub.id!);
+                                                    }
+                                                  });
+                                                },
+                                                child: Chip(
+                                                  label: Text(
+                                                    sub.name ?? 'Unnamed',
+                                                  ),
+                                                  backgroundColor: isSubSelected
+                                                      ? const Color(
+                                                          0xff726CF7,
+                                                        ).withOpacity(0.3)
+                                                      : const Color(0xffF5F5F5),
+                                                  labelStyle: const TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                  shape: StadiumBorder(
+                                                    side: BorderSide(
+                                                      color: isSubSelected
+                                                          ? Color(
+                                                              0xff726CF7,
+                                                            ).withOpacity(0.3)
+                                                          : Color(0xffF5F5F5),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }
-                                          return const SizedBox.shrink();
-                                        }).toList(),
+                                              );
+                                            }
+                                            return const SizedBox.shrink();
+                                          }).toList(),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
 
-                                const SizedBox(height: 16.0),
-                              ],
+                                  const SizedBox(height: 16.0),
+                                ],
+                              ),
                             );
                           },
                         );
                       },
                     ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: SafeArea(
