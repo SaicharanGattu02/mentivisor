@@ -5,6 +5,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../../../core/network/api_config.dart';
 import '../../../../services/SocketService.dart';
+import '../../../../utils/TimeHelper.dart';
 import '../../../Models/GroupChatMessagesModel.dart';
 
 // ---- State ----
@@ -129,12 +130,17 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
     return int.tryParse(v.toString());
   }
 
+  DateTime convertUTCToIST(String utcString) {
+    final utcTime = DateTime.parse(utcString).toUtc();
+    return utcTime.add(const Duration(hours: 5, minutes: 30));
+  }
+
+
   void _onReceive(dynamic data) {
     debugPrint("📩 [RECEIVE] Message event received => $data");
     try {
       final server = _mapSocket(data);
-      final serverTs =
-          DateTime.tryParse(server.createdAt ?? '') ?? DateTime.now();
+      final serverTs = DateTime.parse(server.createdAt!).toUtc();
 
       // Check if message matches an optimistic (temporary) message
       final idx = state.messages.indexWhere((m) {
@@ -145,7 +151,8 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
         final sameUrl = (m.url ?? '') == (server.url ?? '');
         if (!(sameSender && sameType && sameMsg && sameUrl)) return false;
 
-        final mTs = DateTime.tryParse(m.createdAt ?? '') ?? DateTime.now();
+        final mTs = DateTime.parse(m.createdAt!).toUtc();
+
         final diff = mTs.difference(serverTs).abs();
         return diff <= const Duration(seconds: 10);
       });
@@ -193,10 +200,9 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
       return;
     }
 
-    final nowIso = DateTime.now().toIso8601String();
+    final nowUtc = DateTime.now().toUtc().toIso8601String(); // IMPORTANT
     final tempId = -DateTime.now().microsecondsSinceEpoch;
 
-    // Optimistic local message
     final local = GroupMessages(
       id: tempId,
       collegeId: int.parse(collegeId),
@@ -204,16 +210,12 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
       message: text,
       url: url ?? '',
       type: type,
-      createdAt: nowIso,
-      updatedAt: nowIso,
+      createdAt: nowUtc,      // store UTC
+      updatedAt: nowUtc,      // store UTC
     );
+
     emit(state.copyWith(messages: [...state.messages, local]));
 
-    debugPrint(
-      "✉️ [SEND] Local optimistic message added => id:$tempId, msg:$text",
-    );
-
-    // Send to server
     final payload = {
       'sender_id': int.tryParse(currentUserId),
       'college_id': int.parse(collegeId),
@@ -222,7 +224,6 @@ class GroupRoomCubit extends Cubit<GroupRoomState> {
       'type': type,
     };
 
-    debugPrint("🚀 [EMIT] Sending to server => $payload");
     _socket.emit('send_college_message', payload);
   }
 

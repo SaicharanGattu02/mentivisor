@@ -68,6 +68,8 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
       if (file != null) {
         _pickedFile.value = file;
         AppLogger.info("Picked & compressed file: ${file.path}");
+      }else{
+        CustomSnackBar1.show(context, "File is too large! Max allowed size is 200MB.");
       }
     } catch (e) {
       debugPrint('File selection error: $e');

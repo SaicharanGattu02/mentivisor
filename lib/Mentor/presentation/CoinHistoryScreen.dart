@@ -17,7 +17,6 @@ class CoinHistoryScreen extends StatefulWidget {
 }
 
 class _CoinHistoryScreenState extends State<CoinHistoryScreen> {
-  /// Store API key of current filter: all | week | month | quarter
   String _selectedKey = 'all';
 
   @override

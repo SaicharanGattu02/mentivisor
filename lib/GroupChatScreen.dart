@@ -10,7 +10,7 @@ import 'package:mentivisor/services/SocketService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:intl/intl.dart';
 import 'Components/CustomAppButton.dart';
 import 'Components/CustomSnackBar.dart';
 import 'Mentee/Models/GroupChatMessagesModel.dart';
@@ -21,11 +21,15 @@ import 'Mentee/data/cubits/GroupChatMessages/GroupMessagesState.dart';
 // -------- Extensions ----------
 extension GroupMsgX on GroupMessages {
   DateTime get createdAtDate {
-    final raw = createdAt?.toString() ?? '';
-    return DateTime.tryParse(raw) ?? DateTime.now();
-  }
+    if (createdAt == null) return DateTime.now();
 
-  String get timeLabel => DateFormat('hh:mm a').format(createdAtDate);
+    try {
+      final utc = DateTime.parse(createdAt!).toUtc();
+      return utc.add(const Duration(hours: 5, minutes: 30)); // IST
+    } catch (_) {
+      return DateTime.now();
+    }
+  }
 
   bool get isText => (type ?? 'text') == 'text';
   bool get isFile => (type ?? '') == 'file';
@@ -37,6 +41,16 @@ extension GroupMsgX on GroupMessages {
             u.endsWith('.jpeg') ||
             u.endsWith('.webp') ||
             u.endsWith('.gif'));
+  }
+}
+
+extension GroupMessageTimeExt on GroupMessages {
+  String get timeLabel {
+    try {
+      return DateFormat('hh:mm a').format(createdAtDate);
+    } catch (_) {
+      return "";
+    }
   }
 }
 
@@ -576,8 +590,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 //   ],
                 // ),
                 child: Row(
-                  mainAxisAlignment:
-                  isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  mainAxisAlignment: isMe
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // ----- Avatar -----
@@ -615,7 +630,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     ],
                   ],
                 ),
-
               ),
               const SizedBox(height: 4),
 
@@ -692,7 +706,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       ),
     );
   }
-  void _showReportSheet(int msgId,BuildContext context) {
+
+  void _showReportSheet(int msgId, BuildContext context) {
     String _selected = 'Copied';
     final TextEditingController _otherController = TextEditingController();
     final List<String> _reportReasons = [
@@ -842,7 +857,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                 "reason": finalReason,
                               };
 
-                              context.read<groupChatReportCubit>().groupChatReport(data);
+                              context
+                                  .read<groupChatReportCubit>()
+                                  .groupChatReport(data);
                             },
                           ),
                         );
@@ -858,6 +875,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       },
     );
   }
+
   void _sendText() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;

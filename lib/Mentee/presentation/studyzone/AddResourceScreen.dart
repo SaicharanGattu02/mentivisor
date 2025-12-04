@@ -54,6 +54,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
       if (file != null) {
         _pickedFile.value = file;
+      }else{
+        CustomSnackBar1.show(context, "File is too large! Max allowed size is 200MB.");
       }
     } catch (e) {
       debugPrint('File selection error: $e');
@@ -592,7 +594,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   );
                 },
               ),
-
               const SizedBox(height: 20),
             ],
           ),

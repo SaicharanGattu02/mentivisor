@@ -25,18 +25,27 @@ class FileImagePicker {
   }
 
   static Future<File?> pickPdfFile({
-    int thresholdSizeInKB = 500,
-    int quality = 60,
+    int maxSizeInMB = 200, // limit
   }) async {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ["pdf"],
-        withData: true, // important
+        withData: true, // we need bytes to check size
       );
 
       if (result != null && result.files.single.bytes != null) {
         final bytes = result.files.single.bytes!;
+        final sizeInMB = bytes.length / (1024 * 1024);
+
+        // ⛔ Block files above limit
+        if (sizeInMB > maxSizeInMB) {
+          AppLogger.error(
+              "File too large: ${sizeInMB.toStringAsFixed(2)} MB (limit: $maxSizeInMB MB)");
+          return null;
+        }
+
+        // Save file to app directory
         final appDir = await getApplicationDocumentsDirectory();
         final file = File('${appDir.path}/${result.files.single.name}');
         await file.writeAsBytes(bytes);
@@ -46,25 +55,17 @@ class FileImagePicker {
           return null;
         }
 
-        // Optional compression
-        final compressor = PDFCompression();
-        final compressedPdf = await compressor.compressPdf(
-          file,
-          thresholdSize: thresholdSizeInKB * 1024,
-          quality: quality,
-        );
-
-        AppLogger.info(
-          "Compressed PDF size: ${compressedPdf.lengthSync() / 1024} KB",
-        );
-
-        return compressedPdf;
+        // 🔥 NO COMPRESSION – return as is
+        AppLogger.info("Picked PDF size: ${file.lengthSync() / (1024 * 1024)} MB");
+        return file;
       }
     } catch (e) {
       AppLogger.error("Error picking PDF file: $e");
     }
+
     return null;
   }
+
 
   // static Future<File?> pickPdfFile({
   //   int thresholdSizeInKB = 500,
@@ -74,34 +75,40 @@ class FileImagePicker {
   //     final result = await FilePicker.platform.pickFiles(
   //       type: FileType.custom,
   //       allowedExtensions: ["pdf"],
+  //       withData: true, // important
   //     );
   //
-  //     if (result != null && result.files.single.path != null) {
-  //       final pickedFile = File(result.files.single.path!);
+  //     if (result != null && result.files.single.bytes != null) {
+  //       final bytes = result.files.single.bytes!;
+  //       final appDir = await getApplicationDocumentsDirectory();
+  //       final file = File('${appDir.path}/${result.files.single.name}');
+  //       await file.writeAsBytes(bytes);
   //
-  //       if (pickedFile.path.toLowerCase().endsWith('.pdf')) {
-  //         final compressor = PDFCompression();
-  //         final compressedPdf = await compressor.compressPdf(
-  //           pickedFile,
-  //           thresholdSize: thresholdSizeInKB * 1024,
-  //           quality: quality,
-  //         );
-  //
-  //         AppLogger.info(
-  //           "Compressed size: ${compressedPdf.lengthSync() / 1024} KB",
-  //         );
-  //
-  //         return compressedPdf;
-  //       } else {
-  //         return pickedFile;
+  //       if (file.lengthSync() == 0) {
+  //         AppLogger.error("Picked PDF is empty");
+  //         return null;
   //       }
+  //
+  //       // Optional compression
+  //       final compressor = PDFCompression();
+  //       final compressedPdf = await compressor.compressPdf(
+  //         file,
+  //         thresholdSize: thresholdSizeInKB * 1024,
+  //         quality: quality,
+  //       );
+  //
+  //       AppLogger.info(
+  //         "Compressed PDF size: ${compressedPdf.lengthSync() / 1024} KB",
+  //       );
+  //
+  //       return compressedPdf;
   //     }
   //   } catch (e) {
   //     AppLogger.error("Error picking PDF file: $e");
   //   }
-  //
   //   return null;
   // }
+
 
   /// Show bottom sheet for picking image
   static Future<File?> pickImageBottomSheet(BuildContext context) async {
