@@ -380,7 +380,7 @@ class _ChatScreenState extends State<ChatScreen> {
       final bytes = await file.length();
       final sizeInKb = bytes / 1024;
 
-      if (sizeInKb > 500) {
+      if (sizeInKb > 102400) {
         // File is too large
         CustomSnackBar1.show(context, "File size must not exceed 500 KB");
         return;

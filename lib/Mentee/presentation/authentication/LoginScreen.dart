@@ -74,7 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
         "username": emailController.text,
         "password": passwordController.text,
         "fcm_token": fcmToken ?? "",
-        // "fcm_token": "hherhejtjtj",
       };
       context.read<LoginCubit>().logInApi(data);
     }
