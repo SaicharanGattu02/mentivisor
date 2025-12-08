@@ -9,7 +9,6 @@ import '../../data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
 import '../../data/Cubits/MentorAvailability/MentorAvailabilityCubit.dart';
 import '../../data/Cubits/MentorAvailability/MentorAvailabilitytates.dart';
 
-
 class AddSlotDialog extends StatefulWidget {
   final DateTime selectedDate;
 
@@ -64,7 +63,6 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
     totalSessionCoinsNotifier.value = total;
   }
 
-
   Future<void> _pickTime(BuildContext context, bool isFrom) async {
     final picked = await showTimePicker(
       context: context,
@@ -83,10 +81,20 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
   }
 
   void _onAdd() async {
-    final fromDate = DateTime(widget.selectedDate.year, widget.selectedDate.month,
-        widget.selectedDate.day, from.hour, from.minute);
-    final toDate = DateTime(widget.selectedDate.year, widget.selectedDate.month,
-        widget.selectedDate.day, to.hour, to.minute);
+    final fromDate = DateTime(
+      widget.selectedDate.year,
+      widget.selectedDate.month,
+      widget.selectedDate.day,
+      from.hour,
+      from.minute,
+    );
+    final toDate = DateTime(
+      widget.selectedDate.year,
+      widget.selectedDate.month,
+      widget.selectedDate.day,
+      to.hour,
+      to.minute,
+    );
     final diff = toDate.difference(fromDate).inMinutes;
 
     if (diff <= 0) {
@@ -104,8 +112,10 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
 
     final mapData = {
       "date": DateFormat("yyyy-MM-dd").format(widget.selectedDate),
-      "start_time": "${from.hour.toString().padLeft(2, '0')}:${from.minute.toString().padLeft(2, '0')}",
-      "end_time": "${to.hour.toString().padLeft(2, '0')}:${to.minute.toString().padLeft(2, '0')}",
+      "start_time":
+          "${from.hour.toString().padLeft(2, '0')}:${from.minute.toString().padLeft(2, '0')}",
+      "end_time":
+          "${to.hour.toString().padLeft(2, '0')}:${to.minute.toString().padLeft(2, '0')}",
       "repeat_weekly": keepForWeek ? "1" : "0",
       "coins": totalSessionCoinsNotifier.value.toString(),
     };
@@ -158,16 +168,22 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text("to",
-                    style: TextStyle(
-                        fontFamily: 'segeo',
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff666666))),
+                const Text(
+                  "to",
+                  style: TextStyle(
+                    fontFamily: 'segeo',
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff666666),
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: GestureDetector(
                     onTap: () => _pickTime(context, false),
-                    child: _timeField(Icons.access_time_filled_rounded, _formatTime(to)),
+                    child: _timeField(
+                      Icons.access_time_filled_rounded,
+                      _formatTime(to),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -228,9 +244,10 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
                       const Text(
                         "Keep this timing for full week",
                         style: TextStyle(
-                            fontFamily: 'segeo',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600),
+                          fontFamily: 'segeo',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(width: 8),
 
@@ -243,7 +260,7 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
                             onChanged: (v) => setState(() => keepForWeek = v),
                             activeColor: const Color(0xFF4076ED),
                             materialTapTargetSize:
-                            MaterialTapTargetSize.shrinkWrap,
+                                MaterialTapTargetSize.shrinkWrap,
                           ),
                         ),
                       ),
@@ -252,7 +269,6 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
                 ),
               ],
             ),
-
             const SizedBox(height: 10),
             const Text.rich(
               TextSpan(
@@ -267,7 +283,8 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
                     ),
                   ),
                   TextSpan(
-                    text: "The minimum slot is 30 minutes and maximum is 90 minutes.",
+                    text:
+                        "The minimum slot is 30 minutes and maximum is 90 minutes.",
                     style: TextStyle(
                       fontFamily: 'segeo',
                       fontSize: 12,
@@ -284,7 +301,9 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
               listener: (context, state) {
                 if (state is MentorAvailabilityLoaded) {
                   Navigator.pop(context);
-                  context.read<AvailableSlotsCubit>().getAvailableSlots("this_week");
+                  context.read<AvailableSlotsCubit>().getAvailableSlots(
+                    "this_week",
+                  );
                   CustomSnackBar1.show(context, "Slot added successfully!");
                 } else if (state is MentorAvailabilityFailure) {
                   CustomSnackBar1.show(context, state.error);

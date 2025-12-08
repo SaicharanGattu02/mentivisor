@@ -632,14 +632,13 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                           crossAxisSpacing: 10,
                                           mainAxisSpacing: 16,
                                           childCount:
-                                              studyZoneData
+                                          studyZoneData
                                                   ?.studyZoneCampusData
                                                   ?.length ??
                                               0,
                                           itemBuilder: (context, index) {
                                             final campusList = studyZoneData
                                                 ?.studyZoneCampusData![index];
-
                                             return InkWell(
                                               onTap: () {
                                                 if (isGuest) {

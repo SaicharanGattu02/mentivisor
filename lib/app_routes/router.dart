@@ -382,7 +382,6 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final idString = state.uri.queryParameters['id'];
         final id = int.tryParse(idString ?? '') ?? 0;
-
         return buildSlideTransitionPage(MentorProfileScreen(id: id), state);
       },
     ),

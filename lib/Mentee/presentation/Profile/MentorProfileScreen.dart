@@ -12,6 +12,8 @@ import 'package:mentivisor/utils/constants.dart';
 import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../../Components/Shimmers.dart';
 import '../../../utils/spinkittsLoader.dart';
+import '../../Models/MentorProfileModel.dart';
+import '../../data/cubits/ExpertiseExpansionCubit.dart';
 import '../../data/cubits/MentorProfile/MentorProfileCubit.dart';
 import '../../data/cubits/MentorProfile/MentorProfileState.dart';
 import '../Widgets/ReviewCard.dart';
@@ -29,6 +31,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   bool hasRemainingSlots = false;
   String? user_id;
   int? profile_id;
+  List<bool> _expandedExpertise = [];
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +55,11 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           listener: (context, state) {
             if (state is MentorProfileLoaded) {
               final d = state.mentorProfileModel.data;
+              // initialize the expansion list
+              _expandedExpertise = List.filled(
+                d?.expertises?.length ?? 0,
+                false,
+              );
               final t1 = (d?.todaySlots ?? []).isNotEmpty;
               final t2 = (d?.tomorrowSlots ?? []).isNotEmpty;
               final t3 = (d?.remainingSlots ?? 0) > 0;
@@ -247,78 +256,83 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             ),
                           ),
                         ),
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(16),
-                          margin: EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: ValueListenableBuilder<bool>(
-                            valueListenable: _isExpertiseExpanded,
-                            builder: (context, isExpanded, _) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Expertise',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Inter',
-                                          color: Color(0xff333333),
-                                        ),
-                                      ),
-                                      IconButton(
-                                        padding: EdgeInsets.zero,
-                                        visualDensity: VisualDensity.compact,
-                                        onPressed: () {
-                                          _isExpertiseExpanded.value =
-                                              !isExpanded;
-                                        },
-                                        icon: Icon(
-                                          isExpanded
-                                              ? Icons.arrow_drop_up_outlined
-                                              : Icons.arrow_drop_down_outlined,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (isExpanded) ...[
-                                    SizedBox(height: 10),
-                                    Wrap(
-                                      spacing: 4,
-                                      children: (mentorData?.expertises ?? [])
-                                          .expand<Widget>(
-                                            (e) => [
-                                              _buildChip(e.name ?? ""),
-                                              ...(e.subExpertises ?? []).map(
-                                                (sub) =>
-                                                    _buildChip(sub.name ?? ""),
-                                              ),
-                                            ],
-                                          )
-                                          .toList(),
-                                    ),
-                                  ],
-                                ],
-                              );
-                            },
+                        BlocProvider(
+                          create: (_) => ExpertiseExpansionCubit(),
+                          child: _buildExpertiseSection(
+                            mentorData ?? MentorData(),
                           ),
                         ),
-
+                        // Container(
+                        //   width: double.infinity,
+                        //   padding: EdgeInsets.all(16),
+                        //   margin: EdgeInsets.only(bottom: 16),
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.white,
+                        //     borderRadius: BorderRadius.circular(12),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Colors.black.withOpacity(0.05),
+                        //         blurRadius: 10,
+                        //         offset: Offset(0, 2),
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: ValueListenableBuilder<bool>(
+                        //     valueListenable: _isExpertiseExpanded,
+                        //     builder: (context, isExpanded, _) {
+                        //       return Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Row(
+                        //             mainAxisAlignment:
+                        //                 MainAxisAlignment.spaceBetween,
+                        //             children: [
+                        //               const Text(
+                        //                 'Expertise',
+                        //                 style: TextStyle(
+                        //                   fontSize: 18,
+                        //                   fontWeight: FontWeight.w500,
+                        //                   fontFamily: 'Inter',
+                        //                   color: Color(0xff333333),
+                        //                 ),
+                        //               ),
+                        //               IconButton(
+                        //                 padding: EdgeInsets.zero,
+                        //                 visualDensity: VisualDensity.compact,
+                        //                 onPressed: () {
+                        //                   _isExpertiseExpanded.value =
+                        //                       !isExpanded;
+                        //                 },
+                        //                 icon: Icon(
+                        //                   isExpanded
+                        //                       ? Icons.arrow_drop_up_outlined
+                        //                       : Icons.arrow_drop_down_outlined,
+                        //                 ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //           if (isExpanded) ...[
+                        //             SizedBox(height: 10),
+                        //             Wrap(
+                        //               spacing: 4,
+                        //               children: (mentorData?.expertises ?? [])
+                        //                   .expand<Widget>(
+                        //                     (e) => [
+                        //                       _buildChip(e.name ?? ""),
+                        //                       ...(e.subExpertises ?? []).map(
+                        //                         (sub) =>
+                        //                             _buildChip(sub.name ?? ""),
+                        //                       ),
+                        //                     ],
+                        //                   )
+                        //                   .toList(),
+                        //             ),
+                        //           ],
+                        //         ],
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         if (hasTodaySlots ||
                             hasTomorrowSlots ||
                             hasRemainingSlots) ...[
@@ -463,6 +477,96 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                     ),
                   )
           : SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildExpertiseSection(MentorData mentorData) {
+    return BlocBuilder<ExpertiseExpansionCubit, int?>(
+      builder: (context, expandedIndex) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Expertise',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Inter',
+                  color: Color(0xff333333),
+                ),
+              ),
+              SizedBox(height: 12),
+
+              // LOOP EXPERTISE
+              ...List.generate(mentorData.expertises?.length ?? 0, (index) {
+                final exp = mentorData.expertises![index];
+                final isOpen = expandedIndex == index;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        context.read<ExpertiseExpansionCubit>().toggle(index);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              exp.name ?? "",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Icon(
+                              isOpen
+                                  ? Icons.keyboard_arrow_up
+                                  : Icons.keyboard_arrow_down,
+                              size: 22,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    if (isOpen)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6, bottom: 10),
+                        child: Wrap(
+                          spacing: 6,
+                          runSpacing: 8,
+                          children: (exp.subExpertises ?? [])
+                              .map((sub) => _buildChip(sub.name ?? ""))
+                              .toList(),
+                        ),
+                      ),
+
+                    SizedBox(height: 8),
+                  ],
+                );
+              }),
+            ],
+          ),
+        );
+      },
     );
   }
 
