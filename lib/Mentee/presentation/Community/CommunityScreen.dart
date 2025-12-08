@@ -384,7 +384,6 @@ class _CommunityScreenState extends State<Communityscreen> {
                     return Expanded(
                       child: NotificationListener<ScrollNotification>(
                         onNotification: (scrollInfo) {
-                          // Existing pagination
                           if (scrollInfo.metrics.pixels >=
                               scrollInfo.metrics.maxScrollExtent * 0.9) {
                             if (state is CommunityPostsLoaded &&

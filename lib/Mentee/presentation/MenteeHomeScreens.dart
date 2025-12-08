@@ -79,9 +79,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
 
       // ---- Call only when guest ----
       if (guest) {
-        futures.add(
-          context.read<GuestMentorsCubit>().fetchGuestMentorList(),
-        );
+        futures.add(context.read<GuestMentorsCubit>().fetchGuestMentorList());
       }
 
       await Future.wait(futures);
@@ -93,7 +91,6 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
       }
     }
   }
-
 
   void _navigateToScreen(String name) {
     switch (name) {
@@ -607,7 +604,7 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                       width: 50,
                                       height: 50,
                                     ),
-                                    title:'Switch to Mentor',
+                                    title: 'Switch to Mentor',
                                     onTap: () {
                                       context.pop();
                                       context.pushReplacement(
@@ -1225,69 +1222,195 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                     Widget? actionButton;
                                                     if (isOnCampus) {
                                                       if (role == "both") {
-                                                        message =
-                                                            "No mentors in your campus yet";
+                                                        message = "No mentors in your campus yet";
                                                         actionButton = null;
                                                       } else {
-                                                        message =
-                                                            "Be the first mentor in your campus!";
+                                                        message = "Be the first mentor in your campus!";
                                                         actionButton = Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                top: 16,
-                                                              ),
-                                                          child: OutlinedButton.icon(
-                                                            onPressed: () =>
-                                                                context.push(
-                                                                  '/becomementorscreen',
-                                                                ),
-                                                            label: const Text(
-                                                              "Become a Mentor",
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'segeo',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                                color: Color(
-                                                                  0xff4A7CF6,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            style: OutlinedButton.styleFrom(
-                                                              backgroundColor:
-                                                                  const Color(
-                                                                    0xFFF5F8FF,
+                                                          padding: const EdgeInsets.only(top: 16),
+                                                          child: BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
+                                                            builder: (context, state) {
+                                                              if (state is! MenteeProfileLoaded) {
+                                                                return const SizedBox.shrink();
+                                                              }
+
+                                                              final user = state.menteeProfileModel.data?.user;
+                                                              final status = (user?.mentorStatus ?? "none").toLowerCase();
+
+                                                              // Decide label + navigation based on status
+                                                              String buttonText;
+                                                              VoidCallback? onPressed;
+
+                                                              switch (status) {
+                                                                case "none":
+                                                                  buttonText = "Become a Mentor";
+                                                                  onPressed = () {
+                                                                    context.push('/becomementorscreen');
+                                                                  };
+                                                                  break;
+
+                                                                case "inreview":
+                                                                  buttonText = "View Application Status";
+                                                                  onPressed = () {
+                                                                    context.push('/in_review');
+                                                                  };
+                                                                  break;
+
+                                                                case "rejected":
+                                                                  buttonText = "Become a Mentor";
+                                                                  onPressed = () {
+                                                                    context.push('/profile_rejected');
+                                                                  };
+                                                                  break;
+
+                                                                case "approved":
+                                                                // Optional: show as disabled or change text
+                                                                  buttonText = "You’re already a Mentor";
+                                                                  onPressed = null; // disabled
+                                                                  break;
+
+                                                                default:
+                                                                  buttonText = "Become a Mentor";
+                                                                  onPressed = () {
+                                                                    context.push('/becomementorscreen');
+                                                                  };
+                                                              }
+
+                                                              return OutlinedButton.icon(
+                                                                onPressed: onPressed,
+                                                                icon: const Icon(Icons.person_outline, size: 20, color: Color(0xff4A7CF6)),
+                                                                label: Text(
+                                                                  buttonText,
+                                                                  style: const TextStyle(
+                                                                    fontFamily: 'segeo',
+                                                                    fontWeight: FontWeight.w600,
+                                                                    fontSize: 16,
+                                                                    color: Color(0xff4A7CF6),
                                                                   ),
-                                                              side: const BorderSide(
-                                                                color: Color(
-                                                                  0xff4A7CF6,
                                                                 ),
-                                                              ),
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      30,
-                                                                    ),
-                                                              ),
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        28,
-                                                                    vertical:
-                                                                        10,
+                                                                style: OutlinedButton.styleFrom(
+                                                                  backgroundColor: const Color(0xFFF5F8FF),
+                                                                  side: const BorderSide(
+                                                                    color: Color(0xff4A7CF6),
                                                                   ),
-                                                            ),
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(30),
+                                                                  ),
+                                                                  padding: const EdgeInsets.symmetric(
+                                                                    horizontal: 28,
+                                                                    vertical: 10,
+                                                                  ),
+                                                                ),
+                                                              );
+
+                                                            },
                                                           ),
                                                         );
                                                       }
                                                     } else {
-                                                      // BEYOND CAMPUS
-                                                      message =
-                                                          "No mentors found beyond campus";
+                                                      message = "No mentors found beyond campus";
                                                       actionButton = null;
                                                     }
+
+                                                    // if (isOnCampus) {
+                                                    //   if (role == "both") {
+                                                    //     message =
+                                                    //         "No mentors in your campus yet";
+                                                    //     actionButton = null;
+                                                    //   } else {
+                                                    //     message =
+                                                    //         "Be the first mentor in your campus!";
+                                                    //     actionButton = Padding(
+                                                    //       padding:
+                                                    //           const EdgeInsets.only(
+                                                    //             top: 16,
+                                                    //           ),
+                                                    //       child:
+                                                    //           BlocBuilder<
+                                                    //             MenteeProfileCubit,
+                                                    //             MenteeProfileState
+                                                    //           >(
+                                                    //             builder: (context, state) {
+                                                    //               if (state
+                                                    //                   is! MenteeProfileLoaded)
+                                                    //                 return SizedBox.shrink();
+                                                    //
+                                                    //               final user = state
+                                                    //                   .menteeProfileModel
+                                                    //                   .data
+                                                    //                   ?.user;
+                                                    //               final status =
+                                                    //                   (user?.mentorStatus ??
+                                                    //                           "none")
+                                                    //                       .toLowerCase();
+                                                    //               OutlinedButton.icon(
+                                                    //                 onPressed: () {
+                                                    //                   if (status ==
+                                                    //                       "none") {
+                                                    //                     context.push(
+                                                    //                       '/becomementorscreen',
+                                                    //                     );
+                                                    //                   } else if (status ==
+                                                    //                       "inreview") {
+                                                    //                     context.push(
+                                                    //                       '/in_review',
+                                                    //                     );
+                                                    //                   } else if (status ==
+                                                    //                       "rejected") {
+                                                    //                     context.push(
+                                                    //                       '/profile_rejected',
+                                                    //                     );
+                                                    //                   }
+                                                    //                 },
+                                                    //
+                                                    //                 label:  Text(
+                                                    //                   "Become a Mentor",
+                                                    //                   style: TextStyle(
+                                                    //                     fontFamily:
+                                                    //                         'segeo',
+                                                    //                     fontWeight:
+                                                    //                         FontWeight.w600,
+                                                    //                     fontSize:
+                                                    //                         16,
+                                                    //                     color: Color(
+                                                    //                       0xff4A7CF6,
+                                                    //                     ),
+                                                    //                   ),
+                                                    //                 ),
+                                                    //                 style: OutlinedButton.styleFrom(
+                                                    //                   backgroundColor:
+                                                    //                       const Color(
+                                                    //                         0xFFF5F8FF,
+                                                    //                       ),
+                                                    //                   side: const BorderSide(
+                                                    //                     color: Color(
+                                                    //                       0xff4A7CF6,
+                                                    //                     ),
+                                                    //                   ),
+                                                    //                   shape: RoundedRectangleBorder(
+                                                    //                     borderRadius:
+                                                    //                         BorderRadius.circular(
+                                                    //                           30,
+                                                    //                         ),
+                                                    //                   ),
+                                                    //                   padding: const EdgeInsets.symmetric(
+                                                    //                     horizontal:
+                                                    //                         28,
+                                                    //                     vertical:
+                                                    //                         10,
+                                                    //                   ),
+                                                    //                 ),
+                                                    //               );
+                                                    //             },
+                                                    //           ),
+                                                    //     );
+                                                    //   }
+                                                    // } else {
+                                                    //   // BEYOND CAMPUS
+                                                    //   message =
+                                                    //       "No mentors found beyond campus";
+                                                    //   actionButton = null;
+                                                    // }
                                                     return Column(
                                                       children: [
                                                         Text(

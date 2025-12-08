@@ -40,6 +40,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     user_id = await AuthService.getUSerId();
   }
 
+  final ValueNotifier<bool> _isExpertiseExpanded = ValueNotifier<bool>(true);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,21 +247,75 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             ),
                           ),
                         ),
-
-                        _buildSection(
-                          title: 'Expertise',
-                          child: Wrap(
-                            spacing: 4,
-                            children: (mentorData?.expertises ?? [])
-                                .expand<Widget>(
-                                  (e) => [
-                                    _buildChip(e.name ?? ""),
-                                    ...(e.subExpertises ?? []).map(
-                                      (sub) => _buildChip(sub.name ?? ""),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ValueListenableBuilder<bool>(
+                            valueListenable: _isExpertiseExpanded,
+                            builder: (context, isExpanded, _) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Expertise',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Inter',
+                                          color: Color(0xff333333),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        visualDensity: VisualDensity.compact,
+                                        onPressed: () {
+                                          _isExpertiseExpanded.value =
+                                              !isExpanded;
+                                        },
+                                        icon: Icon(
+                                          isExpanded
+                                              ? Icons.arrow_drop_up_outlined
+                                              : Icons.arrow_drop_down_outlined,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (isExpanded) ...[
+                                    SizedBox(height: 10),
+                                    Wrap(
+                                      spacing: 4,
+                                      children: (mentorData?.expertises ?? [])
+                                          .expand<Widget>(
+                                            (e) => [
+                                              _buildChip(e.name ?? ""),
+                                              ...(e.subExpertises ?? []).map(
+                                                (sub) =>
+                                                    _buildChip(sub.name ?? ""),
+                                              ),
+                                            ],
+                                          )
+                                          .toList(),
                                     ),
                                   ],
-                                )
-                                .toList(),
+                                ],
+                              );
+                            },
                           ),
                         ),
 
@@ -356,7 +412,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               ) {
                                 return ReviewCard(
                                   name: review.user?.name ?? "",
-                                  id: review.userId??0,
+                                  id: review.userId ?? 0,
                                   rating: review.rating ?? 0,
                                   createdAt: review.createdAt ?? "",
                                   review: review.feedback ?? "",
