@@ -97,8 +97,8 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
       setState(() => errorText = "Minimum slot is 30 minutes.");
       return;
     }
-    if (diff > 180) {
-      setState(() => errorText = "Maximum slot is 3 hours.");
+    if (diff > 90) {
+      setState(() => errorText = "Maximum slot is 90 minutes.");
       return;
     }
 
@@ -267,7 +267,7 @@ class _AddSlotDialogState extends State<AddSlotDialog> {
                     ),
                   ),
                   TextSpan(
-                    text: "The minimum slot is 30 minutes and maximum is 3 hours.",
+                    text: "The minimum slot is 30 minutes and maximum is 90 minutes.",
                     style: TextStyle(
                       fontFamily: 'segeo',
                       fontSize: 12,
