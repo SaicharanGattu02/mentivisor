@@ -58,19 +58,6 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
     }
   }
 
-  // Future<void> _pickResumeFile() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ["pdf", "doc", "docx"],
-  //   );
-  //
-  //   if (result != null && result.files.single.path != null) {
-  //     setState(() {
-  //       selectedResumeFile = File(result.files.single.path!);
-  //     });
-  //   }
-  // }
-
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> data = {
@@ -84,27 +71,6 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
       context.push("/language_selection", extra: data);
     }
   }
-  //
-  // void _submitForm() {
-  //   if (_formKey.currentState!.validate()) {
-  //     final Map<String, dynamic> data = {
-  //       ...widget.data,
-  //       "portfolio": _portfolioUrlController.text.trim().isEmpty
-  //           ? null
-  //           : _portfolioUrlController.text.trim(),
-  //       "linked_in": _linkdnUrlController.text.trim().isEmpty
-  //           ? null
-  //           : _linkdnUrlController.text.trim(),
-  //       "git_hub": _githubUrlController.text.trim().isEmpty
-  //           ? null
-  //           : _githubUrlController.text.trim(),
-  //       "resume": selectedResumeFile != null ? selectedResumeFile!.path : null,
-  //     };
-  //
-  //     context.push("/language_selection", extra: data);
-  //   }
-  // }
-
 
 
   @override
@@ -120,7 +86,6 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-
               Center(
                 child: Image.asset('assets/images/linkimg.png', height: 140),
               ),
@@ -176,14 +141,18 @@ class _BecomeMentorDataState extends State<BecomeMentorData> {
                 cursorColor: Colors.black,
                 decoration: const InputDecoration(hintText: 'LinkedIn URL'),
                 validator: (value) {
-                  if (value != null && value.trim().isNotEmpty) {
-                    final urlPattern =
-                        r'^(http|https):\/\/([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$';
-                    final result = RegExp(urlPattern).hasMatch(value.trim());
-                    if (!result) {
-                      return "Enter a valid URL";
-                    }
+                  if (value == null || value.trim().isEmpty) {
+                    return "LinkedIn URL is required";
                   }
+
+                  final urlPattern =
+                      r'^(http|https):\/\/([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$';
+                  final isValid = RegExp(urlPattern).hasMatch(value.trim());
+
+                  if (!isValid) {
+                    return "Enter a valid LinkedIn URL";
+                  }
+
                   return null;
                 },
               ),

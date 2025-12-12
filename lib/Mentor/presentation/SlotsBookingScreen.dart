@@ -381,11 +381,15 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                         ),
                         child: PopupMenuButton<String>(
                           onSelected: (value) {
-                            setState(
-                              () => _weekFilter = value == 'This Week'
-                                  ? 'this_week'
-                                  : 'next_week',
-                            );
+                            setState(() {
+                              if (value == 'This Week') {
+                                _weekFilter = 'this_week';
+                              } else if (value == 'Next Week') {
+                                _weekFilter = 'next_week';
+                              } else {
+                                _weekFilter = 'this_month';
+                              }
+                            });
                             context
                                 .read<AvailableSlotsCubit>()
                                 .getAvailableSlots(
@@ -400,6 +404,10 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                             PopupMenuItem<String>(
                               value: 'Next Week',
                               child: Text('Next Week'),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'This Month',
+                              child: Text('This Month'),
                             ),
                           ],
                           child: Row(
@@ -419,7 +427,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                                 child: Text(
                                   _weekFilter == 'this_week'
                                       ? 'This Week'
-                                      : 'Next Week', // Display human-readable text
+                                      : _weekFilter == 'next_week'
+                                      ? "Next Week"
+                                      : 'This Month',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -519,7 +529,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                         _recentGroupCard(
                           title: day.date ?? '',
                           slots: day.slots ?? [],
-                          count: day.slots?.length??0,// ← Send the slot objects directly
+                          count:
+                              day.slots?.length ??
+                              0, // ← Send the slot objects directly
                           statusCounts: day.statusCounts,
                         ),
                         const SizedBox(height: 12),
@@ -707,10 +719,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
               runSpacing: 10,
               children: slots.map((slot) {
                 bool isBooked = (slot.status?.toLowerCase() == "booked");
-                return _slotItem(
-                  timeSlot: slot,
-                  isBooked: isBooked,
-                );
+                return _slotItem(timeSlot: slot, isBooked: isBooked);
               }).toList(),
             ),
           ],
@@ -718,7 +727,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       ),
     );
   }
-
 
   Widget _slotItem({required TimeSlot timeSlot, required bool isBooked}) {
     return Container(
@@ -748,29 +756,23 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
           if (!isBooked)
             GestureDetector(
               onTap: () {
-                showDeleteConfirmationDialog(
-                  context,
-                      () {
-                    context.read<DeleteSlotCubit>().deleteSlot(timeSlot.id.toString());
-                  },
-                );
+                showDeleteConfirmationDialog(context, () {
+                  context.read<DeleteSlotCubit>().deleteSlot(
+                    timeSlot.id.toString(),
+                  );
+                });
               },
-              child: Icon(
-                Icons.cancel,
-                size: 18,
-                color: primarycolor,
-              ),
+              child: Icon(Icons.cancel, size: 18, color: primarycolor),
             ),
         ],
       ),
     );
   }
 
-
   Future<void> showDeleteConfirmationDialog(
-      BuildContext context,
-      VoidCallback onConfirm,
-      ) async {
+    BuildContext context,
+    VoidCallback onConfirm,
+  ) async {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -779,7 +781,9 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
           listener: (context, state) {
             if (state is DeleteSlotLoaded) {
               Navigator.pop(context); // close dialog
-              context.read<AvailableSlotsCubit>().getAvailableSlots(_weekFilter);
+              context.read<AvailableSlotsCubit>().getAvailableSlots(
+                _weekFilter,
+              );
             }
             if (state is DeleteSlotFailure) {
               Navigator.pop(context);
@@ -794,7 +798,11 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
               ),
               title: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.red, size: 30),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red,
+                    size: 30,
+                  ),
                   const SizedBox(width: 8),
                   const Text("Delete Slot"),
                 ],
@@ -818,13 +826,13 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
                   onPressed: isLoading ? null : onConfirm,
                   child: isLoading
                       ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Text("Delete"),
                 ),
               ],
@@ -834,7 +842,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       },
     );
   }
-
 
   Widget _slotChip(String slotTime, bool isBooked) {
     return Opacity(
@@ -868,7 +875,6 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
     return out;
   }
 
-
   Future<void> _showAddSlotDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -876,9 +882,7 @@ class _SlotsbookingscreenState extends State<Slotsbookingscreen> {
       builder: (_) => AddSlotDialog(selectedDate: selectedDate),
     );
   }
-
 }
-
 
 class AvailableSlotsShimmer extends StatelessWidget {
   const AvailableSlotsShimmer({super.key});
