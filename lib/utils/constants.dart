@@ -196,6 +196,19 @@ String formatTime(TimeOfDay time) {
   final period = time.period == DayPeriod.am ? 'AM' : 'PM';
   return '$hour:$minute $period';
 }
+String formatTime1(TimeOfDay time) {
+  final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+  final minute = time.minute.toString().padLeft(2, '0');
+  final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+  return '$hour:$minute $period';
+}
+TimeOfDay parseTimeOfDay(String time) {
+  final parts = time.split(":");
+  return TimeOfDay(
+    hour: int.parse(parts[0]),
+    minute: int.parse(parts[1]),
+  );
+}
 
 String formatTimeRange(String? rawTime) {
   if (rawTime == null || rawTime.isEmpty) return "";

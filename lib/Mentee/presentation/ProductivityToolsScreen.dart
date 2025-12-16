@@ -5,6 +5,8 @@ import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CustomSnackBar.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:intl/intl.dart';
+import 'package:mentivisor/utils/constants.dart';
+import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Components/Shimmers.dart';
 import '../data/cubits/ProductTools/TaskByDate/task_by_date_cubit.dart';
@@ -703,21 +705,43 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                                             ),
                                             const SizedBox(width: 8),
                                             Expanded(
-                                              child: Text(
-                                                task.title ?? 'Untitled Task',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily: 'segeo',
-                                                  fontWeight: FontWeight.w400,
-                                                  decoration:
-                                                      task.isCompleted == 1
-                                                      ? TextDecoration
-                                                            .lineThrough
-                                                      : TextDecoration.none,
-                                                  color: const Color(
-                                                    0xff666666,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                spacing: 5,
+                                                children: [
+                                                  Text(
+                                                    task.title ??
+                                                        'Untitled Task',
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // 🔑 important
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontFamily: 'segeo',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      decoration:
+                                                          task.isCompleted == 1
+                                                          ? TextDecoration
+                                                                .lineThrough
+                                                          : TextDecoration.none,
+                                                      color: const Color(
+                                                        0xff666666,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
+                                                  Text(
+                                                    "${formatTime1(parseTimeOfDay(task.taskTime ?? "00:00:00"))}",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontFamily: 'segeo',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Color(0xff666666),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                             IconButton(

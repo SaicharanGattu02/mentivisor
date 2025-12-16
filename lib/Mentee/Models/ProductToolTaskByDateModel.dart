@@ -28,6 +28,7 @@ class Tasks {
   int? id;
   int? userId;
   String? taskDate;
+  String? taskTime;
   String? title;
   int? isCompleted;
   String? createdAt;
@@ -37,6 +38,7 @@ class Tasks {
       {this.id,
         this.userId,
         this.taskDate,
+        this.taskTime,
         this.title,
         this.isCompleted,
         this.createdAt,
@@ -46,6 +48,7 @@ class Tasks {
     id = json['id'];
     userId = json['user_id'];
     taskDate = json['task_date'];
+    taskTime = json['task_time'];
     title = json['title'];
     isCompleted = json['is_completed'];
     createdAt = json['created_at'];
@@ -57,6 +60,7 @@ class Tasks {
     data['id'] = this.id;
     data['user_id'] = this.userId;
     data['task_date'] = this.taskDate;
+    data['task_time'] = this.taskTime;
     data['title'] = this.title;
     data['is_completed'] = this.isCompleted;
     data['created_at'] = this.createdAt;
