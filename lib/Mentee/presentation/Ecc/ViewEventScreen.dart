@@ -97,15 +97,15 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              Text(
-                                eventDetails?.description ?? "",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'segeo',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              // Text(
+                              //   eventDetails?.description ?? "",
+                              //   style: const TextStyle(
+                              //     color: Colors.white,
+                              //     fontFamily: 'segeo',
+                              //     fontSize: 14,
+                              //     fontWeight: FontWeight.w500,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
