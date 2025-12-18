@@ -47,15 +47,18 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   List<String> _customTags = [];
 
   Future<void> _selectFile() async {
-    _isLoading.value = true; // start loading
+    _isLoading.value = true;
 
     try {
       final file = await FileImagePicker.pickPdfFile();
 
       if (file != null) {
         _pickedFile.value = file;
-      }else{
-        CustomSnackBar1.show(context, "File is too large! Max allowed size is 200MB.");
+      } else {
+        CustomSnackBar1.show(
+          context,
+          "File is too large! Max allowed size is 200MB.",
+        );
       }
     } catch (e) {
       debugPrint('File selection error: $e');
@@ -63,6 +66,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
       _isLoading.value = false;
     }
   }
+
 
   Future<void> _selectImage() async {
     final image = await FileImagePicker.pickImageBottomSheet(context);

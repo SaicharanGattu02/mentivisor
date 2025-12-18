@@ -24,48 +24,83 @@ class FileImagePicker {
     return null;
   }
 
-  static Future<File?> pickPdfFile({
-    int maxSizeInMB = 200, // limit
-  }) async {
+  // static Future<File?> pickPdfFile({
+  //   int maxSizeInMB = 200, // limit
+  // }) async {
+  //   try {
+  //     final result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom,
+  //       allowedExtensions: ["pdf"],
+  //       withData: false,
+  //     );
+  //
+  //     if (result != null && result.files.single.bytes != null) {
+  //       final bytes = result.files.single.bytes!;
+  //       final sizeInMB = bytes.length / (1024 * 1024);
+  //
+  //       // ⛔ Block files above limit
+  //       if (sizeInMB > maxSizeInMB) {
+  //         AppLogger.error(
+  //             "File too large: ${sizeInMB.toStringAsFixed(2)} MB (limit: $maxSizeInMB MB)");
+  //         return null;
+  //       }
+  //
+  //       // Save file to app directory
+  //       final appDir = await getApplicationDocumentsDirectory();
+  //       final file = File('${appDir.path}/${result.files.single.name}');
+  //       await file.writeAsBytes(bytes);
+  //
+  //       if (file.lengthSync() == 0) {
+  //         AppLogger.error("Picked PDF is empty");
+  //         return null;
+  //       }
+  //
+  //       // 🔥 NO COMPRESSION – return as is
+  //       AppLogger.info("Picked PDF size: ${file.lengthSync() / (1024 * 1024)} MB");
+  //       return file;
+  //     }
+  //   } catch (e) {
+  //     AppLogger.error("Error picking PDF file: $e");
+  //   }
+  //
+  //   return null;
+  // }
+
+  static Future<File?> pickPdfFile({int maxSizeInMB = 200}) async {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ["pdf"],
-        withData: true, // we need bytes to check size
+        allowedExtensions: ['pdf',], // if images too
+        withData: false, // ✅ important
       );
 
-      if (result != null && result.files.single.bytes != null) {
-        final bytes = result.files.single.bytes!;
-        final sizeInMB = bytes.length / (1024 * 1024);
-
-        // ⛔ Block files above limit
-        if (sizeInMB > maxSizeInMB) {
-          AppLogger.error(
-              "File too large: ${sizeInMB.toStringAsFixed(2)} MB (limit: $maxSizeInMB MB)");
-          return null;
-        }
-
-        // Save file to app directory
-        final appDir = await getApplicationDocumentsDirectory();
-        final file = File('${appDir.path}/${result.files.single.name}');
-        await file.writeAsBytes(bytes);
-
-        if (file.lengthSync() == 0) {
-          AppLogger.error("Picked PDF is empty");
-          return null;
-        }
-
-        // 🔥 NO COMPRESSION – return as is
-        AppLogger.info("Picked PDF size: ${file.lengthSync() / (1024 * 1024)} MB");
-        return file;
+      if (result == null || result.files.single.path == null) {
+        return null; // user cancelled
       }
+
+      final file = File(result.files.single.path!);
+
+      final sizeInBytes = await file.length();
+      final sizeInMB = sizeInBytes / (1024 * 1024);
+
+      // ⛔ Proper size check
+      if (sizeInMB > maxSizeInMB) {
+        AppLogger.error(
+          "File too large: ${sizeInMB.toStringAsFixed(2)} MB (limit: $maxSizeInMB MB)",
+        );
+        return null;
+      }
+
+      AppLogger.info(
+        "Picked file size: ${sizeInMB.toStringAsFixed(2)} MB",
+      );
+
+      return file;
     } catch (e) {
-      AppLogger.error("Error picking PDF file: $e");
+      AppLogger.error("Error picking file: $e");
+      return null;
     }
-
-    return null;
   }
-
 
   // static Future<File?> pickPdfFile({
   //   int thresholdSizeInKB = 500,
