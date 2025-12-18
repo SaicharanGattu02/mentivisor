@@ -24,13 +24,20 @@ class ExclusiveServices extends StatefulWidget {
 class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
-  String searchQuery = '';
-
+  String searchQuery = "";
   @override
   void initState() {
     super.initState();
-    context.read<MenteeCustomersupportCubit>().CustomersupportDetails();
-    context.read<ExclusiveservicelistCubit>().getExclusiveServiceList("");
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await Future.wait([
+      context.read<ExclusiveservicelistCubit>().getExclusiveServiceList(
+        searchQuery,
+      ),
+      context.read<MenteeCustomersupportCubit>().CustomersupportDetails(),
+    ]);
   }
 
   @override
@@ -54,12 +61,15 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
         ),
         child: Column(
           children: [
-            BlocBuilder<MenteeCustomersupportCubit,MenteeCustomersupportStates>(
+            BlocBuilder<
+              MenteeCustomersupportCubit,
+              MenteeCustomersupportStates
+            >(
               builder: (context, state) {
-                if(state is MenteeCustomersupportLoaded){
-                  final data =  state.menteeCustmor_supportModel.data;
+                if (state is MenteeCustomersupportLoaded) {
+                  final data = state.menteeCustmor_supportModel.data;
                   return Text(
-                    "To Post your Services mail to ${data?.email??""}",
+                    "To Post your Services mail to ${data?.email ?? ""}",
                     style: TextStyle(
                       fontFamily: 'segeo',
                       fontWeight: FontWeight.w400,
@@ -67,7 +77,7 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                       color: Color(0xff666666),
                     ),
                   );
-                }else{
+                } else {
                   return SizedBox.shrink();
                 }
               },
@@ -79,13 +89,19 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                 controller: searchController,
                 cursorColor: primarycolor,
                 onChanged: (query) {
+                  searchQuery = query;
+
                   if (_debounce?.isActive ?? false) _debounce!.cancel();
+
                   _debounce = Timer(const Duration(milliseconds: 300), () {
                     context
                         .read<ExclusiveservicelistCubit>()
-                        .getExclusiveServiceList(query);
+                        .getExclusiveServiceList(
+                          query, // ✅ allow empty string
+                        );
                   });
                 },
+
                 style: TextStyle(fontFamily: "Poppins", fontSize: 15),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -114,6 +130,123 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
               ),
             ),
             SizedBox(height: 20),
+            // BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
+            //   builder: (context, state) {
+            //     if (state is ExclusiveserviceStateLoading) {
+            //       return Expanded(
+            //         child: CustomScrollView(
+            //           slivers: [
+            //             SliverPadding(
+            //               padding: EdgeInsets.zero,
+            //               sliver: SliverMasonryGrid.count(
+            //                 crossAxisCount: _getCrossAxisCount(
+            //                   context,
+            //                 ), // 👈 1 on mobile, 2 on tab
+            //                 mainAxisSpacing:
+            //                     0, // keep your original mainAxisSpacing
+            //                 crossAxisSpacing: 16,
+            //                 childCount: 10,
+            //                 itemBuilder: (context, index) {
+            //                   return ServiceCardShimmer();
+            //                 },
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       );
+            //     } else if (state is ExclusiveserviceStateLoaded ||
+            //         state is ExclusiveserviceStateLoadingMore) {
+            //       final exclusiveServicesModel =
+            //           (state is ExclusiveserviceStateLoaded)
+            //           ? (state as ExclusiveserviceStateLoaded)
+            //                 .exclusiveServicesModel
+            //           : (state as ExclusiveserviceStateLoadingMore)
+            //                 .exclusiveServicesModel;
+            //
+            //       final list = exclusiveServicesModel.data?.data ?? [];
+            //       return Expanded(
+            //         child: CustomScrollView(
+            //           slivers: [
+            //             if (list.isEmpty)
+            //               SliverToBoxAdapter(
+            //                 child: Padding(
+            //                   padding: EdgeInsets.only(top: 48),
+            //                   child: Center(
+            //                     child: Column(
+            //                       spacing: 10,
+            //                       mainAxisAlignment: MainAxisAlignment.center,
+            //                       crossAxisAlignment: CrossAxisAlignment.center,
+            //                       children: [
+            //                         SizedBox(
+            //                           height: 200,
+            //                           width: 200,
+            //                           child: Center(
+            //                             child: Image.asset(
+            //                               "assets/nodata/no_data.png",
+            //                             ),
+            //                           ),
+            //                         ),
+            //                         Text(
+            //                           textAlign: TextAlign.center,
+            //                           'No Exclusive Service Found!',
+            //                           style: TextStyle(
+            //                             color: primarycolor,
+            //                             fontSize: 18,
+            //                             fontWeight: FontWeight.w400,
+            //                             fontFamily: 'Poppins',
+            //                           ),
+            //                         ),
+            //                       ],
+            //                     ),
+            //                   ),
+            //                 ),
+            //               )
+            //             else
+            //               SliverPadding(
+            //                 padding: EdgeInsets.zero,
+            //                 sliver: SliverMasonryGrid.count(
+            //                   crossAxisCount: _getCrossAxisCount(context),
+            //                   mainAxisSpacing: 0,
+            //                   crossAxisSpacing: 16,
+            //                   childCount: list.length,
+            //                   itemBuilder: (context, index) {
+            //                     final serviceList = list[index];
+            //                     return _ServiceCard(
+            //                       exclusiveServiceImageUrl:
+            //                           serviceList.exclusiveService ?? '',
+            //                       imageUrl: serviceList.imageUrl ?? '',
+            //                       title: serviceList.name ?? '',
+            //                       description: serviceList.description ?? '',
+            //                       onTap: () {
+            //                         context.push(
+            //                           '/service_details?id=${serviceList.id}&title=${serviceList.name ?? ''}',
+            //                         );
+            //                       },
+            //                     );
+            //                   },
+            //                 ),
+            //               ),
+            //             if (state is ExclusiveserviceStateLoadingMore)
+            //               const SliverToBoxAdapter(
+            //                 child: Padding(
+            //                   padding: EdgeInsets.all(24.0),
+            //                   child: Center(
+            //                     child: CircularProgressIndicator(
+            //                       strokeWidth: 1.6,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //           ],
+            //         ),
+            //       );
+            //     } else if (state is ExclusiveserviceStateFailure) {
+            //       return Center(child: Text(state.msg ?? 'Failed to load'));
+            //     } else {
+            //       return Center(child: Text("No Data"));
+            //     }
+            //   },
+            // ),
             BlocBuilder<ExclusiveservicelistCubit, ExclusiveserviceslistState>(
               builder: (context, state) {
                 if (state is ExclusiveserviceStateLoading) {
@@ -123,67 +256,90 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                         SliverPadding(
                           padding: EdgeInsets.zero,
                           sliver: SliverMasonryGrid.count(
-                            crossAxisCount: _getCrossAxisCount(
-                              context,
-                            ), // 👈 1 on mobile, 2 on tab
-                            mainAxisSpacing:
-                                0, // keep your original mainAxisSpacing
+                            crossAxisCount: _getCrossAxisCount(context),
                             crossAxisSpacing: 16,
+                            mainAxisSpacing: 0,
                             childCount: 10,
-                            itemBuilder: (context, index) {
-                              return ServiceCardShimmer();
-                            },
+                            itemBuilder: (_, __) => ServiceCardShimmer(),
                           ),
                         ),
                       ],
                     ),
                   );
-                } else if (state is ExclusiveserviceStateLoaded) {
-                  final list = state.exclusiveServicesModel.data?.data ?? [];
-                  return Expanded(
-                    child: CustomScrollView(
-                      slivers: [
-                        if (list.isEmpty)
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 48),
-                              child: Center(
-                                child: Column(
-                                  spacing: 10,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 200,
-                                      width: 200,
-                                      child: Center(
-                                        child: Image.asset(
-                                          "assets/nodata/no_data.png",
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      textAlign: TextAlign.center,
-                                      'No Exclusive Service Found!',
-                                      style: TextStyle(
-                                        color: primarycolor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                  ],
+                } else if (state is ExclusiveserviceStateLoaded ||
+                    state is ExclusiveserviceStateLoadingMore) {
+                  final exclusiveServicesModel =
+                      (state is ExclusiveserviceStateLoaded)
+                      ? (state as ExclusiveserviceStateLoaded)
+                            .exclusiveServicesModel
+                      : (state as ExclusiveserviceStateLoadingMore)
+                            .exclusiveServicesModel;
+
+                  final list = exclusiveServicesModel.data?.data ?? [];
+
+                  if (list.isEmpty) {
+                    return Expanded(
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 48),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/nodata/no_data.png",
+                                  width: 200,
+                                  height: 200,
                                 ),
-                              ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  "No Exclusive Service Found!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: primarycolor,
+                                    fontSize: 18,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              ],
                             ),
-                          )
-                        else
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Expanded(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        // ✅ only react to scroll updates
+                        if (notification is ScrollUpdateNotification) {
+                          final metrics = notification.metrics;
+
+                          if (metrics.pixels >= metrics.maxScrollExtent - 200 &&
+                              state is ExclusiveserviceStateLoaded &&
+                              state.hasNextPage &&
+                              !context
+                                  .read<ExclusiveservicelistCubit>()
+                                  .isLoadingMore &&
+                              !context
+                                  .read<ExclusiveservicelistCubit>()
+                                  .isSearching) {
+                            context
+                                .read<ExclusiveservicelistCubit>()
+                                .fetchMoreExclusiveServiceList(searchQuery);
+                          }
+                        }
+                        return false;
+                      },
+                      child: CustomScrollView(
+                        slivers: [
                           SliverPadding(
                             padding: EdgeInsets.zero,
                             sliver: SliverMasonryGrid.count(
                               crossAxisCount: _getCrossAxisCount(context),
-                              mainAxisSpacing: 0,
                               crossAxisSpacing: 16,
+                              mainAxisSpacing: 0,
                               childCount: list.length,
                               itemBuilder: (context, index) {
                                 final serviceList = list[index];
@@ -202,25 +358,29 @@ class _ExclusiveServicesScreenState extends State<ExclusiveServices> {
                               },
                             ),
                           ),
-                        if (state is ExclusiveserviceStateLoadingMore)
-                          const SliverToBoxAdapter(
-                            child: Padding(
-                              padding: EdgeInsets.all(24.0),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1.6,
+
+                          if (state is ExclusiveserviceStateLoadingMore)
+                            const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.6,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
-                } else if (state is ExclusiveserviceStateFailure) {
-                  return Center(child: Text(state.msg ?? 'Failed to load'));
-                } else {
-                  return Center(child: Text("No Data"));
                 }
+                /// 🔹 Failure
+                else if (state is ExclusiveserviceStateFailure) {
+                  return Center(child: Text(state.msg ?? "Failed to load"));
+                }
+
+                return const SizedBox.shrink();
               },
             ),
           ],

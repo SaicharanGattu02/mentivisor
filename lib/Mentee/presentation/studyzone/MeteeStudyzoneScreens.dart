@@ -541,14 +541,20 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                     .studyZoneCampusModel;
                           final studyZoneData =
                               studyZoneCampusModel.studyZoneData;
-                          if ((studyZoneData?.studyZoneCampusData?.length ?? 0) == 0) {
+                          if ((studyZoneData?.studyZoneCampusData?.length ??
+                                  0) ==
+                              0) {
                             return Center(
                               child: SingleChildScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Image.asset("assets/nodata/no_data.png", width: 200, height: 200),
+                                    Image.asset(
+                                      "assets/nodata/no_data.png",
+                                      width: 200,
+                                      height: 200,
+                                    ),
                                     ValueListenableBuilder<bool>(
                                       valueListenable: onCampusNotifier,
                                       builder: (context, isOnCampus, _) {
@@ -557,33 +563,48 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                           builder: (context, tagIndex, _) {
                                             // Get current selected tag safely
                                             String currentTag = "All";
-                                            final tagsState = context.read<TagsCubit>().state;
+                                            final tagsState = context
+                                                .read<TagsCubit>()
+                                                .state;
 
                                             if (tagsState is TagsLoaded) {
                                               final modifiedTags = [
                                                 StudyZone(id: -1, tags: "All"),
                                                 ...?tagsState.tagsModel.data,
                                               ];
-                                              if (tagIndex >= 0 && tagIndex < modifiedTags.length) {
-                                                currentTag = modifiedTags[tagIndex].tags ?? "All";
+                                              if (tagIndex >= 0 &&
+                                                  tagIndex <
+                                                      modifiedTags.length) {
+                                                currentTag =
+                                                    modifiedTags[tagIndex]
+                                                        .tags ??
+                                                    "All";
                                               }
                                             }
 
-                                            final String scope = isOnCampus ? "on campus" : "beyond campus";
+                                            final String scope = isOnCampus
+                                                ? "on campus"
+                                                : "beyond campus";
 
                                             String message;
 
                                             if (isOnCampus) {
-                                              if (currentTag.toLowerCase() == "all") {
-                                                message = "Be the first to upload notes, books, or study materials on your campus!";
+                                              if (currentTag.toLowerCase() ==
+                                                  "all") {
+                                                message =
+                                                    "Be the first to upload notes, books, or study materials on your campus!";
                                               } else {
-                                                message = "Be the first to upload notes, books, or study materials on your campus!";
+                                                message =
+                                                    "Be the first to upload notes, books, or study materials on your campus!";
                                               }
                                             } else {
-                                              if (currentTag.toLowerCase() == "all") {
-                                                message = "No study resources found beyond campus yet.";
+                                              if (currentTag.toLowerCase() ==
+                                                  "all") {
+                                                message =
+                                                    "No study resources found beyond campus yet.";
                                               } else {
-                                                message = "No $currentTag resources found beyond campus.";
+                                                message =
+                                                    "No $currentTag resources found beyond campus.";
                                               }
                                             }
 
@@ -658,7 +679,7 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                           crossAxisSpacing: 10,
                                           mainAxisSpacing: 16,
                                           childCount:
-                                          studyZoneData
+                                              studyZoneData
                                                   ?.studyZoneCampusData
                                                   ?.length ??
                                               0,
