@@ -43,6 +43,13 @@ class _CommunityScreenState extends State<Communityscreen> {
     super.dispose();
   }
 
+  String _getCurrentFilter() {
+    if (_selectedFilter.value >= 0 && _selectedFilter.value < _filters.length) {
+      return _filters[_selectedFilter.value].toLowerCase();
+    }
+    return "all";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -388,26 +395,14 @@ class _CommunityScreenState extends State<Communityscreen> {
                               scrollInfo.metrics.maxScrollExtent * 0.9) {
                             if (state is CommunityPostsLoaded &&
                                 state.hasNextPage) {
-                              final selectedUpdate =
-                                  _filters[_selectedFilter.value].toLowerCase();
-                              if (_onCampus.value == true) {
-                                context
-                                    .read<CommunityPostsCubit>()
-                                    .fetchMoreCommunityPosts(
-                                      "",
-                                      selectedUpdate,
-                                    );
-                              } else {
-                                context
-                                    .read<CommunityPostsCubit>()
-                                    .fetchMoreCommunityPosts(
-                                      "beyond",
-                                      selectedUpdate,
-                                    );
-                              }
+                              final scope = _onCampus.value ? "" : "beyond";
+                              final filter = _getCurrentFilter();
+
+                              context
+                                  .read<CommunityPostsCubit>()
+                                  .fetchMoreCommunityPosts(scope, filter);
                             }
                           }
-
                           // NEW: Hide/show FAB based on scroll direction
                           if (scrollInfo is UserScrollNotification) {
                             if (scrollInfo.direction ==

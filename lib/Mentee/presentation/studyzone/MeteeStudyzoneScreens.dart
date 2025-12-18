@@ -59,6 +59,24 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
     super.dispose();
   }
 
+  String _getCurrentSelectedTag(BuildContext context) {
+    final tagsState = context.read<TagsCubit>().state;
+
+    if (tagsState is TagsLoaded) {
+      final modifiedTags = [
+        StudyZone(id: -1, tags: "All"),
+        ...?tagsState.tagsModel.data,
+      ];
+
+      if (_selectedTagIndex.value >= 0 &&
+          _selectedTagIndex.value < modifiedTags.length) {
+        final tag = modifiedTags[_selectedTagIndex.value].tags ?? "";
+        return tag.toLowerCase() == "all" ? "" : tag;
+      }
+    }
+    return "";
+  }
+
   String searchQuery = '';
   final TextEditingController searchController = TextEditingController();
   @override
@@ -594,9 +612,17 @@ class _MenteeStudyZoneState extends State<MenteeStudyZone> {
                                   scrollInfo.metrics.maxScrollExtent * 0.9) {
                                 if (state is StudyZoneCampusLoaded &&
                                     state.hasNextPage) {
+                                  final scope = onCampusNotifier.value ? "" : "beyond";
+                                  final tag = _getCurrentSelectedTag(context);
+                                  final search = searchController.text;
+
                                   context
                                       .read<StudyZoneCampusCubit>()
-                                      .fetchMoreStudyZoneCampus("", "", "");
+                                      .fetchMoreStudyZoneCampus(
+                                    scope,
+                                    tag,
+                                    search,
+                                  );
                                 }
                               }
                               return false;

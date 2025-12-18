@@ -50,6 +50,21 @@ class _EccScreenState extends State<EccScreen> {
     _fabVisible.dispose();
   }
 
+  String _getCurrentSelectedTag(BuildContext context) {
+    final tagsState = context.read<EccTagsCubit>().state;
+
+    if (tagsState is EccTagsLoaded) {
+      final modifiedTags = ["All", ...?tagsState.tagsModel.data];
+
+      if (_selectedTagIndex.value >= 0 &&
+          _selectedTagIndex.value < modifiedTags.length) {
+        final tag = modifiedTags[_selectedTagIndex.value];
+        return tag.toLowerCase() == "all" ? "" : tag;
+      }
+    }
+    return "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -592,7 +607,11 @@ class _EccScreenState extends State<EccScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset("assets/nodata/no_data.png", width: 200, height: 200),
+                                Image.asset(
+                                  "assets/nodata/no_data.png",
+                                  width: 200,
+                                  height: 200,
+                                ),
                                 // const SizedBox(height: 24),
                                 ValueListenableBuilder<bool>(
                                   valueListenable: onCampusNotifier,
@@ -602,26 +621,40 @@ class _EccScreenState extends State<EccScreen> {
                                       builder: (context, tagIndex, _) {
                                         // Safely get the current tag (including "All")
                                         String currentTag = "All";
-                                        final tagsState = context.read<EccTagsCubit>().state;
+                                        final tagsState = context
+                                            .read<EccTagsCubit>()
+                                            .state;
                                         if (tagsState is EccTagsLoaded) {
-                                          final modifiedTags = ["All", ...?tagsState.tagsModel.data];
-                                          if (tagIndex >= 0 && tagIndex < modifiedTags.length) {
+                                          final modifiedTags = [
+                                            "All",
+                                            ...?tagsState.tagsModel.data,
+                                          ];
+                                          if (tagIndex >= 0 &&
+                                              tagIndex < modifiedTags.length) {
                                             currentTag = modifiedTags[tagIndex];
                                           }
                                         }
-                                        final String scope = isOnCampus ? "on campus" : "beyond campus";
+                                        final String scope = isOnCampus
+                                            ? "on campus"
+                                            : "beyond campus";
                                         String message;
                                         if (isOnCampus) {
-                                          if (currentTag.toLowerCase() == "all") {
-                                            message = "Be the first to share events, competitions, or challenges on your campus!";
+                                          if (currentTag.toLowerCase() ==
+                                              "all") {
+                                            message =
+                                                "Be the first to share events, competitions, or challenges on your campus!";
                                           } else {
-                                            message = "No $currentTag events on campus yet.\nBe the first to add one!";
+                                            message =
+                                                "No $currentTag events on campus yet.\nBe the first to add one!";
                                           }
                                         } else {
-                                          if (currentTag.toLowerCase() == "all") {
-                                            message = "No events, competitions, or challenges beyond campus yet.";
+                                          if (currentTag.toLowerCase() ==
+                                              "all") {
+                                            message =
+                                                "No events, competitions, or challenges beyond campus yet.";
                                           } else {
-                                            message = "No $currentTag events beyond campus.";
+                                            message =
+                                                "No $currentTag events beyond campus.";
                                           }
                                         }
                                         return Text(
@@ -650,80 +683,21 @@ class _EccScreenState extends State<EccScreen> {
                             if (scrollInfo.metrics.pixels >=
                                 scrollInfo.metrics.maxScrollExtent * 0.9) {
                               if (state is ECCLoaded && state.hasNextPage) {
-                                final tagsState = context
-                                    .read<EccTagsCubit>()
-                                    .state;
-                                String selectedTag = "";
+                                final scope = onCampusNotifier.value
+                                    ? ""
+                                    : "beyond";
+                                final tag = _getCurrentSelectedTag(context);
+                                final search = _searchController.text;
 
-                                if (tagsState is EccTagsLoaded &&
-                                    _selectedTagIndex.value >= 0 &&
-                                    _selectedTagIndex.value <
-                                        (tagsState.tagsModel.data?.length ??
-                                            0)) {
-                                  final modifiedTags = [
-                                    "All",
-                                    ...?tagsState.tagsModel.data,
-                                  ];
-                                  final tagItem =
-                                      modifiedTags[_selectedTagIndex.value];
-                                  selectedTag = (tagItem.toLowerCase() == "all")
-                                      ? ""
-                                      : tagItem;
-                                }
-
-                                if (onCampusNotifier.value == true) {
-                                  context.read<ECCCubit>().fetchMoreECC(
-                                    "",
-                                    selectedTag,
-                                    "",
-                                  );
-                                } else {
-                                  context.read<ECCCubit>().fetchMoreECC(
-                                    "beyond",
-                                    selectedTag,
-                                    "",
-                                  );
-                                }
+                                context.read<ECCCubit>().fetchMoreECC(
+                                  scope,
+                                  tag,
+                                  search,
+                                );
                               }
                             }
                             return false;
                           },
-                          // NotificationListener<ScrollNotification>(
-                          //   onNotification: (scrollInfo) {
-                          //     if (scrollInfo.metrics.pixels >=
-                          //         scrollInfo.metrics.maxScrollExtent * 0.9) {
-                          //       if (state is ECCLoaded && state.hasNextPage) {
-                          //         final tagsState = context
-                          //             .read<EccTagsCubit>()
-                          //             .state;
-                          //         String selectedTag = "";
-                          //
-                          //         if (tagsState is EccTagsLoaded &&
-                          //             _selectedTagIndex.value >= 0 &&
-                          //             _selectedTagIndex.value <
-                          //                 (tagsState.tagsModel.data?.length ??
-                          //                     0)) {
-                          //           selectedTag = tagsState
-                          //               .tagsModel
-                          //               .data![_selectedTagIndex.value];
-                          //         }
-                          //         if (onCampusNotifier.value == true) {
-                          //           context.read<ECCCubit>().fetchMoreECC(
-                          //             "",
-                          //             selectedTag,
-                          //             "",
-                          //           );
-                          //         } else {
-                          //           context.read<ECCCubit>().fetchMoreECC(
-                          //             "beyond",
-                          //             selectedTag,
-                          //             "",
-                          //           );
-                          //         }
-                          //       }
-                          //     }
-                          //     return false;
-                          //   },
                           child: NotificationListener<UserScrollNotification>(
                             onNotification: (n) {
                               if (n.direction == ScrollDirection.reverse &&
