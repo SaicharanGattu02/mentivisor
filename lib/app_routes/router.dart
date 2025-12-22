@@ -324,6 +324,7 @@ final GoRouter appRouter = GoRouter(
         return buildSlideTransitionPage(DownloadsScreen(), state);
       },
     ),
+
     GoRoute(
       path: '/add_resource',
       pageBuilder: (context, state) =>

@@ -369,127 +369,127 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Discount Details Card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.withOpacity(0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Discount Details",
-                          style: TextStyle(
-                            fontFamily: 'segoe',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green.shade800,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Original Price",
-                                    style: TextStyle(
-                                      fontFamily: 'segoe',
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  Text(
-                                    "₹${actualValue.toStringAsFixed(0)}",
-                                    style: TextStyle(
-                                      fontFamily: 'segoe',
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Text(
-                              "→",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    "Discounted Price",
-                                    style: TextStyle(
-                                      fontFamily: 'segoe',
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  Text(
-                                    "₹${purchaseValue.toStringAsFixed(0)}",
-                                    style: TextStyle(
-                                      fontFamily: 'segoe',
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.green.shade700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "You Save: ₹${savings.toStringAsFixed(0)} (${discountPercent}%)",
-                              style: TextStyle(
-                                fontFamily: 'segoe',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.green.shade700,
-                              ),
-                            ),
-                            // if (couponsDetails?.totalCoupons != null)
-                            //   Container(
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 8,
-                            //       vertical: 4,
-                            //     ),
-                            //     decoration: BoxDecoration(
-                            //       color: Colors.orange.withOpacity(0.2),
-                            //       borderRadius: BorderRadius.circular(12),
-                            //     ),
-                            //     child: Text(
-                            //       "${couponsDetails!.totalCoupons} left",
-                            //       style: TextStyle(
-                            //         fontFamily: 'segoe',
-                            //         fontSize: 12,
-                            //         fontWeight: FontWeight.w600,
-                            //         color: Colors.orange.shade700,
-                            //       ),
-                            //     ),
-                            //   ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  // const SizedBox(height: 20),
+                  //
+                  // // Discount Details Card
+                  // Container(
+                  //   width: double.infinity,
+                  //   padding: const EdgeInsets.all(16),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.green.withOpacity(0.1),
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  //   ),
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Text(
+                  //         "Discount Details",
+                  //         style: TextStyle(
+                  //           fontFamily: 'segoe',
+                  //           fontSize: 16,
+                  //           fontWeight: FontWeight.w600,
+                  //           color: Colors.green.shade800,
+                  //         ),
+                  //       ),
+                  //       const SizedBox(height: 8),
+                  //       Row(
+                  //         children: [
+                  //           Expanded(
+                  //             child: Column(
+                  //               crossAxisAlignment: CrossAxisAlignment.start,
+                  //               children: [
+                  //                 Text(
+                  //                   "Original Price",
+                  //                   style: TextStyle(
+                  //                     fontFamily: 'segoe',
+                  //                     fontSize: 12,
+                  //                     color: Colors.grey.shade600,
+                  //                   ),
+                  //                 ),
+                  //                 Text(
+                  //                   "₹${actualValue.toStringAsFixed(0)}",
+                  //                   style: TextStyle(
+                  //                     fontFamily: 'segoe',
+                  //                     fontSize: 18,
+                  //                     fontWeight: FontWeight.w700,
+                  //                     color: Colors.black87,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //           const Text(
+                  //             "→",
+                  //             style: TextStyle(
+                  //               fontSize: 20,
+                  //               color: Colors.grey,
+                  //             ),
+                  //           ),
+                  //           Expanded(
+                  //             child: Column(
+                  //               crossAxisAlignment: CrossAxisAlignment.end,
+                  //               children: [
+                  //                 Text(
+                  //                   "Discounted Price",
+                  //                   style: TextStyle(
+                  //                     fontFamily: 'segoe',
+                  //                     fontSize: 12,
+                  //                     color: Colors.grey.shade600,
+                  //                   ),
+                  //                 ),
+                  //                 Text(
+                  //                   "₹${purchaseValue.toStringAsFixed(0)}",
+                  //                   style: TextStyle(
+                  //                     fontFamily: 'segoe',
+                  //                     fontSize: 18,
+                  //                     fontWeight: FontWeight.w700,
+                  //                     color: Colors.green.shade700,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       const SizedBox(height: 8),
+                  //       Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           Text(
+                  //             "You Save: ₹${savings.toStringAsFixed(0)} (${discountPercent}%)",
+                  //             style: TextStyle(
+                  //               fontFamily: 'segoe',
+                  //               fontSize: 14,
+                  //               fontWeight: FontWeight.w600,
+                  //               color: Colors.green.shade700,
+                  //             ),
+                  //           ),
+                  //           // if (couponsDetails?.totalCoupons != null)
+                  //           //   Container(
+                  //           //     padding: const EdgeInsets.symmetric(
+                  //           //       horizontal: 8,
+                  //           //       vertical: 4,
+                  //           //     ),
+                  //           //     decoration: BoxDecoration(
+                  //           //       color: Colors.orange.withOpacity(0.2),
+                  //           //       borderRadius: BorderRadius.circular(12),
+                  //           //     ),
+                  //           //     child: Text(
+                  //           //       "${couponsDetails!.totalCoupons} left",
+                  //           //       style: TextStyle(
+                  //           //         fontFamily: 'segoe',
+                  //           //         fontSize: 12,
+                  //           //         fontWeight: FontWeight.w600,
+                  //           //         color: Colors.orange.shade700,
+                  //           //       ),
+                  //           //     ),
+                  //           //   ),
+                  //         ],
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: 20),
                   if (couponsDetails?.startDate != null ||
                       couponsDetails?.expiryDate != null)

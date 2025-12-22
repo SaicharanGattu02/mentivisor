@@ -47,7 +47,7 @@ class SuccessScreen extends StatelessWidget {
           child: CustomAppButton1(
             text: "Done",
             onPlusTap: () {
-              context.pushReplacement("/login", extra: data);
+              context.pushReplacement('/dashboard');
             },
           ),
         ),

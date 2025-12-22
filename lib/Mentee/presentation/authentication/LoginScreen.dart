@@ -384,7 +384,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 data.user?.name ?? "",
                                 data.user?.email ?? "",
                                 data.user?.profilePicUrl ?? "",
-                                data.user?.contact ?? 0,
+                                data.user?.contact?.toString() ?? "",
+
                               );
                               await _handleRememberMe(
                                 emailController.text.trim(),

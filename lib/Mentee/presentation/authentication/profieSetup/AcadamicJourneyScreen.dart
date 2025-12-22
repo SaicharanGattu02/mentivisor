@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,8 @@ import 'package:mentivisor/Mentee/data/cubits/Register/Registor_State.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 
 import '../../../../Components/CustomAppButton.dart';
+import '../../../../services/AuthService.dart';
+import '../../../../services/SecureStorageService.dart';
 import '../../../../utils/color_constants.dart';
 import '../../../data/cubits/Campuses/campuses_cubit.dart';
 import '../../../data/cubits/Campuses/campuses_states.dart';
@@ -275,13 +278,25 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                 ),
               ),
               BlocConsumer<RegisterCubit, RegisterState>(
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state is RegisterSucess) {
-                    context.go('/success_screen');
+                    final data = state.registerModel.data;
+                    await AuthService.saveTokens(
+                      data?.accessToken ?? "",
+                      data?.refreshToken ?? "",
+                      data?.expiresIn ?? 0,
+                      data?.role ?? "",
+                      data?.user?.id ?? 0,
+                      data?.user?.name ?? "",
+                      data?.user?.email ?? "",
+                      data?.user?.profilePicUrl ?? "",
+                      data?.user?.contact ?? 0,
+                    );
                     CustomSnackBar1.show(
                       context,
                       state.registerModel.message ?? "",
                     );
+                    context.go('/success_screen');
                   } else if (state is RegisterFailure) {
                     CustomSnackBar1.show(context, state.message);
                   }
@@ -294,7 +309,7 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                     radius: 10,
                     width: 200,
                     height: 42,
-                    onPlusTap: () {
+                    onPlusTap: () async {
                       if (_yearController.text.isEmpty) {
                         CustomSnackBar1.show(
                           context,
@@ -311,12 +326,23 @@ class _Acadamicjourneyscreen extends State<Acadamicjourneyscreen> {
                           "Please select your college.",
                         );
                       } else {
+                        String? fcmToken = await FirebaseMessaging.instance
+                            .getToken();
+                        AppLogger.log("FCM Token: $fcmToken");
+
+                        if (fcmToken != null) {
+                          await SecureStorageService.instance.setString(
+                            "fb_token",
+                            fcmToken,
+                          );
+                        }
+
                         final Map<String, dynamic> data = {
                           ...widget.data,
                           "year": _yearId,
                           "stream": _steamController.text.trim(),
                           "college": _collegeId,
-                          "fcm_token": "sfsbdfbsjkdbfa",
+                          "fcm_token": fcmToken ?? "",
                         };
                         context.read<RegisterCubit>().finalRegisterApi(data);
                       }

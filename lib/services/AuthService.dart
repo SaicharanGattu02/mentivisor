@@ -116,7 +116,7 @@ class AuthService {
     String userName,
     String email,
     String profile_pic,
-    int mobile,
+    String mobile,
   ) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
     await _storage.write(key: _refreshTokenKey, value: refreshToken);
