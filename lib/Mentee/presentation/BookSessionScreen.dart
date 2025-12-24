@@ -416,8 +416,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       },
                     ),
 
-
-
                     //
                     // BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
                     //   builder: (context, state) {
