@@ -497,7 +497,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   void _showImagePreview(BuildContext context, String imageUrl, String? name) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.85),
       builder: (_) {
         return GestureDetector(
           onTap: () => Navigator.pop(context),
