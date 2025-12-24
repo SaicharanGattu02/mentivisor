@@ -160,6 +160,8 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                 setState(() => _weekFilter = value);
                                 final week = value == 'Next Week'
                                     ? 'next'
+                                    : value == 'This Week'
+                                    ? "month"
                                     : 'this';
                                 context.read<WeeklySlotsCubit>().getWeeklySlots(
                                   widget.data.id ?? 0,
