@@ -112,7 +112,7 @@ abstract class RemoteDataSource {
   );
   Future<MenteeProfileModel?> getMenteeProfile();
   Future<ExclusiveServicesModel?> exclusiveServiceList(String search, int page);
-  Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''});
+  Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = '', String month = "",});
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
   Future<SuccessModel?> menteeProfileUpdate(final Map<String, dynamic> data);
   Future<ExclusiveservicedetailsModel?> exclusiveServiceDetails(int id);
@@ -174,12 +174,8 @@ abstract class RemoteDataSource {
   Future<SuccessModel?> deleteECC(String id);
   Future<SuccessModel?> deleteDownload(String id);
   Future<TermsAndConditionModel?> getTermsAndCondition();
-  Future<SuccessModel?> deleteComment({
-    required String commentId,
-  });
-  Future<SuccessModel?> deleteSlot({
-    required String slotId,
-  });
+  Future<SuccessModel?> deleteComment({required String commentId});
+  Future<SuccessModel?> deleteSlot({required String slotId});
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -222,9 +218,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SuccessModel?> deleteSlot({
-    required String slotId,
-  }) async {
+  Future<SuccessModel?> deleteSlot({required String slotId}) async {
     try {
       Response res = await ApiClient.delete(
         "${APIEndpointUrls.delete_slot}/$slotId",
@@ -238,9 +232,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<SuccessModel?> deleteComment({
-    required String commentId,
-  }) async {
+  Future<SuccessModel?> deleteComment({required String commentId}) async {
     try {
       Response res = await ApiClient.delete(
         "${APIEndpointUrls.delete_comment}/$commentId",
@@ -324,7 +316,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<LeaderBoardModel?> getLeaderBoard(String college) async {
     try {
-      Response res = await ApiClient.get("${APIEndpointUrls.leader_board}?college=${college}");
+      Response res = await ApiClient.get(
+        "${APIEndpointUrls.leader_board}?college=${college}",
+      );
       AppLogger.log('getLeaderBoard: ${res.data}');
       return LeaderBoardModel.fromJson(res.data);
     } catch (e) {
@@ -465,9 +459,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<HighlightedCoinsModel?> highlihtedCoins() async {
     try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.highlated_coins}",
-      );
+      Response res = await ApiClient.get("${APIEndpointUrls.highlated_coins}");
       AppLogger.log('highlated Coins: ${res.data}');
       return HighlightedCoinsModel.fromJson(res.data);
     } catch (e) {
@@ -540,17 +532,32 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<WeeklySlotsModel?> getWeeklySlots(
-    int mentorId, {
-    String week = '',
-  }) async {
+      int mentorId, {
+        String? week,
+        String? month,
+      }) async {
     try {
-      Response res = await ApiClient.get(
-        "${APIEndpointUrls.weekly_slots}/${mentorId}?week=${week}",
-      );
+      final queryParams = <String, String>{};
+      debugPrint("Query month:${month}");
+
+      if (week != null && week.isNotEmpty) {
+        queryParams['week'] = week;
+      }
+
+      if (month != null && month.isNotEmpty) {
+        queryParams['month'] = month;
+      }
+
+      final uri = Uri.parse(
+        "${APIEndpointUrls.weekly_slots}/$mentorId",
+      ).replace(queryParameters: queryParams);
+
+      Response res = await ApiClient.get(uri.toString());
+
       AppLogger.log('getWeeklySlots: ${res.data}');
       return WeeklySlotsModel.fromJson(res.data);
     } catch (e) {
-      AppLogger.error('getWeeklySlots:${e}');
+      AppLogger.error('getWeeklySlots: $e');
       return null;
     }
   }
@@ -789,11 +796,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<ECCModel?> getEcc(
-      String scope,
-      String updates,
-      String search,
-      int page,
-      ) async {
+    String scope,
+    String updates,
+    String search,
+    int page,
+  ) async {
     try {
       final token = await AuthService.getAccessToken();
 
@@ -978,11 +985,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<StudyZoneCampusModel?> getStudyZoneCampus(
-      String scope,
-      String tag,
-      String search,
-      int page,
-      ) async {
+    String scope,
+    String tag,
+    String search,
+    int page,
+  ) async {
     try {
       final token = await AuthService.getAccessToken();
 

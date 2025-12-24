@@ -6,19 +6,26 @@ import 'package:mentivisor/Mentee/Models/WeeklySlotsModel.dart';
 import 'package:mentivisor/Mentee/data/remote_data_source.dart';
 
 abstract class SessionBookingRepo {
-  Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''});
+  Future<WeeklySlotsModel?> getWeeklySlots(
+    int mentorId, {
+    String week = '',
+    String month = "",
+  });
   Future<DailySlotsModel?> getDailySlots(int mentor_id, String date);
   Future<SelectSlotModel?> selectSlot(int mentor_id, int slot_id);
-  Future<SessionBookingModel?> sessionBooking(Map<String,dynamic> data
-  );
+  Future<SessionBookingModel?> sessionBooking(Map<String, dynamic> data);
 }
 
 class SessionBookingRepoImpl implements SessionBookingRepo {
   RemoteDataSource remoteDataSource;
   SessionBookingRepoImpl({required this.remoteDataSource});
   @override
-  Future<WeeklySlotsModel?> getWeeklySlots(int mentorId, {String week = ''}) async {
-    return await remoteDataSource.getWeeklySlots(mentorId,week: week);
+  Future<WeeklySlotsModel?> getWeeklySlots(
+    int mentorId, {
+    String week = '',
+    String month = "",
+  }) async {
+    return await remoteDataSource.getWeeklySlots(mentorId, week: week,month: month);
   }
 
   @override
@@ -32,9 +39,7 @@ class SessionBookingRepoImpl implements SessionBookingRepo {
   }
 
   @override
-  Future<SessionBookingModel?> sessionBooking(
-      Map<String,dynamic> data
-  ) async {
+  Future<SessionBookingModel?> sessionBooking(Map<String, dynamic> data) async {
     return await remoteDataSource.sessionBooking(data);
   }
 }

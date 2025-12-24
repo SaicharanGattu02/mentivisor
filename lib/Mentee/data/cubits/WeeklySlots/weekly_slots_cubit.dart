@@ -6,10 +6,10 @@ class WeeklySlotsCubit extends Cubit<WeeklySlotsStates> {
   SessionBookingRepo sessionBookingRepo;
   WeeklySlotsCubit(this.sessionBookingRepo) : super(WeeklySlotsInitially());
 
-  Future<void> getWeeklySlots(int mentorId, {String week = 'this'}) async {
+  Future<void> getWeeklySlots(int mentorId, {String week = '',String month = ''}) async {
     emit(WeeklySlotsLoading());
     try {
-      final response = await sessionBookingRepo.getWeeklySlots(mentorId,week: week);
+      final response = await sessionBookingRepo.getWeeklySlots(mentorId,week: week,month: month);
       if (response != null && response.status == true) {
         emit(WeeklySlotsLoaded(response));
       } else {

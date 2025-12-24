@@ -47,6 +47,10 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
   // String? selectedFilePath;
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
   final ValueNotifier<File?> _pickedFile = ValueNotifier(null);
+
+  final ScrollController _daysScrollController = ScrollController();
+  bool _autoScrolled = false;
+
   @override
   void initState() {
     super.initState();
@@ -158,15 +162,28 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             child: PopupMenuButton<String>(
                               onSelected: (value) {
                                 setState(() => _weekFilter = value);
-                                final week = value == 'Next Week'
-                                    ? 'next'
-                                    : value == 'This Week'
-                                    ? "this"
-                                    : 'month';
-                                context.read<WeeklySlotsCubit>().getWeeklySlots(
-                                  widget.data.id ?? 0,
-                                  week: week,
-                                );
+
+                                final cubit = context.read<WeeklySlotsCubit>();
+
+                                if (value == 'This Week') {
+                                  cubit.getWeeklySlots(
+                                    widget.data.id ?? 0,
+                                    week: 'this',
+                                  );
+                                }
+                                else if (value == 'Next Week') {
+                                  cubit.getWeeklySlots(
+                                    widget.data.id ?? 0,
+                                    week: 'next',
+                                  );
+                                }
+                                else {
+                                  // Month selected
+                                  cubit.getWeeklySlots(
+                                    widget.data.id ?? 0,
+                                    month: 'current',
+                                  );
+                                }
                               },
                               itemBuilder: (context) => const [
                                 PopupMenuItem<String>(
@@ -235,27 +252,10 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
-                    //   builder: (context, state) {
-                    //     if (state is WeeklySlotsLoaded) {
-                    //       final r = state.weeklySlotsModel.weekRange;
-                    //       if (r?.start != null && r?.end != null) {
-                    //         return Text(
-                    //           '${r!.start} — ${r.end}',
-                    //           style: const TextStyle(
-                    //             fontSize: 12,
-                    //             color: Color(0xFF6A6A6A),
-                    //           ),
-                    //         );
-                    //       }
-                    //     }
-                    //     return const SizedBox.shrink();
-                    //   },
-                    // ),
-                    // const SizedBox(height: 12),
                     BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
                       builder: (context, state) {
                         if (state is WeeklySlotsLoading) {
+                          _autoScrolled = false; // reset on reload
                           return const Padding(
                             padding: EdgeInsets.symmetric(vertical: 20),
                             child: Center(child: CircularProgressIndicator()),
@@ -267,111 +267,146 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Text(
                               state.error,
-                              style: TextStyle(color: Colors.red),
+                              style: const TextStyle(color: Colors.red),
                             ),
                           );
                         }
 
                         if (state is WeeklySlotsLoaded) {
                           final days = state.weeklySlotsModel.days ?? [];
+
                           if (days.isEmpty) {
                             return const Padding(
                               padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Text('No days available this week'),
+                              child: Text('No days available'),
                             );
                           }
 
+                          final today = DateTime.now();
+                          final todayDate =
+                          DateTime(today.year, today.month, today.day);
+
                           return LayoutBuilder(
-                            builder: (context, c) {
+                            builder: (context, constraints) {
                               final spacing = 8.0;
-                              final count = days.length; // generally 7
-                              final width =
-                                  (c.maxWidth - spacing * (count - 1)) / count;
+                              final isMonthView = days.length > 7;
 
-                              final today = DateTime.now();
-                              final todayDate = DateTime(
-                                today.year,
-                                today.month,
-                                today.day,
-                              );
+                              final itemWidth = isMonthView
+                                  ? 64.0
+                                  : (constraints.maxWidth -
+                                  spacing * (days.length - 1)) /
+                                  days.length;
 
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  for (final d in days)
-                                    if (d.date != null) ...[
-                                      Builder(
-                                        builder: (context) {
-                                          final dayDate = DateTime.parse(
-                                            d.date!,
-                                          );
-                                          final onlyDate = DateTime(
-                                            dayDate.year,
-                                            dayDate.month,
-                                            dayDate.day,
-                                          );
-                                          final isPast = onlyDate.isBefore(
-                                            todayDate,
-                                          );
+                              /// 🔥 FIND TODAY INDEX
+                              int todayIndex = days.indexWhere((d) {
+                                if (d.date == null) return false;
+                                final dDate = DateTime.parse(d.date!);
+                                return dDate.year == todayDate.year &&
+                                    dDate.month == todayDate.month &&
+                                    dDate.day == todayDate.day;
+                              });
 
-                                          return SizedBox(
-                                            width: width,
-                                            child: IgnorePointer(
-                                              ignoring: isPast,
-                                              child: Opacity(
-                                                opacity: isPast ? 0.5 : 1.0,
-                                                child: DayCell(
-                                                  dayAbbrev: d.day ?? '',
-                                                  dayNum: d.dayNum ?? '',
-                                                  month: d.month ?? '',
-                                                  slotCount: d.slotCount ?? 0,
-                                                  selected:
+                              if (todayIndex < 0) todayIndex = 0;
+
+                              /// 🔥 AUTO SCROLL TO TODAY (only once)
+                              if (isMonthView && !_autoScrolled) {
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  if (_daysScrollController.hasClients) {
+                                    final offset =
+                                        todayIndex * (itemWidth + spacing);
+
+                                    _daysScrollController.jumpTo(
+                                      offset.clamp(
+                                        0.0,
+                                        _daysScrollController.position.maxScrollExtent,
+                                      ),
+                                    );
+                                    _autoScrolled = true;
+                                  }
+                                });
+                              }
+
+                              return SingleChildScrollView(
+                                controller: _daysScrollController,
+                                scrollDirection: Axis.horizontal,
+                                physics: const BouncingScrollPhysics(),
+                                child: Row(
+                                  children: [
+                                    for (final d in days)
+                                      if (d.date != null) ...[
+                                        Builder(
+                                          builder: (context) {
+                                            final dayDate =
+                                            DateTime.parse(d.date!);
+                                            final onlyDate = DateTime(
+                                              dayDate.year,
+                                              dayDate.month,
+                                              dayDate.day,
+                                            );
+
+                                            final isPast =
+                                            onlyDate.isBefore(todayDate);
+
+                                            return Padding(
+                                              padding:
+                                              const EdgeInsets.only(right: 8),
+                                              child: SizedBox(
+                                                width: itemWidth,
+                                                child: IgnorePointer(
+                                                  ignoring: isPast,
+                                                  child: Opacity(
+                                                    opacity: isPast ? 0.5 : 1.0,
+                                                    child: DayCell(
+                                                      dayAbbrev: d.day ?? '',
+                                                      dayNum: d.dayNum ?? '',
+                                                      month: d.month ?? '',
+                                                      slotCount:
+                                                      d.slotCount ?? 0,
+                                                      selected:
                                                       selectedDate == d.date,
-                                                  onTap: () async {
-                                                    setState(
-                                                      () =>
-                                                          selectedDate = d.date,
-                                                    );
+                                                      onTap: () async {
+                                                        setState(() {
+                                                          selectedDate = d.date;
+                                                        });
 
-                                                    final picked =
+                                                        final picked =
                                                         await showDailySlotsBottomSheet(
                                                           context,
                                                           mentorId:
-                                                              widget
-                                                                  .data
-                                                                  .userId ??
+                                                          widget.data.userId ??
                                                               0,
-                                                          date: d
-                                                              .date!, // ISO date
+                                                          date: d.date!,
                                                         );
 
-                                                    if (picked == null) return;
+                                                        if (picked == null) return;
 
-                                                    setState(() {
-                                                      selectedDate = d.date;
-                                                      selectedTime =
-                                                          picked.timeLabel;
-                                                      selectedSlotId =
-                                                          picked.id;
-                                                    });
+                                                        setState(() {
+                                                          selectedDate = d.date;
+                                                          selectedTime =
+                                                              picked.timeLabel;
+                                                          selectedSlotId =
+                                                              picked.id;
+                                                        });
 
-                                                    context
-                                                        .read<SelectSlotCubit>()
-                                                        .getSelectSlot(
+                                                        context
+                                                            .read<
+                                                            SelectSlotCubit>()
+                                                            .getSelectSlot(
                                                           widget.data.userId ??
                                                               0,
                                                           picked.id ?? 0,
                                                         );
-                                                  },
+                                                      },
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                ],
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                  ],
+                                ),
                               );
                             },
                           );
@@ -380,6 +415,137 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                         return const SizedBox.shrink();
                       },
                     ),
+
+
+
+                    //
+                    // BlocBuilder<WeeklySlotsCubit, WeeklySlotsStates>(
+                    //   builder: (context, state) {
+                    //     if (state is WeeklySlotsLoading) {
+                    //       return const Padding(
+                    //         padding: EdgeInsets.symmetric(vertical: 20),
+                    //         child: Center(child: CircularProgressIndicator()),
+                    //       );
+                    //     }
+                    //
+                    //     if (state is WeeklySlotsFailure) {
+                    //       return Padding(
+                    //         padding: const EdgeInsets.symmetric(vertical: 12),
+                    //         child: Text(
+                    //           state.error,
+                    //           style: TextStyle(color: Colors.red),
+                    //         ),
+                    //       );
+                    //     }
+                    //
+                    //     if (state is WeeklySlotsLoaded) {
+                    //       final days = state.weeklySlotsModel.days ?? [];
+                    //       if (days.isEmpty) {
+                    //         return const Padding(
+                    //           padding: EdgeInsets.symmetric(vertical: 12),
+                    //           child: Text('No days available this week'),
+                    //         );
+                    //       }
+                    //
+                    //       return LayoutBuilder(
+                    //         builder: (context, c) {
+                    //           final spacing = 8.0;
+                    //           final count = days.length; // generally 7
+                    //           final width =
+                    //               (c.maxWidth - spacing * (count - 1)) / count;
+                    //
+                    //           final today = DateTime.now();
+                    //           final todayDate = DateTime(
+                    //             today.year,
+                    //             today.month,
+                    //             today.day,
+                    //           );
+                    //
+                    //           return Row(
+                    //             mainAxisAlignment:
+                    //                 MainAxisAlignment.spaceBetween,
+                    //             children: [
+                    //               for (final d in days)
+                    //                 if (d.date != null) ...[
+                    //                   Builder(
+                    //                     builder: (context) {
+                    //                       final dayDate = DateTime.parse(
+                    //                         d.date!,
+                    //                       );
+                    //                       final onlyDate = DateTime(
+                    //                         dayDate.year,
+                    //                         dayDate.month,
+                    //                         dayDate.day,
+                    //                       );
+                    //                       final isPast = onlyDate.isBefore(
+                    //                         todayDate,
+                    //                       );
+                    //
+                    //                       return SizedBox(
+                    //                         width: width,
+                    //                         child: IgnorePointer(
+                    //                           ignoring: isPast,
+                    //                           child: Opacity(
+                    //                             opacity: isPast ? 0.5 : 1.0,
+                    //                             child: DayCell(
+                    //                               dayAbbrev: d.day ?? '',
+                    //                               dayNum: d.dayNum ?? '',
+                    //                               month: d.month ?? '',
+                    //                               slotCount: d.slotCount ?? 0,
+                    //                               selected:
+                    //                                   selectedDate == d.date,
+                    //                               onTap: () async {
+                    //                                 setState(
+                    //                                   () =>
+                    //                                       selectedDate = d.date,
+                    //                                 );
+                    //
+                    //                                 final picked =
+                    //                                     await showDailySlotsBottomSheet(
+                    //                                       context,
+                    //                                       mentorId:
+                    //                                           widget
+                    //                                               .data
+                    //                                               .userId ??
+                    //                                           0,
+                    //                                       date: d
+                    //                                           .date!, // ISO date
+                    //                                     );
+                    //
+                    //                                 if (picked == null) return;
+                    //
+                    //                                 setState(() {
+                    //                                   selectedDate = d.date;
+                    //                                   selectedTime =
+                    //                                       picked.timeLabel;
+                    //                                   selectedSlotId =
+                    //                                       picked.id;
+                    //                                 });
+                    //
+                    //                                 context
+                    //                                     .read<SelectSlotCubit>()
+                    //                                     .getSelectSlot(
+                    //                                       widget.data.userId ??
+                    //                                           0,
+                    //                                       picked.id ?? 0,
+                    //                                     );
+                    //                               },
+                    //                             ),
+                    //                           ),
+                    //                         ),
+                    //                       );
+                    //                     },
+                    //                   ),
+                    //                 ],
+                    //             ],
+                    //           );
+                    //         },
+                    //       );
+                    //     }
+                    //
+                    //     return const SizedBox.shrink();
+                    //   },
+                    // ),
                   ],
                 ),
               ),
