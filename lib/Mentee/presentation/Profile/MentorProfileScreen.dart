@@ -101,62 +101,76 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: SizedBox(
-                            width: 120,
-                            height: 120,
-                            child: CachedNetworkImage(
-                              imageUrl: mentorData?.user?.profilePicUrl ?? "",
-                              fadeInDuration: const Duration(milliseconds: 200),
-                              fadeOutDuration: const Duration(
-                                milliseconds: 100,
-                              ),
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
+                          child: GestureDetector(
+                            onTap: () {
+                              if ((mentorData?.user?.profilePicUrl ?? "")
+                                  .isNotEmpty) {
+                                _showImagePreview(
+                                  context,
+                                  mentorData!.user!.profilePicUrl!,
+                                  name,
+                                );
+                              }
+                            },
+                            child: SizedBox(
+                              width: 120,
+                              height: 120,
+                              child: CachedNetworkImage(
+                                imageUrl: mentorData?.user?.profilePicUrl ?? "",
+                                fadeInDuration: const Duration(
+                                  milliseconds: 200,
+                                ),
+                                fadeOutDuration: const Duration(
+                                  milliseconds: 100,
+                                ),
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                placeholder: (context, url) => Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFFE0E0E0),
+                                  ),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 28,
+                                      height: 28,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                   ),
-                              placeholder: (context, url) => Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color(0xFFE0E0E0),
                                 ),
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 28,
-                                    height: 28,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      color: Colors.grey,
-                                    ),
+                                errorWidget: (context, url, error) => Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade300,
                                   ),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey.shade300,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    (name != null && name.trim().isNotEmpty)
-                                        ? name.trim()[0].toUpperCase()
-                                        : 'U',
-                                    style: const TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xff333333),
-                                      fontFamily: 'segeo',
+                                  child: Center(
+                                    child: Text(
+                                      (name != null && name.trim().isNotEmpty)
+                                          ? name.trim()[0].toUpperCase()
+                                          : 'U',
+                                      style: const TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xff333333),
+                                        fontFamily: 'segeo',
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -477,6 +491,46 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                     ),
                   )
           : SizedBox.shrink(),
+    );
+  }
+
+  void _showImagePreview(BuildContext context, String imageUrl, String? name) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.85),
+      builder: (_) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(20),
+            child: InteractiveViewer(
+              minScale: 0.8,
+              maxScale: 4,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.contain,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Container(
+                  alignment: Alignment.center,
+                  color: Colors.grey.shade800,
+                  child: Text(
+                    (name != null && name.trim().isNotEmpty)
+                        ? name.trim()[0].toUpperCase()
+                        : 'U',
+                    style: const TextStyle(
+                      fontSize: 64,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
