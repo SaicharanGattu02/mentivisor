@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
-                      "assets/images/mentivisorlogo.png",
+                      "assets/icons/menteeLogo.png",
                       width: SizeConfig.screenWidth * 0.2,
                       height: SizeConfig.screenHeight * 0.085,
                       fit: BoxFit.cover, // 👈 important

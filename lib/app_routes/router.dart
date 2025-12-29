@@ -81,6 +81,7 @@ import '../Mentee/presentation/BuyCoinsScreens.dart';
 import '../Mentee/presentation/ExclusiveServices.dart';
 import '../Mentor/presentation/CouponDetailsScreen.dart';
 import '../Mentor/presentation/SlotsBookingScreen.dart';
+import '../PrivacyPolicyScreen.dart';
 import '../Splash.dart';
 import '../Mentee/presentation/becomeMentor/InterestingScreen.dart';
 import '../Mentee/presentation/authentication/profieSetup/ProfileSetupWizard.dart';
@@ -846,6 +847,12 @@ final GoRouter appRouter = GoRouter(
       path: '/terms_conditions',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(TermsAndConditionScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/privacy-policy',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(PrivacyPolicyScreen(), state);
       },
     ),
   ],
