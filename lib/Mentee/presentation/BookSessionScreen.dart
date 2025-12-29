@@ -401,6 +401,7 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                                   ),
                                                 ),
                                               ),
+
                                             );
                                           },
                                         ),
@@ -411,7 +412,6 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                             },
                           );
                         }
-
                         return const SizedBox.shrink();
                       },
                     ),
