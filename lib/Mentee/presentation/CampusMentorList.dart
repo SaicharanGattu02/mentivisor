@@ -12,6 +12,7 @@ import 'package:mentivisor/utils/media_query_helper.dart';
 import '../../Components/Shimmers.dart';
 import '../../utils/color_constants.dart';
 import '../../utils/spinkittsLoader.dart';
+import '../Models/CompusMentorListModel.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_cubit.dart';
 import '../data/cubits/CampusMentorList/campus_mentor_list_state.dart';
 
@@ -92,7 +93,7 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                     },
                     style: const TextStyle(fontFamily: "Poppins", fontSize: 15),
                     decoration: InputDecoration(
-                      hintText: 'Search your mentor /Collage',
+                      hintText: 'Search your mentor /College',
                       prefixIcon: const Icon(Icons.search),
                     ),
                   ),
@@ -102,186 +103,214 @@ class _CampusmentorlistState extends State<Campusmentorlist> {
                   builder: (context, state) {
                     if (state is CampusMentorListStateLoading) {
                       return MentorGridShimmer();
-                    }
-                    if (state is CampusMentorListStateFailure) {
+                    } else if (state is CampusMentorListStateLoaded || state is CampusMentorListStateLoadingMore) {
+                      // Extract model from either Loaded or LoadingMore
+                      final model = (state is CampusMentorListStateLoaded)
+                          ? state.campusMentorListModel
+                          : (state as CampusMentorListStateLoadingMore).campusMentorListModel;
+
+                      final list = model.data?.mentors_list ?? [];
+
+                      if (list.isEmpty) {
+                        return SizedBox(
+                          height: SizeConfig.screenHeight * 0.6,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/nodata/no_data.png",
+                                  width: 250,
+                                ),
+                                const Text(
+                                  "No Mentors Found!",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Expanded(
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (scrollInfo) {
+                            // Trigger load more when 90% scrolled
+                            if (scrollInfo.metrics.pixels >=
+                                scrollInfo.metrics.maxScrollExtent * 0.9) {
+                              if (state is CampusMentorListStateLoaded && state.hasNextPage) {
+                                context.read<CampusMentorListCubit>().fetchMoreCampusMentors(
+                                  "${widget.scope}",
+                                  searchController.text,
+                                );
+                              }
+                            }
+                            return false;
+                          },
+                          child: CustomScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            slivers: [
+                              SliverMasonryGrid.count(
+                                crossAxisCount: _getCrossAxisCount(context),
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childCount: list.length,
+                                itemBuilder: (context, index) {
+                                  final m = list[index];
+                                  final name = m.user?.name ?? "";
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (isGuest) {
+                                        context.push('/auth_landing');
+                                      } else {
+                                        context.push('/mentor_profile?id=${m.userId}');
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(15),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl: m.user?.profilePicUrl ?? "",
+                                            imageBuilder: (context, imageProvider) => CircleAvatar(
+                                              radius: 36,
+                                              backgroundImage: imageProvider,
+                                            ),
+                                            placeholder: (context, url) => CircleAvatar(
+                                              radius: 36,
+                                              backgroundColor: Colors.grey,
+                                              child: SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                                child: Center(
+                                                  child: spinkits.getSpinningLinespinkit(),
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => CircleAvatar(
+                                              radius: 36,
+                                              backgroundColor: Colors.grey.shade300,
+                                              child: Text(
+                                                (name.isNotEmpty) ? name.trim()[0].toUpperCase() : 'U',
+                                                style: const TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Color(0xff333333),
+                                                  fontFamily: 'segeo',
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            capitalize(m.user?.name ?? ''),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xff333333),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            m.user?.college?.name ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: Color(0xff555555),
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            m.user?.bio ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: Color(0xff555555),
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                "assets/images/starvector.png",
+                                                color: Colors.amber,
+                                                height: 14,
+                                                width: 14,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: m.averageRating?.toStringAsFixed(1) ?? '0.0',
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontFamily: 'segeo',
+                                                        color: Color(0xff333333),
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text: ' (${m.totalReviews ?? 0})',
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontFamily: 'segeo',
+                                                        color: Color(0xff666666),
+                                                        fontWeight: FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              // Loading indicator at the bottom when fetching more
+                              if (state is CampusMentorListStateLoadingMore)
+                                const SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(25.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.blue, // or your primary color
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else if (state is CampusMentorListStateFailure) {
                       return SizedBox(
                         height: 200,
                         child: Center(
                           child: Text(state.msg ?? 'Failed to load'),
                         ),
                       );
+                    } else {
+                      return const Expanded(child: Center(child: Text("No Data")));
                     }
-                    final list =
-                        (state as CampusMentorListStateLoaded)
-                            .campusMentorListModel
-                            .data
-                            ?.mentors_list ??
-                        [];
-                    if (list.isEmpty) {
-                      return SizedBox(
-                        height: SizeConfig.screenHeight * 0.6,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/nodata/no_data.png",
-                                width: 250,
-                              ),
-                              Text(
-                                "No Mentors Found!",
-                                style: TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                    return Expanded(
-                      child: MasonryGridView.count(
-                        crossAxisCount: _getCrossAxisCount(context),
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: list.length,
-                        itemBuilder: (ctx, i) {
-                          final m = list[i];
-                          final name = m.user?.name ?? "";
-                          return GestureDetector(
-                            onTap: () {
-                              if (isGuest) {
-                                context.push('/auth_landing');
-                              } else {
-                                context.push('/mentor_profile?id=${m.userId}');
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl: m.user?.profilePicUrl ?? "",
-                                    imageBuilder: (context, imageProvider) =>
-                                        CircleAvatar(
-                                          radius: 36,
-                                          backgroundImage: imageProvider,
-                                        ),
-                                    placeholder: (context, url) => CircleAvatar(
-                                      radius: 36,
-                                      backgroundColor: Colors.grey,
-                                      child: SizedBox(
-                                        width: 16,
-                                        height: 16,
-                                        child: Center(
-                                          child: spinkits
-                                              .getSpinningLinespinkit(),
-                                        ),
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        CircleAvatar(
-                                          radius: 36,
-                                          backgroundColor: Colors.grey.shade300,
-                                          child: Text(
-                                            (name != null &&
-                                                    name.trim().isNotEmpty)
-                                                ? name.trim()[0].toUpperCase()
-                                                : 'U',
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xff333333),
-                                              fontFamily: 'segeo',
-                                            ),
-                                          ),
-                                        ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    capitalize(m.user?.name ?? ''),
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xff333333),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    m.user?.college?.name ?? '',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Color(0xff555555),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    m.user?.bio ?? '',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Color(0xff555555),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/starvector.png",
-                                        color: Colors.amber,
-                                        height: 14,
-                                        width: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  m.averageRating
-                                                      ?.toStringAsFixed(1) ??
-                                                  '0.0',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: 'segeo',
-                                                color: Color(0xff333333),
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: ' (${m.totalReviews ?? 0})',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: 'segeo',
-                                                color: Color(0xff666666),
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
                   },
                 ),
               ],

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -287,3 +288,41 @@ String formatSmartDateTime(String isoString) {
   return DateFormat("d'$suffix' MMM yyyy, h:mm a").format(dateTime);
 }
 
+void showImagePreview(BuildContext context, String imageUrl, String? name) {
+  showDialog(
+    context: context,
+    builder: (_) {
+      return GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: InteractiveViewer(
+            minScale: 0.8,
+            maxScale: 4,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.contain,
+              placeholder: (context, url) =>
+              const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Container(
+                alignment: Alignment.center,
+                color: Colors.grey.shade800,
+                child: Text(
+                  (name != null && name.trim().isNotEmpty)
+                      ? name.trim()[0].toUpperCase()
+                      : 'U',
+                  style: const TextStyle(
+                    fontSize: 64,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}

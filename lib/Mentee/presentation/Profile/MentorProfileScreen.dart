@@ -105,7 +105,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             onTap: () {
                               if ((mentorData?.user?.profilePicUrl ?? "")
                                   .isNotEmpty) {
-                                _showImagePreview(
+                                showImagePreview(
                                   context,
                                   mentorData!.user!.profilePicUrl!,
                                   name,
@@ -491,45 +491,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                     ),
                   )
           : SizedBox.shrink(),
-    );
-  }
-
-  void _showImagePreview(BuildContext context, String imageUrl, String? name) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.all(20),
-            child: InteractiveViewer(
-              minScale: 0.8,
-              maxScale: 4,
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.contain,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => Container(
-                  alignment: Alignment.center,
-                  color: Colors.grey.shade800,
-                  child: Text(
-                    (name != null && name.trim().isNotEmpty)
-                        ? name.trim()[0].toUpperCase()
-                        : 'U',
-                    style: const TextStyle(
-                      fontSize: 64,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 

@@ -71,40 +71,56 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          CachedNetworkImage(
-                            imageUrl:
-                                menteeProfile.data?.user?.profilePicUrl ?? "",
-                            imageBuilder: (context, imageProvider) => Container(
-                              padding: EdgeInsets.all(12),
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
+                          GestureDetector(
+                            onTap: () {
+                              if ((menteeProfile.data?.user?.profilePicUrl ??
+                                      "")
+                                  .isNotEmpty) {
+                                showImagePreview(
+                                  context,
+                                  menteeProfile.data?.user?.profilePicUrl ?? "",
+                                  menteeProfile.data?.user?.name,
+                                );
+                              }
+                            },
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  menteeProfile.data?.user?.profilePicUrl ?? "",
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                    padding: EdgeInsets.all(12),
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                              placeholder: (context, url) => Container(
+                                width: 120,
+                                height: 120,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: spinkits.getSpinningLinespinkit(),
                                 ),
                               ),
-                            ),
-                            placeholder: (context, url) => Container(
-                              width: 120,
-                              height: 120,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(shape: BoxShape.circle),
-                              child: Center(
-                                child: spinkits.getSpinningLinespinkit(),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              width: 120,
-                              height: 120,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                    "assets/images/profile.png",
+                              errorWidget: (context, url, error) => Container(
+                                width: 120,
+                                height: 120,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      "assets/images/profile.png",
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),
@@ -450,16 +466,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                   children: [
                                                     const SizedBox(height: 4),
                                                     Text(
-                                                      "Posted At ${formatSmartDateTime( menteePosts?.createdAt??"")}",
+                                                      "Posted At ${formatSmartDateTime(menteePosts?.createdAt ?? "")}",
                                                       style: const TextStyle(
                                                         fontFamily: 'segeo',
-                                                        fontWeight: FontWeight.w500,
+                                                        fontWeight:
+                                                            FontWeight.w500,
                                                         fontSize: 12,
-                                                        color: Color(0xFF222222),
+                                                        color: Color(
+                                                          0xFF222222,
+                                                        ),
                                                       ),
                                                     ),
                                                     Text(
-                                                      menteePosts?.heading ?? "",
+                                                      menteePosts?.heading ??
+                                                          "",
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -853,10 +873,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                           campusList?.title ??
                                                               "",
                                                           maxLines: 1,
-                                                          overflow: TextOverflow.ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                           style: TextStyle(
                                                             fontFamily: 'segeo',
-                                                            fontWeight: FontWeight.w700,
+                                                            fontWeight:
+                                                                FontWeight.w700,
                                                             fontSize: 12,
                                                             letterSpacing: 0.5,
                                                           ),
@@ -871,8 +893,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                                           maxLines: 2,
                                                           style:
                                                               const TextStyle(
-                                                                fontFamily: 'segeo',
-                                                                fontWeight: FontWeight.w400,
+                                                                fontFamily:
+                                                                    'segeo',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
                                                                 fontSize: 11,
                                                               ),
                                                         ),

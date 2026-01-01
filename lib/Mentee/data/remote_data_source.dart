@@ -69,6 +69,7 @@ abstract class RemoteDataSource {
   Future<CompusMentorListModel?> getCampusMentorList(
     String scope,
     String search,
+      int page
   );
   Future<GuestMentorsModel?> getGuestMentorsList();
   Future<MentorProfileModel?> getMentorProfile(int id);
@@ -929,10 +930,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<CompusMentorListModel?> getCampusMentorList(
     String scope,
     String search,
+      int page
   ) async {
     try {
       Response res = await ApiClient.get(
-        "${APIEndpointUrls.get_mentors}?scope=${scope}&search=${search}",
+        "${APIEndpointUrls.get_mentors}?scope=${scope}&search=${search}&page=${page}",
       );
       AppLogger.log('get CampusMentorList::${res.data}');
       return CompusMentorListModel.fromJson(res.data);

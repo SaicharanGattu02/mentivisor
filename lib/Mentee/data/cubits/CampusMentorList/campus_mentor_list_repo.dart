@@ -2,7 +2,7 @@ import '../../../Models/CompusMentorListModel.dart';
 import '../../remote_data_source.dart';
 
 abstract class CampusMentorListRepository {
-  Future<CompusMentorListModel?> getCampusMentorList(String scope, String search,);
+  Future<CompusMentorListModel?> getCampusMentorList(String scope, String search,int page);
 }
 
 class CampusMentorListRepositoryImpl implements CampusMentorListRepository {
@@ -11,7 +11,7 @@ class CampusMentorListRepositoryImpl implements CampusMentorListRepository {
   CampusMentorListRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<CompusMentorListModel?> getCampusMentorList(  String scope, String search,) async {
-    return await remoteDataSource.getCampusMentorList(scope,search);
+  Future<CompusMentorListModel?> getCampusMentorList(  String scope, String search,int page) async {
+    return await remoteDataSource.getCampusMentorList(scope,search,page);
   }
 }
