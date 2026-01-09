@@ -628,6 +628,7 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                               color: Colors.black87,
                             ),
                           ),
+
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
