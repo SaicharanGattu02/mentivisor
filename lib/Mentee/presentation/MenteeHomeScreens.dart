@@ -30,6 +30,7 @@ import '../data/cubits/GetBanners/GetBannersCubit.dart';
 import '../data/cubits/GuestMentors/guest_mentors_cubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileCubit.dart';
 import '../data/cubits/MenteeProfile/GetMenteeProfile/MenteeProfileState.dart';
+import 'Widgets/DeleteAccount.dart';
 import 'Widgets/FilterButton.dart';
 import 'Widgets/MentorGridGuest.dart';
 
@@ -150,6 +151,9 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
         break;
       case 'Logout':
         showLogoutDialog(context);
+        break;
+      case 'Delete Account':
+        DeleteAccountConfirmation.showDeleteConfirmationSheet(context);
         break;
     }
   }
@@ -686,6 +690,10 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     onTap: () =>
                                         _navigateToScreen('Customer Services'),
                                   ),
+                                  Divider(
+                                    height: 0.5,
+                                    color: Colors.grey.shade200,
+                                  ),
                                 ],
                               ),
                             ),
@@ -709,6 +717,43 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 onTap: () => _navigateToScreen('Logout'),
                               ),
                             ),
+                            SizedBox(height: 10),
+
+                            if (Platform.isIOS)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                  horizontal: 16,
+                                ),
+                                color: Colors.white,
+                                child: ListTile(
+                                  leading: const Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: Colors.red,
+                                    size: 26,
+                                  ),
+                                  title: const Text(
+                                    'Delete Account',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontFamily: "Inter",
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pop(context);
+
+                                    Future.delayed(
+                                      const Duration(milliseconds: 250),
+                                      () {
+                                        _navigateToScreen('Delete Account');
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),

@@ -47,6 +47,7 @@ import '../Mentee/presentation/ProductivityToolsScreen.dart';
 import '../Mentee/presentation/Profile/EditProfileScreen.dart';
 import '../Mentee/presentation/Profile/CommonProfile.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
+import '../Mentee/presentation/SubscriptionScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
 import '../Mentee/presentation/UserBlockedScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
@@ -111,6 +112,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(UserBlockedScreen(), state);
       },
+    ),
+    GoRoute(
+      path: '/subscription_plans',
+      pageBuilder: (context, state) =>
+          buildSlideTransitionPage(SubscriptionScreen(), state),
     ),
     GoRoute(
       path: '/chat',

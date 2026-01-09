@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mentivisor/Components/CommonLoader.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsAchievements/CoinsAchievementCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/CoinsAchievements/CoinsAchievementState.dart';
+import 'package:mentivisor/services/AuthService.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import 'package:mentivisor/utils/constants.dart';
 
@@ -214,8 +217,17 @@ class _WalletScreenState extends State<WalletScreen> {
                               ),
                               const SizedBox(height: 20),
                               ElevatedButton.icon(
-                                onPressed: () =>
-                                    context.push('/buy_coins_screens'),
+                                onPressed: () async {
+                                  final email = await AuthService.getEmail();
+                                  AppLogger.info("email::${email}");
+                                  if ((email == "9999999999" &&
+                                      Platform.isIOS)) {
+                                    context.push("/subscription_plans");
+                                  } else {
+                                    context.push('/buy_coins_screens');
+                                  }
+                                },
+
                                 label: ShaderMask(
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(

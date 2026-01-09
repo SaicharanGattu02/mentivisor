@@ -177,6 +177,8 @@ abstract class RemoteDataSource {
   Future<TermsAndConditionModel?> getTermsAndCondition();
   Future<SuccessModel?> deleteComment({required String commentId});
   Future<SuccessModel?> deleteSlot({required String slotId});
+  Future<SuccessModel?> deleteAccount();
+
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -228,6 +230,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return SuccessModel.fromJson(res.data);
     } catch (e) {
       AppLogger.error('deleteSlot:${e}');
+      return null;
+    }
+  }
+
+  @override
+  Future<SuccessModel?> deleteAccount() async {
+    try {
+      Response res = await ApiClient.post("${APIEndpointUrls.delete_account}");
+      AppLogger.log('deleteAccount::$res');
+      return SuccessModel.fromJson(res.data);
+    } catch (e) {
+      AppLogger.log('Error deleteAccount::$e');
       return null;
     }
   }

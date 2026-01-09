@@ -60,6 +60,7 @@ import 'package:mentivisor/Mentee/data/cubits/StudyZoneReport/StudyZoneReportRep
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/Years/years_repository.dart';
+import 'package:mentivisor/Mentee/data/cubits/delete_account/DeleteAccountCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/AvailabilitySlots/AvailabilitySlotsCubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/CoinsHistory/coin_history_cubit.dart';
 import 'package:mentivisor/Mentor/data/Cubits/ExpertiseDetails/expertise_details_cubit.dart';
@@ -139,6 +140,7 @@ import 'Mentee/data/cubits/WalletMoney/WalletMoney_Cubit.dart';
 import 'Mentee/data/cubits/chatReport/GroupChat/groupChatReportCubit.dart';
 import 'Mentee/data/cubits/chatReport/PrivateChat/privateChatReportCubit.dart';
 import 'Mentee/data/cubits/chatReport/chatReportRepo.dart';
+import 'Mentee/data/cubits/delete_account/DeleteAccountRepository.dart';
 import 'Mentee/data/remote_data_source.dart';
 import 'Mentor/data/Cubits/BuyCoupon/BuyCouponCubit.dart';
 import 'Mentor/data/Cubits/CoinsHistory/coin_history_repo.dart';
@@ -191,6 +193,11 @@ class StateInjector {
     RepositoryProvider<VerifyOtpRepository>(
       create: (context) =>
           verifyotpImpl(remoteDataSource: context.read<RemoteDataSource>()),
+    ),
+    RepositoryProvider<Deleteaccountrepository>(
+      create: (context) => DeleteaccountrepositoryImpl(
+        remoteDataSource: context.read<RemoteDataSource>(),
+      ),
     ),
     RepositoryProvider<Getbannersrepository>(
       create: (context) =>
@@ -505,8 +512,7 @@ class StateInjector {
           MenteeCustomersupportCubit(context.read<MenteeCustomersupportRepo>()),
     ),
     BlocProvider<DeleteSlotCubit>(
-      create: (context) =>
-          DeleteSlotCubit(context.read<DeleteSlotRepo>()),
+      create: (context) => DeleteSlotCubit(context.read<DeleteSlotRepo>()),
     ),
     BlocProvider<DeleteCommentCubit>(
       create: (context) =>
@@ -879,6 +885,10 @@ class StateInjector {
 
     BlocProvider<RedeemedCouponCubit>(
       create: (context) => RedeemedCouponCubit(context.read<CouponsRepo>()),
+    ),
+    BlocProvider<DeleteAccountCubit>(
+      create: (context) =>
+          DeleteAccountCubit(context.read<Deleteaccountrepository>()),
     ),
 
     BlocProvider<MentorDashboardCubit>(

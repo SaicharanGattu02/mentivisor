@@ -4,6 +4,8 @@ class APIEndpointUrls {
 
   /// Auth URls
   static const String login = '${apiUrl}user-login';
+  static const String delete_account = '${apiUrl}delete-account';
+
 
   /// auth get register
   static const String get_compuses = "${apiUrl}Campuses";
@@ -104,4 +106,5 @@ class APIEndpointUrls {
   static const String delete_slot = "${userUrl}delete-slot";
   static const String delete_download = "${userUrl}/download/user/delete";
   static const String termsandconditions = "${apiUrl}/terms";
+
 }
