@@ -67,25 +67,99 @@ class _CommunityScreenState extends State<Communityscreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Community',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w700,
-                  height: 1,
-                  fontSize: 20,
-                  color: Color(0xFF121212),
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Connect and Collaborate with Peers ',
-                style: TextStyle(
-                  fontFamily: 'segeo',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Color(0xFF666666),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Community',
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                          fontSize: 20,
+                          color: Color(0xFF121212),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Connect and Collaborate with Peers ',
+                        style: TextStyle(
+                          fontFamily: 'segeo',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Color(0xFF666666),
+                        ),
+                      ),
+                    ],
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _onCampus,
+                    builder: (context, onCampus, _) {
+                      if (!onCampus) {
+                        return const SizedBox.shrink();
+                      }
+                      return FutureBuilder(
+                        future: AuthService.isGuest,
+                        builder: (context, snapshot) {
+                          final isGuest = snapshot.data ?? false;
+                          return ElevatedButton.icon(
+                            onPressed: () {
+                              if (isGuest) {
+                                context.push('/auth_landing');
+                              } else {
+                                final selectedUpdate =
+                                _filters[_selectedFilter.value]
+                                    .toLowerCase();
+                                context.push(
+                                  "/addpostscreen?type=${selectedUpdate}",
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              backgroundColor: const Color(0xffEDD9FF),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                            ),
+                            icon: Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: const Color(0xff9B40EF),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                            label: const Text(
+                              'Add',
+                              style: TextStyle(
+                                fontFamily: 'segeo',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff9B40EF),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
               FutureBuilder(
                 future: AuthService.isGuest,
@@ -156,83 +230,20 @@ class _CommunityScreenState extends State<Communityscreen> {
                 },
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Posts',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF121212),
-                    ),
-                  ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: _onCampus,
-                    builder: (context, onCampus, _) {
-                      if (!onCampus) {
-                        return const SizedBox.shrink();
-                      }
-                      return FutureBuilder(
-                        future: AuthService.isGuest,
-                        builder: (context, snapshot) {
-                          final isGuest = snapshot.data ?? false;
-                          return ElevatedButton.icon(
-                            onPressed: () {
-                              if (isGuest) {
-                                context.push('/auth_landing');
-                              } else {
-                                final selectedUpdate =
-                                    _filters[_selectedFilter.value]
-                                        .toLowerCase();
-                                context.push(
-                                  "/addpostscreen?type=${selectedUpdate}",
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              backgroundColor: const Color(0xffEDD9FF),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                              surfaceTintColor: Colors.transparent,
-                            ),
-                            icon: Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: const Color(0xff9B40EF),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            label: const Text(
-                              'Add',
-                              style: TextStyle(
-                                fontFamily: 'segeo',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff9B40EF),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     const Text(
+              //       'Posts',
+              //       style: TextStyle(
+              //         fontSize: 18,
+              //         fontWeight: FontWeight.bold,
+              //         color: Color(0xFF121212),
+              //       ),
+              //     ),
+              //
+              //   ],
+              // ),
               SizedBox(height: 10),
               SizedBox(
                 height: 32,

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../core/network/api_config.dart';
@@ -9,14 +10,15 @@ import '../core/network/mentee_endpoints.dart';
 import '../utils/CrashlyticsDioInterceptor.dart';
 import '../utils/constants.dart';
 import 'AuthService.dart';
+import 'NotificationService.dart';
 
 class ApiClient {
+  static final FlutterSecureStorage _storage = const FlutterSecureStorage();
   static final Dio _dio = Dio(
     BaseOptions(
       baseUrl: ApiConfig.baseUrl,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
-
       /// Accept EVERY status so response never throws automatically.
       validateStatus: (_) => true,
     ),
@@ -81,53 +83,37 @@ class ApiClient {
         onResponse: (response, handler) async {
           final status = response.statusCode ?? 0;
 
-          // Custom backend rule for token expiry
           if (response.data is Map) {
             final data = response.data as Map;
+
+            // 🔴 Token expired
             if (data['message'] == 'Token is expired') {
               await AuthService.logout();
-              return handler.reject(
-                DioException(
-                  requestOptions: response.requestOptions,
-                  response: response,
-                  error: 'Session expired',
-                  type: DioExceptionType.badResponse,
-                ),
-              );
+              return handler.next(response); // ✅ DO NOT reject
             }
           }
 
-          // Handle auth failures
+          // 🔴 Unauthorized
           if (status == 401) {
             await AuthService.logout();
-            return handler.reject(
-              DioException(
-                requestOptions: response.requestOptions,
-                response: response,
-                error: 'Unauthorized',
-                type: DioExceptionType.badResponse,
-              ),
-            );
+            return handler.next(response); // ✅ DO NOT reject
           }
 
+          // 🔴 Account blocked
           if (status == 403) {
-            navigatorKey.currentContext?.go('/blocked_account');
-            return handler.reject(
-              DioException(
-                requestOptions: response.requestOptions,
-                response: response,
-                error: 'Account blocked',
-                type: DioExceptionType.badResponse,
-              ),
-            );
+            debugPrint("🚫 Account blocked — redirecting");
+            _storage.deleteAll();
+            debugPrint('Tokens cleared, user logged out');
+            rootNavigatorKey.currentContext?.go('/blocked_account');
+            return handler.next(response); // ✅ PASS RESPONSE
           }
 
-          // ACCEPT all other responses: 200-400 and also 422, 409, 404 etc
+          // ✅ Accept everything else
           return handler.next(response);
         },
 
         onError: (e, handler) {
-          // Network timeout mapping
+          // Timeout
           if (e.type == DioExceptionType.connectionTimeout ||
               e.type == DioExceptionType.sendTimeout ||
               e.type == DioExceptionType.receiveTimeout) {
@@ -151,11 +137,11 @@ class ApiClient {
             );
           }
 
-          // Let 500+ errors pass with message
           return handler.next(e);
         },
       ),
     );
+
   }
 
   // --------------------------------------------------------

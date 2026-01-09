@@ -375,27 +375,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           listener: (context, state) async {
                             if (state is LoginSucess) {
                               final data = state.logInModel;
-                              await AuthService.saveTokens(
-                                data.accessToken ?? "",
-                                data.refreshToken ?? "",
-                                data.expiresIn ?? 0,
-                                data.role ?? "",
-                                data.user?.id ?? 0,
-                                data.user?.name ?? "",
-                                data.user?.email ?? "",
-                                data.user?.profilePicUrl ?? "",
-                                data.user?.contact?.toString() ?? "",
-
-                              );
-                              await _handleRememberMe(
-                                emailController.text.trim(),
-                                passwordController.text.trim(),
-                              );
                               // if (data.role == "Both") {
                               //   context.pushReplacement('/selected_screen');
                               // } else
                               //   if (data.role == "Mentee") {
-                              context.pushReplacement('/dashboard');
+                              if (data.user?.activeStatus == 0) {
+                                context.pushReplacement('/blocked_account');
+                              } else {
+                                await AuthService.saveTokens(
+                                  data.accessToken ?? "",
+                                  data.refreshToken ?? "",
+                                  data.expiresIn ?? 0,
+                                  data.role ?? "",
+                                  data.user?.id ?? 0,
+                                  data.user?.name ?? "",
+                                  data.user?.email ?? "",
+                                  data.user?.profilePicUrl ?? "",
+                                  data.user?.contact?.toString() ?? "",
+                                );
+                                await _handleRememberMe(
+                                  emailController.text.trim(),
+                                  passwordController.text.trim(),
+                                );
+                                context.pushReplacement('/dashboard');
+                              }
+
                               // }
                             } else if (state is LoginFailure) {
                               CustomSnackBar.show(context, state.message);

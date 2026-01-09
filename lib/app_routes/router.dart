@@ -48,6 +48,7 @@ import '../Mentee/presentation/Profile/EditProfileScreen.dart';
 import '../Mentee/presentation/Profile/CommonProfile.dart';
 import '../Mentee/presentation/Profile/ProfileScreen.dart';
 import '../Mentee/presentation/UpcomingSessionsScreen.dart';
+import '../Mentee/presentation/UserBlockedScreen.dart';
 import '../Mentee/presentation/WalletScreen.dart';
 import '../Mentee/presentation/authentication/ForgotPassword/ForgotVerifyOtp.dart';
 import '../Mentee/presentation/authentication/ForgotPassword/ForgotPassword.dart';
@@ -103,6 +104,12 @@ final GoRouter appRouter = GoRouter(
       path: '/',
       pageBuilder: (context, state) {
         return buildSlideTransitionPage(SplashScreen(), state);
+      },
+    ),
+    GoRoute(
+      path: '/blocked_account',
+      pageBuilder: (context, state) {
+        return buildSlideTransitionPage(UserBlockedScreen(), state);
       },
     ),
     GoRoute(

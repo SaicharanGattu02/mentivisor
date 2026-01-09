@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -54,6 +56,28 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadAll();
     });
+  }
+
+  Future<void> launchInviteApp() async {
+    late final Uri url;
+
+    if (Platform.isAndroid) {
+      url = Uri.parse(
+        "https://play.google.com/store/apps/details?id=com.mentivisor.android",
+      );
+    } else if (Platform.isIOS) {
+      // 🔁 Replace with App Store link when available
+      url = Uri.parse("https://apps.apple.com/app/idYOUR_APP_ID");
+    } else {
+      // Web / fallback
+      // url = Uri.parse(
+      //   "https://play.google.com/store/apps/details?id=com.mentivisor.android",
+      // );
+    }
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint("❌ Could not launch $url");
+    }
   }
 
   Future<void> _loadAll() async {
@@ -623,23 +647,38 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                               ),
                               color: Colors.white,
                               child: Column(
+                                spacing: 5,
                                 children: [
                                   _buildDrawerItem(
                                     assetpath: "assets/icons/Info.png",
                                     label: 'User Guide',
                                     onTap: () => _navigateToScreen('info'),
                                   ),
+                                  Divider(
+                                    height: 0.5,
+                                    color: Colors.grey.shade200,
+                                  ),
                                   _buildDrawerItem(
                                     assetpath: "assets/icons/file.png",
                                     label: 'Terms And Conditions',
                                     onTap: () => _navigateToScreen('terms'),
                                   ),
-                                  // _buildDrawerItem(
-                                  //   assetpath: "assets/icons/UserCircleCheck.png",
-                                  //   label: 'Invite Friend',
-                                  //   onTap: () =>
-                                  //       _navigateToScreen('Invite Friend'),
-                                  // ),
+                                  Divider(
+                                    height: 0.5,
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  _buildDrawerItem(
+                                    assetpath:
+                                        "assets/icons/UserCircleCheck.png",
+                                    label: 'Invite Friend',
+                                    onTap: () async {
+                                      await launchInviteApp();
+                                    },
+                                  ),
+                                  Divider(
+                                    height: 0.5,
+                                    color: Colors.grey.shade200,
+                                  ),
                                   _buildDrawerItem(
                                     assetpath:
                                         "assets/icons/UserCircleGear.png",
@@ -1222,93 +1261,148 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                     Widget? actionButton;
                                                     if (isOnCampus) {
                                                       if (role == "both") {
-                                                        message = "No mentors in your campus yet";
+                                                        message =
+                                                            "No mentors in your campus yet";
                                                         actionButton = null;
                                                       } else {
-                                                        message = "Be the first mentor in your campus!";
+                                                        message =
+                                                            "Be the first mentor in your campus!";
                                                         actionButton = Padding(
-                                                          padding: const EdgeInsets.only(top: 16),
-                                                          child: BlocBuilder<MenteeProfileCubit, MenteeProfileState>(
-                                                            builder: (context, state) {
-                                                              if (state is! MenteeProfileLoaded) {
-                                                                return const SizedBox.shrink();
-                                                              }
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                                top: 16,
+                                                              ),
+                                                          child:
+                                                              BlocBuilder<
+                                                                MenteeProfileCubit,
+                                                                MenteeProfileState
+                                                              >(
+                                                                builder: (context, state) {
+                                                                  if (state
+                                                                      is! MenteeProfileLoaded) {
+                                                                    return const SizedBox.shrink();
+                                                                  }
 
-                                                              final user = state.menteeProfileModel.data?.user;
-                                                              final status = (user?.mentorStatus ?? "none").toLowerCase();
+                                                                  final user = state
+                                                                      .menteeProfileModel
+                                                                      .data
+                                                                      ?.user;
+                                                                  final status =
+                                                                      (user?.mentorStatus ??
+                                                                              "none")
+                                                                          .toLowerCase();
 
-                                                              // Decide label + navigation based on status
-                                                              String buttonText;
-                                                              VoidCallback? onPressed;
+                                                                  // Decide label + navigation based on status
+                                                                  String
+                                                                  buttonText;
+                                                                  VoidCallback?
+                                                                  onPressed;
 
-                                                              switch (status) {
-                                                                case "none":
-                                                                  buttonText = "Become a Mentor";
-                                                                  onPressed = () {
-                                                                    context.push('/becomementorscreen');
-                                                                  };
-                                                                  break;
+                                                                  switch (status) {
+                                                                    case "none":
+                                                                      buttonText =
+                                                                          "Become a Mentor";
+                                                                      onPressed = () {
+                                                                        context.push(
+                                                                          '/becomementorscreen',
+                                                                        );
+                                                                      };
+                                                                      break;
 
-                                                                case "inreview":
-                                                                  buttonText = "View Application Status";
-                                                                  onPressed = () {
-                                                                    context.push('/in_review');
-                                                                  };
-                                                                  break;
+                                                                    case "inreview":
+                                                                      buttonText =
+                                                                          "View Application Status";
+                                                                      onPressed = () {
+                                                                        context.push(
+                                                                          '/in_review',
+                                                                        );
+                                                                      };
+                                                                      break;
 
-                                                                case "rejected":
-                                                                  buttonText = "Become a Mentor";
-                                                                  onPressed = () {
-                                                                    context.push('/profile_rejected');
-                                                                  };
-                                                                  break;
+                                                                    case "rejected":
+                                                                      buttonText =
+                                                                          "Become a Mentor";
+                                                                      onPressed = () {
+                                                                        context.push(
+                                                                          '/profile_rejected',
+                                                                        );
+                                                                      };
+                                                                      break;
 
-                                                                case "approved":
-                                                                // Optional: show as disabled or change text
-                                                                  buttonText = "You’re already a Mentor";
-                                                                  onPressed = null; // disabled
-                                                                  break;
+                                                                    case "approved":
+                                                                      // Optional: show as disabled or change text
+                                                                      buttonText =
+                                                                          "You’re already a Mentor";
+                                                                      onPressed =
+                                                                          null; // disabled
+                                                                      break;
 
-                                                                default:
-                                                                  buttonText = "Become a Mentor";
-                                                                  onPressed = () {
-                                                                    context.push('/becomementorscreen');
-                                                                  };
-                                                              }
+                                                                    default:
+                                                                      buttonText =
+                                                                          "Become a Mentor";
+                                                                      onPressed = () {
+                                                                        context.push(
+                                                                          '/becomementorscreen',
+                                                                        );
+                                                                      };
+                                                                  }
 
-                                                              return OutlinedButton.icon(
-                                                                onPressed: onPressed,
-                                                                icon: const Icon(Icons.person_outline, size: 20, color: Color(0xff4A7CF6)),
-                                                                label: Text(
-                                                                  buttonText,
-                                                                  style: const TextStyle(
-                                                                    fontFamily: 'segeo',
-                                                                    fontWeight: FontWeight.w600,
-                                                                    fontSize: 16,
-                                                                    color: Color(0xff4A7CF6),
-                                                                  ),
-                                                                ),
-                                                                style: OutlinedButton.styleFrom(
-                                                                  backgroundColor: const Color(0xFFF5F8FF),
-                                                                  side: const BorderSide(
-                                                                    color: Color(0xff4A7CF6),
-                                                                  ),
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(30),
-                                                                  ),
-                                                                  padding: const EdgeInsets.symmetric(
-                                                                    horizontal: 28,
-                                                                    vertical: 10,
-                                                                  ),
-                                                                ),
-                                                              );
-
-                                                            },
-                                                          ),
+                                                                  return OutlinedButton.icon(
+                                                                    onPressed:
+                                                                        onPressed,
+                                                                    icon: const Icon(
+                                                                      Icons
+                                                                          .person_outline,
+                                                                      size: 20,
+                                                                      color: Color(
+                                                                        0xff4A7CF6,
+                                                                      ),
+                                                                    ),
+                                                                    label: Text(
+                                                                      buttonText,
+                                                                      style: const TextStyle(
+                                                                        fontFamily:
+                                                                            'segeo',
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Color(
+                                                                          0xff4A7CF6,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    style: OutlinedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                          const Color(
+                                                                            0xFFF5F8FF,
+                                                                          ),
+                                                                      side: const BorderSide(
+                                                                        color: Color(
+                                                                          0xff4A7CF6,
+                                                                        ),
+                                                                      ),
+                                                                      shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                              30,
+                                                                            ),
+                                                                      ),
+                                                                      padding: const EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            28,
+                                                                        vertical:
+                                                                            10,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ),
                                                         );
                                                       }
                                                     } else {
-                                                      message = "No mentors found beyond campus";
+                                                      message =
+                                                          "No mentors found beyond campus";
                                                       actionButton = null;
                                                     }
 

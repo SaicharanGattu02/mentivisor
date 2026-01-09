@@ -65,13 +65,13 @@ class User {
   String? profilePic;
   dynamic  state;
   dynamic city;
-  Null? country;
+  dynamic? country;
   String? saasId;
-  Null? emailOtp;
-  Null? expiredTime;
+  dynamic? emailOtp;
+  dynamic? expiredTime;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  dynamic? deletedAt;
   int? activeStatus;
   String? profilePicUrl;
 

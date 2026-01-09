@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../utils/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'NotificationService.dart';
+
 class AuthService {
   static const String _accessTokenKey = "access_token";
   static const String _refreshTokenKey = "refresh_token";
@@ -175,13 +177,13 @@ class AuthService {
     await _storage.deleteAll(); // clear all tokens
     debugPrint('Tokens cleared, user logged out');
 
-    final context = navigatorKey.currentContext;
+    final context = rootNavigatorKey.currentContext;
     if (context != null) {
       GoRouter.of(context).go('/onboarding');
     } else {
       debugPrint('Context is null, scheduling GoRouter navigation after frame');
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final postFrameContext = navigatorKey.currentContext;
+        final postFrameContext = rootNavigatorKey.currentContext;
         if (postFrameContext != null) {
           GoRouter.of(postFrameContext).go('/onboarding');
         } else {
