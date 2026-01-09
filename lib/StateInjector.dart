@@ -49,6 +49,7 @@ import 'package:mentivisor/Mentee/data/cubits/Payment/payment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_cubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/PostComment/post_comment_repository.dart';
 import 'package:mentivisor/Mentee/data/cubits/SelectSlot/select_slot_cubit.dart';
+import 'package:mentivisor/Mentee/data/cubits/Subscription/SubscriptionCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/TermsAndConditions/TermsAndConditionCubit.dart';
 import 'package:mentivisor/Mentee/data/cubits/TermsAndConditions/TermsAndConditionRepo.dart';
 import 'package:mentivisor/Mentee/data/cubits/UpComingSessions/up_coming_session_cubit.dart';
@@ -890,6 +891,7 @@ class StateInjector {
       create: (context) =>
           DeleteAccountCubit(context.read<Deleteaccountrepository>()),
     ),
+    BlocProvider<SubscriptionCubit>(create: (context) => SubscriptionCubit()),
 
     BlocProvider<MentorDashboardCubit>(
       create: (context) => MentorDashboardCubit(

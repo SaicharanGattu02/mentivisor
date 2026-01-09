@@ -220,7 +220,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 onPressed: () async {
                                   final email = await AuthService.getEmail();
                                   AppLogger.info("email::${email}");
-                                  if ((email == "9999999999" &&
+                                  if ((email == "saikumar@gmail.com" &&
                                       Platform.isIOS)) {
                                     context.push("/subscription_plans");
                                   } else {

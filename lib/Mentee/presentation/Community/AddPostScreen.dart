@@ -485,8 +485,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                         ),
                                       ),
                                       ElevatedButton(
-                                        onPressed: () {
-                                          context.push("/buy_coins_screens");
+                                        onPressed: () async {
+                                          final email = await AuthService.getEmail();
+                                          AppLogger.info("email::${email}");
+                                          if ((email == "saikumar@gmail.com" &&
+                                              Platform.isIOS)) {
+                                            context.push("/subscription_plans");
+                                          } else {
+                                            context.push('/buy_coins_screens');
+                                          }
                                           Navigator.pop(context);
                                         },
                                         style: ElevatedButton.styleFrom(

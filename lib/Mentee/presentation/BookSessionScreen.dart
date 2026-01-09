@@ -18,6 +18,7 @@ import 'package:mentivisor/Mentee/data/cubits/MenteeProfile/GetMenteeProfile/Men
 import 'package:mentivisor/Mentee/data/cubits/WeeklySlots/weekly_slots_cubit.dart';
 import 'package:mentivisor/utils/AppLogger.dart';
 import '../../Components/CustomAppButton.dart';
+import '../../services/AuthService.dart';
 import '../../utils/spinkittsLoader.dart';
 import '../Models/MentorProfileModel.dart';
 import '../data/cubits/MenteeDashBoard/mentee_dashboard_cubit.dart';
@@ -1059,10 +1060,18 @@ class _BookSessionScreenState extends State<BookSessionScreen> {
                                           ),
                                         ),
                                         ElevatedButton(
-                                          onPressed: () {
-                                            context.push(
-                                              "/buy_coins_screens?mentor_id=${widget.data.userId ?? 0}&slot_id=${selectedSlotId}",
-                                            );
+                                          onPressed: () async {
+                                            final email = await AuthService.getEmail();
+                                            AppLogger.info("email::${email}");
+                                            if ((email == "saikumar@gmail.com" &&
+                                                Platform.isIOS)) {
+                                              context.push("/subscription_plans");
+                                            } else {
+                                              context.push(
+                                                "/buy_coins_screens?mentor_id=${widget.data.userId ?? 0}&slot_id=${selectedSlotId}",
+                                              );
+                                            }
+
                                             Navigator.pop(context);
                                           },
                                           style: ElevatedButton.styleFrom(

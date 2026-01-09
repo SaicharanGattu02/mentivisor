@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -635,8 +637,15 @@ class _CouponDetailsScreenState extends State<CouponDetailsScreen> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                context.push("/buy_coins_screens");
+                              onPressed: () async {
+                                final email = await AuthService.getEmail();
+                                AppLogger.info("email::${email}");
+                                if ((email == "saikumar@gmail.com" &&
+                                    Platform.isIOS)) {
+                                  context.push("/subscription_plans");
+                                } else {
+                                  context.push("/buy_coins_screens");
+                                }
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
