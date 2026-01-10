@@ -740,10 +740,10 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     onTap: () =>
                                         _navigateToScreen('Customer Services'),
                                   ),
-                                  Divider(
-                                    height: 0.5,
-                                    color: Colors.grey.shade200,
-                                  ),
+                                  // Divider(
+                                  //   height: 0.5,
+                                  //   color: Colors.grey.shade200,
+                                  // ),
                                 ],
                               ),
                             ),
