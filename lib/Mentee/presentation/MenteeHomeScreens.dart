@@ -671,18 +671,20 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     height: 0.5,
                                     color: Colors.grey.shade200,
                                   ),
-                                  _buildDrawerItem(
-                                    assetpath:
-                                        "assets/icons/UserCircleCheck.png",
-                                    label: 'Invite Friend',
-                                    onTap: () async {
-                                      await launchInviteApp();
-                                    },
-                                  ),
-                                  Divider(
-                                    height: 0.5,
-                                    color: Colors.grey.shade200,
-                                  ),
+                                  if(Platform.isAndroid)...[
+                                    _buildDrawerItem(
+                                      assetpath:
+                                      "assets/icons/UserCircleCheck.png",
+                                      label: 'Invite Friend',
+                                      onTap: () async {
+                                        await launchInviteApp();
+                                      },
+                                    ),
+                                    Divider(
+                                      height: 0.5,
+                                      color: Colors.grey.shade200,
+                                    ),
+                                  ],
                                   _buildDrawerItem(
                                     assetpath:
                                         "assets/icons/UserCircleGear.png",
