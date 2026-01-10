@@ -79,6 +79,7 @@ dependencies:
   percent_indicator: ^4.2.5
   flutter_html: ^3.0.0
   in_app_purchase: ^3.2.3
+  flutter_linkify: ^6.0.0
 
 
 

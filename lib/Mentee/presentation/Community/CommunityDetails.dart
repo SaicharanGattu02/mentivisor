@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../Components/CommonLoader.dart';
 import '../../../Components/CustomAppButton.dart';
 import '../../../Components/CustomSnackBar.dart';
 import '../../../Components/CutomAppBar.dart';
 import '../../../Components/Shimmers.dart';
 import '../../../services/AuthService.dart';
+import '../../../utils/AppLauncher.dart';
 import '../../../utils/AppLogger.dart';
 import '../../../utils/constants.dart';
-import '../../../utils/media_query_helper.dart';
 import '../../../utils/spinkittsLoader.dart';
 import '../../Models/CommentsModel.dart';
 import '../../Models/CommunityPostsModel.dart';
@@ -24,6 +23,7 @@ import '../../data/cubits/CommunityPostReport/CommunityZoneReportState.dart';
 import '../../data/cubits/PostComment/post_comment_cubit.dart';
 import '../../data/cubits/PostComment/post_comment_states.dart';
 import '../Widgets/CommentCard.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 class CommunityDetails extends StatefulWidget {
   final int communityId;
@@ -263,16 +263,31 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    communityDetails?.description ?? "",
-                    style: const TextStyle(
+                  // Text(
+                  //   communityDetails?.description ?? "",
+                  //   style: const TextStyle(
+                  //     fontFamily: 'segeo',
+                  //     fontSize: 14,
+                  //     color: Color(0xFF666666),
+                  //   ),
+                  // ),
+                  Linkify(
+                    text: communityDetails?.description ?? "",
+                    style: TextStyle(
                       fontFamily: 'segeo',
                       fontSize: 14,
                       color: Color(0xFF666666),
                     ),
+                    linkStyle: TextStyle(
+                      color: Colors.blue,
+                      decorationColor: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                    onOpen: (link) async {
+                      await AppLauncher.openWebsite(link.url);
+                    },
                   ),
-
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   FutureBuilder(
                     future: AuthService.isGuest,
                     builder: (context, snapshot) {

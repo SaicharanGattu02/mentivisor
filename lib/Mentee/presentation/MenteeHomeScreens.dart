@@ -620,27 +620,75 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                 final role = (user?.role ?? "").toLowerCase();
                                 if (role != "both") return SizedBox.shrink();
                                 return Container(
-                                  height: 56,
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  padding: EdgeInsets.only(left: 5),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  // height: 56,
                                   decoration: BoxDecoration(
                                     color: Color(0xffFFF7CE),
                                   ),
-                                  child: _DrawerItem(
-                                    icon: Image.asset(
-                                      "assets/icons/ArrowCircleleft.png",
-                                      width: 50,
-                                      height: 50,
-                                    ),
-                                    title: 'Switch to Mentor',
-                                    onTap: () {
-                                      context.pop();
-                                      context.pushReplacement(
-                                        '/mentor_dashboard',
-                                      );
-                                    },
+                                  child: Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          context.pop();
+                                          context.pushReplacement(
+                                            '/mentor_dashboard',
+                                          );
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              "assets/icons/ArrowCircleleft.png",
+                                              fit: BoxFit.cover,
+                                              width:
+                                                  SizeConfig.screenWidth *
+                                                  0.082,
+                                              height:
+                                                  SizeConfig.screenHeight *
+                                                  0.055,
+                                            ), // Directly use the passed widget
+                                            SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                'Switch to Mentor',
+                                                style: TextStyle(
+                                                  fontFamily: 'segeo',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xff4B5462),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 );
+                                // return Container(
+                                //   height: 56,
+                                //   margin: EdgeInsets.symmetric(vertical: 10),
+                                //   padding: EdgeInsets.only(left: 5),
+                                //   decoration: BoxDecoration(
+                                //     color: Color(0xffFFF7CE),
+                                //   ),
+                                //   child: _DrawerItem(
+                                //     icon: Image.asset(
+                                //       "assets/icons/ArrowCircleleft.png",
+                                //       width: 50,
+                                //       height: 50,
+                                //     ),
+                                //     title: 'Switch to Mentor',
+                                //     onTap: () {
+                                //       context.pop();
+                                //       context.pushReplacement(
+                                //         '/mentor_dashboard',
+                                //       );
+                                //     },
+                                //   ),
+                                // );
                               },
                             ),
                             SizedBox(height: 10),

@@ -111,8 +111,8 @@ class _CommunityScreenState extends State<Communityscreen> {
                                 context.push('/auth_landing');
                               } else {
                                 final selectedUpdate =
-                                _filters[_selectedFilter.value]
-                                    .toLowerCase();
+                                    _filters[_selectedFilter.value]
+                                        .toLowerCase();
                                 context.push(
                                   "/addpostscreen?type=${selectedUpdate}",
                                 );
