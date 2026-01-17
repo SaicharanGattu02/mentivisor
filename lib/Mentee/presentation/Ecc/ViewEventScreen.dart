@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:mentivisor/Components/CustomAppButton.dart';
 import 'package:mentivisor/Components/CutomAppBar.dart';
 import 'package:mentivisor/Mentee/Models/ECCModel.dart';
@@ -58,123 +59,144 @@ class _ViewEventScreenState extends State<ViewEventScreen> {
             eventLink.value = eventDetails?.link ?? "";
             return Column(
               children: [
-                // SizedBox(
-                //   height: MediaQuery.of(context).padding.top + kToolbarHeight,
-                // ),
-                SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                  child: Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: SizeConfig.screenWidth,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8),
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // ===== HEADER =====
+                                Container(
+                                  width: SizeConfig.screenWidth,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(8),
+                                      topRight: Radius.circular(8),
+                                    ),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color(0xFF4A90E2),
+                                        Color(0xFF9013FE),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    spacing: 12,
+                                    children: [
+                                      Text(
+                                        eventDetails?.name ?? "",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'segeo',
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // ===== INFO =====
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 16.0,
+                                    left: 20,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _InfoRow(
+                                        icon: Icons.calendar_today_outlined,
+                                        iconBg: Color(0xFFE8F1FF),
+                                        iconColor: Color(0xFF4A90E2),
+                                        label: 'Date & Time',
+                                        value:
+                                            '${formatDate(eventDetails?.dateofevent)}\n${formatTimeRange(eventDetails?.time)}',
+                                      ),
+                                      _InfoRow(
+                                        icon: Icons.location_on_outlined,
+                                        iconBg: Color(0xFFE8FFEE),
+                                        iconColor: Color(0xFF2ECC71),
+                                        label: 'Location',
+                                        value: eventDetails?.location ?? "",
+                                      ),
+                                      _InfoRow(
+                                        icon: Icons.apartment_rounded,
+                                        iconBg: Color(0xFFF4E8FF),
+                                        iconColor: Color(0xFF9013FE),
+                                        label: 'Organizing Institution',
+                                        value: eventDetails?.college ?? "",
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // ===== DETAILS BOX =====
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(16),
+                                  margin: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(
+                                      0xffBEBEB,
+                                    ).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Event Details',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          fontFamily: 'segeo',
+                                          color: Color(0xff333333),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Linkify(
+                                        text: eventDetails?.description ?? "",
+                                        style: const TextStyle(
+                                          color: Color(0xff666666),
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'segeo',
+                                          fontSize: 14,
+                                        ),
+                                        linkStyle: const TextStyle(
+                                          color: Colors.blue,
+                                          decorationColor: Colors.blue,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        onOpen: (link) async {
+                                          await AppLauncher.openWebsite(
+                                            link.url,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF4A90E2), Color(0xFF9013FE)],
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 12,
-                            children: [
-                              Text(
-                                eventDetails?.name ?? "",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'segeo',
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              // Text(
-                              //   eventDetails?.description ?? "",
-                              //   style: const TextStyle(
-                              //     color: Colors.white,
-                              //     fontFamily: 'segeo',
-                              //     fontSize: 14,
-                              //     fontWeight: FontWeight.w500,
-                              //   ),
-                              // ),
-                            ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0, left: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _InfoRow(
-                                icon: Icons.calendar_today_outlined,
-                                iconBg: const Color(0xFFE8F1FF),
-                                iconColor: const Color(0xFF4A90E2),
-                                label: 'Date & Time',
-                                value:
-                                    '${formatDate(eventDetails?.dateofevent)}\n${formatTimeRange(eventDetails?.time)}',
-                              ),
-                              _InfoRow(
-                                icon: Icons.location_on_outlined,
-                                iconBg: const Color(0xFFE8FFEE),
-                                iconColor: const Color(0xFF2ECC71),
-                                label: 'Location',
-                                value: eventDetails?.location ?? "",
-                              ),
-                              _InfoRow(
-                                icon: Icons.apartment_rounded,
-                                iconBg: const Color(0xFFF4E8FF),
-                                iconColor: const Color(0xFF9013FE),
-                                label: 'Organizing Institution',
-                                value: eventDetails?.college ?? "",
-                              ),
-                            ],
-                          ),
-                        ),
-                        // — Details box
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          margin: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Color(0xffBEBEB).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Event Details',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  fontFamily: 'segeo',
-                                  color: Color(0xff333333),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                eventDetails?.description ?? "",
-                                style: TextStyle(
-                                  color: Color(0xff666666),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'segeo',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],

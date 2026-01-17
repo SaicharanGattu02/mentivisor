@@ -655,8 +655,8 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                                 'Switch to Mentor',
                                                 style: TextStyle(
                                                   fontFamily: 'segeo',
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
                                                   color: Color(0xff4B5462),
                                                 ),
                                               ),

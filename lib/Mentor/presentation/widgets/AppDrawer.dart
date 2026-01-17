@@ -207,8 +207,8 @@ class AppDrawer extends StatelessWidget {
                                     'Switch to Mentee',
                                     style: TextStyle(
                                       fontFamily: 'segeo',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
                                       color: Color(0xff4B5462),
                                     ),
                                   ),
