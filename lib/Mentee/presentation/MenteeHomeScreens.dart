@@ -706,19 +706,19 @@ class _MenteeHomeScreenState extends State<MenteeHomeScreen> {
                                     label: 'User Guide',
                                     onTap: () => _navigateToScreen('info'),
                                   ),
-                                  Divider(
-                                    height: 0.5,
-                                    color: Colors.grey.shade200,
-                                  ),
+                                  // Divider(
+                                  //   height: 0.5,
+                                  //   color: Colors.grey.shade200,
+                                  // ),
                                   _buildDrawerItem(
                                     assetpath: "assets/icons/file.png",
                                     label: 'Terms And Conditions',
                                     onTap: () => _navigateToScreen('terms'),
                                   ),
-                                  Divider(
-                                    height: 0.5,
-                                    color: Colors.grey.shade200,
-                                  ),
+                                  // Divider(
+                                  //   height: 0.5,
+                                  //   color: Colors.grey.shade200,
+                                  // ),
                                   // if(Platform.isAndroid)...[
                                   //   _buildDrawerItem(
                                   //     assetpath:

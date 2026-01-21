@@ -6,6 +6,7 @@ import 'package:mentivisor/Mentor/presentation/widgets/SessionCard.dart';
 import 'package:mentivisor/Mentor/presentation/widgets/SessionShimmerLoader.dart';
 import '../../Components/CommonLoader.dart';
 import '../../Mentee/presentation/Widgets/FilterButton.dart';
+import '../../utils/color_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/media_query_helper.dart';
 import '../data/Cubits/Sessions/SessionsCubit.dart';
@@ -50,6 +51,10 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
     super.initState();
     selectedFilter = widget.selectedFilter ?? 'upcoming';
     context.read<SessionCubit>().getSessions(selectedFilter);
+  }
+
+  Future<void> _onRefresh() async {
+    await context.read<SessionCubit>().getSessions(selectedFilter);
   }
 
   String calculateDuration(String start, String end) {
@@ -176,47 +181,52 @@ class _MySessionsScreenState extends State<MySessionsScreen> {
                         ),
                       );
                     }
-                    return CustomScrollView(
-                      slivers: [
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 0),
-                          sliver: SliverMasonryGrid.count(
-                            crossAxisCount: _getCrossAxisCount(context),
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childCount: Sessions?.length,
-                            itemBuilder: (context, index) {
-                              final session = Sessions?[index];
-                              final duration = calculateDuration(
-                                session?.startTime ?? "",
-                                session?.endTime ?? "",
-                              );
-                              return SessionCard(
-                                attachment: session?.attachment ?? "",
-                                menteeId: session?.mentee?.id ?? 0,
-                                sessionId: session?.id ?? 0,
-                                status: selectedFilter,
-                                sessionStartTime: '${session?.startTime ?? ""}',
-                                sessionEndTime: '${session?.endTime ?? ""}',
-                                sessionDate: formatDate(session?.date ?? ""),
-                                sessionTime: '${duration} to go',
-                                sessionName:
-                                    'Zoom Meet with ${session?.mentee?.name}',
-                                sessionImage:
-                                    session?.mentee?.menteeProfile ??
-                                    "", // Image for upcoming sessions
-                                sessionTopics: session?.topics ?? "",
-                                reason: session?.cancelledReason ?? "",
-                                buttonText:
-                                    'Message from ${session?.mentee?.name ?? ""}',
-                                buttonIcon: "assets/icons/ChatCircle.png",
-                                remainingTime: '${duration} Minutes to go',
-                                cancelreason: session?.cancelledReason ?? "",
-                              );
-                            },
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      color: primarycolor1, // optional
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            sliver: SliverMasonryGrid.count(
+                              crossAxisCount: _getCrossAxisCount(context),
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childCount: Sessions?.length,
+                              itemBuilder: (context, index) {
+                                final session = Sessions?[index];
+                                final duration = calculateDuration(
+                                  session?.startTime ?? "",
+                                  session?.endTime ?? "",
+                                );
+                                return SessionCard(
+                                  attachment: session?.attachment ?? "",
+                                  menteeId: session?.mentee?.id ?? 0,
+                                  sessionId: session?.id ?? 0,
+                                  status: selectedFilter,
+                                  sessionStartTime:
+                                      '${session?.startTime ?? ""}',
+                                  sessionEndTime: '${session?.endTime ?? ""}',
+                                  sessionDate: formatDate(session?.date ?? ""),
+                                  sessionTime: '${duration} to go',
+                                  sessionName:
+                                      'Zoom Meet with ${session?.mentee?.name}',
+                                  sessionImage:
+                                      session?.mentee?.menteeProfile ??
+                                      "", // Image for upcoming sessions
+                                  sessionTopics: session?.topics ?? "",
+                                  reason: session?.cancelledReason ?? "",
+                                  buttonText:
+                                      'Message from ${session?.mentee?.name ?? ""}',
+                                  buttonIcon: "assets/icons/ChatCircle.png",
+                                  remainingTime: '${duration} Minutes to go',
+                                  cancelreason: session?.cancelledReason ?? "",
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   } else {
                     return Center(child: Text("No Data Found"));

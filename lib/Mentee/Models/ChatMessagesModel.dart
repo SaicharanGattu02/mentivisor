@@ -154,7 +154,8 @@ class Messages {
 
     // ⭐ FIX: prepend baseUrl to file url
     if (json['url'] != null && json['url'] != "") {
-      url = ApiConfig.socket_url1 + json['url'].toString().replaceFirst('/', '');
+      url =
+          ApiConfig.socket_url1 + json['url'].toString().replaceFirst('/', '');
     } else {
       url = null;
     }
@@ -164,9 +165,10 @@ class Messages {
     type = json['type'];
 
     sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
-    receiver = json['receiver'] != null ? Sender.fromJson(json['receiver']) : null;
+    receiver = json['receiver'] != null
+        ? Sender.fromJson(json['receiver'])
+        : null;
   }
-
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};

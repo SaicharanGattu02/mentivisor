@@ -8,11 +8,11 @@ class SessionCompleteCubit extends Cubit<SessionCompleteStates> {
   SessionCompleteCubit(this.sessionCompleteRepo) : super(SessionCompletdInitially());
 
   Future<void> sessionComplete(int sessionId) async {
-    emit(SessionCompletdLoading());
+    emit(SessionCompletdLoading(sessionId));
     try {
       final response = await sessionCompleteRepo.sessionComplete(sessionId);
       if (response != null && response.status == true) {
-        emit(SessionCompletdSuccess(response));
+        emit(SessionCompletdSuccess(response,sessionId));
       } else {
         emit(SessionCompletdFailure(response?.message ?? ""));
       }
